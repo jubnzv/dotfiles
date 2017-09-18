@@ -1,0 +1,236 @@
+# Global variables
+set $TERMINAL urxvt
+set $HOME 		  /home/jubnzv/
+set $I3LOCKBG     /home/jubnzv/.i3/i3lock.png
+set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
+set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
+set $SCRIPTS_PATH /home/jubnzv/.local/scripts
+
+# Workspace names
+set $tile_01_q <b></b>
+set $tile_02_w 
+set $tile_03_e <b></b>
+set $tile_04_f 
+set $tile_05_j <b>α</b>
+set $tile_06_i <b>β</b>
+set $tile_07_o <b>γ</b>
+set $tile_08_p <b>δ</b>
+set $tile_09_1 <b>◰</b>
+set $tile_10_2 <b>◳</b>
+set $tile_11_3 <b>◲</b>
+set $tile_12_4 <b>◱</b>
+
+# Multi-monitor setup
+set $display1 LVDS1
+set $display2 VGA1
+set $display3 HDMI3
+
+workspace "1$tile_01_q" output $display1
+workspace "2$tile_02_w" output $display1
+workspace "3$tile_03_e" output $display1
+workspace "4$tile_04_f" output $display1
+workspace "5$tile_05_j" output $display2
+workspace "6$tile_06_i" output $display2
+workspace "7$tile_07_o" output $display2
+workspace "8$tile_08_p" output $display2
+workspace "9$tile_09_1" output $display3
+workspace "10$tile_10_2" output $display3
+workspace "11$tile_11_3" output $display3
+workspace "12$tile_12_4" output $display3
+
+# Autostart
+exec --no-startup-id /usr/bin/fbxkb
+exec --no-startup-id $SCRIPTS_PATH/keys.sh
+exec --no-startup-id $SCRIPTS_PATH/touchpad.sh
+exec --no-startup-id amixer -c 0 -q set Master mute
+exec --no-startup-id amixer -c 0 -q set Capture nocap
+exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
+exec --no-startup-id dunst
+exec --no-startup-id udiskie -t
+exec --no-startup-id xsetroot -solid "#282828" # set solid color as wallpaper
+
+# Window appearance
+new_window 1pixel
+font xft:Proto Sans, FontAwesome 9, pango:Hack 9
+hide_edge_borders both
+
+# Color theme
+# class                 border  backgr. text    indicator
+client.focused          #eee8d5 #282828 #eee8d5 #dc322f
+client.focused_inactive #282828 #282828 #93a1a1 #586e75
+client.unfocused        #282828 #282828 #93a1a1 #586e75
+client.urgent           #dc322f #282828 #000000 #586e75
+
+# Window control
+floating_modifier $mod
+workspace_layout tabbed
+focus_follows_mouse no
+
+# Workspace settings
+# Use xprop command for WM_CLASS and WM_NAME.
+# for_window [class="Emacs"] move workspace $tile_1q
+
+# Keybindings
+set $mod Mod4
+
+# Windows control
+bindsym $mod+Shift+C kill
+bindsym $mod+Shift+less kill
+bindsym $mod+F11 fullscreen
+bindsym $mod+Escape layout toggle
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+Insert restart
+bindsym $mod+Shift+End exit
+
+# Workspaces
+#bindsym $mod+bracketleft workspace prev
+#bindsym $mod+bracketright workspace next
+#bindsym $mod+Shift+R move workspace prev
+#bindsym $mod+Shift+U move workspace next
+
+# Move workspaces through monitors
+bindsym $mod+Shift+underscore move workspace to output left
+bindsym $mod+Shift+plus move workspace to output right
+
+# Switch between screens
+bindsym $mod+Tab focus output right
+
+# Switch between windows
+bindsym $mod+comma focus left
+bindsym $mod+period focus right
+
+# Switch to workspace
+bindsym $mod+q workspace number 1$tile_01_q
+bindsym $mod+w workspace number 2$tile_02_w
+bindsym $mod+e workspace number 3$tile_03_e
+bindsym $mod+f workspace number 4$tile_04_f
+bindsym $mod+j workspace number 5$tile_05_j
+bindsym $mod+i workspace number 6$tile_06_i
+bindsym $mod+o workspace number 7$tile_07_o
+bindsym $mod+p workspace number 8$tile_08_p
+bindsym $mod+1 workspace number 9$tile_09_1
+bindsym $mod+2 workspace number 10$tile_10_2
+bindsym $mod+3 workspace number 11$tile_11_3
+bindsym $mod+4 workspace number 12$tile_12_4
+
+# Move focused container to workspace
+bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
+bindsym $mod+Shift+W move container to workspace 2$tile_02_w
+bindsym $mod+Shift+E move container to workspace 3$tile_03_e
+bindsym $mod+Shift+F move container to workspace 4$tile_04_f
+bindsym $mod+Shift+J move container to workspace 5$tile_05_j
+bindsym $mod+Shift+I move container to workspace 6$tile_06_i
+bindsym $mod+Shift+O move container to workspace 7$tile_07_o
+bindsym $mod+Shift+P move container to workspace 8$tile_08_p
+bindsym $mod+Shift+1 move container to workspace 9$tile_09_1
+bindsym $mod+Shift+2 move container to workspace 10$tile_10_2
+bindsym $mod+Shift+3 move container to workspace 11$tile_11_3
+bindsym $mod+Shift+4 move container to workspace 12$tile_12_4
+
+# Splits
+bindsym $mod+minus split horizontal
+bindsym $mod+backslash split vertical
+
+# Application startup hotkeys
+bindsym $mod+Control+Return workspace 3$tile_03_e; exec $TERMINAL -e tmux
+bindsym $mod+Return exec $TERMINAL
+bindsym $mod+Control+q workspace 1$tile_01_q; exec $TERMINAL -e nvim
+bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
+bindsym $mod+Control+m workspace 7$tile_07_o; exec $TERMINAL -e cmus
+bindsym $mod+Control+r workspace 7$tile_07_o; exec $TERMINAL -e ranger
+bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
+bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $HOME/.local/opt/pycharm-ce/bin/pycharm.sh
+bindsym $mod+Control+F9 exec $HOME/.local/opt/Telegram/Telegram
+bindsym $mod+Control+F8 exec $HOME/.local/opt/Discord/Discord
+
+# Brightness control
+bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 7 &&  pkill -RTMIN+2 i3blocks # decrease screen brightness
+
+# Additional scripts/utils
+bindsym $mod+Shift+Home exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
+bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#eee8d5' -sb '#eee8d5' -sf '#282828' -p "" -m 0
+ bindsym $mod+Print exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
+ bindsym $mod+Shift+Print exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
+ bindsym $mod+Shift+F11 exec byzanz-record --duration=5 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+#bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
+bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
+bindsym $mod+XF86ScreenSaver exec xset s activate
+bindsym $mod+F12 exec notify-send " `date +%D`\n `date +%H:%M:%S`" 
+bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
+
+# cmus control
+bindsym XF86AudioNext exec cmus-remote --next
+bindsym XF86AudioPrev exec cmus-remote --prev
+bindsym XF86AudioPause exec cmus-remote --pause
+bindsym XF86AudioStop exec cmus-remote --stop
+
+# Volume control
+bindsym XF86AudioRaiseVolume exec amixer -c 0 -q set Master 4%+ unmute && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec amixer -c 0 -q set Master 4%- unmute && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec amixer -c 0 -q set Master toggle  && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
+
+# i3bar
+bindsym $mod+F8 bar mode toggle
+
+# Scratchpad
+bindsym $mod+Shift+S move scratchpad
+bindsym $mod+s scratchpad show
+
+# Highlight focused window
+bindsym Shift+F4 [class=".*"] border pixel 5
+bindsym Shift+F4 --release [class=".*"] border none
+
+# Exec-binds
+#
+# Multi-monitor control
+set $mode_exec_xrandr Multiscreen\t \
+<span fgcolor='#2aa198'>[1]</span> LVDS-1 <span fgcolor='#2aa198'>[S]</span>top\t \
+<span fgcolor='#6c71c4'>[2]</span> LVDS-1  VGA-1 \
+<span fgcolor='#6c71c4'>[3]</span> VGA-1  LVDS-1 \
+<span fgcolor='#6c71c4'>[4]</span> HDMI-3  LVDS-1  VGA-1
+
+bindsym XF86Display mode $mode_exec_xrandr
+mode --pango_markup "$mode_exec_xrandr" {
+     bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
+     bindsym 2 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto; mode "default"
+     bindsym 3 exec xrandr --output LVDS-1 --auto --output VGA-1 --left-of LVDS-1 --auto; mode "default"
+     bindsym 4 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto --output HDMI-3 --left-of LVDS-1 --auto; mode "default"
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+
+set $mode_exec_power Power\t \
+<span fgcolor='#2aa198'>[R]</span>eboot \
+<span fgcolor='#6c71c4'>[H]</span>alt
+
+bindsym $mod+Shift+Delete mode $mode_exec_power
+mode --pango_markup "$mode_exec_power" {
+     bindsym R exec /sbin/reboot
+     bindsym H exec /sbin/halt -p
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+
+
+bar {
+    tray_output $display1
+	position top
+    mode hide
+    workspace_buttons yes
+    # separator_symbol +
+    strip_workspace_numbers yes
+    binding_mode_indicator yes
+    status_command i3blocks
+    #				border	bckgrnd	text
+    colors {
+        background		#282828
+        statusline		#d5c4a1
+        focused_workspace	#d5c4a1 #d5c4a1 #282828
+        active_workspace	#d5c4a1 #282828 #d5c4a1
+        inactive_workspace	#282828 #282828 #d5c4a1
+        urgent_workspace	#cc241d	#cc241d	#282828
+    	binding_mode		#d79921	#282828	#fffffv
+    }
+}

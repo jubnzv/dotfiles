@@ -1,0 +1,118 @@
+# i3blocks config file
+#
+# Please see man i3blocks for a complete reference!
+# The man page is also hosted at http://vivien.github.io/i3blocks
+#
+# List of valid properties:
+#
+# align
+# color
+# command
+# full_text
+# instance
+# interval
+# label
+# min_width
+# name
+# separator
+# separator_block_width
+# short_text
+# signal
+# urgent
+
+# Global properties
+align=right
+separator=true
+separator_block_width=9
+
+# [touchpad]
+# label=
+# command=~/.config/i3blocks/scripts/touchpad
+# interval=5
+
+# [localmail]
+# label=
+# command=~/.config/i3blocks/scripts/localmail.sh
+# interval=3600
+
+[volume]
+label=
+instance=Master
+command=~/.config/i3blocks/scripts/volume
+interval=once
+signal=1
+
+# [cmus]
+# command=~/.config/i3blocks/scripts/cmus.sh
+# label=
+# interval=once
+
+# [brightness]
+# label=
+# command=~/.config/i3blocks/scripts/brightness
+# interval=once
+# signal=2
+
+[wifi]
+label=
+command=~/.config/i3blocks/scripts/wifi
+instance=wls1
+interval=7
+
+[disk-ssd]
+label=
+instance=/
+command=~/.config/i3blocks/scripts/disk
+interval=120
+
+[memory]
+label=
+command=~/.config/i3blocks/scripts/memory
+interval=30
+
+[cpu]
+#label=
+command=~/.config/i3blocks/scripts/cpu_usage
+interval=10
+min_width=100.00%
+separator=false
+
+[temp]
+label=
+command=~/.config/i3blocks/scripts/temperature
+interval=60
+
+# [window]
+# command=~/.config/i3blocks/scripts/window
+# interval=5
+
+# [webcam]
+# label=
+# command=~/.config/i3blocks/scripts/webcam
+# interval=5
+
+[emacs-server-status]
+command=~/.config/i3blocks/scripts/emacs-server.sh
+interval=10
+
+[mcst-etoken-status]
+command=~/.config/i3blocks/scripts/mcst-etoken.sh
+interval=10
+
+[battery]
+command=~/.config/i3blocks/scripts/battery
+interval=30
+
+# [time]
+# label=
+# command=date '+%H:%M:%S'
+# interval=5
+
+# [date]
+# label=
+# command=date '+%a %d %h %Y'
+# interval=3600
+
+#[layout]
+#command=xkb-switch
+#interval=5

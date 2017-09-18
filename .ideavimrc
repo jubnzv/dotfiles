@@ -1,0 +1,11 @@
+let mapleader = "-"
+
+imap jj <Esc>
+imap <C-f> <right>
+imap <C-b> <left>
+"imap <C-p> <up>
+"imap <C-n> <down>
+imap <A-f> <right>
+imap <A-b> <left>
+
+set relativenumber
