@@ -6,6 +6,12 @@ set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
 set $SCRIPTS_PATH /home/jubnzv/.local/scripts
 
+# Applications from ~/.local/opt
+set $APP_PYCHARM $HOME/.local/opt/pycharm-ce/bin/pycharm.sh
+set $APP_TELEGRAM $HOME/.local/opt/Telegram/Telegram
+set $APP_DISCORD $HOME/.local/opt/Discord/Discord
+set $APP_MATTERMOST $HOME/.local/opt/mattermost-desktop-3.7.1/mattermost-desktop
+
 # Workspace names
 set $tile_01_q <b></b>
 set $tile_02_w 
@@ -19,11 +25,12 @@ set $tile_09_1 <b>◰</b>
 set $tile_10_2 <b>◳</b>
 set $tile_11_3 <b>◲</b>
 set $tile_12_4 <b>◱</b>
+set $tile_13_msg <b></b>
 
 # Multi-monitor setup
 set $display1 LVDS1
-set $display2 VGA1
-set $display3 HDMI3
+set $display2 HDMI3
+set $display3 VGA1
 
 workspace "1$tile_01_q" output $display1
 workspace "2$tile_02_w" output $display1
@@ -37,6 +44,7 @@ workspace "9$tile_09_1" output $display3
 workspace "10$tile_10_2" output $display3
 workspace "11$tile_11_3" output $display3
 workspace "12$tile_12_4" output $display3
+workspace "13$tile_13_msg" output $display1
 
 # Autostart
 exec --no-startup-id /usr/bin/fbxkb
@@ -68,7 +76,9 @@ focus_follows_mouse no
 
 # Workspace settings
 # Use xprop command for WM_CLASS and WM_NAME.
-# for_window [class="Emacs"] move workspace $tile_1q
+for_window [class="VirtualBox"] floating enable
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
 
 # Keybindings
 set $mod Mod4
@@ -112,6 +122,7 @@ bindsym $mod+1 workspace number 9$tile_09_1
 bindsym $mod+2 workspace number 10$tile_10_2
 bindsym $mod+3 workspace number 11$tile_11_3
 bindsym $mod+4 workspace number 12$tile_12_4
+bindsym $mod+0 workspace number 13$tile_13_msg
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
@@ -126,6 +137,7 @@ bindsym $mod+Shift+1 move container to workspace 9$tile_09_1
 bindsym $mod+Shift+2 move container to workspace 10$tile_10_2
 bindsym $mod+Shift+3 move container to workspace 11$tile_11_3
 bindsym $mod+Shift+4 move container to workspace 12$tile_12_4
+bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 
 # Splits
 bindsym $mod+minus split horizontal
@@ -139,19 +151,17 @@ bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-ext
 bindsym $mod+Control+m workspace 7$tile_07_o; exec $TERMINAL -e cmus
 bindsym $mod+Control+r workspace 7$tile_07_o; exec $TERMINAL -e ranger
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
-bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $HOME/.local/opt/pycharm-ce/bin/pycharm.sh
-bindsym $mod+Control+F9 exec $HOME/.local/opt/Telegram/Telegram
-bindsym $mod+Control+F8 exec $HOME/.local/opt/Discord/Discord
+bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 7 &&  pkill -RTMIN+2 i3blocks # decrease screen brightness
 
 # Additional scripts/utils
-bindsym $mod+Shift+Home exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
+bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#eee8d5' -sb '#eee8d5' -sf '#282828' -p "" -m 0
- bindsym $mod+Print exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
- bindsym $mod+Shift+Print exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
+ bindsym $mod+Home exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
+ bindsym $mod+Shift+Home exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
  bindsym $mod+Shift+F11 exec byzanz-record --duration=5 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
@@ -190,7 +200,6 @@ set $mode_exec_xrandr Multiscreen\t \
 <span fgcolor='#6c71c4'>[2]</span> LVDS-1  VGA-1 \
 <span fgcolor='#6c71c4'>[3]</span> VGA-1  LVDS-1 \
 <span fgcolor='#6c71c4'>[4]</span> HDMI-3  LVDS-1  VGA-1
-
 bindsym XF86Display mode $mode_exec_xrandr
 mode --pango_markup "$mode_exec_xrandr" {
      bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
@@ -201,18 +210,36 @@ mode --pango_markup "$mode_exec_xrandr" {
      bindsym Escape mode "default"
 }
 
-set $mode_exec_power Power\t \
-<span fgcolor='#2aa198'>[R]</span>eboot \
-<span fgcolor='#6c71c4'>[H]</span>alt
-
-bindsym $mod+Shift+Delete mode $mode_exec_power
-mode --pango_markup "$mode_exec_power" {
-     bindsym R exec /sbin/reboot
-     bindsym H exec /sbin/halt -p
+# Application startup routines
+set $mode_exec_apps Execute\t \
+<span fgcolor='#2aa198'>[1]</span>Telegram \
+<span fgcolor='#2aa198'>[2]</span>Discord \
+<span fgcolor='#2aa198'>[3]</span>Mattermost \
+<span fgcolor='#2aa198'>[4]</span>Thunderbird\t \
+<span fgcolor='#2aa198'>[F9]</span>All
+bindsym $mod+Control+F9 mode $mode_exec_apps
+mode --pango_markup "$mode_exec_apps" {
+     bindsym 1 exec $APP_TELEGRAM; mode "default"
+     bindsym 2 exec $APP_DISCORD; mode "default"
+     bindsym 3 exec $APP_MATTERMOST; mode "default"
+     bindsym 4 exec --no-startup-id  thunderbird; mode "default"
+	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec thunderbird; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }
 
+# Power-control
+set $mode_exec_power :  :S |  : r |  : s |  : l |  : e
+bindsym $mod+Shift+Delete mode "$mode_exec_power"
+mode "$mode_exec_power" {
+	bindsym Shift+s     exec systemctl poweroff
+	bindsym r           exec systemctl reboot
+	bindsym s           exec systemctl suspend; mode "default"
+	bindsym l           exec lock; mode "default"
+	bindsym e           exec i3-msg "exit"
+	bindsym Return 	mode "default"
+	bindsym Escape 	mode "default"
+}
 
 bar {
     tray_output $display1
