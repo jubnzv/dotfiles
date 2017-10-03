@@ -79,6 +79,8 @@ focus_follows_mouse no
 for_window [class="VirtualBox"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
+for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
+for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
 
 # Keybindings
 set $mod Mod4
@@ -166,7 +168,7 @@ bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
 bindsym $mod+XF86ScreenSaver exec xset s activate
-bindsym $mod+F12 exec notify-send " `date +%D`\n `date +%H:%M:%S`" 
+bindsym $mod+F12 exec notify-send " `date +%D`\n `date +%H:%M:%S`"
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
 
 # cmus control

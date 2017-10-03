@@ -17,6 +17,8 @@ Plug 'https://github.com/fatih/vim-go'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/neovimhaskell/haskell-vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
+Plug 'https://github.com/scrooloose/nerdtree'
+Plug 'https://github.com/vim-scripts/taglist.vim'
 " Initialize plugin system
 call plug#end()
 """
@@ -67,6 +69,10 @@ map <Leader>` :qa!<cr>
 map <Leader>= :bn<cr>
 map <Leader>- :bp<cr>
 map <Leader>+ :bd<CR>
+map <A-t> :NERDTreeToggle<CR>
+map <A-e> :SyntasticCheck<CR>
+map <C-A-e> :SyntasticReset<CR>
+
 """
 
 """ Commenting by <C-/> like pycharm
@@ -86,6 +92,11 @@ let g:EasyMotion_smartcase = 1
 "map <C-j> <Plug>(easymotion-j)
 "map <C-k> <Plug>(easymotion-K)
 
+""" Syntastic settings
+let g:syntastic_loc_list_height=3
+"""
+
+
 """ Appearance
 set wildmenu
 set wildmode=longest,list
@@ -94,8 +105,9 @@ set wildmode=longest,list
 """ Coding style
 " Linux coding style plugin
 "source ~/.vim/scripts/linuxsty.vim
-" Defaults
 set tabstop=4
+set shiftwidth=4
+set expandtab  " on pressing tab insert 4 spaces
 " 80+ characters line highlight
 highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn', '\%81v', 100)
@@ -121,7 +133,7 @@ autocmd BufWinLeave * call clearmatches()
 """
 
 """ Tag List plugin
-nmap <Esc>r :TlistToggle<CR>
+nmap <C-F8> :TlistToggle<CR>
 """
 
 " Autopair
