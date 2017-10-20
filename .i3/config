@@ -44,12 +44,13 @@ workspace "9$tile_09_1" output $display3
 workspace "10$tile_10_2" output $display3
 workspace "11$tile_11_3" output $display3
 workspace "12$tile_12_4" output $display3
-workspace "13$tile_13_msg" output $display1
+workspace "13$tile_13_msg" output $display2
 
 # Autostart
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/keys.sh
 exec --no-startup-id $SCRIPTS_PATH/touchpad.sh
+exec --no-startup-id $SCRIPTS_PATH/dual.sh
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
@@ -81,6 +82,7 @@ for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
+for_window [title="^Run" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
 
 # Keybindings
 set $mod Mod4
@@ -125,6 +127,10 @@ bindsym $mod+2 workspace number 10$tile_10_2
 bindsym $mod+3 workspace number 11$tile_11_3
 bindsym $mod+4 workspace number 12$tile_12_4
 bindsym $mod+0 workspace number 13$tile_13_msg
+
+# Moar workspace control
+bindsym $mod+u [urgent=latest] focus
+bindsym $mod+r workspace back_and_forth
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q

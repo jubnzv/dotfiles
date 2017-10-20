@@ -1,5 +1,5 @@
 """ Leader
-let mapleader = "-"
+let mapleader = "\\"
 """
 
 """ Misc
@@ -19,6 +19,7 @@ Plug 'https://github.com/neovimhaskell/haskell-vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
+Plug 'https://github.com/ctrlpvim/ctrlp.vim'
 " Initialize plugin system
 call plug#end()
 """
@@ -69,6 +70,8 @@ map <Leader>` :qa!<cr>
 map <Leader>= :bn<cr>
 map <Leader>- :bp<cr>
 map <Leader>+ :bd<CR>
+inoremap <Leader>; <C-o>A;
+inoremap <Leader>j; <C-o>A;<CR>
 map <A-t> :NERDTreeToggle<CR>
 map <A-e> :SyntasticCheck<CR>
 map <C-A-e> :SyntasticReset<CR>
@@ -95,7 +98,6 @@ let g:EasyMotion_smartcase = 1
 """ Syntastic settings
 let g:syntastic_loc_list_height=3
 """
-
 
 """ Appearance
 set wildmenu
@@ -133,7 +135,7 @@ autocmd BufWinLeave * call clearmatches()
 """
 
 """ Tag List plugin
-nmap <C-F8> :TlistToggle<CR>
+nmap <F8> :TlistToggle<CR>
 """
 
 " Autopair
