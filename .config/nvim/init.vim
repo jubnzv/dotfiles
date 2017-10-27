@@ -1,5 +1,5 @@
 """ Leader
-let mapleader = "\\"
+let mapleader = "-"
 """
 
 """ Misc
@@ -19,7 +19,8 @@ Plug 'https://github.com/neovimhaskell/haskell-vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
-Plug 'https://github.com/ctrlpvim/ctrlp.vim'
+"Plug 'https://github.com/ctrlpvim/ctrlp.vim'
+Plug 'junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 " Initialize plugin system
 call plug#end()
 """

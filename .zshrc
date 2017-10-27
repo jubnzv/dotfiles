@@ -71,3 +71,5 @@ source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.config/zsh/zsh-autopair/zsh-autopair.plugin.zsh
 source ~/.config/zsh/zce.zsh/zce.zsh
 bindkey "^Xz" zce
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
