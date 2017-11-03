@@ -23,8 +23,9 @@
 ;; Highlight current line
 (global-hl-line-mode)
 
-;; Font
+;; Fonts
 (set-fontset-font t 'koi8-r "Inconsolata LGC")
+(set-default-font "Fantasque Sans Mono 12")
 
 ;; Column number mode
 (column-number-mode)
@@ -38,7 +39,7 @@
 (setq solarized-emphasize-indicators nil) ;; Use less colors for indicators such as git:gutter, flycheck and similar
 (setq solarized-high-contrast-mode-line t) ;; Make the modeline high contrast
 (setq solarized-scale-org-headlines nil) ;; Don't change size of org-mode headlines (but keep other size-changes)
-(load-theme 'solarized-dark t)
+(load-theme 'gruvbox-dark-soft t)
 
 ;; Disable line truncating in some modes
 (add-hook 'prog-mode-hook (lambda () (setq truncate-lines nil)))

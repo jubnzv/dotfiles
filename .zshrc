@@ -5,6 +5,7 @@ export DOCKER_ID_USER="jubnzv1"
 autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%} %% "
 
+# Default editor setup
 export EDITOR="nvim"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
@@ -25,6 +26,9 @@ export GOPATH=$HOME/Dev/go/
 #
 # Misc
 alias vim='nvim'
+alias grep='ag'
+alias ls='ls --color=auto'
+# Disable history saving for some commands
 alias jrnl=' jrnl'
 alias task=' task'
 alias veracrypt=' veracrypt'
@@ -36,6 +40,7 @@ alias dr='dirs -v'
 alias s='sudo'
 # X apps
 alias zt='zathura'
+alias mrg='mirage'
 # "Tools"
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'

@@ -154,10 +154,11 @@ bindsym $mod+backslash split vertical
 # Application startup hotkeys
 bindsym $mod+Control+Return workspace 3$tile_03_e; exec $TERMINAL -e tmux
 bindsym $mod+Return exec $TERMINAL
-bindsym $mod+Control+q workspace 1$tile_01_q; exec $TERMINAL -e nvim
+bindsym $mod+Control+q workspace 1$tile_01_q; exec emacs25
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
 bindsym $mod+Control+m workspace 7$tile_07_o; exec $TERMINAL -e cmus
 bindsym $mod+Control+r workspace 7$tile_07_o; exec $TERMINAL -e ranger
+bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
 

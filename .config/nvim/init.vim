@@ -19,7 +19,7 @@ Plug 'https://github.com/neovimhaskell/haskell-vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
-"Plug 'https://github.com/ctrlpvim/ctrlp.vim'
+Plug 'https://github.com/mileszs/ack.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 " Initialize plugin system
 call plug#end()
@@ -53,6 +53,7 @@ endfunction
 """
 
 """ Keybindings
+" Misc
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
 nnoremap <F9> :call NumberToggle()<CR>
@@ -70,7 +71,13 @@ map <Leader>q :q<cr>
 map <Leader>` :qa!<cr>
 map <Leader>= :bn<cr>
 map <Leader>- :bp<cr>
-map <Leader>+ :bd<CR>
+map <Leader>+ :bd<cr>
+map <Leader>a :Ack!<Space>
+" Convient emacs-like binds
+map <C-X><C-F> :FZF<cr>
+map <C-X><C-C> :qa<cr>
+map <C-X><C-D> :bd<cr>
+" Coding
 inoremap <Leader>; <C-o>A;
 inoremap <Leader>j; <C-o>A;<CR>
 map <A-t> :NERDTreeToggle<CR>
@@ -98,6 +105,12 @@ let g:EasyMotion_smartcase = 1
 
 """ Syntastic settings
 let g:syntastic_loc_list_height=3
+"""
+
+""" Ag/Ack settings
+if executable('ag')
+  let g:ackprg = 'ag --vimgrep'
+endif
 """
 
 """ Appearance
