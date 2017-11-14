@@ -5,6 +5,9 @@ export DOCKER_ID_USER="jubnzv1"
 autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%} %% "
 
+# PATH
+export PATH=$PATH:${HOME}/.local/bin/
+
 # Default editor setup
 export EDITOR="nvim"
 export USE_EDITOR=$EDITOR
@@ -36,7 +39,8 @@ alias veracrypt=' veracrypt'
 alias q='exit'
 alias pd='pushd'
 alias pdd='popd'
-alias dr='dirs -v'
+alias pl='dirs -v'
+alias pc='dirs -c'
 alias s='sudo'
 # X apps
 alias zt='zathura'
@@ -44,6 +48,9 @@ alias mrg='mirage'
 # "Tools"
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
+# Docker
+alias dps='docker ps'
+alias dpsa='docker ps -a'
 # Other
 alias _up='source ~/.zshrc'
 alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'

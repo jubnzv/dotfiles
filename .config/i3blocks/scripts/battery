@@ -15,6 +15,7 @@
 use strict;
 use warnings;
 use utf8;
+use Desktop::Notify;
 
 my $acpi;
 my $status;
@@ -70,6 +71,14 @@ if ($status eq 'Discharging') {
 
 	if ($percent < 20) {
 		print "#dc322f\n";
+
+		# Send desktop notification
+		my $notify = new Desktop::Notify;
+		my $notification = $notify->create(summary => "Low Battery\n",
+						   body => "($percent)",
+						   timeout => 5000);
+		$notification->show();
+
 	} elsif ($percent < 40) {
 		print "#cb4b16\n";
 	} elsif ($percent < 60) {
