@@ -24,7 +24,7 @@
 (global-hl-line-mode)
 
 ;; Fonts
-(set-fontset-font t 'koi8-r "Inconsolata LGC")
+;; (set-fontset-font t 'koi8-r "Inconsolata LGC")
 (set-default-font "Fantasque Sans Mono 12")
 
 ;; Column number mode

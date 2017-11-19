@@ -21,6 +21,8 @@ Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
 Plug 'https://github.com/mileszs/ack.vim'
 Plug 'junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
+"Plug 'nvie/vim-flake8'
+Plug 'rosenfeld/conque-term'
 " Initialize plugin system
 call plug#end()
 """
@@ -103,10 +105,6 @@ let g:EasyMotion_smartcase = 1
 "map <C-j> <Plug>(easymotion-j)
 "map <C-k> <Plug>(easymotion-K)
 
-""" Syntastic settings
-let g:syntastic_loc_list_height=3
-"""
-
 """ Ag/Ack settings
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
@@ -176,13 +174,28 @@ let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
 let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
 let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
 let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
+"""
+
+""" python
+"let g:python_highlight_all = 1
+"let g:python_highlight_space_errors=0
+"""
+
+""" Conque term with ipython buffer
+nnoremap <Leader><F10> :ConqueTermSplit ipython<CR>
+nnoremap <Leader><F9> :exe ":ConqueTermSplit ipython " . expand("%")<CR>
+"""
 
 """ Syntastics setup
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+let g:syntastic_loc_list_height=3
 let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
+"""
 
 """ Other
 "" css

@@ -55,6 +55,11 @@ alias dpsa='docker ps -a'
 alias _up='source ~/.zshrc'
 alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 
+# try to deal ssh connection every second
+sssh(){
+  while true; do command ssh "$@"; [ $? -ne 255 ] && break || sleep 1; done
+}
+
 # Command completion
 #
 autoload -Uz compinit
