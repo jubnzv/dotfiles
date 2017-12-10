@@ -44,7 +44,7 @@ workspace "9$tile_09_1" output $display3
 workspace "10$tile_10_2" output $display3
 workspace "11$tile_11_3" output $display3
 workspace "12$tile_12_4" output $display3
-workspace "13$tile_13_msg" output $display2
+workspace "13$tile_13_msg" output $display1
 
 # Autostart
 exec --no-startup-id /usr/bin/fbxkb
@@ -156,16 +156,18 @@ bindsym $mod+minus split horizontal
 bindsym $mod+backslash split vertical
 
 # Application startup hotkeys
-bindsym $mod+Control+Return workspace 3$tile_03_e; exec $TERMINAL -e tmux
+bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
+bindsym $mod+Control+t workspace 3$tile_03_e; exec $TERMINAL -e tmux
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+q workspace 1$tile_01_q; exec emacs25
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
 bindsym $mod+Control+m workspace 7$tile_07_o; exec $TERMINAL -e cmus
-bindsym $mod+Control+r workspace 7$tile_07_o; exec $TERMINAL -e ranger
+bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
 bindsym $mod+Control+y exec cd ~/.local/opt/XMind/XMind_amd64 && ./XMind
+bindsym $mod+Control+i exec $TERMINAL -e ipython
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness

@@ -6,7 +6,7 @@ autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%} %% "
 
 # PATH
-export PATH=$PATH:${HOME}/.local/bin/
+export PATH=$PATH:${HOME}/.local/bin/:${HOME}/.local/scripts
 
 # Default editor setup
 export EDITOR="nvim"
@@ -42,6 +42,7 @@ alias pdd='popd'
 alias pl='dirs -v'
 alias pc='dirs -c'
 alias s='sudo'
+alias svim='sudoedit'
 # X apps
 alias zt='zathura'
 alias mrg='mirage'
@@ -90,3 +91,4 @@ source ~/.config/zsh/zce.zsh/zce.zsh
 bindkey "^Xz" zce
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
