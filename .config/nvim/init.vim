@@ -13,6 +13,7 @@ Plug 'https://github.com/morhetz/gruvbox'
 Plug 'https://github.com/scrooloose/nerdcommenter'
 Plug 'https://github.com/easymotion/vim-easymotion'
 Plug 'https://github.com/tpope/vim-surround'
+Plug 'https://github.com/tpope/vim-repeat'
 Plug 'https://github.com/fatih/vim-go'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/neovimhaskell/haskell-vim'
@@ -20,10 +21,10 @@ Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
 Plug 'https://github.com/mileszs/ack.vim'
-Plug 'junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
+Plug 'https://github.com/ap/vim-buftabline'
+Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 "Plug 'nvie/vim-flake8'
-Plug 'rosenfeld/conque-term'
-" Initialize plugin system
+Plug 'https://github.com/rosenfeld/conque-term'
 call plug#end()
 """
 
@@ -40,6 +41,12 @@ set background=dark
 colorscheme gruvbox
 let g:lightline = {}
 let g:lightline.colorscheme = 'gruvbox'
+"""
+
+""" Buffers list in the tabline
+set hidden
+nnoremap <C-N> :bnext<CR>
+nnoremap <C-P> :bprev<CR>
 """
 
 " Relative or absolute number lines
@@ -100,7 +107,7 @@ endif
 
 """ Easymotion settings
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-nmap s <Plug>(easymotion-overwin-f)
+nmap <C-x>z <Plug>(easymotion-overwin-f)
 let g:EasyMotion_smartcase = 1
 "map <C-j> <Plug>(easymotion-j)
 "map <C-k> <Plug>(easymotion-K)

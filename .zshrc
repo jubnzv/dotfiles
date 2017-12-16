@@ -1,9 +1,34 @@
+# Initialize the plugins
+source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source ~/.config/zsh/zsh-autopair/zsh-autopair.plugin.zsh
+source ~/.config/zsh/zce.zsh/zce.zsh
+bindkey "^Xz" zce
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 # Credentials
 export DOCKER_ID_USER="jubnzv1"
 
 # Color prompt
 autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%} %% "
+
+# Dynamically change terminal window title
+case $TERM in
+  (*xterm* | rxvt | rxvt-unicode-256color)
+
+    # Write some info to terminal title.
+    # This is seen when the shell prompts for input.
+    function precmd {
+      print -Pn "\e]0;zsh%L %(1j,%j job%(2j|s|); ,)%~\a"
+    }
+    # Write command and args to terminal title.
+    # This is seen while the shell waits for a command to complete.
+    function preexec {
+      printf "\033]0;%s\a" "$1"
+    }
+
+  ;;
+esac
 
 # PATH
 export PATH=$PATH:${HOME}/.local/bin/:${HOME}/.local/scripts
@@ -84,11 +109,7 @@ backward-kill-dir () {
 zle -N backward-kill-dir
 bindkey '^[^?' backward-kill-dir
 
-# Plugins
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.config/zsh/zsh-autopair/zsh-autopair.plugin.zsh
-source ~/.config/zsh/zce.zsh/zce.zsh
-bindkey "^Xz" zce
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-
+# Fuzzy path completion via FZF
+export FZF_COMPLETION_TRIGGER=''
+bindkey '^T' fzf-completion
+bindkey '^I' $fzf_default_completion
