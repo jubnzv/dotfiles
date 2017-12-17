@@ -175,7 +175,10 @@ bindsym XF86MonBrightnessDown exec xbacklight -dec 7 &&  pkill -RTMIN+2 i3blocks
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
-bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#eee8d5' -sb '#eee8d5' -sf '#282828' -p "" -m 0
+#bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#eee8d5' -sb '#eee8d5' -sf '#282828' -p "" -m 0
+bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
+bindsym $mod+BackSpace exec rofi -show-icons -show window
+bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
  bindsym $mod+Home exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
  bindsym $mod+Shift+Home exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
  bindsym $mod+Shift+F11 exec byzanz-record --duration=5 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"

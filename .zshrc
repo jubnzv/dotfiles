@@ -74,6 +74,10 @@ alias mrg='mirage'
 # "Tools"
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
+# Pipenv
+alias pps='pipenv shell'
+alias ppv='pipenv --venv'
+alias ppi='pipenv install'
 # Docker
 alias dps='docker ps'
 alias dpsa='docker ps -a'
