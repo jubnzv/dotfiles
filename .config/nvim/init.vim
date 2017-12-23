@@ -25,6 +25,8 @@ Plug 'https://github.com/ap/vim-buftabline'
 Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 "Plug 'nvie/vim-flake8'
 Plug 'https://github.com/rosenfeld/conque-term'
+Plug 'https://github.com/chrisbra/Colorizer'
+Plug 'https://github.com/godlygeek/tabular'
 call plug#end()
 """
 
@@ -48,6 +50,10 @@ set hidden
 nnoremap <C-N> :bnext<CR>
 nnoremap <C-P> :bprev<CR>
 """
+
+""" Keep selected text selected when fixing indentation
+vnoremap < <gv
+vnoremap > >gv
 
 " Relative or absolute number lines
 function! NumberToggle()
@@ -93,6 +99,9 @@ map <A-t> :NERDTreeToggle<CR>
 map <A-e> :SyntasticCheck<CR>
 map <C-A-e> :SyntasticReset<CR>
 
+" Remove all trailing whitespaces
+nnoremap <silent> <Leader><Space> :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+
 """
 
 """ Commenting by <C-/> like pycharm
@@ -103,6 +112,10 @@ else
 		nmap <C-_> <leader>c<Space>
 		vmap <C-_> <leader>c<Space>
 endif
+"""
+
+"""Fix python imports order
+autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
 """
 
 """ Easymotion settings

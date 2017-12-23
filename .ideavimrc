@@ -8,4 +8,11 @@ imap <C-b> <left>
 imap <A-f> <right>
 imap <A-b> <left>
 
+" Easymotion alternative
+nnoremap <C-x>z :action AceAction<CR>
+
+""" Keep selected text selected when fixing indentation
+vnoremap < <gv
+vnoremap > >gv
+
 set relativenumber

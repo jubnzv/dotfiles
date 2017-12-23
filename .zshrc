@@ -55,6 +55,10 @@ export GOPATH=$HOME/Dev/go/
 # Misc
 alias vim='nvim'
 alias grep='ag'
+alias agp='ag --pager="less -r"'
+alias agn='ag -n'
+alias agr='ag -r'
+alias ggrep='grep'
 alias ls='ls --color=auto'
 # Disable history saving for some commands
 alias jrnl=' jrnl'
@@ -71,13 +75,16 @@ alias svim='sudoedit'
 # X apps
 alias zt='zathura'
 alias mrg='mirage'
-# "Tools"
+# Ctags
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
 # Pipenv
 alias pps='pipenv shell'
 alias ppv='pipenv --venv'
 alias ppi='pipenv install'
+# Git
+alias gl_f='git log -p'
+alias gl_n='git log --name-status'
 # Docker
 alias dps='docker ps'
 alias dpsa='docker ps -a'

@@ -231,11 +231,11 @@ mode --pango_markup "$mode_exec_xrandr" {
 
 # Application startup routines
 set $mode_exec_apps Execute\t \
-<span fgcolor='#2aa198'>[1]</span>Telegram \
-<span fgcolor='#2aa198'>[2]</span>Discord \
-<span fgcolor='#2aa198'>[3]</span>Mattermost \
-<span fgcolor='#2aa198'>[4]</span>Thunderbird\t \
-<span fgcolor='#2aa198'>[F9]</span>All
+<span fgcolor='#6c71c4'>[1]</span><span fgcolor='#d5c4a1'>Telegram</span> \
+<span fgcolor='#6c71c4'>[2]</span>Discord \
+<span fgcolor='#6c71c4'>[3]</span>Mattermost \
+<span fgcolor='#6c71c4'>[4]</span>Thunderbird\t \
+<span fgcolor='#d79921'>[F9]</span>All
 bindsym $mod+Control+F9 mode $mode_exec_apps
 mode --pango_markup "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
