@@ -9,6 +9,7 @@ separator_block_width=8
 #
 # Widgets
 #
+#
 
 [volume]
 label=
@@ -26,12 +27,6 @@ interval=7
 [disk-root]
 label=
 instance=/
-command=~/.config/i3blocks/scripts/disk
-interval=120
-
-[disk-home]
-label=
-instance=/home
 command=~/.config/i3blocks/scripts/disk
 interval=120
 

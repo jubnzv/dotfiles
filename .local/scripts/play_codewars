@@ -3,9 +3,15 @@ import sys
 import os.path
 import requests
 
-def usage():
-    print("Usage: {} <kata_slug>".format(sys.argv[0]))
-    print("\tPython template code <kata_slug>.py will be created.")
+def get_args():
+    """Parse and returns command line arguments"""
+    parser = argparse.ArgumentParser(description=APP_NAME+APP_DESC)
+
+    parser.add_argument('-l', '--lang', action='store', default='python',
+                        dest='language', help='language to solve')
+
+    args = parser.parse_args()
+    return vars(args)
 
 if len(sys.argv) != 2:
     usage()

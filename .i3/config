@@ -166,13 +166,14 @@ bindsym $mod+Control+t workspace 3$tile_03_e; exec $TERMINAL -e tmux
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+q workspace 1$tile_01_q; exec "$TERMINAL -e nvim -c 'TW'"
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
-bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
+bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
 bindsym $mod+Control+y exec cd ~/.local/opt/XMind/XMind_amd64 && ./XMind
 bindsym $mod+Control+i exec $TERMINAL -e ipython
+bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
@@ -194,21 +195,21 @@ bindsym $mod+F12 exec notify-send " `date +%D`\n `date +%H:%M:%S`"
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
 
 # cmus control
-bindsym XF86AudioNext exec cmus-remote --next
-bindsym XF86AudioPrev exec cmus-remote --prev
-bindsym XF86AudioPause exec cmus-remote --pause
-bindsym XF86AudioStop exec cmus-remote --stop
+bindsym XF86AudioNext exec cmus-remote --next && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioPrev exec cmus-remote --prev && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioPause exec cmus-remote --pause && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioStop exec cmus-remote --stop && pkill -RTMIN+3 i3blocks
 
 # Volume control
 bindsym XF86AudioRaiseVolume exec amixer -c 0 -q set Master 4%+ unmute && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioLowerVolume exec amixer -c 0 -q set Master 4%- unmute && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioMute exec amixer -c 0 -q set Master toggle  && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec amixer -c 0 -q set Master toggle && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 
 # i3bar control
 bindsym $mod+F8 bar mode toggle bar-main
-bindcode Shift+50 bar mode toggle bar-bot
-bindcode Shift+62 bar mode toggle bar-bot
+bindcode Shift+50 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
+bindcode Shift+62 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
 
 # Scratchpad
 bindsym $mod+Shift+S move scratchpad
@@ -280,7 +281,7 @@ bar {
     workspace_buttons yes
     strip_workspace_numbers yes
     binding_mode_indicator yes
-    status_command i3blocks
+    status_command i3blocks -c ~/.config/i3blocks/config
     #				border	bckgrnd	text
     colors {
         background		#282828
@@ -289,7 +290,7 @@ bar {
         active_workspace	#d5c4a1 #282828 #d5c4a1
         inactive_workspace	#282828 #282828 #d5c4a1
         urgent_workspace	#cc241d	#cc241d	#282828
-    	binding_mode		#d79921	#282828	#fffffv
+    	binding_mode		#282828 #282828	#fffffv
     }
 }
 
@@ -297,10 +298,12 @@ bar{
     id bar-bot
     output $display1
     tray_output none
+    hidden_state hide
     position bottom
     mode hide
     workspace_buttons no
     modifier none
+    binding_mode_indicator no
     status_command i3blocks -c ~/.config/i3blocks/config_bot
     #				border	bckgrnd	text
     colors {
@@ -310,6 +313,5 @@ bar{
         active_workspace	#d5c4a1 #282828 #d5c4a1
         inactive_workspace	#282828 #282828 #d5c4a1
         urgent_workspace	#cc241d	#cc241d	#282828
-    	binding_mode		#d79921	#282828	#fffffv
     }
 }

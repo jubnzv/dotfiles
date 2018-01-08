@@ -23,10 +23,15 @@ Plug 'https://github.com/vim-scripts/taglist.vim'
 Plug 'https://github.com/mileszs/ack.vim'
 Plug 'https://github.com/ap/vim-buftabline'
 Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
-"Plug 'nvie/vim-flake8'
 Plug 'https://github.com/rosenfeld/conque-term'
 Plug 'https://github.com/chrisbra/Colorizer'
 Plug 'https://github.com/godlygeek/tabular'
+Plug 'https://github.com/blindFS/vim-taskwarrior'
+Plug 'https://github.com/vimwiki/vimwiki'
+Plug 'https://github.com/cespare/vim-toml'
+Plug 'https://github.com/heavenshell/vim-pydocstring'
+Plug 'https://github.com/mattn/sonictemplate-vim'
+Plug 'https://github.com/metakirby5/codi.vim'
 call plug#end()
 """
 
@@ -223,3 +228,7 @@ autocmd Filetype css setlocal tabstop=4
 "" html
 autocmd Filetype html setlocal tabstop=4
 """
+
+""" Vimwiki
+let g:vimwiki_list = [{'path': '~/Org/vimwiki', 'syntax': 'markdown', 'ext': '.md'}]
+let g:vimwiki_global_ext = 0

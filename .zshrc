@@ -30,8 +30,14 @@ case $TERM in
   ;;
 esac
 
+
+# Go environment
+export GOROOT=$HOME/.local/opt/go/
+export GOPATH=$HOME/Dev/go/
+
 # PATH
-export PATH=$PATH:${HOME}/.local/bin/:${HOME}/.local/scripts
+export SCRIPTS_PATH=$HOME/.local/scripts
+export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$GOROOT/bin
 
 # Default editor setup
 export EDITOR="nvim"
@@ -46,9 +52,6 @@ setopt INC_APPEND_HISTORY        # Write to the history file immediately, not wh
 setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded again.
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 setopt HIST_IGNORE_SPACE		 # Don't store lines beginning with a space
-
-# Global variables
-export GOPATH=$HOME/Dev/go/
 
 # Aliases
 #
@@ -124,3 +127,6 @@ bindkey '^[^?' backward-kill-dir
 export FZF_COMPLETION_TRIGGER=''
 bindkey '^T' fzf-completion
 bindkey '^I' $fzf_default_completion
+
+# Codi
+alias codi=$SCRIPTS_PATH/run_codi.sh

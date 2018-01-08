@@ -14,8 +14,8 @@ command=task status:pending count
 label=
 interval=120
 
-
 [cmus]
 command=~/.config/i3blocks/scripts/cmus
 label=
-interval=5
+interval=60
+signal=3
