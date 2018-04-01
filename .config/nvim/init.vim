@@ -16,7 +16,6 @@ Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/tpope/vim-repeat'
 Plug 'https://github.com/fatih/vim-go'
 Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/neovimhaskell/haskell-vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/vim-scripts/taglist.vim'
@@ -26,12 +25,15 @@ Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './in
 Plug 'https://github.com/rosenfeld/conque-term'
 Plug 'https://github.com/chrisbra/Colorizer'
 Plug 'https://github.com/godlygeek/tabular'
-Plug 'https://github.com/blindFS/vim-taskwarrior'
-Plug 'https://github.com/vimwiki/vimwiki'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/heavenshell/vim-pydocstring'
 Plug 'https://github.com/mattn/sonictemplate-vim'
 Plug 'https://github.com/metakirby5/codi.vim'
+Plug 'https://github.com/kshenoy/vim-signature'
+Plug 'https://github.com/majutsushi/tagbar'
+" Sandbox
+"Plug '~/Dev/neovim-dev/iec-mode/'
+Plug 'https://github.com/jubnzv/IEC.vim.git'
 call plug#end()
 """
 
@@ -45,6 +47,7 @@ set cursorline
 set laststatus=2 " always show status line
 set t_Co=256       " 256-colors mode
 set background=dark
+set title
 colorscheme gruvbox
 let g:lightline = {}
 let g:lightline.colorscheme = 'gruvbox'
@@ -52,13 +55,21 @@ let g:lightline.colorscheme = 'gruvbox'
 
 """ Buffers list in the tabline
 set hidden
-nnoremap <C-N> :bnext<CR>
-nnoremap <C-P> :bprev<CR>
+nnoremap <C-K> :bnext<CR>
+nnoremap <C-J> :bprev<CR>
 """
 
 """ Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
+"""
+
+"""
+inoremap <Up> <Nop>
+inoremap <Down> <Nop>
+inoremap <Left> <Nop>
+inoremap <Right> <Nop>
+"""
 
 " Relative or absolute number lines
 function! NumberToggle()
@@ -72,14 +83,24 @@ function! NumberToggle()
 endfunction
 """
 
+""" Folding settings
+set foldmethod=indent
+set foldnestmax=6
+set nofoldenable " disable folding when open file
+set foldlevel=2
+
+" Markdown
+let g:markdown_folding = 1
+"""
+
 """ Keybindings
 " Misc
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
 nnoremap <F9> :call NumberToggle()<CR>
-imap jj <Esc>
-imap <C-f> <right>
-imap <C-b> <left>
+imap fd <Esc>
+map <C-f> <right>
+map <C-b> <left>
 imap <C-p> <up>
 imap <C-n> <down>
 imap <A-f> <right>
@@ -89,14 +110,9 @@ map <Leader>w :w<cr>
 map <Leader>x :x<cr>
 map <Leader>q :q<cr>
 map <Leader>` :qa!<cr>
-map <Leader>= :bn<cr>
-map <Leader>- :bp<cr>
-map <Leader>+ :bd<cr>
 map <Leader>a :Ack!<Space>
 " Convient emacs-like binds
 map <C-X><C-F> :FZF<cr>
-map <C-X><C-C> :qa<cr>
-map <C-X><C-D> :bd<cr>
 " Coding
 inoremap <Leader>; <C-o>A;
 inoremap <Leader>j; <C-o>A;<CR>
@@ -127,8 +143,7 @@ autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 nmap <C-x>z <Plug>(easymotion-overwin-f)
 let g:EasyMotion_smartcase = 1
-"map <C-j> <Plug>(easymotion-j)
-"map <C-k> <Plug>(easymotion-K)
+"""
 
 """ Ag/Ack settings
 if executable('ag')
@@ -191,16 +206,6 @@ au FileType go nmap <leader>d <plug>(go-doc)
 au FileType go nmap <leader>f <plug>(go-fmt)
 """
 
-""" haskell
-let g:haskell_enable_quantification = 1   " to enable highlighting of `forall`
-let g:haskell_enable_recursivedo = 1      " to enable highlighting of `mdo` and `rec`
-let g:haskell_enable_arrowsyntax = 1      " to enable highlighting of `proc`
-let g:haskell_enable_pattern_synonyms = 1 " to enable highlighting of `pattern`
-let g:haskell_enable_typeroles = 1        " to enable highlighting of type roles
-let g:haskell_enable_static_pointers = 1  " to enable highlighting of `static`
-let g:haskell_backpack = 1                " to enable highlighting of backpack keywords
-"""
-
 """ python
 "let g:python_highlight_all = 1
 "let g:python_highlight_space_errors=0
@@ -223,12 +228,6 @@ let g:syntastic_check_on_wq = 0
 """
 
 """ Other
-"" css
 autocmd Filetype css setlocal tabstop=4
-"" html
 autocmd Filetype html setlocal tabstop=4
 """
-
-""" Vimwiki
-let g:vimwiki_list = [{'path': '~/Org/vimwiki', 'syntax': 'markdown', 'ext': '.md'}]
-let g:vimwiki_global_ext = 0

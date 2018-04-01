@@ -14,9 +14,19 @@ Xft.rgba: rgb
 Xcursor.theme: Breeze
 Xcursor.size: 16
 
-URxvt.perl-ext-common : default,matcher
-URxvt.urlLauncher     : chromium
-URxvt.matcher.button  : 1
+!! Initialize Perl extensions
+URxvt.perl-lib          : /home/jubnzv/.local/opt/urxvt-perls/
+URxvt.perl-ext-common   : default,matcher,keyboard-select,resize-font
+!! Matcher
+URxvt.urlLauncher       : firefox
+URxvt.matcher.button    : 1
+!! Keboard-select
+URxvt.keysym.M-Tab      : perl:keyboard-select:activate
+!! Resize font (use default binds)
+!URxvt.keysym.C-minus    : resize-font:smaller
+!URxvt.keysym.C-plus     : resize-font:bigger
+!URxvt.keysym.C-equal    : resize-font:reset
+!URxvt.keysym.C-question : resize-font:show
 
 ! hard contrast: *background: #1d2021
 *background: #282828

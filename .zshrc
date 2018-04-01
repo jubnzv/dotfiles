@@ -88,6 +88,10 @@ alias ppi='pipenv install'
 # Git
 alias gl_f='git log -p'
 alias gl_n='git log --name-status'
+alias gp_master='git push origin master'
+alias gp_undo='git push -f origin HEAD^:master'
+# Add note
+alias nn='vim ~/Org/Notes/'
 # Docker
 alias dps='docker ps'
 alias dpsa='docker ps -a'
@@ -130,3 +134,7 @@ bindkey '^I' $fzf_default_completion
 
 # Codi
 alias codi=$SCRIPTS_PATH/run_codi.sh
+
+# Autojump
+. /usr/share/autojump/autojump.sh
+

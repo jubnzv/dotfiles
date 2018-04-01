@@ -7,7 +7,7 @@ set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
 set $SCRIPTS_PATH /home/jubnzv/.local/scripts
 
 # Applications from ~/.local/opt
-set $APP_PYCHARM $HOME/.local/opt/pycharm-ce/bin/pycharm.sh
+set $APP_PYCHARM $HOME/.local/bin/PyCharm
 set $APP_TELEGRAM $HOME/.local/opt/Telegram/Telegram
 set $APP_DISCORD $HOME/.local/opt/Discord/Discord
 set $APP_MATTERMOST $HOME/.local/opt/mattermost-desktop-3.7.1/mattermost-desktop
@@ -59,10 +59,11 @@ exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
 exec --no-startup-id udiskie -t
 exec --no-startup-id xsetroot -solid "#282828" # set solid color as wallpaper
+# exec --no-startup-id emacs25 -name "Emacs_Scratchpad" --funcall=org-agenda-list
 
 # Window appearance
 new_window 1pixel
-font xft:Proto Sans, FontAwesome 9, pango:Hack 9
+font xft:Proto Sans, FontAwesome 9
 hide_edge_borders both
 
 # Color theme
@@ -82,6 +83,8 @@ focus_follows_mouse no
 # for_window [class="VirtualBox"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
+#for_window [class="(?i)emacs"] move container to workspace 1$tile_01_q
+for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
@@ -164,8 +167,9 @@ bindsym $mod+backslash split vertical
 bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
 bindsym $mod+Control+t workspace 3$tile_03_e; exec $TERMINAL -e tmux
 bindsym $mod+Return exec $TERMINAL
-bindsym $mod+Control+q workspace 1$tile_01_q; exec "$TERMINAL -e nvim -c 'TW'"
+#bindsym $mod+Control+q workspace 1$tile_01_q; exec emacs25
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
+# bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
@@ -174,6 +178,13 @@ bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
 bindsym $mod+Control+y exec cd ~/.local/opt/XMind/XMind_amd64 && ./XMind
 bindsym $mod+Control+i exec $TERMINAL -e ipython
 bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
+
+# $mod + mousescroll binds
+# bindsym --whole-window --border $mod+button4 workspace next
+# bindsym --whole-window --border $mod+button5 workspace prev
+
+# Focus Emacs window
+#bindsym $mod+End [class="(?i)emacs"] focus
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
@@ -187,7 +198,7 @@ bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
  bindsym $mod+Home exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
  bindsym $mod+Shift+Home exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
- bindsym $mod+Shift+F11 exec byzanz-record --duration=5 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+ bindsym $mod+Shift+F11 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
 bindsym $mod+XF86ScreenSaver exec xset s activate
@@ -208,12 +219,15 @@ bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 
 # i3bar control
 bindsym $mod+F8 bar mode toggle bar-main
-bindcode Shift+50 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
-bindcode Shift+62 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
+#bindcode Shift+50 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
+#bindcode Shift+62 bar mode toggle bar-bot && pkill -RTMIN+3 i3blocks
 
-# Scratchpad
+# Main scratchpad
 bindsym $mod+Shift+S move scratchpad
 bindsym $mod+s scratchpad show
+
+# Secondary scratchpad with emacs window
+#bindsym $mod+apostrophe [instance="^Emacs_Scratchpad$"] scratchpad show
 
 # Highlight focused window
 bindsym Shift+F4 [class=".*"] border pixel 5
@@ -261,7 +275,12 @@ mode --pango_markup "$mode_exec_apps" {
 }
 
 # Power-control
-set $mode_exec_power <span fgcolor='#d5c4a1'> :S |  : r |  : s |  : l |  : e</span>
+set $mode_exec_power <span fgcolor='#d5c4a1'>Power management\t\t</span>\
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[S]</span><span fgcolor='#d5c4a1'>  poweroff\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[r]</span><span fgcolor='#d5c4a1'>  reboot\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[s]</span><span fgcolor='#d5c4a1'>  sleep\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[l]</span><span fgcolor='#d5c4a1'>  lock\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[e]</span><span fgcolor='#d5c4a1'>  log out\t</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
 	bindsym Shift+s     exec systemctl poweroff
@@ -273,6 +292,7 @@ mode --pango_markup "$mode_exec_power" {
 	bindsym Escape 	mode "default"
 }
 
+# Main bar
 bar {
     id bar-main
     tray_output $display1
@@ -294,24 +314,25 @@ bar {
     }
 }
 
-bar{
-    id bar-bot
-    output $display1
-    tray_output none
-    hidden_state hide
-    position bottom
-    mode hide
-    workspace_buttons no
-    modifier none
-    binding_mode_indicator no
-    status_command i3blocks -c ~/.config/i3blocks/config_bot
-    #				border	bckgrnd	text
-    colors {
-        background		#282828
-        statusline		#d5c4a1
-        focused_workspace	#d5c4a1 #d5c4a1 #282828
-        active_workspace	#d5c4a1 #282828 #d5c4a1
-        inactive_workspace	#282828 #282828 #d5c4a1
-        urgent_workspace	#cc241d	#cc241d	#282828
-    }
-}
+# Bottom bar
+#bar{
+    #id bar-bot
+    #output $display1
+    #tray_output none
+    #hidden_state hide
+    #position bottom
+    #mode hide
+    #workspace_buttons no
+    #modifier none
+    #binding_mode_indicator no
+    #status_command i3blocks -c ~/.config/i3blocks/config_bot
+    ##				border	bckgrnd	text
+    #colors {
+        #background		#282828
+        #statusline		#d5c4a1
+        #focused_workspace	#d5c4a1 #d5c4a1 #282828
+        #active_workspace	#d5c4a1 #282828 #d5c4a1
+        #inactive_workspace	#282828 #282828 #d5c4a1
+        #urgent_workspace	#cc241d	#cc241d	#282828
+    #}
+#}

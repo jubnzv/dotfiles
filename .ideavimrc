@@ -1,10 +1,8 @@
 let mapleader = "-"
 
-imap jj <Esc>
+imap fd <Esc>
 imap <C-f> <right>
 imap <C-b> <left>
-"imap <C-p> <up>
-"imap <C-n> <down>
 imap <A-f> <right>
 imap <A-b> <left>
 
@@ -16,3 +14,4 @@ vnoremap < <gv
 vnoremap > >gv
 
 set relativenumber
+set surround
