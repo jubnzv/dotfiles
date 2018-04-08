@@ -1,4 +1,13 @@
-let mapleader = "-"
+let mapleader = " "
+
+set scrolloff = 3  " 3 lines above/below cursor when scrolling
+
+" Integrate with system clipboard
+set clipboard=unnamedplus,unnamed
+
+" These create newlines like o and O but stay in normal mode
+nmap zj o<Esc>k
+nmap zk O<Esc>j
 
 imap fd <Esc>
 imap <C-f> <right>
@@ -7,7 +16,7 @@ imap <A-f> <right>
 imap <A-b> <left>
 
 " Easymotion alternative
-nnoremap <C-x>z :action AceAction<CR>
+nnoremap <Leader>; :action AceAction<CR>
 
 """ Keep selected text selected when fixing indentation
 vnoremap < <gv

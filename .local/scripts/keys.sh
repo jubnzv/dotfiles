@@ -4,6 +4,8 @@
 setxkbmap -option ctrl:nocaps
 xset b off
 /usr/bin/xmodmap -e "keysym Print = Super_L"
-#/usr/bin/xmodmap -e "keysym Menu = Super_L"
-#/usr/bin/xmodmap -e "keysym XF86Search = Caps_Lock"
-#/usr/bin/xmodmap -e "keysym Menu = Escape"
+
+# x230 + classic keyboard
+/usr/bin/xmodmap -e "keycode 110=Delete" # Delete
+/usr/bin/xmodmap -e "keycode 118="       # PgDn
+/usr/bin/xmodmap -e "keycode 119="       # PgUp

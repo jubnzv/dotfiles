@@ -51,7 +51,7 @@ workspace "14$tile_14_music" output $display1
 # Autostart
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/keys.sh
-exec --no-startup-id $SCRIPTS_PATH/touchpad.sh
+#exec --no-startup-id $SCRIPTS_PATH/touchpad.sh
 exec --no-startup-id $SCRIPTS_PATH/dual.sh
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
@@ -99,7 +99,7 @@ bindsym $mod+Shift+less kill
 bindsym $mod+F11 fullscreen
 bindsym $mod+Escape layout toggle
 bindsym $mod+Shift+space floating toggle
-bindsym $mod+Shift+Insert restart
+bindsym $mod+End restart
 bindsym $mod+Shift+End exit
 
 # Workspaces
@@ -236,12 +236,13 @@ bindsym Shift+F4 --release [class=".*"] border none
 # Exec-binds
 #
 # Multi-monitor control
-set $mode_exec_xrandr <span fgcolor='#d5c4a1'></span>\t \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'>LVDS-1</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'>LVDS-1  VGA-1</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'>VGA-1  LVDS-1</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[4]</span> <span fgcolor='#d5c4a1'>HDMI-3  LVDS-1  VGA-1</span>\t\t \
-<span bgcolor='#fabd2f' fgcolor='#282828'>dual.sh</span>  \
+set $mode_exec_xrandr <span fgcolor='#d5c4a1'>Display options:</span>\t \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'></span>\t  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'> </span>\t  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'> </span>\t  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[4]</span> <span fgcolor='#fabd2f'>  </span><span fgcolor='#d5c4a1'> </span>\t \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[5]</span> <span fgcolor='#d5c4a1'> </span>\t\t \
+<span bgcolor='#fabd2f' fgcolor='#282828'>auto</span>  \
 <span bgcolor='#8ec07c' fgcolor='#282828'>[e]</span> <span fgcolor='#8ec07c'>on</span>  \
 <span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>
 bindsym XF86Display mode $mode_exec_xrandr
@@ -250,6 +251,7 @@ mode --pango_markup "$mode_exec_xrandr" {
      bindsym 2 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto; mode "default"
      bindsym 3 exec xrandr --output LVDS-1 --auto --output VGA-1 --left-of LVDS-1 --auto; mode "default"
      bindsym 4 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto --output HDMI-3 --left-of LVDS-1 --auto; mode "default"
+     bindsym 5 exec arandr; mode "default"
      bindsym e exec $SCRIPTS_PATH/dual.sh; mode "default"
      bindsym d exec $SCRIPTS_PATH/dual-off.sh; mode "default"
      bindsym Return mode "default"
