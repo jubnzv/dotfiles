@@ -38,9 +38,9 @@ $percent = $2;
 $full_text = "";
 
 if ($status eq 'Discharging') {
-	# $full_text .= 'DIS'; 
+	# $full_text .= 'DIS';
 } else {
-    $full_text .= ' '; 
+    $full_text .= ' ';
 }
 
 if ($percent < 10) {
@@ -89,7 +89,7 @@ if ($status eq 'Discharging') {
 } else {
 	if ($percent < 20) {
 		print "#839461\n";
-	} 
+	}
 }
 
 exit(0);

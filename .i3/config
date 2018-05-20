@@ -7,10 +7,10 @@ set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
 set $SCRIPTS_PATH /home/jubnzv/.local/scripts
 
 # Applications from ~/.local/opt
-set $APP_PYCHARM $HOME/.local/bin/PyCharm
-set $APP_TELEGRAM $HOME/.local/opt/Telegram/Telegram
-set $APP_DISCORD $HOME/.local/opt/Discord/Discord
-set $APP_MATTERMOST $HOME/.local/opt/mattermost-desktop-3.7.1/mattermost-desktop
+set $APP_JBTOOLBOX $HOME/.local/bin/jetbrains-toolbox
+set $APP_TELEGRAM $HOME/.local/bin/Telegram
+set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
+set $APP_THUNDERBIRD $HOME/.local/bin/thunderbird
 
 # Workspace names
 set $tile_01_q <b></b>
@@ -174,7 +174,7 @@ bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pki
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
-bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_PYCHARM
+bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
 bindsym $mod+Control+y exec cd ~/.local/opt/XMind/XMind_amd64 && ./XMind
 bindsym $mod+Control+i exec $TERMINAL -e ipython
 bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
@@ -196,9 +196,9 @@ bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='C
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
 bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
- bindsym $mod+Home exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
- bindsym $mod+Shift+Home exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
- bindsym $mod+Shift+F11 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+ bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
+ bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
+ # bindsym XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
 bindsym $mod+XF86ScreenSaver exec xset s activate
@@ -270,8 +270,8 @@ mode --pango_markup "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
      bindsym 2 exec $APP_DISCORD; mode "default"
      bindsym 3 exec $APP_MATTERMOST; mode "default"
-     bindsym 4 exec --no-startup-id  thunderbird; mode "default"
-	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec thunderbird; mode "default"
+     bindsym 4 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
+	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }

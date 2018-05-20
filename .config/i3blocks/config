@@ -53,6 +53,11 @@ command=~/.config/i3blocks/scripts/brightness
 interval=once
 signal=2
 
+# [openvpn]
+# label=
+# command=~/.config/i3blocks/scripts/openvpn
+# interval=20
+
 [battery]
 command=~/.config/i3blocks/scripts/battery
 interval=30

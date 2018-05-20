@@ -1,14 +1,13 @@
-""" Leader key
+""" Leader key {{{1
 let mapleader = "\<Space>"
-"""
 
-""" Misc
+""" Misc {{{1
 set nocompatible
-"""
 
-""" Plugins
+""" Plugins {{{1
 call plug#begin('~/.local/share/nvim/plugged')
-" Misc
+
+" Misc {{{2
 Plug 'https://github.com/mileszs/ack.vim'
 Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 Plug 'https://github.com/scrooloose/nerdtree'
@@ -16,13 +15,17 @@ Plug 'https://github.com/tpope/vim-repeat'
 Plug 'https://github.com/rosenfeld/conque-term'
 Plug 'https://github.com/kshenoy/vim-signature'
 Plug 'https://github.com/easymotion/vim-easymotion'
-" UI / appearance
+Plug 'https://github.com/gcmt/wildfire.vim'
+
+" UI & appearance {{{2
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/morhetz/gruvbox'
 Plug 'https://github.com/ap/vim-buftabline'
 Plug 'https://github.com/chrisbra/Colorizer'
-" Programming general
-Plug 'https://github.com/scrooloose/nerdcommenter'
+
+" Coding tools {{{2
+" General {{{3
+" Plug 'https://github.com/scrooloose/nerdcommenter'
 Plug 'https://github.com/vim-syntastic/syntastic'
 Plug 'https://github.com/mattn/sonictemplate-vim'
 Plug 'https://github.com/godlygeek/tabular'
@@ -32,20 +35,36 @@ Plug 'https://github.com/tyru/current-func-info.vim'
 Plug 'https://github.com/brookhong/cscope.vim'
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
-" Golang
+Plug 'https://github.com/dag/vim-fish'
+Plug 'https://github.com/Valloric/YouCompleteMe'
+Plug 'https://github.com/SirVer/ultisnips'
+Plug 'https://github.com/honza/vim-snippets'
+
+" C {{{3
+Plug 'https://github.com/vivien/vim-linux-coding-style'
+Plug 'https://github.com/vim-scripts/a.vim'
+
+" Golang {{{3
 Plug 'https://github.com/fatih/vim-go'
-" Python
+
+" Python {{{3
 Plug 'https://github.com/heavenshell/vim-pydocstring'
-" Markdown & configuration support
+
+" IEC 631131-3 {{{3
+" Plug 'https://github.com/jubnzv/IEC.vim.git'
+
+" Markdown & config formats {{{2
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
-" Sandbox
-"Plug '~/Dev/neovim-dev/iec-mode/'
-Plug 'https://github.com/jubnzv/IEC.vim.git'
-call plug#end()
-"""
+Plug 'https://github.com/JamshedVesuna/vim-markdown-preview'
 
-""" GUI & eye candy appearance
+" Sandbox {{{2
+Plug '~/Dev/IEC.vim'
+Plug '~/Dev/nerdcommenter'
+
+call plug#end()
+
+""" GUI & eye candy appearance {{{1
 set guioptions-=m  "remove menu bar
 set guioptions-=T  "remove toolbar
 set guioptions-=r  "remove right-hand scroll bar
@@ -60,31 +79,32 @@ colorscheme gruvbox
 let g:lightline = {}
 let g:lightline.colorscheme = 'gruvbox'
 set scrolloff=3  " 3 lines above/below cursor when scrolling
-"""
 
-""" Integrate with system clipboard
+""" Undo options {{{1
+set undofile
+set undodir=$HOME/.vim/undo
+set undolevels=1000
+set undoreload=10000
+
+""" Integrate with system clipboard {{{1
 set clipboard=unnamedplus,unnamed
-"""
 
-""" Buffers list in the tabline
+""" Buffers list in the tabline {{{1
 set hidden
 nnoremap <C-K> :bnext<CR>
 nnoremap <C-J> :bprev<CR>
-"""
 
-""" Keep selected text selected when fixing indentation
+""" Keep selected text selected when fixing indentation {{{1
 vnoremap < <gv
 vnoremap > >gv
-"""
 
-"""
+""" Disable annoying arrows {{{1
 inoremap <Up> <Nop>
 inoremap <Down> <Nop>
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
-"""
 
-" Relative or absolute number lines
+" Relative or absolute number lines {{{1
 function! NumberToggle()
     if(&nu == 1)
         set nu!
@@ -94,20 +114,16 @@ function! NumberToggle()
         set nu
     endif
 endfunction
-"""
 
-""" Folding settings
-set foldmethod=indent
+""" Folding settings {{{1
+set foldmethod=syntax
 set foldnestmax=6
 set nofoldenable " disable folding when open file
 set foldlevel=2
-
-" Markdown
 let g:markdown_folding = 1
-"""
 
-""" Keybindings
-" Misc
+""" Keybindings {{{1
+" General {{{2
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
 nnoremap <F9> :call NumberToggle()<CR>
@@ -118,24 +134,26 @@ map <Leader>x :x<cr>
 map <Leader>q :q<cr>
 map <Leader>` :qa!<cr>
 map <Leader>a :Ack!<Space>
-" Convient emacs-like binds
+" Convient emacs-like binds {{{2
 map <C-X><C-F> :FZF<cr>
-imap <C-f> <right>
-imap <C-b> <left>
+"imap <C-f> <right>
+"imap <C-b> <left>
 "imap <C-p> <up>
 "imap <C-n> <down>
 "imap <A-f> <right>
 "imap <A-b> <left>
-" Coding
+" Coding {{{2
 map <A-t> :NERDTreeToggle<CR>
 map <A-e> :SyntasticCheck<CR>
 map <C-A-e> :SyntasticReset<CR>
+" Show current function
+nnoremap <Leader>f :echo cfi#format("%s", "")<CR> 
+nmap <F8> :TlistToggle<CR>
 
-" Remove all trailing whitespaces
-nnoremap <silent> <Leader>S :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-"""
+" E45: 'readonly' option is set (add ! to override) {{{1
+cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
 
-""" Nerdcommenter settings
+""" Nerdcommenter settings {{{1
 let g:NERDSpaceDelims = 1
 let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
@@ -147,54 +165,48 @@ else
 		nmap <C-_> <leader>c<Space>
 		vmap <C-_> <leader>c<Space>
 endif
-"""
 
-""" Fix python imports order
-autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
-"""
-
-""" Easymotion settings
+""" Easymotion {{{1
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 map <Leader>; <Plug>(easymotion-overwin-f)
 let g:EasyMotion_smartcase = 1
-"""
 
-""" Ag/Ack settings
+""" Ag/Ack {{{1
 if executable('ag')
   let g:ackprg = 'ag --vimgrep'
 endif
-"""
 
-""" Appearance
-set wildmenu
-set wildmode=longest,list
-"""
-
-""" Coding style
-"source ~/.vim/scripts/linuxsty.vim  " Linux Kernel style
+""" Coding style general {{{1
 set tabstop=4
 set shiftwidth=4
 set expandtab  " on pressing tab insert 4 spaces
-" 80+ characters line highlight
-highlight ColorColumn ctermbg=magenta
-call matchadd('ColorColumn', '\%81v', 100)
+autocmd Filetype css setlocal tabstop=4
+autocmd Filetype html setlocal tabstop=4
 
-""" Highlight trailing spaces
+" 79+ characters line highlight {{{1
+highlight ColorColumn ctermbg=magenta
+call matchadd('ColorColumn', '\%79v', 100)
+
+""" Kernel settings {{{1
+let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
+
+""" Trailing whitespaces {{{1
 " http://vim.wikia.com/wiki/Highlight_unwanted_spaces
+" Highlight
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
-"""
+" Remove all trailing whitespaces
+nnoremap <silent> <Leader>S :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 
-""" ctags
+""" ctags {{{1
 set tags=./tags;
 let g:ctags_statusline=1
-"""
 
-""" cscope
+""" cscope {{{1
 nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
 nnoremap <leader>l :call ToggleLocationList()<CR>
 
@@ -214,13 +226,18 @@ nnoremap  <leader>fe :call CscopeFind('e', expand('<cword>'))<CR>
 nnoremap  <leader>ff :call CscopeFind('f', expand('<cword>'))<CR>
 " i: Find files #including this file
 nnoremap  <leader>fi :call CscopeFind('i', expand('<cword>'))<CR>
-"""
 
-""" Tag List plugin
-nmap <F8> :TlistToggle<CR>
-"""
+""" Syntastics setup {{{1
+let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
+nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+let g:syntastic_loc_list_height=3
+let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 1
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
 
-""" golang mode settings
+""" Golang mode settings {{{1
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_fields = 1
@@ -230,34 +247,35 @@ let g:go_highlight_build_constraints = 1
 au FileType go nmap <leader>r <plug>(go-run)
 au FileType go nmap <leader>d <plug>(go-doc)
 au FileType go nmap <leader>f <plug>(go-fmt)
-"""
 
-""" python
+""" Python settings {{{1
 "let g:python_highlight_all = 1
 "let g:python_highlight_space_errors=0
-"""
+
+""" Fix python imports order
+autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
 
 """ Conque term with ipython buffer
 nnoremap <Leader><F10> :ConqueTermSplit ipython<CR>
 nnoremap <Leader><F9> :exe ":ConqueTermSplit ipython " . expand("%")<CR>
-"""
 
-""" Syntastics setup
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
-let g:syntastic_loc_list_height=3
-let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-"""
+""" Markdown preview {{{1
+let vim_markdown_preview_github=1  " Support grip
+let vim_markdown_preview_hotkey='<leader><C-m>'
 
-""" Show current function
-nnoremap <Leader>f :echo cfi#format("%s", "")<CR>
-"""
+""" wildmenu options {{{1
+set wildmenu
+set wildmode=longest,list
 
-""" Other
-autocmd Filetype css setlocal tabstop=4
-autocmd Filetype html setlocal tabstop=4
-"""
+""" MatIEC configuration {{{1
+let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
+let matiec_mkbuilddir = 1
+
+""" Snippets & autocomplition options {{{1
+let g:UltiSnipsExpandTrigger="<M-i>"
+let g:UltiSnipsJumpForwardTrigger="<c-f>"
+let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:ycm_key_list_select_completion   = ['<C-n>']
+let g:ycm_key_list_previous_completion = ['<C-p>']
+
+" vim: foldmethod=marker sw=3
