@@ -1,3 +1,4 @@
+! General {{{1
 URxvt*saveLines: 5000
 URxvt*scrollBar: false
 URxvt*font: xft:FantasqueSansMono:size=11:antialias=true:hinting=true,xft:Font Awesome:size=10
@@ -14,7 +15,7 @@ Xft.rgba: rgb
 Xcursor.theme: Breeze
 Xcursor.size: 16
 
-!! Initialize Perl extensions
+!! Perl extensions {{{1
 URxvt.perl-lib          : /home/jubnzv/.local/opt/urxvt-perls/
 URxvt.perl-ext-common   : default,matcher,keyboard-select,resize-font
 !! Matcher
@@ -28,32 +29,33 @@ URxvt.keysym.M-Tab      : perl:keyboard-select:activate
 !URxvt.keysym.C-equal    : resize-font:reset
 !URxvt.keysym.C-question : resize-font:show
 
+!! Color scheme {{{1
 ! hard contrast: *background: #1d2021
 *background: #282828
-! ! soft contrast: *background: #32302f
+!! soft contrast: *background: #32302f
 *foreground: #ebdbb2
-! ! Black + DarkGrey
+!! Black + DarkGrey
 *color0:  #282828
 *color8:  #928374
-! ! DarkRed + Red
+!! DarkRed + Red
 *color1:  #cc241d
 *color9:  #fb4934
-! ! DarkGreen + Green
+!! DarkGreen + Green
 *color2:  #98971a
 *color10: #b8bb26
-! ! DarkYellow + Yellow
+!! DarkYellow + Yellow
 *color3:  #d79921
 *color11: #fabd2f
-! ! DarkBlue + Blue
+!! DarkBlue + Blue
 *color4:  #458588
 *color12: #83a598
-! ! DarkMagenta + Magenta
+!! DarkMagenta + Magenta
 *color5:  #b16286
 *color13: #d3869b
-! ! DarkCyan + Cyan
+!! DarkCyan + Cyan
 *color6:  #689d6a
 *color14: #8ec07c
-! ! LightGrey + White
+!! LightGrey + White
 *color7:  #a89984
 *color15: #ebdbb2
 
@@ -88,8 +90,11 @@ URxvt.color246: #a89984
 URxvt.color248: #bdae93
 URxvt.color250: #d5c4a1
 
-! XTerm settings
+!! XTerm settings {{{1
 XTerm.vt100.metaSendsEscape: true
 XTerm.vt100.saveLines: 5000
 XTerm*faceName: Terminus
 XTerm*faceSize: 11
+!! }}}1
+
+! vim: foldmethod=marker sw=4

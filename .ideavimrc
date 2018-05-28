@@ -5,22 +5,31 @@ set scrolloff = 3  " 3 lines above/below cursor when scrolling
 " Integrate with system clipboard
 set clipboard=unnamedplus,unnamed
 
+set timeoutlen=200
+imap fd <Esc>
+"imap <C-f> <right>
+"imap <C-b> <left>
+"imap <A-f> <right>
+"imap <A-b> <left>
+
 " These create newlines like o and O but stay in normal mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 
-imap fd <Esc>
-imap <C-f> <right>
-imap <C-b> <left>
-imap <A-f> <right>
-imap <A-b> <left>
-
-" Easymotion alternative
-nnoremap <Leader>; :action AceAction<CR>
-
 """ Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
+
+" Reload .ideavimrc
+nnoremap <Space>vs :source ~/.ideavimrc<CR>
+
+nnoremap <leader>fu :action FindUsages<cr>
+nnoremap <leader>bb :action ToggleLineBreakpoint<cr>
+nnoremap <leader>bs :action ViewBreakpoints<cr>
+nnoremap ]e :action GotoNextError<cr>
+nnoremap [e :action GotoPreviousError<cr>
+nnoremap <A-;> :action AceAction<CR>
+nnoremap <A-l> :action AceLineAction<CR>
 
 set relativenumber
 set surround

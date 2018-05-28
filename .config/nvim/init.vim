@@ -50,19 +50,30 @@ Plug 'https://github.com/fatih/vim-go'
 " Python {{{3
 Plug 'https://github.com/heavenshell/vim-pydocstring'
 
-" IEC 631131-3 {{{3
+" IEC 61131-3 {{{3
 " Plug 'https://github.com/jubnzv/IEC.vim.git'
 
 " Markdown & config formats {{{2
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/JamshedVesuna/vim-markdown-preview'
+Plug 'https://github.com/nvie/vim-rst-tables'
+Plug 'https://github.com/chr4/nginx.vim'
+
+" Documentation {{{2
+Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim'
 
 " Sandbox {{{2
 Plug '~/Dev/IEC.vim'
 Plug '~/Dev/nerdcommenter'
 
 call plug#end()
+
+""" Force python3 {{{1
+" if has('python3')
+" elif has('python')
+" endif
+" 1}}}
 
 """ GUI & eye candy appearance {{{1
 set guioptions-=m  "remove menu bar
@@ -93,6 +104,7 @@ set clipboard=unnamedplus,unnamed
 set hidden
 nnoremap <C-K> :bnext<CR>
 nnoremap <C-J> :bprev<CR>
+nnoremap <C-F4> :bdelete<CR>
 
 """ Keep selected text selected when fixing indentation {{{1
 vnoremap < <gv
@@ -123,6 +135,7 @@ set foldlevel=2
 let g:markdown_folding = 1
 
 """ Keybindings {{{1
+set timeoutlen=200
 " General {{{2
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
@@ -134,20 +147,11 @@ map <Leader>x :x<cr>
 map <Leader>q :q<cr>
 map <Leader>` :qa!<cr>
 map <Leader>a :Ack!<Space>
-" Convient emacs-like binds {{{2
+nnoremap <leader>vs :so $MYVIMRC<CR>
 map <C-X><C-F> :FZF<cr>
-"imap <C-f> <right>
-"imap <C-b> <left>
-"imap <C-p> <up>
-"imap <C-n> <down>
-"imap <A-f> <right>
-"imap <A-b> <left>
-" Coding {{{2
-map <A-t> :NERDTreeToggle<CR>
-map <A-e> :SyntasticCheck<CR>
-map <C-A-e> :SyntasticReset<CR>
-" Show current function
-nnoremap <Leader>f :echo cfi#format("%s", "")<CR> 
+
+" Show current function {{{1
+nnoremap <Leader>f :echo cfi#format("%s", "")<CR>
 nmap <F8> :TlistToggle<CR>
 
 " E45: 'readonly' option is set (add ! to override) {{{1
@@ -159,21 +163,28 @@ let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
 " Commenting by <C-/> like pycharm
 if has('win32')
-		nmap <C-/> <leader>c<Space>
-		vmap <C-/> <leader>c<Space>
+    nmap <C-/> <leader>c<Space>
+    vmap <C-/> <leader>c<Space>
 else
-		nmap <C-_> <leader>c<Space>
-		vmap <C-_> <leader>c<Space>
+    nmap <C-_> <leader>c<Space>
+    vmap <C-_> <leader>c<Space>
 endif
+
+""" NerdTree {{{1
+map <A-t> :NERDTreeToggle<CR>
 
 """ Easymotion {{{1
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-map <Leader>; <Plug>(easymotion-overwin-f)
+map <A-;> <Plug>(easymotion-overwin-f)
+map <A-l> <Plug>(easymotion-overwin-line)
+" Turn on case insensitive feature
 let g:EasyMotion_smartcase = 1
+" Smartsign (type `3` and match `3`&`#`)
+let g:EasyMotion_use_smartsign_us = 1
 
 """ Ag/Ack {{{1
 if executable('ag')
-  let g:ackprg = 'ag --vimgrep'
+    let g:ackprg = 'ag --vimgrep'
 endif
 
 """ Coding style general {{{1
@@ -216,8 +227,8 @@ nnoremap  <leader>fs :call CscopeFind('s', expand('<cword>'))<CR>
 nnoremap  <leader>fg :call CscopeFind('g', expand('<cword>'))<CR>
 " d: Find functions called by this function
 nnoremap  <leader>fd :call CscopeFind('d', expand('<cword>'))<CR>
-" c: Find functions calling this function
-nnoremap  <leader>fc :call CscopeFind('c', expand('<cword>'))<CR>
+" c: Find usages (functions calling this function)
+nnoremap  <leader>fu :call CscopeFind('c', expand('<cword>'))<CR>
 " t: Find this text string
 nnoremap  <leader>ft :call CscopeFind('t', expand('<cword>'))<CR>
 " e: Find this egrep pattern
@@ -229,13 +240,18 @@ nnoremap  <leader>fi :call CscopeFind('i', expand('<cword>'))<CR>
 
 """ Syntastics setup {{{1
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
-let g:syntastic_loc_list_height=3
+let g:syntastic_c_checkers=['make','gcc']
 let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
+let g:syntastic_loc_list_height=3
 let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
+nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+map <A-e> :SyntasticCheck<CR>
+map <C-A-e> :SyntasticReset<CR>
+nnoremap ]e :lnext <CR>
+nnoremap [e :lprevious<CR>
 
 """ Golang mode settings {{{1
 let g:go_highlight_functions = 1
@@ -271,11 +287,37 @@ set wildmode=longest,list
 let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 
-""" Snippets & autocomplition options {{{1
+""" Snippets & autocomplition {{{1
 let g:UltiSnipsExpandTrigger="<M-i>"
 let g:UltiSnipsJumpForwardTrigger="<c-f>"
 let g:UltiSnipsJumpBackwardTrigger="<c-b>"
+let g:ycm_show_diagnostics_ui = 0
 let g:ycm_key_list_select_completion   = ['<C-n>']
 let g:ycm_key_list_previous_completion = ['<C-p>']
 
-" vim: foldmethod=marker sw=3
+""" Timestamp routines {{{1
+" language time C
+nnoremap <leader><leader>t "=strftime("%Y-%m-%d")<CR>P
+inoremap <leader><leader>t <C-R>=strftime("%Y-%m-%d")<CR>
+" If buffer modified, update any 'Last modified: ' in the first 20 lines.
+" 'Last modified: ' can have up to 10 characters before (they are retained).
+" Restores cursor and window position using save_cursor variable.
+function! LastModified()
+  if &modified
+    let save_cursor = getpos(".")
+    let n = min([20, line("$")])
+    keepjumps exe '1,' . n . 's#^\(.\{,10}Last modified: \).*#\1' .
+          \ strftime('%a %b %d, %Y  %I:%M%p') . '#e'
+    call histdel('search', -1)
+    call setpos('.', save_cursor)
+  endif
+endfun
+autocmd BufWritePre * call LastModified()
+""" }}}1
+
+""" Doxygen {{{1
+let g:DoxygenToolkit_commentType = "C"
+autocmd FileType c nnoremap <leader>d :Dox<CR>
+"""}}}1
+
+" vim: foldmethod=marker sw=4
