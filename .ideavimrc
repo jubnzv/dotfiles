@@ -1,18 +1,23 @@
 let mapleader = " "
 
-set scrolloff = 3  " 3 lines above/below cursor when scrolling
+set scrolloff=3  " 3 lines above/below cursor when scrolling
+set incsearch hlsearch
+set relativenumber
+set surround
+set showmode
 
 " Integrate with system clipboard
 set clipboard=unnamedplus,unnamed
 
 set timeoutlen=200
-imap fd <Esc>
-"imap <C-f> <right>
-"imap <C-b> <left>
-"imap <A-f> <right>
-"imap <A-b> <left>
+inoremap jj <Esc>
+inoremap <C-n> <down:>
+inoremap <C-p> <up>
 
-" These create newlines like o and O but stay in normal mode
+" switch between current and last buffer (not work)
+" nmap <A-r> <C-^>
+
+" Insert newline without entering insert mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 
@@ -20,16 +25,60 @@ nmap zk O<Esc>j
 vnoremap < <gv
 vnoremap > >gv
 
-" Reload .ideavimrc
-nnoremap <Space>vs :source ~/.ideavimrc<CR>
+" Tabs / buffers
+nnoremap <leader><F4> :action CloseContent<cr>
 
-nnoremap <leader>fu :action FindUsages<cr>
+" Folding
+nnoremap zR :action ExpandAll<cr>
+nnoremap zM :action CollapsAll<cr>
+
+" Reload .ideavimrc
+nnoremap <leader>vs :source ~/.ideavimrc<cr>
+
+" Search routines
+nnoremap <leader>ff :action FindInPath<cr>
+
+" Source navigation
+nnoremap <leader>gu :action FindUsages<cr>
+nnoremap <leader>gc :action GotoClass<cr>
+nnoremap <leader>gd :action GotoDeclaration<cr>
+nnoremap <leader>gf :action GotoFile<cr>
+nnoremap <leader>gs :action GotoSymbol<cr>
+nnoremap <leader>gr :action GotoRelated<cr>
+
+" Debugging && errors actions
 nnoremap <leader>bb :action ToggleLineBreakpoint<cr>
 nnoremap <leader>bs :action ViewBreakpoints<cr>
+nmap <leader>ed :action ShowErrorDescription<cr>
 nnoremap ]e :action GotoNextError<cr>
 nnoremap [e :action GotoPreviousError<cr>
+
+" VCS & local history
+nnoremap [v :action VcsShowPrevChangeMarker<cr>
+nnoremap ]v :action VcsShowNextChangeMarker<cr>
+" in PyCharm works like `git blame`
+nnoremap <leader>va :action Annotate<cr>
+nnoremap <leader>vh :action LocalHistory<cr>
+
+" See docs / implementation
+nnoremap <leader>qi :action QuickImplementations<cr>
+nnoremap <leader>qq :action QuickJavaDoc<cr>
+
+" Bookmarks
+nnoremap mm :action ShowBookmarks<cr>
+nnoremap mt :action ToggleBookmark<cr>
+nnoremap mb :action ToggleBookmarkWithMnemonic<cr>
+nnoremap m1 :action ToggleBookmark1<cr>
+nnoremap m2 :action ToggleBookmark2<cr>
+nnoremap m3 :action ToggleBookmark3<cr>
+nnoremap m4 :action ToggleBookmark4<cr>
+nnoremap m5 :action ToggleBookmark5<cr>
+nnoremap m6 :action ToggleBookmark6<cr>
+nnoremap m7 :action ToggleBookmark7<cr>
+nnoremap m8 :action ToggleBookmark8<cr>
+nnoremap m9 :action ToggleBookmark9<cr>
+nnoremap m0 :action ToggleBookmark0<cr>
+
+" Ace == easymotion
 nnoremap <A-;> :action AceAction<CR>
 nnoremap <A-l> :action AceLineAction<CR>
-
-set relativenumber
-set surround

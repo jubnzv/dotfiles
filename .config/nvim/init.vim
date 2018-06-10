@@ -1,13 +1,10 @@
-""" Leader key {{{1
-let mapleader = "\<Space>"
-
-""" Misc {{{1
 set nocompatible
+let mapleader = "\<Space>"
 
 """ Plugins {{{1
 call plug#begin('~/.local/share/nvim/plugged')
 
-" Misc {{{2
+" Motion/Navigation {{{2
 Plug 'https://github.com/mileszs/ack.vim'
 Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
 Plug 'https://github.com/scrooloose/nerdtree'
@@ -22,11 +19,14 @@ Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/morhetz/gruvbox'
 Plug 'https://github.com/ap/vim-buftabline'
 Plug 'https://github.com/chrisbra/Colorizer'
+Plug 'https://github.com/vim-scripts/BufOnly.vim'
 
 " Coding tools {{{2
 " General {{{3
-" Plug 'https://github.com/scrooloose/nerdcommenter'
+"Plug 'https://github.com/scrooloose/nerdcommenter'
 Plug 'https://github.com/vim-syntastic/syntastic'
+"Plug 'https://github.com/w0rp/ale'
+Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/mattn/sonictemplate-vim'
 Plug 'https://github.com/godlygeek/tabular'
 Plug 'https://github.com/vim-scripts/taglist.vim'
@@ -42,7 +42,7 @@ Plug 'https://github.com/honza/vim-snippets'
 
 " C {{{3
 Plug 'https://github.com/vivien/vim-linux-coding-style'
-Plug 'https://github.com/vim-scripts/a.vim'
+Plug 'https://github.com/nacitar/a.vim'
 
 " Golang {{{3
 Plug 'https://github.com/fatih/vim-go'
@@ -51,20 +51,20 @@ Plug 'https://github.com/fatih/vim-go'
 Plug 'https://github.com/heavenshell/vim-pydocstring'
 
 " IEC 61131-3 {{{3
-" Plug 'https://github.com/jubnzv/IEC.vim.git'
+"Plug 'https://github.com/jubnzv/IEC.vim.git'
 
-" Markdown & config formats {{{2
+" Markdown/configuration/documentation formats {{{2
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/JamshedVesuna/vim-markdown-preview'
 Plug 'https://github.com/nvie/vim-rst-tables'
 Plug 'https://github.com/chr4/nginx.vim'
-
-" Documentation {{{2
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim'
+Plug 'https://github.com/dhruvasagar/vim-table-mode'
 
 " Sandbox {{{2
 Plug '~/Dev/IEC.vim'
+Plug '~/Dev/lark.vim'
 Plug '~/Dev/nerdcommenter'
 
 call plug#end()
@@ -87,9 +87,32 @@ set t_Co=256       " 256-colors mode
 set background=dark
 set title
 colorscheme gruvbox
-let g:lightline = {}
-let g:lightline.colorscheme = 'gruvbox'
 set scrolloff=3  " 3 lines above/below cursor when scrolling
+
+""" Statusline {{{2
+let g:lightline = {
+      \ 'colorscheme': 'gruvbox',
+      \ 'active': {
+      \   'left':  [ [ 'mode', 'paste' ],
+      \              [ 'readonly', 'filename', 'modified' ] ],
+      \   'right': [ [ 'lineinfo' ],
+      \              [ 'percent' ],
+      \              [ 'fileformat', 'fileencoding', 'filetype' ],
+      \              [ 'gitbranch' ] ],
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'fugitive#head'
+      \ },
+      \ }
+
+""" Buffers manipulation and tabline {{{1
+let g:buftabline_indicators=1 " show modified
+set hidden
+nnoremap <C-K> :bnext<CR>
+nnoremap <C-J> :bprev<CR>
+nnoremap <leader><F4> :bdelete<CR>
+" switch between current and last buffer
+nmap <A-r> <C-^>
 
 """ Undo options {{{1
 set undofile
@@ -100,11 +123,20 @@ set undoreload=10000
 """ Integrate with system clipboard {{{1
 set clipboard=unnamedplus,unnamed
 
-""" Buffers list in the tabline {{{1
-set hidden
-nnoremap <C-K> :bnext<CR>
-nnoremap <C-J> :bprev<CR>
-nnoremap <C-F4> :bdelete<CR>
+""" Keybinds settings {{{1
+set timeoutlen=200
+inoremap jj <Esc>
+nnoremap <leader>h :noh<CR>
+" Insert newline without entering insert mode
+nmap zj o<Esc>k
+nmap zk O<Esc>j
+" Reload vimrc
+nnoremap <leader>vs :so $MYVIMRC<CR>
+nmap <F1> :echo <CR>
+imap <F1> <C-o>:echo <CR>
+map <C-X><C-F> :FZF<cr>
+" search visually selected
+vnoremap // y/<C-R>"<CR>
 
 """ Keep selected text selected when fixing indentation {{{1
 vnoremap < <gv
@@ -126,6 +158,7 @@ function! NumberToggle()
         set nu
     endif
 endfunction
+nnoremap <F9> :call NumberToggle()<CR>
 
 """ Folding settings {{{1
 set foldmethod=syntax
@@ -134,25 +167,9 @@ set nofoldenable " disable folding when open file
 set foldlevel=2
 let g:markdown_folding = 1
 
-""" Keybindings {{{1
-set timeoutlen=200
-" General {{{2
-nmap <F1> :echo <CR>
-imap <F1> <C-o>:echo <CR>
-nnoremap <F9> :call NumberToggle()<CR>
-imap fd <Esc>
-map <Leader>j <Esc>
-map <Leader>w :w<cr>
-map <Leader>x :x<cr>
-map <Leader>q :q<cr>
-map <Leader>` :qa!<cr>
-map <Leader>a :Ack!<Space>
-nnoremap <leader>vs :so $MYVIMRC<CR>
-map <C-X><C-F> :FZF<cr>
-
 " Show current function {{{1
 nnoremap <Leader>f :echo cfi#format("%s", "")<CR>
-nmap <F8> :TlistToggle<CR>
+nmap <A-7> :TlistToggle<CR>
 
 " E45: 'readonly' option is set (add ! to override) {{{1
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
@@ -171,7 +188,7 @@ else
 endif
 
 """ NerdTree {{{1
-map <A-t> :NERDTreeToggle<CR>
+map <A-1> :NERDTreeToggle<CR>
 
 """ Easymotion {{{1
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
@@ -186,6 +203,7 @@ let g:EasyMotion_use_smartsign_us = 1
 if executable('ag')
     let g:ackprg = 'ag --vimgrep'
 endif
+map <Leader>a :Ack!<Space>
 
 """ Coding style general {{{1
 set tabstop=4
@@ -238,7 +256,8 @@ nnoremap  <leader>ff :call CscopeFind('f', expand('<cword>'))<CR>
 " i: Find files #including this file
 nnoremap  <leader>fi :call CscopeFind('i', expand('<cword>'))<CR>
 
-""" Syntastics setup {{{1
+""" Linters setup {{{1
+""" Syntastics setup {{{2
 let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
 let g:syntastic_c_checkers=['make','gcc']
 let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
@@ -247,11 +266,26 @@ let g:syntastic_always_populate_loc_list = 1
 let g:syntastic_auto_loc_list = 1
 let g:syntastic_check_on_open = 0
 let g:syntastic_check_on_wq = 0
-nnoremap <Leader><F3> :SyntasticCheck<CR> :SyntasticToggleMode<CR>
-map <A-e> :SyntasticCheck<CR>
-map <C-A-e> :SyntasticReset<CR>
+nnoremap <leader>lt :SyntasticCheck<CR> :SyntasticToggleMode<CR>
+nnoremap <leader>lc :SyntasticCheck<CR>
+nnoremap <leader>lr :SyntasticReset<CR>
+" ALE {{{2
+" let g:ale_use_deprecated_neovim = 1
+" let g:ale_lint_on_enter = 0
+" let g:ale_lint_on_text_changed = 'never'
+" let g:ale_linters = {
+"   \ 'c': ['gcc', 'make'] ,
+"   \ }
+" }}}2
 nnoremap ]e :lnext <CR>
 nnoremap [e :lprevious<CR>
+
+""" C settings {{{1
+autocmd bufreadpre *.c setlocal textwidth=79
+autocmd bufreadpre *.h setlocal textwidth=79
+autocmd bufreadpre *.h set filetype=c
+
+nmap <leader>is :A<CR>
 
 """ Golang mode settings {{{1
 let g:go_highlight_functions = 1
@@ -319,5 +353,29 @@ autocmd BufWritePre * call LastModified()
 let g:DoxygenToolkit_commentType = "C"
 autocmd FileType c nnoremap <leader>d :Dox<CR>
 """}}}1
+
+""" Git workflow {{{1
+
+""" Sphinx & RST {{{1
+" autocmd bufreadpre *.rst setlocal textwidth=79
+autocmd FileType rst setlocal sw=2 ts=2 expandtab
+autocmd FileType rst setlocal textwidth=79
+" ASCII tables
+let g:table_mode_corner_corner='+'
+let g:table_mode_header_fillchar='='
+
+""" Surround and quotes {{{1
+" let g:surround_116 = "<<\r>>"
+" augroup textobj_quote
+"   autocmd!
+"   autocmd FileType markdown call textobj#quote#init()
+"   autocmd FileType rst call textobj#quote#init()
+"   autocmd FileType textile call textobj#quote#init()
+"   autocmd FileType text call textobj#quote#init({'educate': 0})
+" augroup END
+
+" Spellchecking {{{1
+" set spell
+" autocmd BufRead,BufNewFile *.rst set spell spelllang=ru
 
 " vim: foldmethod=marker sw=4
