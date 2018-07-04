@@ -1,5 +1,6 @@
 set nocompatible
 let mapleader = "\<Space>"
+set shell=bash
 
 """ Plugins {{{1
 call plug#begin('~/.local/share/nvim/plugged')
@@ -7,12 +8,15 @@ call plug#begin('~/.local/share/nvim/plugged')
 " Motion/Navigation {{{2
 Plug 'https://github.com/mileszs/ack.vim'
 Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
+Plug 'https://github.com/junegunn/fzf.vim'
 Plug 'https://github.com/scrooloose/nerdtree'
+"Plug 'https://github.com/francoiscabrol/ranger.vim'
 Plug 'https://github.com/tpope/vim-repeat'
 Plug 'https://github.com/rosenfeld/conque-term'
 Plug 'https://github.com/kshenoy/vim-signature'
 Plug 'https://github.com/easymotion/vim-easymotion'
 Plug 'https://github.com/gcmt/wildfire.vim'
+" Plug 'https://github.com/yegappan/mru'
 
 " UI & appearance {{{2
 Plug 'https://github.com/itchyny/lightline.vim'
@@ -27,12 +31,12 @@ Plug 'https://github.com/vim-scripts/BufOnly.vim'
 Plug 'https://github.com/vim-syntastic/syntastic'
 "Plug 'https://github.com/w0rp/ale'
 Plug 'https://github.com/tpope/vim-fugitive'
+Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'https://github.com/mattn/sonictemplate-vim'
 Plug 'https://github.com/godlygeek/tabular'
 Plug 'https://github.com/vim-scripts/taglist.vim'
 Plug 'https://github.com/majutsushi/tagbar'
 Plug 'https://github.com/tyru/current-func-info.vim'
-Plug 'https://github.com/brookhong/cscope.vim'
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/dag/vim-fish'
@@ -57,8 +61,10 @@ Plug 'https://github.com/heavenshell/vim-pydocstring'
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/JamshedVesuna/vim-markdown-preview'
+Plug 'https://github.com/tpope/vim-markdown'
 Plug 'https://github.com/nvie/vim-rst-tables'
 Plug 'https://github.com/chr4/nginx.vim'
+Plug 'https://github.com/othree/xml.vim'
 Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim'
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
 
@@ -111,8 +117,14 @@ set hidden
 nnoremap <C-K> :bnext<CR>
 nnoremap <C-J> :bprev<CR>
 nnoremap <leader><F4> :bdelete<CR>
+nnoremap <leader>wh :only<cr>
 " switch between current and last buffer
 nmap <A-r> <C-^>
+" Reopen last closed buffer
+" let MRU_File = $HOME.'/.vim/mru_file'
+" let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
+" nmap <c-s-t> :MRU<cr><cr>
+
 
 """ Undo options {{{1
 set undofile
@@ -126,15 +138,14 @@ set clipboard=unnamedplus,unnamed
 """ Keybinds settings {{{1
 set timeoutlen=200
 inoremap jj <Esc>
-nnoremap <leader>h :noh<CR>
+nnoremap <A-h> :noh<CR>
 " Insert newline without entering insert mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 " Reload vimrc
-nnoremap <leader>vs :so $MYVIMRC<CR>
+nnoremap <leader>rr :so $MYVIMRC<CR>
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
-map <C-X><C-F> :FZF<cr>
 " search visually selected
 vnoremap // y/<C-R>"<CR>
 
@@ -165,14 +176,19 @@ set foldmethod=syntax
 set foldnestmax=6
 set nofoldenable " disable folding when open file
 set foldlevel=2
-let g:markdown_folding = 1
 
 " Show current function {{{1
-nnoremap <Leader>f :echo cfi#format("%s", "")<CR>
-nmap <A-7> :TlistToggle<CR>
+nnoremap <A-q> :echo cfi#format("%s", "")<CR>
+" nmap <A-7> :TlistToggle<CR>
 
 " E45: 'readonly' option is set (add ! to override) {{{1
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
+" Create directories before write {{{1
+function! WriteCreatingDirs()
+    execute ':silent !mkdir -p %:h'
+endfunction
+command! Mkw call WriteCreatingDirs()
 
 """ Nerdcommenter settings {{{1
 let g:NERDSpaceDelims = 1
@@ -187,8 +203,12 @@ else
     vmap <C-_> <leader>c<Space>
 endif
 
-""" NerdTree {{{1
-map <A-1> :NERDTreeToggle<CR>
+""" File manager {{{1
+map <A-1> :NERDTreeToggle<cr>
+let NERDTreeQuitOnOpen=1
+" map <A-2> :Ranger<cr>
+" let g:NERDTreeHijackNetrw=0
+" let g:ranger_replace_netrw=1
 
 """ Easymotion {{{1
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
@@ -203,7 +223,26 @@ let g:EasyMotion_use_smartsign_us = 1
 if executable('ag')
     let g:ackprg = 'ag --vimgrep'
 endif
-map <Leader>a :Ack!<Space>
+map <leader>a :Ack!<space>
+
+""" FZF {{{1
+nmap <A-x> <plug>(fzf-maps-n)
+xmap <A-x> <plug>(fzf-maps-x)
+omap <A-x> <plug>(fzf-maps-o)
+" Motion/files
+nnoremap <leader>m :Marks<cr>
+nnoremap <leader>ff :Files<cr>
+nnoremap <leader>fs :Ag<cr>
+nnoremap <leader>fl :BLines<cr>
+nnoremap <leader>fp :Lines<cr>
+nnoremap <leader>ft :Tags<cr>
+nnoremap <A-7> :BTags<CR>
+" VCS
+nnoremap <leader>vc :Commits<cr>
+nnoremap <leader>vs :GFiles?<cr>
+" Buffers/windows
+nnoremap <leader>bl :Buffers<cr>
+nnoremap <leader>wl :Windows<cr>
 
 """ Coding style general {{{1
 set tabstop=4
@@ -229,32 +268,11 @@ autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 " Remove all trailing whitespaces
-nnoremap <silent> <Leader>S :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 
 """ ctags {{{1
 set tags=./tags;
 let g:ctags_statusline=1
-
-""" cscope {{{1
-nnoremap <leader>fa :call CscopeFindInteractive(expand('<cword>'))<CR>
-nnoremap <leader>l :call ToggleLocationList()<CR>
-
-" s: Find this C symbol
-nnoremap  <leader>fs :call CscopeFind('s', expand('<cword>'))<CR>
-" g: Find this definition
-nnoremap  <leader>fg :call CscopeFind('g', expand('<cword>'))<CR>
-" d: Find functions called by this function
-nnoremap  <leader>fd :call CscopeFind('d', expand('<cword>'))<CR>
-" c: Find usages (functions calling this function)
-nnoremap  <leader>fu :call CscopeFind('c', expand('<cword>'))<CR>
-" t: Find this text string
-nnoremap  <leader>ft :call CscopeFind('t', expand('<cword>'))<CR>
-" e: Find this egrep pattern
-nnoremap  <leader>fe :call CscopeFind('e', expand('<cword>'))<CR>
-" f: Find this file
-nnoremap  <leader>ff :call CscopeFind('f', expand('<cword>'))<CR>
-" i: Find files #including this file
-nnoremap  <leader>fi :call CscopeFind('i', expand('<cword>'))<CR>
 
 """ Linters setup {{{1
 """ Syntastics setup {{{2
@@ -309,9 +327,12 @@ autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
 nnoremap <Leader><F10> :ConqueTermSplit ipython<CR>
 nnoremap <Leader><F9> :exe ":ConqueTermSplit ipython " . expand("%")<CR>
 
-""" Markdown preview {{{1
+""" Markdown {{{1
 let vim_markdown_preview_github=1  " Support grip
 let vim_markdown_preview_hotkey='<leader><C-m>'
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
+let g:markdown_folding = 1
 
 """ wildmenu options {{{1
 set wildmenu
@@ -355,6 +376,11 @@ autocmd FileType c nnoremap <leader>d :Dox<CR>
 """}}}1
 
 """ Git workflow {{{1
+let g:gitgutter_map_keys = 0
+nmap [v <Plug>GitGutterPrevHunk
+nmap ]v <Plug>GitGutterNextHunk
+nnoremap <leader>vv :GitGutterPreviewHunk<cr>
+nnoremap <leader>vu :GitGutterUndoHunk<cr>
 
 """ Sphinx & RST {{{1
 " autocmd bufreadpre *.rst setlocal textwidth=79

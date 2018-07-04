@@ -51,15 +51,14 @@ workspace "14$tile_14_music" output $display1
 # Autostart
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/keys.sh
-#exec --no-startup-id $SCRIPTS_PATH/touchpad.sh
 exec --no-startup-id $SCRIPTS_PATH/dual.sh
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
 exec --no-startup-id udiskie -t
-exec --no-startup-id xsetroot -solid "#282828" # set solid color as wallpaper
-# exec --no-startup-id emacs25 -name "Emacs_Scratchpad" --funcall=org-agenda-list
+exec --no-startup-id bsetroot -solid "#282828"
+exec --no-startup-id /usr/bin/xcompmgr
 
 # Window appearance
 new_window 1pixel
@@ -83,10 +82,10 @@ focus_follows_mouse no
 # for_window [class="VirtualBox"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
-#for_window [class="(?i)emacs"] move container to workspace 1$tile_01_q
 for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
+for_window [title="^xev$"] layout floating
 for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
 for_window [title="^Run" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
 
@@ -99,8 +98,6 @@ bindsym $mod+Shift+less kill
 bindsym $mod+F11 fullscreen
 bindsym $mod+Escape layout toggle
 bindsym $mod+Shift+space floating toggle
-bindsym $mod+End restart
-bindsym $mod+Shift+End exit
 
 # Workspaces
 #bindsym $mod+bracketleft workspace prev
@@ -160,8 +157,8 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Splits
-bindsym $mod+minus split horizontal
-bindsym $mod+backslash split vertical
+# bindsym $mod+minus split horizontal
+# bindsym $mod+backslash split vertical
 
 # Application startup hotkeys
 bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
@@ -202,7 +199,7 @@ bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
 bindsym $mod+XF86ScreenSaver exec xset s activate
-bindsym $mod+F12 exec notify-send " `date +%D`\n `date +%H:%M:%S`"
+bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`"
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
 
 # cmus control
@@ -261,37 +258,45 @@ mode --pango_markup "$mode_exec_xrandr" {
 # Application startup routines
 set $mode_exec_apps <span fgcolor='#d5c4a1'></span>\t\t\
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'>Telegram</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'>Discord</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'>Mattermost</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[4]</span> <span fgcolor='#d5c4a1'>Thunderbird</span>\t\t  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'>Mattermost</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'>Thunderbird</span>\t\t  \
 <span bgcolor='#fabd2f' fgcolor='#282828'>[F9]</span> <span fgcolor='#fabd2f'>All</span>
 bindsym $mod+Control+F9 mode $mode_exec_apps
 mode --pango_markup "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
-     bindsym 2 exec $APP_DISCORD; mode "default"
-     bindsym 3 exec $APP_MATTERMOST; mode "default"
-     bindsym 4 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
+     bindsym 2 exec $APP_MATTERMOST; mode "default"
+     bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
 	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }
 
-# Power-control
-set $mode_exec_power <span fgcolor='#d5c4a1'>Power management\t\t</span>\
+# Power control
+set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'>Power management</span>\t\t\
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[S]</span><span fgcolor='#d5c4a1'>  poweroff\t</span>  \
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[r]</span><span fgcolor='#d5c4a1'>  reboot\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[s]</span><span fgcolor='#d5c4a1'>  sleep\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[l]</span><span fgcolor='#d5c4a1'>  lock\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[e]</span><span fgcolor='#d5c4a1'>  log out\t</span>
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[s]</span><span fgcolor='#d5c4a1'>  sleep</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
-	bindsym Shift+s     exec systemctl poweroff
-	bindsym r           exec systemctl reboot
+	bindsym Shift+s     exec systemctl poweroff; mode "default"
+	bindsym r           exec systemctl reboot; mode "default"
 	bindsym s           exec systemctl suspend; mode "default"
+	bindsym Return 	    mode "default"
+	bindsym Escape 	    mode "default"
+}
+
+# i3wm control
+set $mode_exec_i3cmd <span bgcolor='#b8bb26' fgcolor='#282828'>i3wm command</span>\t\t\
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[l]</span><span fgcolor='#d5c4a1'>  lock\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[r]</span><span fgcolor='#d5c4a1'>  restart\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[e]</span><span fgcolor='#d5c4a1'>  log out</span>
+bindsym $mod+Control+End mode "$mode_exec_i3cmd"
+mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym l           exec lock; mode "default"
-	bindsym e           exec i3-msg "exit"
-	bindsym Return 	mode "default"
-	bindsym Escape 	mode "default"
+	bindsym r           exec i3-msg "restart"; mode "default"
+	bindsym e           exec i3-msg "exit"; mode "default"
+	bindsym Return 	    mode "default"
+	bindsym Escape 	    mode "default"
 }
 
 # Main bar
@@ -304,6 +309,7 @@ bar {
     strip_workspace_numbers yes
     binding_mode_indicator yes
     status_command i3blocks -c ~/.config/i3blocks/config
+    # i3bar_command i3bar -t status_command i3blocks -c ~/.config/i3blocks/config
     #				border	bckgrnd	text
     colors {
         background		#282828

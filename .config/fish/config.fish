@@ -7,6 +7,9 @@ set -x  GOROOT      "/usr/lib/go-1.10"
 set -x  GOTOOLDIR   "/usr/lib/go-1.10/pkg/tool/linux_amd64"
 set     PATH        $GOPATH/bin/                   $PATH
 
+set EDITOR  nvim
+set VISUAL  nvim
+
 # Appearance {{{1
 theme_gruvbox dark medium
 
@@ -16,11 +19,10 @@ set LESS '-RS#3NM~g'
 # Aliases {{{1
 alias vim='nvim'
 alias vi='nvim'
-alias grep='ag'
+#alias grep='ag'
 alias agp='ag --pager="less -r"'
 alias agn='ag -n'
 alias agr='ag -r'
-alias ggrep='grep'
 alias ls='ls --color=auto'
 alias q='exit'
 alias pd='pushd'
@@ -33,7 +35,15 @@ alias zt='zathura'
 alias mrg='mirage'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
+
+# git {{{1
 alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+alias git_changelog="git --no-pager log --no-merges --pretty=format:' %x20%x20 - %s (%an)' (git tag | grep -v -- -rc | tail -n 1)..HEAD ."
+
+# cscope routines {{{1
+# Find all available functions
+alias cs_f='cscope -R -L -2 ".*" | awk -F \' \' \'{print $2 "\t" $1}\' | sort | uniq'
+
 
 # Fish git prompt {{{1
 set __fish_git_prompt_showdirtystate 'yes'
