@@ -38,14 +38,14 @@ nnoremap zM :action CollapsAll<cr>
 nnoremap <leader>rr :source ~/.ideavimrc<cr>
 
 " Search routines
-nnoremap <leader>ff :action FindInPath<cr>
+nnoremap <leader>fs :action FindInPath<cr>
 nnoremap <A-h> :noh<cr>
 
 " Source navigation
 nnoremap <leader>gu :action FindUsages<cr>
 nnoremap <leader>gc :action GotoClass<cr>
 nnoremap <leader>gd :action GotoDeclaration<cr>
-nnoremap <leader>gf :action GotoFile<cr>
+nnoremap <leader>ff :action GotoFile<cr>
 nnoremap <leader>gs :action GotoSymbol<cr>
 nnoremap <leader>gr :action GotoRelated<cr>
 

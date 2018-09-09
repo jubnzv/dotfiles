@@ -30,7 +30,7 @@
     browser = /usr/bin/chromium
     icon_position = left
     max_icon_size = 16
-    icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/:/usr/share/icons/breeze/status/16/
+    icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/:/usr/share/icons/breeze/status/16/:/usr/share/icons/breeze/actions/16
 
 [frame]
     width = 1

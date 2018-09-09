@@ -1,10 +1,11 @@
-# Initialize the plugins
+# Initialize plugins
 source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source ~/.config/zsh/zsh-autopair/zsh-autopair.plugin.zsh
 source ~/.config/zsh/zce.zsh/zce.zsh
 bindkey "^Xz" zce
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
 # Credentials
 export DOCKER_ID_USER="jubnzv1"
 
@@ -12,27 +13,8 @@ export DOCKER_ID_USER="jubnzv1"
 autoload -U colors && colors
 PS1="%{$fg[red]%}%n%{$reset_color%}@%{$fg[blue]%}%m %{$fg[yellow]%}%~ %{$reset_color%} %% "
 
-# Dynamically change terminal window title
-case $TERM in
-  (*xterm* | rxvt | rxvt-unicode-256color)
-
-    # Write some info to terminal title.
-    # This is seen when the shell prompts for input.
-    function precmd {
-      print -Pn "\e]0;zsh%L %(1j,%j job%(2j|s|); ,)%~\a"
-    }
-    # Write command and args to terminal title.
-    # This is seen while the shell waits for a command to complete.
-    function preexec {
-      printf "\033]0;%s\a" "$1"
-    }
-
-  ;;
-esac
-
-
 # Go environment
-export GOROOT=$HOME/.local/opt/go/
+export GOROOT=~/.local/opt/go
 export GOPATH=$HOME/Dev/go/
 
 # PATH
@@ -53,21 +35,16 @@ setopt HIST_IGNORE_DUPS          # Don't record an entry that was just recorded 
 setopt HIST_REDUCE_BLANKS        # Remove superfluous blanks before recording entry.
 setopt HIST_IGNORE_SPACE		 # Don't store lines beginning with a space
 
-# Aliases
-#
-# Misc
+# Enable emacs-mode
+bindkey -e
+
 alias vim='nvim'
-alias grep='ag'
+alias vi='nvim'
 alias agp='ag --pager="less -r"'
 alias agn='ag -n'
 alias agr='ag -r'
-alias ggrep='grep'
 alias ls='ls --color=auto'
-# Disable history saving for some commands
-alias jrnl=' jrnl'
-alias task=' task'
 alias veracrypt=' veracrypt'
-# Basic commands
 alias q='exit'
 alias pd='pushd'
 alias pdd='popd'
@@ -90,14 +67,25 @@ alias gl_f='git log -p'
 alias gl_n='git log --name-status'
 alias gp_master='git push origin master'
 alias gp_undo='git push -f origin HEAD^:master'
+alias _up='source ~/.zshrc'
+alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 # Add note
 alias nn='vim ~/Org/Notes/'
 # Docker
 alias dps='docker ps'
 alias dpsa='docker ps -a'
-# Other
-alias _up='source ~/.zshrc'
-alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+
+# Dynamically change terminal window title
+case $TERM in
+  (*xterm* | rxvt | rxvt-unicode-256color)
+    function precmd {
+      print -Pn "\e]0;zsh%L %(1j,%j job%(2j|s|); ,)%~\a"
+    }
+    function preexec {
+      printf "\033]0;%s\a" "$1"
+    }
+  ;;
+esac
 
 # try to deal ssh connection every second
 sssh(){
@@ -105,14 +93,8 @@ sssh(){
 }
 
 # Command completion
-#
 autoload -Uz compinit
 compinit
-
-# Keybinds
-#
-# Enable emacs-mode
-bindkey -e
 
 # Make keybinds work with ru keymap
 bindkey '^[а'	forward-word
@@ -132,9 +114,9 @@ export FZF_COMPLETION_TRIGGER=''
 bindkey '^T' fzf-completion
 bindkey '^I' $fzf_default_completion
 
-# Codi
-alias codi=$SCRIPTS_PATH/run_codi.sh
-
 # Autojump
 . /usr/share/autojump/autojump.sh
+
+# Auto start X
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
 

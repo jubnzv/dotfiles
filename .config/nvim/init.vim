@@ -1,101 +1,93 @@
 set nocompatible
 let mapleader = "\<Space>"
-set shell=bash
+set shell=fish
 
-""" Plugins {{{1
+" {{{1 Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Motion/Navigation {{{2
-Plug 'https://github.com/mileszs/ack.vim'
-Plug 'https://github.com/junegunn/fzf', { 'dir': '~/.local/opt/fzf', 'do': './install --all' }
-Plug 'https://github.com/junegunn/fzf.vim'
 Plug 'https://github.com/scrooloose/nerdtree'
-"Plug 'https://github.com/francoiscabrol/ranger.vim'
-Plug 'https://github.com/tpope/vim-repeat'
-Plug 'https://github.com/rosenfeld/conque-term'
-Plug 'https://github.com/kshenoy/vim-signature'
+Plug 'https://github.com/kshenoy/vim-signature'          " Bookmarks extended
 Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/gcmt/wildfire.vim'
-" Plug 'https://github.com/yegappan/mru'
+Plug 'https://github.com/lyokha/vim-xkbswitch'           " ru keybinds in normal mode
+Plug 'https://github.com/terryma/vim-multiple-cursors'
+" Plug 'https://github.com/christoomey/vim-tmux-navigator'
+Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
+Plug 'https://github.com/junegunn/fzf', {
+    \ 'dir': '~/.local/opt/fzf',
+    \ 'do': './install --all'
+    \ }
+" }}}2
 
-" UI & appearance {{{2
-Plug 'https://github.com/itchyny/lightline.vim'
-Plug 'https://github.com/morhetz/gruvbox'
-Plug 'https://github.com/ap/vim-buftabline'
-Plug 'https://github.com/chrisbra/Colorizer'
-Plug 'https://github.com/vim-scripts/BufOnly.vim'
+" {{{2 UI & appearance
+Plug 'https://github.com/itchyny/lightline.vim'   " Modeline plugin
+Plug 'https://github.com/morhetz/gruvbox'         " Color scheme
+Plug 'https://github.com/ap/vim-buftabline'       " Show buffers in the tabline
+Plug 'https://github.com/chrisbra/Colorizer'      " Color colornames and codes
+Plug 'https://github.com/Yggdroot/indentLine'     " Show identation as vertical lines
+Plug 'https://github.com/junegunn/goyo.vim'       " `Zen-mode`
+Plug 'https://github.com/junegunn/limelight.vim'  " `Hyperfocused writing`
+" Plug 'https://github.com/ryanoasis/vim-devicons'  " DevIcons support
+" }}}2
+
+" Markdown/configuration/documentation formats {{{2
+Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'      " Doxygen helper
+Plug 'https://github.com/pearofducks/ansible-vim'        " Ansible format support
+Plug 'https://github.com/cespare/vim-toml'               " .toml
+Plug 'https://github.com/chr4/nginx.vim'                 " Nginx configuration files
+Plug 'https://github.com/othree/xml.vim'                 " Extended XML/XSD features
+Plug 'https://github.com/dhruvasagar/vim-table-mode'     " Simplifies plain text tables creation
+Plug 'https://github.com/lervag/vimtex'                  " LaTeX support
+Plug 'https://github.com/gu-fan/riv.vim'                 " .rst extension
+" Plug 'https://github.com/plasticboy/vim-markdown'        " Extended markdown support
+" }}}2
 
 " Coding tools {{{2
 " General {{{3
-"Plug 'https://github.com/scrooloose/nerdcommenter'
-Plug 'https://github.com/vim-syntastic/syntastic'
-"Plug 'https://github.com/w0rp/ale'
-Plug 'https://github.com/tpope/vim-fugitive'
-Plug 'https://github.com/airblade/vim-gitgutter'
-Plug 'https://github.com/mattn/sonictemplate-vim'
-Plug 'https://github.com/godlygeek/tabular'
-Plug 'https://github.com/vim-scripts/taglist.vim'
-Plug 'https://github.com/majutsushi/tagbar'
-Plug 'https://github.com/tyru/current-func-info.vim'
+Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'https://github.com/scrooloose/nerdcommenter'
+Plug 'https://github.com/tpope/vim-fugitive'         " Git wrapper
+Plug 'https://github.com/airblade/vim-gitgutter'     " Show git diffs in the gutter
+Plug 'https://github.com/godlygeek/tabular'          " Create fancy tabularized comments
+Plug 'https://github.com/majutsushi/tagbar'          " Display sorted tags in a window
+Plug 'https://github.com/tyru/current-func-info.vim' " Show current function name
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/dag/vim-fish'
-Plug 'https://github.com/Valloric/YouCompleteMe'
-Plug 'https://github.com/SirVer/ultisnips'
-Plug 'https://github.com/honza/vim-snippets'
+Plug 'https://github.com/dag/vim-fish'               " fish scripting language support
+Plug 'https://github.com/honza/vim-snippets'         " Snippets plugin
+Plug 'https://github.com/SirVer/ultisnips'           " Another snippets solution
+Plug 'https://github.com/terryma/vim-expand-region'
+Plug 'https://github.com/embear/vim-localvimrc'      " Per-project settings
+Plug 'autozimu/LanguageClient-neovim', {
+    \ 'branch': 'next',
+    \ 'do': 'bash install.sh',
+    \ }
 
-" C {{{3
-Plug 'https://github.com/vivien/vim-linux-coding-style'
-Plug 'https://github.com/nacitar/a.vim'
-
-" Golang {{{3
+" {{{3 Language-specific options
+Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel style settings
+Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
 Plug 'https://github.com/fatih/vim-go'
-
-" Python {{{3
-Plug 'https://github.com/heavenshell/vim-pydocstring'
-
-" IEC 61131-3 {{{3
-"Plug 'https://github.com/jubnzv/IEC.vim.git'
-
-" Markdown/configuration/documentation formats {{{2
-Plug 'https://github.com/pearofducks/ansible-vim'
-Plug 'https://github.com/cespare/vim-toml'
-Plug 'https://github.com/JamshedVesuna/vim-markdown-preview'
-Plug 'https://github.com/tpope/vim-markdown'
-Plug 'https://github.com/nvie/vim-rst-tables'
-Plug 'https://github.com/chr4/nginx.vim'
-Plug 'https://github.com/othree/xml.vim'
-Plug 'https://github.com/vim-scripts/DoxygenToolkit.vim'
-Plug 'https://github.com/dhruvasagar/vim-table-mode'
-
-" Sandbox {{{2
-Plug '~/Dev/IEC.vim'
-Plug '~/Dev/lark.vim'
-Plug '~/Dev/nerdcommenter'
+Plug '~/Dev/IEC.vim'                                    " IEC 61131-3 support
+" }}}3
+" }}}2
 
 call plug#end()
+" }}}1
 
-""" Force python3 {{{1
-" if has('python3')
-" elif has('python')
-" endif
-" 1}}}
-
-""" GUI & eye candy appearance {{{1
-set guioptions-=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
+" {{{1 GUI & eye candy appearance
+set guioptions-=m  " Remove menu bar
+set guioptions-=T  " Remove toolbar
+set guioptions-=r  " Remove right-hand scroll bar
+set guioptions-=L  " Remove left-hand scroll bar
 set relativenumber
 set cursorline
-set laststatus=2   " always show status line
-set t_Co=256       " 256-colors mode
+set laststatus=2   " Always show status line
 set background=dark
-set title
+set t_Co=256       " 256-colors mode
 colorscheme gruvbox
-set scrolloff=3  " 3 lines above/below cursor when scrolling
+set title          " Show window title
 
-""" Statusline {{{2
+" {{{2 Modeline
 let g:lightline = {
       \ 'colorscheme': 'gruvbox',
       \ 'active': {
@@ -110,56 +102,127 @@ let g:lightline = {
       \   'gitbranch': 'fugitive#head'
       \ },
       \ }
+" }}}2
 
-""" Buffers manipulation and tabline {{{1
+" {{{2 `Zen mode`
+map <F11> :Goyo<CR>
+
+" function! s:goyo_enter()
+"   set scrolloff=999
+"   Limelight
+" endfunction
+
+" function! s:goyo_leave()
+"   set scrolloff=5
+"   Limelight!
+" endfunction
+
+" autocmd! User GoyoEnter nested call <SID>goyo_enter()
+" autocmd! User GoyoLeave nested call <SID>goyo_leave()
+" }}}2
+" }}}1
+
+" 1{{{ Make normal mode compatible with ru keymap
+" set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+let g:XkbSwitchLib = "/usr/local/lib/libxkbswitch.so"
+" echo libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')
+" call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'us')
+let g:XkbSwitchEnabled = 0
+let g:XkbSwitchLoadRIMappings = 0
+let g:XkbSwitchIMappings = ['ru']
+" }}}1
+
+" Scrolling options
+set scrolloff=7     " 7 lines above/below cursor when scrolling
+set scroll=7        " Number of lines scrolled by C-u / C-d
+
+" {{{1 Buffers/windows manipulation
 let g:buftabline_indicators=1 " show modified
 set hidden
-nnoremap <C-K> :bnext<CR>
-nnoremap <C-J> :bprev<CR>
-nnoremap <leader><F4> :bdelete<CR>
-nnoremap <leader>wh :only<cr>
-" switch between current and last buffer
+nnoremap <C-k> :bnext<CR>
+nnoremap <C-j> :bprev<CR>
+nnoremap <C-F4> :bdelete<CR>
+nnoremap <leader>wh :only<CR>
+" Switch between current and last buffer
 nmap <A-r> <C-^>
 " Reopen last closed buffer
 " let MRU_File = $HOME.'/.vim/mru_file'
 " let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
-" nmap <c-s-t> :MRU<cr><cr>
+" nmap <c-s-t> :MRU<CR><CR>
+""" }}}1
 
+" {{{1 tmux integration
+if exists('$TMUX')
+    " Prefix key
+    map ` <Nop>
+    " set termguicolors
+endif
+" }}}1
 
-""" Undo options {{{1
+" Undo options
 set undofile
 set undodir=$HOME/.vim/undo
 set undolevels=1000
 set undoreload=10000
 
-""" Integrate with system clipboard {{{1
+" Edit of files in the same directory
+cabbr %% <C-R>=expand('%:p:h')<CR>
+
+" Integrate with system clipboard
 set clipboard=unnamedplus,unnamed
 
-""" Keybinds settings {{{1
-set timeoutlen=200
+" Set working directory to the current file
+" set autochdir
+
+" Remove the Windows ^M - when the encodings gets messed up
+noremap <Leader>m mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
+
+" Open markdown *scratch*
+map <leader>x :e ~/Org/buffer.md<CR>
+
+" {{{1 Misc keybinds
+set timeoutlen=500
 inoremap jj <Esc>
 nnoremap <A-h> :noh<CR>
 " Insert newline without entering insert mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 " Reload vimrc
-nnoremap <leader>rr :so $MYVIMRC<CR>
+nnoremap <leader>rr :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
-" search visually selected
+" Search visually selected
 vnoremap // y/<C-R>"<CR>
-
-""" Keep selected text selected when fixing indentation {{{1
+" Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
+" Make C-S work as `Save`
+nmap <c-s> :w<CR>
+imap <c-s> <Esc>:w<CR>i
 
-""" Disable annoying arrows {{{1
+" Disable annoying arrows
 inoremap <Up> <Nop>
 inoremap <Down> <Nop>
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
+" }}}1
 
-" Relative or absolute number lines {{{1
+" Suppress auto-pairs bind
+let g:AutoPairsShortcutToggle = ''
+
+" Show matching brackets when text indicator is over them
+set showmatch
+
+" How many tenths of a second to blink when matching brackets
+set mat=1
+
+" Ignore compiled files
+set wildignore=*.o,*~,*.pyc
+
+" Toggle paste mode on and off
+map <leader>pp :setlocal paste!<CR>
+
+" {{{1 Switch between relative and absolute lines numering
 function! NumberToggle()
     if(&nu == 1)
         set nu!
@@ -170,31 +233,53 @@ function! NumberToggle()
     endif
 endfunction
 nnoremap <F9> :call NumberToggle()<CR>
+" }}}1
 
-""" Folding settings {{{1
+" {{{1 Defatul folding settings
 set foldmethod=syntax
 set foldnestmax=6
 set nofoldenable " disable folding when open file
 set foldlevel=2
 
-" Show current function {{{1
+" {{{2 Foldcolumn behaviour
+set foldcolumn=0
+function! ToggleFoldColumn()
+    if(&foldcolumn != 0)
+        set foldcolumn=0
+    else
+        set foldcolumn=3
+    endif
+endfunction
+nnoremap <leader>q :call ToggleFoldColumn()<CR>
+" }}}2
+" }}}1
+
+" {{{1 Show current function name
 nnoremap <A-q> :echo cfi#format("%s", "")<CR>
+" }}}1
+
+" {{{1 Display tags
 " nmap <A-7> :TlistToggle<CR>
+" }}}1
 
 " E45: 'readonly' option is set (add ! to override) {{{1
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+" }}}1
 
 " Create directories before write {{{1
 function! WriteCreatingDirs()
     execute ':silent !mkdir -p %:h'
 endfunction
 command! Mkw call WriteCreatingDirs()
+" }}}1
 
-""" Nerdcommenter settings {{{1
+" {{{1 Nerdcommenter settings
 let g:NERDSpaceDelims = 1
+let g:NERDRemoveExtraSpaces = 1
 let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
-" Commenting by <C-/> like pycharm
+let g:NERDAltDelims_c = 1
+" Commenting by <C-/> like Intellij
 if has('win32')
     nmap <C-/> <leader>c<Space>
     vmap <C-/> <leader>c<Space>
@@ -202,15 +287,30 @@ else
     nmap <C-_> <leader>c<Space>
     vmap <C-_> <leader>c<Space>
 endif
+" }}}1
 
-""" File manager {{{1
-map <A-1> :NERDTreeToggle<cr>
+" NERDTree: Free my keybinds
+" let g:NERDTreeMapJumpNextSibling = ''
+" let g:NERDTreeMapJumpPrevSibling = ''
+
+" Multiple cursors {{{1
+let g:multi_cursor_use_default_mapping=0
+let g:multi_cursor_start_word_key      = '<A-i>'
+let g:multi_cursor_select_all_word_key = '<A-u>'
+" let g:multi_cursor_start_key           = 'g<C-n>'
+" let g:multi_cursor_select_all_key      = 'g<A-n>'
+let g:multi_cursor_next_key            = '<A-i>'
+let g:multi_cursor_prev_key            = '<A-o>'
+let g:multi_cursor_skip_key            = '<A-q>'
+let g:multi_cursor_quit_key            = '<Esc>'
+" }}}1
+
+" {{{1 File manager
+map <A-1> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
-" map <A-2> :Ranger<cr>
-" let g:NERDTreeHijackNetrw=0
-" let g:ranger_replace_netrw=1
+" }}}1
 
-""" Easymotion {{{1
+" {{{1 Easymotion
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 map <A-;> <Plug>(easymotion-overwin-f)
 map <A-l> <Plug>(easymotion-overwin-line)
@@ -218,47 +318,55 @@ map <A-l> <Plug>(easymotion-overwin-line)
 let g:EasyMotion_smartcase = 1
 " Smartsign (type `3` and match `3`&`#`)
 let g:EasyMotion_use_smartsign_us = 1
+" }}}1
 
-""" Ag/Ack {{{1
-if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-endif
-map <leader>a :Ack!<space>
-
-""" FZF {{{1
-nmap <A-x> <plug>(fzf-maps-n)
-xmap <A-x> <plug>(fzf-maps-x)
-omap <A-x> <plug>(fzf-maps-o)
-" Motion/files
-nnoremap <leader>m :Marks<cr>
-nnoremap <leader>ff :Files<cr>
-nnoremap <leader>fs :Ag<cr>
-nnoremap <leader>fl :BLines<cr>
-nnoremap <leader>fp :Lines<cr>
-nnoremap <leader>ft :Tags<cr>
+" FZF settings {{{1
+let $FZF_DEFAULT_OPTS .= ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-c:cancel'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
+" Search vim keybinds
+nmap <A-z> <plug>(fzf-maps-n)
+xmap <A-z> <plug>(fzf-maps-x)
+omap <A-z> <plug>(fzf-maps-o)
+" Vim commands
+nnoremap <A-x> :Commands<CR>
+" List bookmarks
+nnoremap <leader>m :Marks<CR>
+" Files from current directory
+nnoremap <A-p> :Files<CR>
+" Ag search
+nnoremap <leader>fs :Ag<CR>
+" Search from tags in directory
+nnoremap <leader>ft :Tags<CR>
+" Tags from a current file
 nnoremap <A-7> :BTags<CR>
-" VCS
-nnoremap <leader>vc :Commits<cr>
-nnoremap <leader>vs :GFiles?<cr>
-" Buffers/windows
-nnoremap <leader>bl :Buffers<cr>
-nnoremap <leader>wl :Windows<cr>
+" Commit messages search
+nnoremap <leader>vc :Commits<CR>
+" Staging files search
+nnoremap <leader>vs :GFiles?<CR>
+" List openned buffers
+nnoremap <A-b> :Buffers<CR>
+" List openned windows
+nnoremap <leader>wl :Windows<CR>
+" }}}1
 
-""" Coding style general {{{1
+" {{{1 Default identation settings
 set tabstop=4
 set shiftwidth=4
 set expandtab  " on pressing tab insert 4 spaces
 autocmd Filetype css setlocal tabstop=4
 autocmd Filetype html setlocal tabstop=4
+" }}}1
 
-" 79+ characters line highlight {{{1
-highlight ColorColumn ctermbg=magenta
+" {{{1 79+ characters line highlight
+highlight ColorColumn ctermbg=132
 call matchadd('ColorColumn', '\%79v', 100)
+" }}}1
 
-""" Kernel settings {{{1
+" {{{1 Apply kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
+" }}}1
 
-""" Trailing whitespaces {{{1
+" {{{1 Trailing whitespaces
 " http://vim.wikia.com/wiki/Highlight_unwanted_spaces
 " Highlight
 highlight ExtraWhitespace ctermbg=red guibg=red
@@ -269,43 +377,26 @@ autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
 " Remove all trailing whitespaces
 nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+" }}}1
 
-""" ctags {{{1
+" ctags
 set tags=./tags;
 let g:ctags_statusline=1
 
-""" Linters setup {{{1
-""" Syntastics setup {{{2
-let g:syntastic_mode_map = { 'mode': 'passive', 'active_filetypes': [],'passive_filetypes': [] }
-let g:syntastic_c_checkers=['make','gcc']
-let g:syntastic_haskell_checkers = ['hdevtools', 'hlint', 'ghc_mod']
-let g:syntastic_loc_list_height=3
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 1
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-nnoremap <leader>lt :SyntasticCheck<CR> :SyntasticToggleMode<CR>
-nnoremap <leader>lc :SyntasticCheck<CR>
-nnoremap <leader>lr :SyntasticReset<CR>
-" ALE {{{2
-" let g:ale_use_deprecated_neovim = 1
-" let g:ale_lint_on_enter = 0
-" let g:ale_lint_on_text_changed = 'never'
-" let g:ale_linters = {
-"   \ 'c': ['gcc', 'make'] ,
-"   \ }
-" }}}2
-nnoremap ]e :lnext <CR>
-nnoremap [e :lprevious<CR>
+" Local project settings
+let g:localvimrc_enable = 1
+let g:localvimrc_ask = 0
+map <leader>l :e .lvimrc<CR>
 
-""" C settings {{{1
+" {{{1 C/C++ settings
 autocmd bufreadpre *.c setlocal textwidth=79
+autocmd bufreadpre *.cpp setlocal textwidth=79
 autocmd bufreadpre *.h setlocal textwidth=79
 autocmd bufreadpre *.h set filetype=c
+nmap <A-a> :A<CR>
+" }}}1
 
-nmap <leader>is :A<CR>
-
-""" Golang mode settings {{{1
+" {{{1 Golang mode settings
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_fields = 1
@@ -315,45 +406,99 @@ let g:go_highlight_build_constraints = 1
 au FileType go nmap <leader>r <plug>(go-run)
 au FileType go nmap <leader>d <plug>(go-doc)
 au FileType go nmap <leader>f <plug>(go-fmt)
+" }}}1
 
-""" Python settings {{{1
+" {{{1 Python settings
 "let g:python_highlight_all = 1
 "let g:python_highlight_space_errors=0
 
-""" Fix python imports order
+" Fix imports order
 autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
+" }}}1
 
-""" Conque term with ipython buffer
-nnoremap <Leader><F10> :ConqueTermSplit ipython<CR>
-nnoremap <Leader><F9> :exe ":ConqueTermSplit ipython " . expand("%")<CR>
-
-""" Markdown {{{1
-let vim_markdown_preview_github=1  " Support grip
-let vim_markdown_preview_hotkey='<leader><C-m>'
+" Markdown {{{1
+let vim_markdown_preview_github=0
+let vim_markdown_preview_hotkey='<leader>m'
+let vim_markdown_preview_browser='Chromium'
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
 let g:markdown_folding = 1
+" }}}1
 
-""" wildmenu options {{{1
+" {{{1 wildmenu: command line completion
 set wildmenu
 set wildmode=longest,list
+" }}}1
 
-""" MatIEC configuration {{{1
+" {{{1 MatIEC configuration
 let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
+" }}}1
 
-""" Snippets & autocomplition {{{1
-let g:UltiSnipsExpandTrigger="<M-i>"
-let g:UltiSnipsJumpForwardTrigger="<c-f>"
-let g:UltiSnipsJumpBackwardTrigger="<c-b>"
-let g:ycm_show_diagnostics_ui = 0
-let g:ycm_key_list_select_completion   = ['<C-n>']
-let g:ycm_key_list_previous_completion = ['<C-p>']
+" {{{1 Snippets
+let g:UltiSnipsExpandTrigger="A-i>"
+let g:UltiSnipsJumpForwardTrigger="<A-f>"
+let g:UltiSnipsJumpBackwardTrigger="<A-b>"
+" }}}1
 
-""" Timestamp routines {{{1
+" {{{1 Autocomplition
+let g:deoplete#enable_at_startup = 1
+inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
+inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+" }}}1
+
+" {{{1 LSP settings
+let g:LanguageClient_serverCommands = {
+    \ 'python': ['/usr/local/bin/pyls'],
+    \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
+    \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
+    \ }
+let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
+let g:LanguageClient_diagnosticsEnable = 1
+
+" Keybindings
+nnoremap ]e :cnext <CR>
+nnoremap [e :cprevious<CR>
+nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
+nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
+nn <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+
+" {{{2 Control how diagnostics messages are displayed.
+let g:LanguageClient_diagnosticsDisplay = {
+    \   1: {
+    \       "name": "Error",
+    \       "texthl": "ALEError",
+    \       "signText": ">>",
+    \       "signTexthl": "ALEErrorSign",
+    \   },
+    \   2: {
+    \       "name": "Warning",
+    \       "texthl": "ALEWarning",
+    \       "signText": "--",
+    \       "signTexthl": "ALEWarningSign",
+    \   },
+    \   3: {
+    \       "name": "Information",
+    \       "texthl": "ALEInfo",
+    \       "signText": "?i",
+    \       "signTexthl": "ALEInfoSign",
+    \   },
+    \   4: {
+    \       "name": "Hint",
+    \       "texthl": "ALEInfo",
+    \       "signText": "?h",
+    \       "signTexthl": "ALEInfoSign",
+    \   },}
+" }}}2
+" }}}1
+
+" {{{1 Datetime options
 " language time C
-nnoremap <leader><leader>t "=strftime("%Y-%m-%d")<CR>P
-inoremap <leader><leader>t <C-R>=strftime("%Y-%m-%d")<CR>
+nnoremap <C-c>. "=strftime("%Y-%m-%d")<CR>P
+inoremap <C-c>. <C-R>=strftime("%Y-%m-%d")<CR>
 " If buffer modified, update any 'Last modified: ' in the first 20 lines.
 " 'Last modified: ' can have up to 10 characters before (they are retained).
 " Restores cursor and window position using save_cursor variable.
@@ -368,29 +513,38 @@ function! LastModified()
   endif
 endfun
 autocmd BufWritePre * call LastModified()
-""" }}}1
+" }}}1
 
-""" Doxygen {{{1
-let g:DoxygenToolkit_commentType = "C"
+" {{{1 Doxygen
+let g:DoxygenToolkit_commentType = "C++"
+let g:DoxygenToolkit_compactOneLineDoc = "yes"
+let g:DoxygenToolkit_compactDoc = "yes"
+let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
+let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
 autocmd FileType c nnoremap <leader>d :Dox<CR>
-"""}}}1
+"}}}1
 
-""" Git workflow {{{1
+" {{{1 Git workflow
 let g:gitgutter_map_keys = 0
 nmap [v <Plug>GitGutterPrevHunk
 nmap ]v <Plug>GitGutterNextHunk
-nnoremap <leader>vv :GitGutterPreviewHunk<cr>
-nnoremap <leader>vu :GitGutterUndoHunk<cr>
+nnoremap <leader>vv :GitGutterPreviewHunk<CR>
+nnoremap <leader>vu :GitGutterUndoHunk<CR>
+" }}}1
 
-""" Sphinx & RST {{{1
+" {{{1 Sphinx & RST
+let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
+
 " autocmd bufreadpre *.rst setlocal textwidth=79
 autocmd FileType rst setlocal sw=2 ts=2 expandtab
 autocmd FileType rst setlocal textwidth=79
+
 " ASCII tables
 let g:table_mode_corner_corner='+'
 let g:table_mode_header_fillchar='='
+" }}}1
 
-""" Surround and quotes {{{1
+" {{{1 Surround and quotes
 " let g:surround_116 = "<<\r>>"
 " augroup textobj_quote
 "   autocmd!
@@ -399,9 +553,11 @@ let g:table_mode_header_fillchar='='
 "   autocmd FileType textile call textobj#quote#init()
 "   autocmd FileType text call textobj#quote#init({'educate': 0})
 " augroup END
+" }}}1
 
-" Spellchecking {{{1
-" set spell
-" autocmd BufRead,BufNewFile *.rst set spell spelllang=ru
+" {{{1 Spellchecking
+map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
+imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
+" }}}1
 
 " vim: foldmethod=marker sw=4

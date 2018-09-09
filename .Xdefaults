@@ -1,25 +1,37 @@
 ! General {{{1
-URxvt*saveLines: 5000
+URxvt*saveLines: 10000
 URxvt*scrollBar: false
-URxvt*font: xft:FantasqueSansMono:size=11:antialias=true:hinting=true,xft:Font Awesome:size=10
 URxvt.shading:       5
 
-Xft.autohint: 0
+! Scrolling settings {{{2
+URxvt*scrollTtyOutput:      false
+URxvt*scrollWithBuffer:     true
+URxvt*scrollTtyKeypress:    true
+! }}}2
+
+! URxvt*font: xft:FantasqueSansMono:size=13:antialias=true:hinting=true,xft:Font Awesome:size=10
+URxvt*font: xft:FantasqueSansMono Nerd Font:size=13:antialias=true:hinting=true
+Xft.autohint: 1
 Xft.lcdfilter: lcddefault
 Xft.hintstyle: hintfull
 Xft.hinting: 1
 Xft.antialias: 1
 Xft.dpi: 96
 Xft.rgba: rgb
+! Fix font spacing
+URxvt.letterSpace: -1
 
 Xcursor.theme: Breeze
 Xcursor.size: 16
+! }}}1
+
+URxvt:meta8: False
 
 !! Perl extensions {{{1
 URxvt.perl-lib          : /home/jubnzv/.local/opt/urxvt-perls/
 URxvt.perl-ext-common   : default,matcher,keyboard-select,resize-font
 !! Matcher
-URxvt.urlLauncher       : firefox
+URxvt.urlLauncher       : chromium
 URxvt.matcher.button    : 1
 !! Keboard-select
 URxvt.keysym.M-Tab      : perl:keyboard-select:activate
@@ -31,8 +43,8 @@ URxvt.keysym.M-Tab      : perl:keyboard-select:activate
 
 !! Color scheme {{{1
 ! hard contrast: *background: #1d2021
-*background: #282828
-!! soft contrast: *background: #32302f
+! normal: *background: #282828
+*background: #32302f
 *foreground: #ebdbb2
 !! Black + DarkGrey
 *color0:  #282828

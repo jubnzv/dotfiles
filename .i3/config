@@ -1,5 +1,6 @@
 # Global variables
 set $TERMINAL urxvt
+# set $TERMINAL alacritty
 set $HOME 		  /home/jubnzv/
 set $I3LOCKBG     /home/jubnzv/.i3/i3lock.png
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
@@ -7,7 +8,7 @@ set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
 set $SCRIPTS_PATH /home/jubnzv/.local/scripts
 
 # Applications from ~/.local/opt
-set $APP_JBTOOLBOX $HOME/.local/bin/jetbrains-toolbox
+set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 set $APP_TELEGRAM $HOME/.local/bin/Telegram
 set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
 set $APP_THUNDERBIRD $HOME/.local/bin/thunderbird
@@ -49,6 +50,7 @@ workspace "13$tile_13_msg" output $display1
 workspace "14$tile_14_music" output $display1
 
 # Autostart
+exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/keys.sh
 exec --no-startup-id $SCRIPTS_PATH/dual.sh
@@ -85,9 +87,11 @@ for_window [window_type="menu"] floating enable
 for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
-for_window [title="^xev$"] layout floating
+for_window [title="^xev$"] floating enable
 for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
 for_window [title="^Run" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
+for_window [class="jetbrains-toolbox"] floating enable
+for_window [window_role="GtkFileChooserDialog"] floating enable, resize set 800 600, move center, focus
 
 # Keybindings
 set $mod Mod4
@@ -98,6 +102,7 @@ bindsym $mod+Shift+less kill
 bindsym $mod+F11 fullscreen
 bindsym $mod+Escape layout toggle
 bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+B border toggle
 
 # Workspaces
 #bindsym $mod+bracketleft workspace prev
@@ -161,18 +166,17 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 # bindsym $mod+backslash split vertical
 
 # Application startup hotkeys
-bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
-bindsym $mod+Control+t workspace 3$tile_03_e; exec $TERMINAL -e tmux
-bindsym $mod+Return exec $TERMINAL
+bindsym $mod+Control+q exec $TERMINAL -e nvim
 #bindsym $mod+Control+q workspace 1$tile_01_q; exec emacs25
+bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
+bindsym $mod+Return exec $TERMINAL
+bindsym $mod+Control+t exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
-# bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
-bindsym $mod+Control+y exec cd ~/.local/opt/XMind/XMind_amd64 && ./XMind
 bindsym $mod+Control+i exec $TERMINAL -e ipython
 bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
 
@@ -186,6 +190,7 @@ bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
 bindsym XF86MonBrightnessDown exec xbacklight -dec 7 &&  pkill -RTMIN+2 i3blocks # decrease screen brightness
+bindsym $mod+F7 exec sleep 1 && xset dpms force off
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
@@ -194,12 +199,13 @@ bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-mo
 bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
  bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
- bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
- # bindsym XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
+bindsym Control+XF86Launch1 exec screengrab -r
+#bindsym XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
-bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5
+bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
 bindsym $mod+XF86ScreenSaver exec xset s activate
-bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`"
+bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
 
 # cmus control
