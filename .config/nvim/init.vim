@@ -20,14 +20,12 @@ Plug 'https://github.com/junegunn/fzf', {
 " }}}2
 
 " {{{2 UI & appearance
-Plug 'https://github.com/itchyny/lightline.vim'   " Modeline plugin
+Plug 'https://github.com/vim-airline/vim-airline'
 Plug 'https://github.com/morhetz/gruvbox'         " Color scheme
-Plug 'https://github.com/ap/vim-buftabline'       " Show buffers in the tabline
 Plug 'https://github.com/chrisbra/Colorizer'      " Color colornames and codes
 Plug 'https://github.com/Yggdroot/indentLine'     " Show identation as vertical lines
 Plug 'https://github.com/junegunn/goyo.vim'       " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'  " `Hyperfocused writing`
-" Plug 'https://github.com/ryanoasis/vim-devicons'  " DevIcons support
 " }}}2
 
 " Markdown/configuration/documentation formats {{{2
@@ -38,8 +36,8 @@ Plug 'https://github.com/chr4/nginx.vim'                 " Nginx configuration f
 Plug 'https://github.com/othree/xml.vim'                 " Extended XML/XSD features
 Plug 'https://github.com/dhruvasagar/vim-table-mode'     " Simplifies plain text tables creation
 Plug 'https://github.com/lervag/vimtex'                  " LaTeX support
-Plug 'https://github.com/gu-fan/riv.vim'                 " .rst extension
-" Plug 'https://github.com/plasticboy/vim-markdown'        " Extended markdown support
+Plug 'https://github.com/plasticboy/vim-markdown'        " Extended markdown support
+" Plug 'https://github.com/SidOfc/mkdx'                    " Markdown extensions
 " }}}2
 
 " Coding tools {{{2
@@ -68,6 +66,8 @@ Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel style settings
 Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
 Plug 'https://github.com/fatih/vim-go'
 Plug '~/Dev/IEC.vim'                                    " IEC 61131-3 support
+Plug 'https://github.com/junegunn/vader.vim'            " vimscript testing framework
+Plug 'https://github.com/Kuniwak/vint'                  " vimscript linter
 " }}}3
 " }}}2
 
@@ -87,43 +87,37 @@ set t_Co=256       " 256-colors mode
 colorscheme gruvbox
 set title          " Show window title
 
-" {{{2 Modeline
-let g:lightline = {
-      \ 'colorscheme': 'gruvbox',
-      \ 'active': {
-      \   'left':  [ [ 'mode', 'paste' ],
-      \              [ 'readonly', 'filename', 'modified' ] ],
-      \   'right': [ [ 'lineinfo' ],
-      \              [ 'percent' ],
-      \              [ 'fileformat', 'fileencoding', 'filetype' ],
-      \              [ 'gitbranch' ] ],
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'fugitive#head'
-      \ },
-      \ }
+" {{{2 Airline
+set showtabline=2
+let g:airline#extensions#tabline#enabled = 1
+let g:airline_powerline_fonts = 0
+let g:airline_left_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_sep = ''
+let g:airline_right_alt_sep = ''
 " }}}2
 
 " {{{2 `Zen mode`
 map <F11> :Goyo<CR>
 
-" function! s:goyo_enter()
-"   set scrolloff=999
-"   Limelight
-" endfunction
+function! s:goyo_enter()
+  " set scrolloff=999
+  Limelight
+endfunction
 
-" function! s:goyo_leave()
-"   set scrolloff=5
-"   Limelight!
-" endfunction
+function! s:goyo_leave()
+  " set scrolloff=5
+  Limelight!
+endfunction
 
-" autocmd! User GoyoEnter nested call <SID>goyo_enter()
-" autocmd! User GoyoLeave nested call <SID>goyo_leave()
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " }}}2
 " }}}1
 
 " 1{{{ Make normal mode compatible with ru keymap
 " set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+" set keymap=russian-jcukenwin
 let g:XkbSwitchLib = "/usr/local/lib/libxkbswitch.so"
 " echo libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')
 " call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'us')
@@ -137,7 +131,6 @@ set scrolloff=7     " 7 lines above/below cursor when scrolling
 set scroll=7        " Number of lines scrolled by C-u / C-d
 
 " {{{1 Buffers/windows manipulation
-let g:buftabline_indicators=1 " show modified
 set hidden
 nnoremap <C-k> :bnext<CR>
 nnoremap <C-j> :bprev<CR>
@@ -205,6 +198,12 @@ inoremap <Up> <Nop>
 inoremap <Down> <Nop>
 inoremap <Left> <Nop>
 inoremap <Right> <Nop>
+
+" Fix some common typos
+cnoreabbrev W w
+cnoreabbrev X x
+cnoreabbrev Q q
+cnoreabbrev E e
 " }}}1
 
 " Suppress auto-pairs bind
@@ -254,13 +253,8 @@ nnoremap <leader>q :call ToggleFoldColumn()<CR>
 " }}}2
 " }}}1
 
-" {{{1 Show current function name
+" Show current function name
 nnoremap <A-q> :echo cfi#format("%s", "")<CR>
-" }}}1
-
-" {{{1 Display tags
-" nmap <A-7> :TlistToggle<CR>
-" }}}1
 
 " E45: 'readonly' option is set (add ! to override) {{{1
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
@@ -358,8 +352,9 @@ autocmd Filetype html setlocal tabstop=4
 " }}}1
 
 " {{{1 79+ characters line highlight
-highlight ColorColumn ctermbg=132
-call matchadd('ColorColumn', '\%79v', 100)
+highlight ColorColumn ctermbg=236
+" call matchadd('ColorColumn', '\%79v', 100)
+set colorcolumn=79
 " }}}1
 
 " {{{1 Apply kernel settings
@@ -413,16 +408,29 @@ au FileType go nmap <leader>f <plug>(go-fmt)
 "let g:python_highlight_space_errors=0
 
 " Fix imports order
-autocmd FileType python nnoremap <Leader>i :!isort %<CR><CR>
+autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
 " }}}1
 
 " Markdown {{{1
 let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>m'
 let vim_markdown_preview_browser='Chromium'
+
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
 let g:markdown_folding = 1
+
+" Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
+let g:vim_markdown_math = 1
+
+" let g:mkdx#settings = { 'highlight': { 'enable': 1 },
+"                     \ 'enter': { 'shift': 1 },
+"                     \ 'links': { 'external': { 'enable': 1 } },
+"                     \ 'toc': { 'text': 'Table of Contents', 'update_on_write': 1 },
+"                     \ 'fold': { 'enable': 1 },
+"                     \ 'map': { 'prefix': '<leader>' }}
+
+nnoremap <leader>mt :Toch<CR>
 " }}}1
 
 " {{{1 wildmenu: command line completion
@@ -436,7 +444,7 @@ let matiec_mkbuilddir = 1
 " }}}1
 
 " {{{1 Snippets
-let g:UltiSnipsExpandTrigger="A-i>"
+let g:UltiSnipsExpandTrigger="<A-i>"
 let g:UltiSnipsJumpForwardTrigger="<A-f>"
 let g:UltiSnipsJumpBackwardTrigger="<A-b>"
 " }}}1
@@ -462,9 +470,14 @@ let g:LanguageClient_diagnosticsEnable = 1
 nnoremap ]e :cnext <CR>
 nnoremap [e :cprevious<CR>
 nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
+" Symbol definition, similar to C-]
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+" Symbol implementation
+nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
 nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
-nn <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+" All available symbols from curent project
+nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
 
 " {{{2 Control how diagnostics messages are displayed.
 let g:LanguageClient_diagnosticsDisplay = {
@@ -533,15 +546,15 @@ nnoremap <leader>vu :GitGutterUndoHunk<CR>
 " }}}1
 
 " {{{1 Sphinx & RST
-let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
+" let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
 
 " autocmd bufreadpre *.rst setlocal textwidth=79
 autocmd FileType rst setlocal sw=2 ts=2 expandtab
 autocmd FileType rst setlocal textwidth=79
 
 " ASCII tables
-let g:table_mode_corner_corner='+'
-let g:table_mode_header_fillchar='='
+" let g:table_mode_corner_corner='+'
+" let g:table_mode_header_fillchar='='
 " }}}1
 
 " {{{1 Surround and quotes
