@@ -9,8 +9,8 @@ URxvt*scrollWithBuffer:     true
 URxvt*scrollTtyKeypress:    true
 ! }}}2
 
-! URxvt*font: xft:FantasqueSansMono:size=13:antialias=true:hinting=true,xft:Font Awesome:size=10
-URxvt*font: xft:FantasqueSansMono Nerd Font:size=13:antialias=true:hinting=true
+! URxvt*font: xft:FantasqueSansMono:size=13:antialias=true:hinting=true,xft:Font Awesome:size=13
+URxvt*font: xft:FantasqueSansMono Nerd Font:size=13:antialias=true:hinting=true:minspace=False
 Xft.autohint: 1
 Xft.lcdfilter: lcddefault
 Xft.hintstyle: hintfull

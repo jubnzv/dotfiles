@@ -100,7 +100,7 @@ set $mod Mod4
 bindsym $mod+Shift+C kill
 bindsym $mod+Shift+less kill
 bindsym $mod+F11 fullscreen
-bindsym $mod+Escape layout toggle
+bindsym $mod+Escape layout toggle tabbed splith
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Shift+B border toggle
 
@@ -167,7 +167,7 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
 bindsym $mod+Control+q exec $TERMINAL -e nvim
-#bindsym $mod+Control+q workspace 1$tile_01_q; exec emacs25
+# bindsym $mod+Control+q workspace 1$tile_01_q; exec $TERMINAL -e emacs -nw
 bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+t exec $TERMINAL -e tmux
@@ -177,8 +177,6 @@ bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
-bindsym $mod+Control+i exec $TERMINAL -e ipython
-bindsym $mod+Control+k exec $TERMINAL -e $SCRIPTS_PATH/run_codi.sh
 
 # $mod + mousescroll binds
 # bindsym --whole-window --border $mod+button4 workspace next
@@ -280,12 +278,12 @@ mode --pango_markup "$mode_exec_apps" {
 # Power control
 set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'>Power management</span>\t\t\
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[S]</span><span fgcolor='#d5c4a1'>  poweroff\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[r]</span><span fgcolor='#d5c4a1'>  reboot\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[R]</span><span fgcolor='#d5c4a1'>  reboot\t</span>  \
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[s]</span><span fgcolor='#d5c4a1'>  sleep</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
 	bindsym Shift+s     exec systemctl poweroff; mode "default"
-	bindsym r           exec systemctl reboot; mode "default"
+	bindsym R           exec systemctl reboot; mode "default"
 	bindsym s           exec systemctl suspend; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
@@ -303,6 +301,20 @@ mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym e           exec i3-msg "exit"; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
+}
+
+# Run selected Python REPL
+set $mode_run_python <span bgcolor='#282828' fgcolor='#d79921'>Python</span>\t\t\
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span><span fgcolor='#d5c4a1'> ipython2\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span><span fgcolor='#d5c4a1'> ipython3\t</span>  \
+<span bgcolor='#d5c4a1' fgcolor='#282828'>[b]</span><span fgcolor='#d5c4a1'> bpython</span>
+bindsym $mod+Control+i mode "$mode_run_python"
+mode --pango_markup "$mode_run_python" {
+    bindsym 2       exec $TERMINAL -e ipython; mode "default"
+    bindsym 3       exec $TERMINAL -e ipython3; mode "default"
+    bindsym b       exec $TERMINAL -e bpython; mode "default"
+	bindsym Return  mode "default"
+	bindsym Escape  mode "default"
 }
 
 # Main bar

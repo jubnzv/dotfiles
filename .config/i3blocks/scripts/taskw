@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Simple script that shows number of active taskwarrior tasks.
+# Pango markup is required to show different colors.
+#
+
+# COLOR_OK="#98971a"
+COLOR_WARN="#b57614"
+
+t_due="$(task due.before:1w _unique id | wc -l)"
+t_sched="$(task scheduled.before:1w count)"
+t_overdue="$(task +OVERDUE count)"
+
+# Full text
+echo "${t_sched}:${t_due}"
+
+# Short text
+echo "${t_due}"
+
+# Color
+if [ ${t_due} -gt 0 ]; then
+    echo $COLOR_WARN
+else
+    echo ""
+fi

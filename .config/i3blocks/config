@@ -9,25 +9,24 @@ separator_block_width=8
 #
 # Widgets
 #
-#
 
 [volume]
 label=
-instance=Master
 command=~/.config/i3blocks/scripts/volume
+instance=Master
 interval=once
 signal=1
 
-[wifi]
-label=
-command=~/.config/i3blocks/scripts/wifi
-instance=wls1
-interval=7
+[brightness]
+label=
+command=~/.config/i3blocks/scripts/brightness
+interval=once
+signal=2
 
 [disk-root]
 label=
-instance=/
 command=~/.config/i3blocks/scripts/disk
+instance=/
 interval=120
 
 [memory]
@@ -40,27 +39,20 @@ label=
 command=~/.config/i3blocks/scripts/cpu_usage
 interval=10
 min_width=100.00%
-separator=false
 
 [temp]
 label=
 command=~/.config/i3blocks/scripts/temperature
 interval=60
 
-[brightness]
-label=
-command=~/.config/i3blocks/scripts/brightness
-interval=once
-signal=2
-
-# [openvpn]
-# label=
-# command=~/.config/i3blocks/scripts/openvpn
-# interval=20
-
 [battery]
 command=~/.config/i3blocks/scripts/battery
 interval=30
+
+[taskw]
+label=
+command=~/.config/i3blocks/scripts/taskw
+interval=60
 
 #
 # Currently unused
@@ -128,3 +120,15 @@ interval=30
 # command=xtitle
 # interval=5
 # color=#ffffff
+
+# [wifi]
+# label=
+# command=~/.config/i3blocks/scripts/wifi
+# instance=wlp3s0
+# interval=7
+
+# [openvpn]
+# label=
+# command=~/.config/i3blocks/scripts/openvpn
+# interval=20
+
