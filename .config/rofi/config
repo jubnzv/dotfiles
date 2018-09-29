@@ -13,5 +13,5 @@ rofi.ssh-command:   {terminal} -e {ssh-client} {host}
 ! Keybinds
 rofi.kb-row-up:         Alt+k,Up,Control+p
 rofi.kb-row-down:       Alt+j,Down,Control+n
-rofi.kb-accept-entry:   Alt+m,Control+m
+rofi.kb-accept-entry:   Alt+m,Control+m,Return
 rofi.kb-cancel:         Escape,Control+g,Alt+q

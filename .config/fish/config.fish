@@ -43,9 +43,7 @@ set fish_escape_delay_ms 100
 set LESS '-RS#3NM~g'
 
 # {{{ Aliases
-alias vim='nvim'
-alias vi='nvim'
-alias v='nvim'
+# {{{2 common
 alias agp='ag --pager="less -r"'
 alias agn='ag -n'
 alias agr='ag -r'
@@ -57,12 +55,33 @@ alias pl='dirs -v'
 alias pc='dirs -c'
 alias s='sudo'
 alias svim='sudoedit'
+# 2}}}
+
+# {{{2 X apps
 alias zt='zathura'
 alias mrg='mirage'
+# 2}}}
+
+# {{{2 vim
+alias vim='nvim'
+alias vi='nvim'
+alias v='nvim'
+# 2}}}
+
+# {{{2 ctags
 alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
+# 2}}}
+
+# {{{2 taskwarrior
 alias t='task'
+alias tdw="task due.before:eow list"
+alias tdd="task due:today list"
+alias tsw="task scheduled.before:eow list"
+alias tsd="task scheduled:today list"
+alias ta="task add"
+# 2}}}
 # }}}
 
 # cscope

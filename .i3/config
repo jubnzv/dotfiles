@@ -1,11 +1,15 @@
 # Global variables
 set $TERMINAL urxvt
-# set $TERMINAL alacritty
 set $HOME 		  /home/jubnzv/
 set $I3LOCKBG     /home/jubnzv/.i3/i3lock.png
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
 set $SCRIPTS_PATH /home/jubnzv/.local/scripts
+
+# Multi-monitor setup
+set $display1 LVDS1
+set $display2 HDMI3
+set $display3 VGA1
 
 # Applications from ~/.local/opt
 set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
@@ -28,11 +32,6 @@ set $tile_11_3 <b>◲</b>
 set $tile_12_4 <b>◱</b>
 set $tile_13_msg <b></b>
 set $tile_14_music <b></b>
-
-# Multi-monitor setup
-set $display1 LVDS1
-set $display2 HDMI3
-set $display3 VGA1
 
 workspace "1$tile_01_q" output $display1
 workspace "2$tile_02_w" output $display1
@@ -88,8 +87,8 @@ for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^xev$"] floating enable
-for_window [title="^Debug" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
-for_window [title="^Run" class="jetbrains-pycharm-ce"] floating disable, move container to workspace 10$tile_10_2
+for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
+for_window [title="^Run" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [class="jetbrains-toolbox"] floating enable
 for_window [window_role="GtkFileChooserDialog"] floating enable, resize set 800 600, move center, focus
 
@@ -234,8 +233,6 @@ bindsym $mod+s scratchpad show
 bindsym Shift+F4 [class=".*"] border pixel 5
 bindsym Shift+F4 --release [class=".*"] border none
 
-# Exec-binds
-#
 # Multi-monitor control
 set $mode_exec_xrandr <span fgcolor='#d5c4a1'>Display options:</span>\t \
 <span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'></span>\t  \

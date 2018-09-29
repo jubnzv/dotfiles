@@ -16,6 +16,9 @@ Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/rhysd/clever-f.vim'             " Convient `f` / `F`
 " Plug 'https://github.com/christoomey/vim-tmux-navigator'
 " Plug 'https://github.com/benmills/vimux'
+Plug 'https://github.com/Shougo/vimproc.vim', {
+    \ 'do' : 'make'
+    \ }
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/junegunn/fzf', {
     \ 'dir': '~/.local/opt/fzf',
@@ -32,6 +35,7 @@ Plug 'https://github.com/Yggdroot/indentLine'      " Show identation as vertical
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementaly highlight search results
 Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " `Hyperfocused writing`
+Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 " }}}2
 
 " {{{2 Text editing
@@ -55,7 +59,8 @@ Plug 'https://github.com/godlygeek/tabular'          " Create fancy tabularized 
 Plug 'https://github.com/majutsushi/tagbar'          " Display sorted tags in a window
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/terryma/vim-expand-region'
+Plug 'https://github.com/terryma/vim-expand-region'  " Visually select increasingly larger regions
+Plug 'https://github.com/ludovicchabant/vim-gutentags'
 Plug 'https://github.com/Shougo/neosnippet.vim'
 Plug 'https://github.com/Shougo/neosnippet-snippets'
 Plug 'autozimu/LanguageClient-neovim', {
@@ -155,6 +160,9 @@ set iskeyword+=-
 " Don't display the intro message on starting Vim.
 set shortmess+=I
 
+" Remove delay between complex keybinds. Required for `vim-which-key`.
+set notimeout
+
 " 1{{{ Make normal mode compatible with ru keymap
 " set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 " set keymap=russian-jcukenwin
@@ -171,7 +179,10 @@ set hidden
 nnoremap <C-k> :bnext<CR>
 nnoremap <C-j> :bprev<CR>
 nnoremap <C-F4> :bdelete<CR>
-nnoremap <leader>wh :only<CR>
+nnoremap <C-x>1 :only<CR>
+nnoremap <C-x>2 :split<CR>
+nnoremap <C-x>3 :vsplit<CR>
+nnoremap <C-x>o <C-w><C-w><CR>
 " Switch between current and last buffer
 nmap <A-r> <C-^>
 " Reopen last closed buffer
@@ -222,7 +233,7 @@ nmap zj o<Esc>k
 nmap zk O<Esc>j
 
 " Reload vimrc
-nnoremap <leader>rr :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <leader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Free <F1>
 nmap <F1> :echo <CR>
@@ -453,7 +464,7 @@ let g:pymode_python = 'python3'
 
 " Markdown {{{1
 let vim_markdown_preview_github=0
-let vim_markdown_preview_hotkey='<leader>m'
+let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
@@ -507,6 +518,7 @@ let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 " Keybindings
 nnoremap ]e :cnext <CR>
 nnoremap [e :cprevious<CR>
+" Show hover info
 nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
 " Symbol definition, similar to C-]
 nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
@@ -583,15 +595,134 @@ nmap ]v <Plug>GitGutterNextHunk
 nnoremap <leader>vv :GitGutterPreviewHunk<CR>
 nnoremap <leader>vu :GitGutterUndoHunk<CR>
 
-" {{{1 Sphinx & RST
+" Sphinx & RST
 let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
-
 autocmd FileType rst setlocal sw=2 ts=2 expandtab
 autocmd FileType rst setlocal textwidth=79
-" }}}1
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
+
+" {{{1 which-key: redundant long keybindinds with mnemonics.
+" Use it only when forget shorter keybind.
+"
+" Define prefix dictionary
+let g:which_key_map =  {}
+
+let g:which_key_map.l = {
+      \ 'name' : '+lsp'                                            ,
+      \ 'f' : ['LanguageClient#textDocument_formatting()'     , 'formatting']       ,
+      \ 'h' : ['LanguageClient#textDocument_hover()'          , 'hover']            ,
+      \ 'r' : ['LanguageClient#textDocument_references()'     , 'references']       ,
+      \ 'R' : ['LanguageClient#textDocument_rename()'         , 'rename']           ,
+      \ 's' : ['LanguageClient#textDocument_documentSymbol()' , 'document-symbol']  ,
+      \ 'S' : ['LanguageClient#workspace_symbol()'            , 'workspace-symbol'] ,
+      \ 'g' : {
+        \ 'name': '+goto',
+        \ 'd' : ['LanguageClient#textDocument_definition()'     , 'definition']       ,
+        \ 't' : ['LanguageClient#textDocument_typeDefinition()' , 'type-definition']  ,
+        \ 'i' : ['LanguageClient#textDocument_implementation()'  , 'implementation']  ,
+        \ },
+      \ }
+
+let g:which_key_map.g = {
+      \ 'name' : '+git',
+      \ 'c' : ['Gcommit', 'commit'],
+      \ 's' : ['Gstatus', 'status'],
+      \ 'b' : ['Gblame', 'blame'],
+      \ 'd' : ['Gdiff', 'diff'],
+      \ 'f' : ['Gfetch', 'fetch'] ,
+      \ 'p' : ['Gpull', 'pull'] ,
+      \ 'P' : ['Gpush', 'pull'] ,
+      \ 'r' : ['Grebase', 'rebase'] ,
+      \ 'm' : ['Gmerge', 'merge'] ,
+      \ 'D' : ['Gdelete', 'delete'],
+      \ 'e' : ['Gedit', 'edit'] ,
+      \ 'M' : ['Gmove', 'move'] ,
+      \ }
+
+let g:which_key_map.r = {
+      \ 'name' : '+riv',
+      \ 'i' : ['RivProjectIndex', 'index'],
+      \ 'r' : ['RivReload', 'reload'],
+      \ 't' : {
+        \ 'name': '+title',
+        \ '0' : ['RivTitle0', '0'],
+        \ '1' : ['RivTitle0', '1'],
+        \ '2' : ['RivTitle0', '2'],
+        \ '3' : ['RivTitle0', '3'],
+        \ '4' : ['RivTitle0', '4'],
+        \ '5' : ['RivTitle0', '5'],
+        \ '6' : ['RivTitle0', '6'],
+        \ },
+      \ 'o' : {
+        \ 'name': '+todo',
+        \ 'a' : ['RivTodoAsk', 'ask'],
+        \ 'd' : ['RivTodoDate', 'date'],
+        \ 'D' : ['RivTodoDel', 'delete'],
+        \ 'p' : ['RivTodoPrior', 'priority'],
+        \ 't' : ['RivTodoToggle', 'toggle'],
+        \ 'u' : ['RivTodoUpdateCache', 'update'],
+        \ '1' : ['RivTodoType1', 'type: [  ] '],
+        \ '2' : ['RivTodoType2', 'type: TODO '],
+        \ '3' : ['RivTodoType2', 'type: FIXME'],
+        \ '4' : ['RivTodoType4', 'type: START'],
+        \ },
+      \ 'a' : {
+        \ 'name': '+table',
+        \ 'c' : ['RivTableCreate', 'create'],
+        \ 'f' : ['RivTableFormat', 'format'],
+        \ 'n' : ['RivTableNextCell', 'next cell'],
+        \ 'p' : ['RivTablePrevCell', 'prev cell'],
+        \ },
+      \ 'l' : {
+        \ 'name': '+list',
+        \ 't' : ['RivListToggle', 'toggle'],
+        \ 'd' : ['RivListDelete', 'delete'],
+        \ 'n' : ['RivListNew', 'new'],
+        \ 'b' : ['RivListSub', 'sub'],
+        \ 'p' : ['RivListSup', 'sup'],
+        \ '0' : ['RivListType0', 'type: * '],
+        \ '1' : ['RivListType1', 'type: 1.'],
+        \ '2' : ['RivListType2', 'type: a.'],
+        \ '3' : ['RivListType3', 'type: A)'],
+        \ '4' : ['RivListType4', 'type: i)'],
+        \ },
+      \ 'c' : {
+        \ 'name': '+create',
+        \ 'c' : ['RivCreateContent', 'content'],
+        \ 'd' : ['RivCreateDate', 'date'],
+        \ 'e' : ['RivCreateEmphasis', 'emphasis'],
+        \ 'm' : ['RivCreateExplicitMark', 'mark'],
+        \ 'f' : ['RivCreateFoot', 'foot'],
+        \ 'g' : ['RivCreateGitLink', 'git link'],
+        \ 'h' : ['RivCreateHyperLink', 'hyperlink'],
+        \ 'i' : ['RivCreateInterpreted', 'interpreted'],
+        \ 'l' : ['RivCreateLink', 'link'],
+        \ 'B' : ['RivCreateLiteralBlock', 'code block'],
+        \ 'I' : ['RivCreateLiteralInline', 'code inline'],
+        \ 's' : ['RivCreateStrong', 'strong'],
+        \ 't' : ['RivCreateTime', 'time'],
+        \ 'T' : ['RivCreateTransition', 'transition'],
+        \ },
+      \ 'h' : {
+        \ 'name': '+help',
+        \ 'd' : ['RivDirectives', 'directives'],
+        \ 'q' : ['RivQuickStart', 'quick start'],
+        \ 'f' : ['RivHelpFile', 'file?'],
+        \ 's' : ['RivHelpSection', 'section?'],
+        \ 't' : ['RivHelpTodo', 'todo?'],
+        \ 'p' : ['RivPrimer', 'primer'],
+        \ 'S' : ['RivSpecification', 'specification'],
+        \ 'i' : ['RivInstruction', 'instruction'],
+        \ 'I' : ['RivIntro', 'intro'],
+        \ },
+      \ }
+
+call which_key#register('<Space>', "g:which_key_map")
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
+" 1}}}
 
 " vim: foldmethod=marker sw=4
