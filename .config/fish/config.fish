@@ -44,6 +44,7 @@ set LESS '-RS#3NM~g'
 
 # {{{ Aliases
 # {{{2 common
+alias ag='ag --path-to-ignore ~/.agignore'
 alias agp='ag --pager="less -r"'
 alias agn='ag -n'
 alias agr='ag -r'
@@ -76,9 +77,9 @@ alias ct='ctags -R --exclude=.git -f tags'
 
 # {{{2 taskwarrior
 alias t='task'
-alias tdw="task due.before:eow list"
+alias tdw="task due.before:eow+1d list"
 alias tdd="task due:today list"
-alias tsw="task scheduled.before:eow list"
+alias tsw="task scheduled.before:eow+1d list"
 alias tsd="task scheduled:today list"
 alias ta="task add"
 # 2}}}

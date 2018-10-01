@@ -16,9 +16,6 @@ Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/rhysd/clever-f.vim'             " Convient `f` / `F`
 " Plug 'https://github.com/christoomey/vim-tmux-navigator'
 " Plug 'https://github.com/benmills/vimux'
-Plug 'https://github.com/Shougo/vimproc.vim', {
-    \ 'do' : 'make'
-    \ }
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/junegunn/fzf', {
     \ 'dir': '~/.local/opt/fzf',
@@ -649,12 +646,12 @@ let g:which_key_map.r = {
       \ 't' : {
         \ 'name': '+title',
         \ '0' : ['RivTitle0', '0'],
-        \ '1' : ['RivTitle0', '1'],
-        \ '2' : ['RivTitle0', '2'],
-        \ '3' : ['RivTitle0', '3'],
-        \ '4' : ['RivTitle0', '4'],
-        \ '5' : ['RivTitle0', '5'],
-        \ '6' : ['RivTitle0', '6'],
+        \ '1' : ['RivTitle1', '1'],
+        \ '2' : ['RivTitle2', '2'],
+        \ '3' : ['RivTitle3', '3'],
+        \ '4' : ['RivTitle4', '4'],
+        \ '5' : ['RivTitle5', '5'],
+        \ '6' : ['RivTitle6', '6'],
         \ },
       \ 'o' : {
         \ 'name': '+todo',

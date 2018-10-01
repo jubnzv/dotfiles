@@ -1,0 +1,17 @@
+let configpath = '~/.cvimrc'
+let blacklists = ["https://cloud.digitalocean.com/*"]
+set cncpcompletion
+
+" Mappings
+let mapleader = " "
+map <A-r> lastUsedTab
+map <C-F4> closeTab
+map <leader>d :duplicate<CR>
+map sb :bookmarks<Space>
+map <leader>R :source ~/.cvimrc<CR>
+
+"Search image on google
+map si reverseImage
+
+"Set mark
+map m setMark

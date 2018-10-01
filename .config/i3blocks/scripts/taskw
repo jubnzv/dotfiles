@@ -7,8 +7,8 @@
 # COLOR_OK="#98971a"
 COLOR_WARN="#b57614"
 
-t_due="$(task due.before:eow _unique id | wc -l)"
-t_sched="$(task scheduled.before:eow _unique id | wc -l)"
+t_due="$(task due.before:eow+1d _unique id | wc -l)"
+t_sched="$(task scheduled.before:eow+1d _unique id | wc -l)"
 t_overdue="$(task +OVERDUE count)"
 
 # Full text

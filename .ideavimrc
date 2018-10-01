@@ -35,7 +35,7 @@ nnoremap zR :action ExpandAll<cr>
 nnoremap zM :action CollapsAll<cr>
 
 " Reload .ideavimrc
-nnoremap <leader>rr :source ~/.ideavimrc<cr>
+nnoremap <leader>R :source ~/.ideavimrc<cr>
 
 " Search routines
 nnoremap <leader>fs :action FindInPath<cr>
