@@ -5,7 +5,7 @@
 #
 
 # COLOR_OK="#98971a"
-COLOR_WARN="#b57614"
+COLOR_WARN="#d79921"
 
 t_due="$(task due.before:eow+1d _unique id | wc -l)"
 t_sched="$(task scheduled.before:eow+1d _unique id | wc -l)"
@@ -22,4 +22,14 @@ if [ ${t_due} -gt 0 ]; then
     echo $COLOR_WARN
 else
     echo ""
+fi
+
+# Handle click buttons
+if [ "$BLOCK_BUTTON" -eq 1 ]; then
+    # sow="$(task calc eow+1d)"
+    # eow="$(task calc eow+1d)"
+    notify-send -i "mail-task" -t 2500 "Week $(date +%V)" \
+    "Scheduled: ${t_sched}
+           Due: ${t_due}
+       Overdue: ${t_overdue}"
 fi

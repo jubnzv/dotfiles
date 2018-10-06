@@ -33,6 +33,8 @@ Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementaly highlight sear
 Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " `Hyperfocused writing`
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
+Plug 'https://github.com/itchyny/vim-cursorword'   " Underlines word under cursor
+Plug 'https://github.com/romainl/vim-cool'         " Disables search highlighting when its done
 " }}}2
 
 " {{{2 Text editing
@@ -66,7 +68,8 @@ Plug 'autozimu/LanguageClient-neovim', {
     \ }
 
 " {{{3 Language-specific
-Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel style settings
+Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel C codestyle
+Plug 'https://github.com/nvie/vim-flake8'               " flake8 integration
 Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
 Plug 'https://github.com/fatih/vim-go'                  " Golang plugin
 Plug 'https://github.com/dag/vim-fish'                  " fish scripting language support
@@ -159,6 +162,11 @@ set shortmess+=I
 
 " Remove delay between complex keybinds. Required for `vim-which-key`.
 set notimeout
+
+" Jump to the last position when reopening a file (see `/etc/vim/vimrc`)
+if has("autocmd")
+  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
+endif
 
 " 1{{{ Make normal mode compatible with ru keymap
 " set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
@@ -363,7 +371,15 @@ let g:EasyMotion_use_smartsign_us = 1
 " }}}1
 
 "{{{1 FZF settings
-let $FZF_DEFAULT_OPTS .= ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-c:cancel'
+let $FZF_DEFAULT_OPTS .= ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel'
+
+" Command for git grep
+" - fzf#vim#grep(command, with_column, [options], [fullscreen])
+command! -bang -nargs=* GGrep
+  \ call fzf#vim#grep(
+  \   'git grep --line-number '.shellescape(<q-args>), 0,
+  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 " Search vim keybinds
 nmap <A-z> <plug>(fzf-maps-n)
@@ -452,11 +468,14 @@ au FileType go nmap <leader>f <plug>(go-fmt)
 " {{{1 Python settings
 "let g:python_highlight_all = 1
 "let g:python_highlight_space_errors=0
+let g:pymode_python = 'python3'
 
 " Fix imports order
 autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
 
-let g:pymode_python = 'python3'
+" flake8
+let no_flake8_maps = 1
+autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
 " }}}1
 
 " Markdown {{{1
@@ -577,6 +596,11 @@ autocmd BufWritePre * call LastModified()
 " }}}1
 
 " {{{1 Doxygen
+
+" Disable syntax highlighting provided by default plugin
+let g:load_doxygen_syntax=0
+
+" Configure DoxygenToolchain
 let g:DoxygenToolkit_commentType = "C++"
 let g:DoxygenToolkit_compactOneLineDoc = "yes"
 let g:DoxygenToolkit_compactDoc = "yes"
@@ -637,6 +661,10 @@ let g:which_key_map.g = {
       \ 'D' : ['Gdelete', 'delete'],
       \ 'e' : ['Gedit', 'edit'] ,
       \ 'M' : ['Gmove', 'move'] ,
+      \ 'g' : {
+        \ 'name': '+Gutter',
+        \ 'p' : ['GitGutterPreviewHunk'     , 'preview']       ,
+        \ },
       \ }
 
 let g:which_key_map.r = {

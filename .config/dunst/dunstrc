@@ -34,7 +34,7 @@
 
 [frame]
     width = 1
-    color = "#ecdab8"
+    color = "#bdae93"
 
 [shortcuts]
     close = mod4+bracketleft
@@ -44,12 +44,12 @@
 
 [urgency_low]
     background = "#282828"
-    foreground = "#fdf6e3"
+    foreground = "#bdae93"
     timeout = 10
 
 [urgency_normal]
     background = "#282828"
-    foreground = "#ecdab8"
+    foreground = "#bdae93"
     timeout = 10
 
 [urgency_critical]

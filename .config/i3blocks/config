@@ -23,6 +23,11 @@ command=~/.config/i3blocks/scripts/brightness
 interval=once
 signal=2
 
+# [connections]
+# command=~/.config/i3blocks/scripts/connections
+# markup=pango
+# interval=120
+
 [disk-root]
 label=
 command=~/.config/i3blocks/scripts/disk

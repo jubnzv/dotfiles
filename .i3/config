@@ -68,10 +68,10 @@ hide_edge_borders both
 
 # Color theme
 # class                 border  backgr. text    indicator
-client.focused          #eee8d5 #282828 #eee8d5 #dc322f
+client.focused          #bdae93 #282828 #bdae93 #d65d0e
 client.focused_inactive #282828 #282828 #93a1a1 #586e75
 client.unfocused        #282828 #282828 #93a1a1 #586e75
-client.urgent           #dc322f #282828 #000000 #586e75
+client.urgent           #d65d0e #282828 #000000 #586e75
 
 # Window control
 floating_modifier $mod
@@ -103,6 +103,9 @@ bindsym $mod+Escape layout toggle tabbed splith
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Shift+B border toggle
 
+# Change split orientation
+bindsym $mod+Shift+ampersand layout toggle split
+
 # Workspaces
 #bindsym $mod+bracketleft workspace prev
 #bindsym $mod+bracketright workspace next
@@ -120,9 +123,13 @@ bindsym $mod+Tab focus output right
 bindsym $mod+comma focus left
 bindsym $mod+period focus right
 
-# Switch between workspaces
+# Switch between workspaces (all screens)
 bindsym $mod+Next workspace next
 bindsym $mod+Prior workspace prev
+
+# Switch between workspaces (current screen only)
+# bindsym $mod+Shift+greater workspace next_on_output
+# bindsym $mod+Shift+less workspace prev_on_output
 
 # Switch to workspace
 bindsym $mod+q workspace number 1$tile_01_q
@@ -160,10 +167,6 @@ bindsym $mod+Shift+4 move container to workspace 12$tile_12_4
 bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
-# Splits
-# bindsym $mod+minus split horizontal
-# bindsym $mod+backslash split vertical
-
 # Application startup hotkeys
 bindsym $mod+Control+q exec $TERMINAL -e nvim
 # bindsym $mod+Control+q workspace 1$tile_01_q; exec $TERMINAL -e emacs -nw
@@ -191,14 +194,14 @@ bindsym $mod+F7 exec sleep 1 && xset dpms force off
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
-#bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#eee8d5' -sb '#eee8d5' -sf '#282828' -p "" -m 0
+#bindsym $mod+asciitilde exec dmenu_run -fn "FantasqueSansMono:size=13" -nb '#282828' -nf '#bdae93' -sb '#bdae93' -sf '#282828' -p "" -m 0
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
 bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+Shift+BackSpace exec rofi -show-icons -show ssh
  bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
 bindsym Control+XF86Launch1 exec screengrab -r
-#bindsym XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+# bindsym XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 #bindsym XF86ScreenSaver exec i3lock --image=$I3LOCKBG -f -I 5
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
 bindsym $mod+XF86ScreenSaver exec xset s activate
@@ -234,12 +237,12 @@ bindsym Shift+F4 [class=".*"] border pixel 5
 bindsym Shift+F4 --release [class=".*"] border none
 
 # Multi-monitor control
-set $mode_exec_xrandr <span fgcolor='#d5c4a1'>Display options:</span>\t \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'></span>\t  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'> </span>\t  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'> </span>\t  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[4]</span> <span fgcolor='#fabd2f'>  </span><span fgcolor='#d5c4a1'> </span>\t \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[5]</span> <span fgcolor='#d5c4a1'> </span>\t\t \
+set $mode_exec_xrandr <span fgcolor='#bdae93'>Display options</span>\t \
+<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'></span>\t  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span> <span fgcolor='#bdae93'> </span>\t  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span> <span fgcolor='#bdae93'> </span>\t  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[4]</span> <span fgcolor='#fabd2f'>  </span><span fgcolor='#bdae93'> </span>\t \
+<span bgcolor='#bdae93' fgcolor='#282828'>[5]</span> <span fgcolor='#bdae93'> </span>\t\t \
 <span bgcolor='#fabd2f' fgcolor='#282828'>auto</span>  \
 <span bgcolor='#8ec07c' fgcolor='#282828'>[e]</span> <span fgcolor='#8ec07c'>on</span>  \
 <span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>
@@ -257,26 +260,28 @@ mode --pango_markup "$mode_exec_xrandr" {
 }
 
 # Application startup routines
-set $mode_exec_apps <span fgcolor='#d5c4a1'></span>\t\t\
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[1]</span> <span fgcolor='#d5c4a1'>Telegram</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span> <span fgcolor='#d5c4a1'>Mattermost</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span> <span fgcolor='#d5c4a1'>Thunderbird</span>\t\t  \
-<span bgcolor='#fabd2f' fgcolor='#282828'>[F9]</span> <span fgcolor='#fabd2f'>All</span>
+set $mode_exec_apps <span bgcolor='#d3869b' fgcolor='#282828'> IM</span>\t\t\
+<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'> Telegram</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span> <span fgcolor='#bdae93'> Mattermost</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span> <span fgcolor='#bdae93'> Thunderbird</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[4]</span> <span fgcolor='#bdae93'> Slack</span>\t\t  \
+<span bgcolor='#d3869b' fgcolor='#282828'>[F9]</span> <span fgcolor='#d3869b'>All</span>
 bindsym $mod+Control+F9 mode $mode_exec_apps
 mode --pango_markup "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
      bindsym 2 exec $APP_MATTERMOST; mode "default"
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
-	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; mode "default"
+     bindsym 4 exec --no-startup-id slack; mode "default"
+	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; exec slack; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }
 
 # Power control
-set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'>Power management</span>\t\t\
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[S]</span><span fgcolor='#d5c4a1'>  poweroff\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[R]</span><span fgcolor='#d5c4a1'>  reboot\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[s]</span><span fgcolor='#d5c4a1'>  sleep</span>
+set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'> Power management</span>\t\t\
+<span bgcolor='#bdae93' fgcolor='#282828'>[S]</span><span fgcolor='#bdae93'>  poweroff\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[R]</span><span fgcolor='#bdae93'>  reboot\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[s]</span><span fgcolor='#bdae93'>  sleep</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
 	bindsym Shift+s     exec systemctl poweroff; mode "default"
@@ -287,10 +292,10 @@ mode --pango_markup "$mode_exec_power" {
 }
 
 # i3wm control
-set $mode_exec_i3cmd <span bgcolor='#b8bb26' fgcolor='#282828'>i3wm command</span>\t\t\
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[l]</span><span fgcolor='#d5c4a1'>  lock\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[r]</span><span fgcolor='#d5c4a1'>  restart\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[e]</span><span fgcolor='#d5c4a1'>  log out</span>
+set $mode_exec_i3cmd <span bgcolor='#8ec07c' fgcolor='#282828'> i3 command</span>\t\t\
+<span bgcolor='#bdae93' fgcolor='#282828'>[l]</span><span fgcolor='#bdae93'>  lock\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[r]</span><span fgcolor='#bdae93'>  restart\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[e]</span><span fgcolor='#bdae93'>  log out</span>
 bindsym $mod+Control+End mode "$mode_exec_i3cmd"
 mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym l           exec lock; mode "default"
@@ -301,10 +306,10 @@ mode --pango_markup "$mode_exec_i3cmd" {
 }
 
 # Run selected Python REPL
-set $mode_run_python <span bgcolor='#282828' fgcolor='#d79921'>Python</span>\t\t\
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[2]</span><span fgcolor='#d5c4a1'> ipython2\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[3]</span><span fgcolor='#d5c4a1'> ipython3\t</span>  \
-<span bgcolor='#d5c4a1' fgcolor='#282828'>[b]</span><span fgcolor='#d5c4a1'> bpython</span>
+set $mode_run_python <span bgcolor='#d79921' fgcolor='#282828'> Python</span>\t\t\
+<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span><span fgcolor='#bdae93'> ipython2\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span><span fgcolor='#bdae93'> ipython3\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> bpython</span>
 bindsym $mod+Control+i mode "$mode_run_python"
 mode --pango_markup "$mode_run_python" {
     bindsym 2       exec $TERMINAL -e ipython; mode "default"
@@ -325,37 +330,37 @@ bar {
     binding_mode_indicator yes
     status_command i3blocks -c ~/.config/i3blocks/config
     # i3bar_command i3bar -t status_command i3blocks -c ~/.config/i3blocks/config
-    #				border	bckgrnd	text
     colors {
         background		#282828
-        statusline		#d5c4a1
-        focused_workspace	#d5c4a1 #d5c4a1 #282828
-        active_workspace	#d5c4a1 #282828 #d5c4a1
-        inactive_workspace	#282828 #282828 #d5c4a1
-        urgent_workspace	#cc241d	#cc241d	#282828
+        statusline		#bdae93
+        #				    border  bckgrnd text
+        focused_workspace	#bdae93 #bdae93 #282828
+        active_workspace	#bdae93 #282828 #bdae93
+        inactive_workspace	#282828 #282828 #bdae93
+        urgent_workspace	#d65d0e #d65d0e #282828
     	binding_mode		#282828 #282828	#fffffv
     }
 }
 
 # Bottom bar
-#bar{
-    #id bar-bot
-    #output $display1
-    #tray_output none
-    #hidden_state hide
-    #position bottom
-    #mode hide
-    #workspace_buttons no
-    #modifier none
-    #binding_mode_indicator no
-    #status_command i3blocks -c ~/.config/i3blocks/config_bot
-    ##				border	bckgrnd	text
-    #colors {
-        #background		#282828
-        #statusline		#d5c4a1
-        #focused_workspace	#d5c4a1 #d5c4a1 #282828
-        #active_workspace	#d5c4a1 #282828 #d5c4a1
-        #inactive_workspace	#282828 #282828 #d5c4a1
-        #urgent_workspace	#cc241d	#cc241d	#282828
-    #}
-#}
+# bar{
+#     id bar-bot
+#     output $display1
+#     tray_output none
+#     hidden_state hide
+#     position bottom
+#     mode hide
+#     workspace_buttons no
+#     modifier none
+#     binding_mode_indicator no
+#     status_command i3blocks -c ~/.config/i3blocks/config_bot
+#     colors {
+#         background		#282828
+#         statusline		#bdae93
+#         #				        border  bckgrnd text
+#         focused_workspace 	#bdae93 #bdae93 #282828
+#         active_workspace  	#bdae93 #282828 #bdae93
+#         inactive_workspace    #282828 #282828 #bdae93
+#         urgent_workspace  	#cc241d	#cc241d	#282828
+#     }
+# }

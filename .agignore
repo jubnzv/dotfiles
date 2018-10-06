@@ -1,4 +1,5 @@
 .git/
 venv*/
 tags
+gdb.txt
 

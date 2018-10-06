@@ -28,6 +28,10 @@ set     e2k_PREFIX  "$e2k_PATH"/fs/usr/
 # Editor settings
 set EDITOR  nvim
 set VISUAL  nvim
+
+# Terminal settings consumed by ranger
+set TERMCMD "urxvt"
+set TERMINAL "urxvt -e"
 # }}}
 
 # Color theme
@@ -58,6 +62,10 @@ alias s='sudo'
 alias svim='sudoedit'
 # 2}}}
 
+# {{{2 Wrappers for common utils
+alias ping='prettyping'
+# 2}}}
+
 # {{{2 X apps
 alias zt='zathura'
 alias mrg='mirage'
@@ -82,6 +90,16 @@ alias tdd="task due:today list"
 alias tsw="task scheduled.before:eow+1d list"
 alias tsd="task scheduled:today list"
 alias ta="task add"
+
+function __fzf_select_task -d 'select id one of taskwarrior tasks with fzf'
+    set -l res (task minimal 2> /dev/null | sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' | fzf)
+    echo $res | awk '{print $1}'
+end
+
+alias tf="t (__fzf_select_task)"
+alias tfe="t edit (__fzf_select_task)"
+alias tfd="t done (__fzf_select_task)"
+alias tfD="t delete (__fzf_select_task)"
 # 2}}}
 # }}}
 
@@ -99,8 +117,8 @@ set __fish_git_prompt_showstashstate 'yes'
 set __fish_git_prompt_showupstream 'yes'
 set __fish_git_prompt_color_branch yellow
 set __fish_git_prompt_char_dirtystate '⚡'
-set __fish_git_prompt_char_stagedstate '→'
-set __fish_git_prompt_char_stashstate '↩'
+set __fish_git_prompt_char_stagedstate ''
+set __fish_git_prompt_char_stashstate ''
 set __fish_git_prompt_char_upstream_ahead '↑'
 set __fish_git_prompt_char_upstream_behind '↓'
 
@@ -122,7 +140,7 @@ if status --is-login
 end
 
 # {{{1 FZF settings
-# Color scheme by https://github.com/nicodebo/base16-fzf
+# https://github.com/nicodebo/base16-fzf/blob/master/fish/base16-gruvbox-dark-medium.fish
 set -l color00 '#282828'
 set -l color01 '#3c3836'
 set -l color02 '#504945'
@@ -140,17 +158,10 @@ set -l color0D '#83a598'
 set -l color0E '#d3869b'
 set -l color0F '#d65d0e'
 
-set -U FZF_DEFAULT_OPTS "
-  --color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D
-  --color=fg:$color04,header:$color0D,info:$color0A,pointer:$color0C
-  --color=marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D
-"
-
-# Set keybinds options
-set -U FZF_DEFAULT_OPTS ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-c:cancel'
+set -Ux FZF_DEFAULT_OPTS "--color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D,fg:$color04,header:$color0D,info:$color0A,pointer:$color0C,marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel"
 
 # Default file searcher
-set -U FZF_DEFAULT_COMMAND 'fd --type f'
+set -Ux FZF_DEFAULT_COMMAND 'fd --type f'
 # 1}}}
 
 # vim: foldmethod=marker
