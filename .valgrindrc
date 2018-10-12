@@ -1,0 +1,4 @@
+--leak-check=full
+--leak-resolution=high
+--show-reachable=yes
+--log-file=.valgrind.log

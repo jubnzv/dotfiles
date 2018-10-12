@@ -84,11 +84,13 @@ alias ct='ctags -R --exclude=.git -f tags'
 # 2}}}
 
 # {{{2 taskwarrior
-alias t='task'
-alias tdw="task due.before:eow+1d list"
-alias tdd="task due:today list"
-alias tsw="task scheduled.before:eow+1d list"
-alias tsd="task scheduled:today list"
+alias t="task"
+alias tdw="task due.before:eow+1d"
+alias tdd="task due:today"
+alias tcd="task end.after:today completed"
+alias tsw="task due.before:eow+1d or scheduled.before:eow+1d"
+alias tsd="task due:today or scheduled:today"
+alias tcw="task end.after:today-1wk completed"
 alias ta="task add"
 
 function __fzf_select_task -d 'select id one of taskwarrior tasks with fzf'
@@ -163,5 +165,9 @@ set -Ux FZF_DEFAULT_OPTS "--color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$
 # Default file searcher
 set -Ux FZF_DEFAULT_COMMAND 'fd --type f'
 # 1}}}
+
+function sssh
+  while true; command ssh $argv; [ $status -ne 255 ] and break or sleep 1; end
+end
 
 # vim: foldmethod=marker

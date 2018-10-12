@@ -34,7 +34,6 @@ Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " `Hyperfocused writing`
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/itchyny/vim-cursorword'   " Underlines word under cursor
-Plug 'https://github.com/romainl/vim-cool'         " Disables search highlighting when its done
 " }}}2
 
 " {{{2 Text editing
@@ -246,6 +245,10 @@ imap <F1> <C-o>:echo <CR>
 
 " Search visually selected
 vnoremap // y/<C-R>"<CR>
+
+" Replace with `F` / `f` / `t` / `T`
+noremap ;; :%s///g<Left><Left><Left>
+noremap ;' :%s///cg<Left><Left><Left><Left>
 
 " Keep selected text selected when fixing indentation
 vnoremap < <gv
@@ -478,10 +481,12 @@ let no_flake8_maps = 1
 autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
 " }}}1
 
-" Markdown {{{1
+"{{{ Markdown
 let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
+
+let g:vim_markdown_conceal = 0
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
@@ -491,7 +496,7 @@ let g:markdown_folding = 1
 let g:vim_markdown_math = 1
 
 nnoremap <leader>mt :Toch<CR>
-" }}}1
+" }}}
 
 " MatIEC configuration
 let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
@@ -499,16 +504,6 @@ let matiec_mkbuilddir = 1
 
 " {{{1 deoplete autocomplition
 let g:deoplete#enable_at_startup = 1
-
-" Set sources
-" FIXME:
-" let g:deoplete#sources = {}
-" let g:deoplete#sources.c = ['LanguageClient']
-" let g:deoplete#sources.cpp = ['LanguageClient']
-" let g:deoplete#sources.python = ['LanguageClient']
-" let g:deoplete#sources.python3 = ['LanguageClient']
-" let g:deoplete#sources#go = ['vim-go']
-" let g:deoplete#sources.vim = ['vim']
 
 " Keybindings
 inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
@@ -527,8 +522,12 @@ let g:LanguageClient_rootMarkers = {
     \ 'c': ['compile_commands.json', 'build'],
     \ }
 set completefunc=LanguageClient#complete
-set formatexpr=LanguageClient_textDocument_rangeFormatting()
-let g:LanguageClient_loadSettings = 1 " Use an absolute configuration path if you want system-wide settings
+
+" FIXME: Can be broken with cquery on some projects. Use default `gq`.
+" set formatexpr=LanguageClient_textDocument_rangeFormatting()
+set formatexpr=""
+
+let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 
 " Keybindings

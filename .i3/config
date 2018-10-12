@@ -79,12 +79,15 @@ workspace_layout tabbed
 focus_follows_mouse no
 
 # Workspace settings
-# Use xprop command for WM_CLASS and WM_NAME.
+# Use `xprop` command for WM_CLASS and WM_NAME.
 # for_window [class="VirtualBox"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
+for_window [class="^Slack$"] move container to workspace 13$tile_13_msg
+for_window [class="^Telegram$"] move container to workspace 13$tile_13_msg
+for_window [class="^Thunderbird$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^xev$"] floating enable
 for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
@@ -309,12 +312,14 @@ mode --pango_markup "$mode_exec_i3cmd" {
 set $mode_run_python <span bgcolor='#d79921' fgcolor='#282828'> Python</span>\t\t\
 <span bgcolor='#bdae93' fgcolor='#282828'>[2]</span><span fgcolor='#bdae93'> ipython2\t</span>  \
 <span bgcolor='#bdae93' fgcolor='#282828'>[3]</span><span fgcolor='#bdae93'> ipython3\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> bpython</span>
+<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> bpython</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[j]</span><span fgcolor='#bdae93'> jupyter</span>
 bindsym $mod+Control+i mode "$mode_run_python"
 mode --pango_markup "$mode_run_python" {
     bindsym 2       exec $TERMINAL -e ipython; mode "default"
     bindsym 3       exec $TERMINAL -e ipython3; mode "default"
     bindsym b       exec $TERMINAL -e bpython; mode "default"
+    bindsym j       exec $TERMINAL -e jupyter notebook; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }

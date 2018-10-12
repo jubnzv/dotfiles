@@ -11,24 +11,32 @@
 
 * Distro: Debian 10
 
-* Environment: `i3` (`i3blocks` in statusbar, `rofi` as launcher, notifications
-  via `dunst`). Fonts: `Proto Sans` for WM, `FontAwesome`, `dejavu` in most
-  X-apps, `FantasqueSansMono` for text/code editing. GTK theme: `numix`,
-  cursors and icons: KDE5's `Breeze`.
+* Desktop environment
 
-* Text editor: `neovim`
-
-* IDE: `PyCharm` (`ideavim` + `AceJump` plugins)
-
-* Terminal emulator: `rxvt-unicode-256color`
+  + `i3` window manager (`i3blocks` in statusbar, `rofi` as application
+    launcher, notifications via `dunst`);
+  + Fonts: `Proto Sans` and `Font Awesome` for WM decorations, `IBM Plex` in
+    GUI applications, `Fantasque Sans Mono` in terminal;
+  + GTK theme: `numix`;
+  + Cursors and icons: `Breeze`;
+  + Colors: `gruvbox dark` where it possible.
 
 * Shell: `fish`
 
+* Text editor: `neovim`
+
+* IDE: JetBrains IDE's with `ideavim` and `AceJump` plugins
+
+* Terminal emulator: `rxvt-unicode-256color`
+
 * Web-browser: `chromium` with [CVim](https://github.com/1995eaton/chromium-vim)
 
-* FM: `ranger`
+* File manager: `ranger`
 
-* Media players: `cmus`, `mpv`
+* Media players: `cmus` and `mpv`
 
-* Docs: `zathura`, `libreoffice`, `FBReader`
+* Organizer: `taskwarrior` with number of notification scripts (email,
+  libnotify), [riv.vim](https://github.com/gu-fan/riv.vim) for notekeeping.
+
+* Viewers: `zathura`, `libreoffice`, `FBReader`, `mirage`, `XMind`
 
