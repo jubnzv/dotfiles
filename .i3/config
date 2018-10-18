@@ -175,7 +175,6 @@ bindsym $mod+Control+q exec $TERMINAL -e nvim
 # bindsym $mod+Control+q workspace 1$tile_01_q; exec $TERMINAL -e emacs -nw
 bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here.sh
 bindsym $mod+Return exec $TERMINAL
-bindsym $mod+Control+t exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec chromium --enable-remote-extensions
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
 bindsym $mod+Control+r exec $TERMINAL -e ranger
@@ -320,6 +319,22 @@ mode --pango_markup "$mode_run_python" {
     bindsym 3       exec $TERMINAL -e ipython3; mode "default"
     bindsym b       exec $TERMINAL -e bpython; mode "default"
     bindsym j       exec $TERMINAL -e jupyter notebook; mode "default"
+	bindsym Return  mode "default"
+	bindsym Escape  mode "default"
+}
+
+# Taskwarrior helpers
+set $mode_run_task <span bgcolor='#d79921' fgcolor='#282828'> Taskwarrior</span>\t\t\
+<span bgcolor='#bdae93' fgcolor='#282828'>[c]</span><span fgcolor='#bdae93'> calendar\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[t]</span><span fgcolor='#bdae93'> context\t</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[s]</span><span fgcolor='#bdae93'> shell</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> burndown</span>
+bindsym $mod+t mode "$mode_run_task"
+mode --pango_markup "$mode_run_task" {
+    bindsym c       exec urxvt -hold -e task calendar; mode "default"
+    bindsym t       exec notify-send "Current context: $(task _get rc.context)"; mode "default"
+    bindsym s       exec $TERMINAL -e 'tasksh'; mode "default"
+    bindsym b       exec urxvt -hold -e task burndown.weekly; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }

@@ -7,12 +7,21 @@
 # COLOR_OK="#98971a"
 COLOR_WARN="#d79921"
 
+function get_context {
+    local ctx="$(task _get rc.context)"
+    if [ -z $ctx ]; then
+        ctx="none"
+    fi
+    echo "$ctx" | head -c 1 | tr a-z A-Z
+}
+
 t_due="$(task due.before:eow+1d _unique id | wc -l)"
-t_sched="$(task scheduled.before:eow+1d _unique id | wc -l)"
+t_sched="$(task scheduled.before:eow+1d -WAITING _unique id | wc -l)"
 t_overdue="$(task +OVERDUE count)"
+t_context="$(get_context)"
 
 # Full text
-echo "${t_sched}:${t_due}"
+echo "${t_context}:${t_sched}:${t_due}"
 
 # Short text
 echo "${t_due}"
@@ -24,12 +33,19 @@ else
     echo ""
 fi
 
-# Handle click buttons
+# Left button click
 if [ "$BLOCK_BUTTON" -eq 1 ]; then
     # sow="$(task calc eow+1d)"
     # eow="$(task calc eow+1d)"
-    notify-send -i "mail-task" -t 2500 "Week $(date +%V)" \
-    "Scheduled: ${t_sched}
+    t_sched_waiting="$(task scheduled.before:eow+1d +WAITING _unique id | wc -l)"
+    notify-send -i "mail-task" -t 2500 "Agenda for week $(date +%V)" \
+    "   Active:  ${t_sched}
+       Waiting: ${t_sched_waiting}
            Due: ${t_due}
        Overdue: ${t_overdue}"
+fi
+
+# Right button click
+if [ "$BLOCK_BUTTON" -eq 3 ]; then
+    exec urxvt -hold -e task burndown.weekly
 fi
