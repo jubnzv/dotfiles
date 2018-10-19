@@ -37,15 +37,15 @@ Plug 'https://github.com/itchyny/vim-cursorword'   " Underlines word under curso
 " }}}2
 
 " {{{2 Text editing
-Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'      " Doxygen helper
-Plug 'https://github.com/pearofducks/ansible-vim'        " Ansible format support
-Plug 'https://github.com/cespare/vim-toml'               " .toml
-Plug 'https://github.com/chr4/nginx.vim'                 " Nginx configuration files
-Plug 'https://github.com/othree/xml.vim'                 " Extended XML/XSD features
-Plug 'https://github.com/dhruvasagar/vim-table-mode'     " Simplifies plain text tables creation
-Plug 'https://github.com/lervag/vimtex'                  " LaTeX support
-Plug 'https://github.com/plasticboy/vim-markdown'        " Extended markdown support
-Plug 'https://github.com/gu-fan/riv.vim'                 " .rst
+Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'     " Doxygen helper
+Plug 'https://github.com/pearofducks/ansible-vim'       " Ansible format support
+Plug 'https://github.com/cespare/vim-toml'              " .toml
+Plug 'https://github.com/chr4/nginx.vim'                " Nginx configuration files
+Plug 'https://github.com/othree/xml.vim'                " Extended XML/XSD features
+Plug 'https://github.com/dhruvasagar/vim-table-mode'    " Simplifies plain text tables creation
+Plug 'https://github.com/lervag/vimtex'                 " LaTeX support
+Plug 'https://github.com/plasticboy/vim-markdown'       " Extended markdown support
+Plug 'https://github.com/gu-fan/riv.vim'                " .rst
 " }}}2
 
 " {{{2 Coding tools
@@ -92,6 +92,9 @@ set laststatus=2   " Always show status line
 set background=dark
 set t_Co=256       " 256-colors mode
 colorscheme gruvbox
+let g:gruvbox_italic=1
+set t_ZH=^[[3m
+set t_ZR=^[[23m
 set title          " Show window title
 
 " {{{2 Modeline | tabline
@@ -468,7 +471,7 @@ au FileType go nmap <leader>d <plug>(go-doc)
 au FileType go nmap <leader>f <plug>(go-fmt)
 " }}}1
 
-" {{{1 Python settings
+" {{{ Python settings
 "let g:python_highlight_all = 1
 "let g:python_highlight_space_errors=0
 let g:pymode_python = 'python3'
@@ -479,14 +482,13 @@ autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
 " flake8
 let no_flake8_maps = 1
 autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
-" }}}1
+" }}}
 
 "{{{ Markdown
 let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
-
-let g:vim_markdown_conceal = 0
+" let g:vim_markdown_conceal = 0
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
@@ -546,30 +548,40 @@ nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
 
 " {{{2 Diagnostic messages / linting
 let g:LanguageClient_diagnosticsEnable = 1
+
+" Use something different for highlighting
+let sign_column_color=synIDattr(hlID('SignColumn'), 'bg#')
+execute "hi LSPError gui=undercurl cterm=underline term=underline guisp=red"
+execute "hi LSPErrorText guifg=yellow ctermbg=red  ctermfg=" . sign_column_color . "guibg=" . sign_column_color
+execute "hi LSPWarning gui=undercurl cterm=underline term=underline guisp=yellow"
+execute "hi LSPWarningText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . "guibg=" . sign_column_color
+execute "hi LSPInfo gui=undercurl cterm=underline term=underline guisp=yellow"
+execute "hi LSPInfoText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . "guibg=" . sign_column_color
+
 let g:LanguageClient_diagnosticsDisplay = {
     \   1: {
     \       "name": "Error",
-    \       "texthl": "ALEError",
-    \       "signText": ">>",
-    \       "signTexthl": "ALEErrorSign",
+    \       "texthl": "LSPError",
+    \       "signText": "ee",
+    \       "signTexthl": "LSPErrorText",
     \   },
     \   2: {
     \       "name": "Warning",
-    \       "texthl": "ALEWarning",
-    \       "signText": "--",
-    \       "signTexthl": "ALEWarningSign",
+    \       "texthl": "LSPWarning",
+    \       "signText": "ww",
+    \       "signTexthl": "LSPWarningText",
     \   },
     \   3: {
     \       "name": "Information",
-    \       "texthl": "ALEInfo",
-    \       "signText": "?i",
-    \       "signTexthl": "ALEInfoSign",
+    \       "texthl": "LSPInfo",
+    \       "signText": "ii",
+    \       "signTexthl": "LSPInfoText",
     \   },
     \   4: {
     \       "name": "Hint",
-    \       "texthl": "ALEInfo",
-    \       "signText": "?h",
-    \       "signTexthl": "ALEInfoSign",
+    \       "texthl": "LSPInfo",
+    \       "signText": "hh",
+    \       "signTexthl": "LSPInfoText",
     \   },}
 " }}}2
 " }}}1
@@ -609,6 +621,7 @@ autocmd FileType c nnoremap <leader>d :Dox<CR>
 "}}}1
 
 " Git workflow
+let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 nmap [v <Plug>GitGutterPrevHunk
 nmap ]v <Plug>GitGutterNextHunk
