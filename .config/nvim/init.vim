@@ -96,6 +96,7 @@ let g:gruvbox_italic=1
 set t_ZH=^[[3m
 set t_ZR=^[[23m
 set title          " Show window title
+set signcolumn=yes
 
 " {{{2 Modeline | tabline
 let g:lightline = {
@@ -106,6 +107,7 @@ let g:lightline = {
     \              [ 'tagbar' ] ],
     \   'right': [ [ 'lineinfo' ],
     \              [ 'percent' ],
+    \              [ 'lsp_status' ],
     \              [ 'fileformat', 'fileencoding', 'filetype' ],
     \              [ 'gitbranch' ] ],
     \ },
@@ -114,6 +116,14 @@ let g:lightline = {
     \ },
     \ 'component': {
     \   'tagbar': '%{tagbar#currenttag("[%s]", "", "f")}',
+    \ },
+    \ 'component_expand': {
+    \   'lsp_status': 'LightlineLSPStatus'
+    \ },
+    \ 'component_type': {
+    \   'lsp_warnings': 'warning',
+    \   'lsp_errors': 'error',
+    \   'readonly': 'error'
     \ },
     \ }
 let g:buftabline_indicators=1 " show modified
@@ -421,10 +431,10 @@ set expandtab  " on pressing tab insert 4 spaces
 autocmd Filetype css setlocal tabstop=4
 autocmd Filetype html setlocal tabstop=4
 
-" 79+ characters line highlight
+" 80+ characters line highlight
 highlight ColorColumn ctermbg=236
-" call matchadd('ColorColumn', '\%79v', 100)
-set colorcolumn=79
+" call matchadd('ColorColumn', '\%80v', 100)
+set colorcolumn=80
 
 " {{{1 Trailing whitespaces
 " http://vim.wikia.com/wiki/Highlight_unwanted_spaces
@@ -584,6 +594,30 @@ let g:LanguageClient_diagnosticsDisplay = {
     \       "signTexthl": "LSPInfoText",
     \   },}
 " }}}2
+
+" {{{2 Functions to show LSP status in modeline
+augroup LanguageClient_config
+    autocmd!
+    autocmd User LanguageClientStarted call LSPUpdateStatus(1)
+    autocmd User LanguageClientStopped call LSPUpdateStatus(0)
+augroup END
+let g:lsp_status = 0
+function! LSPUpdateStatus(status) abort
+    let g:lsp_status = a:status
+    call lightline#update()
+endfunction
+function! LightlineLSPStatus() abort
+  return g:lsp_status == 1 ? 'L ' : ''
+endfunction
+" 2}}}
+
+function! LSPToggle()
+    if (g:lsp_status == 0)
+        execute ":LanguageClientStart"
+    else
+        execute ":LanguageClientStop"
+    endif
+endfunction
 " }}}1
 
 " {{{1 Datetime options
@@ -607,7 +641,6 @@ autocmd BufWritePre * call LastModified()
 " }}}1
 
 " {{{1 Doxygen
-
 " Disable syntax highlighting provided by default plugin
 let g:load_doxygen_syntax=0
 
@@ -637,6 +670,11 @@ autocmd FileType rst setlocal textwidth=79
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 
+" {{{ File triggers
+" buildbot configuration file
+au BufNewFile,BufRead   master.cfg  set ft=python
+" }}}
+
 " {{{1 which-key: redundant long keybindinds with mnemonics.
 " Use it only when forget shorter keybind.
 "
@@ -644,7 +682,9 @@ imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 let g:which_key_map =  {}
 
 let g:which_key_map.l = {
-      \ 'name' : '+lsp'                                            ,
+      \ 'name' : '+lsp',
+      \ 'a' : ['LanguageClient_textDocument_codeAction()'     , 'action']           ,
+      \ 't' : ['LSPToggle()'                                  , 'toggle']           ,
       \ 'f' : ['LanguageClient#textDocument_formatting()'     , 'formatting']       ,
       \ 'h' : ['LanguageClient#textDocument_hover()'          , 'hover']            ,
       \ 'r' : ['LanguageClient#textDocument_references()'     , 'references']       ,
