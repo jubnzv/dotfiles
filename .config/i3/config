@@ -348,8 +348,7 @@ bar {
     workspace_buttons yes
     strip_workspace_numbers yes
     binding_mode_indicator yes
-    status_command i3blocks -c ~/.config/i3blocks/config
-    # i3bar_command i3bar -t status_command i3blocks -c ~/.config/i3blocks/config
+    status_command i3status-rs ~/.config/i3/i3status-rust.toml
     colors {
         background		#282828
         statusline		#bdae93
@@ -361,26 +360,3 @@ bar {
     	binding_mode		#282828 #282828	#fffffv
     }
 }
-
-# Bottom bar
-# bar{
-#     id bar-bot
-#     output $display1
-#     tray_output none
-#     hidden_state hide
-#     position bottom
-#     mode hide
-#     workspace_buttons no
-#     modifier none
-#     binding_mode_indicator no
-#     status_command i3blocks -c ~/.config/i3blocks/config_bot
-#     colors {
-#         background		#282828
-#         statusline		#bdae93
-#         #				        border  bckgrnd text
-#         focused_workspace 	#bdae93 #bdae93 #282828
-#         active_workspace  	#bdae93 #282828 #bdae93
-#         inactive_workspace    #282828 #282828 #bdae93
-#         urgent_workspace  	#cc241d	#cc241d	#282828
-#     }
-# }

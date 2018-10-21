@@ -1,0 +1,54 @@
+icons = "awesome"
+
+[theme]
+name = "gruvbox-dark"
+[theme.overrides]
+separator = ""
+idle_bg = "#282828"
+idle_fg = "#bdae93"
+info_bg = "#282828"
+info_fg = "#83a598"
+warning_bg = "#282828"
+warning_fg = "#d79921"
+good_bg = "#282828"
+good_fg = "#689d6a"
+critical_bg = "#282828"
+critical_fg = "#cc241d"
+
+[[block]]
+block = "sound"
+
+[[block]]
+block = "backlight"
+device = "intel_backlight"
+
+[[block]]
+block = "disk_space"
+path = "/"
+alias = "/"
+info_type = "available"
+unit = "GB"
+interval = 30
+warning = 20.0
+alert = 10.0
+
+[[block]]
+block = "memory"
+display_type = "memory"
+format_mem = "{MUp}%"
+clickable = false
+interval = 5
+
+[[block]]
+block = "cpu"
+interval = 3
+
+[[block]]
+block = "load"
+interval = 3
+format = "{1m}"
+
+[[block]]
+block = "battery"
+interval = 15
+format = "{percentage}% {time}"
