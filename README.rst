@@ -55,21 +55,21 @@ Desktop environment
 
 + :code:`i3` window manager
 
-    + Status: `i3-status-rust <https://github.com/greshake/i3status-rust>`_
-    + Application launcher: :code:`rofi`
-    + Notification daemon: :code:`dunst`
-    + Keymap indicator: :code:`fbxkb`
-    + Automount daemon and tray icon: :code:`udiskie`
+  * Status: `i3-status-rust <https://github.com/greshake/i3status-rust>`_
+  * Application launcher: :code:`rofi`
+  * Notification daemon: :code:`dunst`
+  * Keymap indicator: :code:`fbxkb`
+  * Automount daemon and tray icon: :code:`udiskie`
 
-  + Fonts
++ Fonts
 
-    + WM: :code:`Proto Sans` and :code:`Font Awesome`
-    + GUI applications: :code:`IBM Plex Sans Text`
-    + Terminal: :code:`Fantasque Sans Mono` with `NerdFont <https://github.com/ryanoasis/nerd-fonts>`_ patch
+  * WM: :code:`Proto Sans` and :code:`Font Awesome`
+  * GUI applications: :code:`IBM Plex Sans Text`
+  * Terminal: :code:`Fantasque Sans Mono` with `NerdFont <https://github.com/ryanoasis/nerd-fonts>`_ patch
 
-  + GTK theme: :code:`numix`
-  + Cursors and icons: :code:`Breeze`
-  + Colors: :code:`gruvbox dark` where it possible
++ GTK theme: :code:`numix`
++ Cursors and icons: :code:`Breeze`
++ Colors: :code:`gruvbox dark` where it possible
 
 CLI tools
 =========
