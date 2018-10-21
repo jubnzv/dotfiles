@@ -2,11 +2,12 @@
 dotfiles
 ########
 
-.. image:: https://raw.githubusercontent.com/jubnzv/dotfiles/master/screenshot.png
-    :alt: Screenshot
-    :width: 50%
-    :height: 50%
-    :align: center
+.. class:: no-web
+
+  .. image:: https://raw.githubusercontent.com/jubnzv/dotfiles/master/screenshot.png
+      :alt: Screenshot
+      :scale: 50%
+      :align: center
 
 Hardware
 ========
