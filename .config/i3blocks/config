@@ -45,10 +45,10 @@ command=~/.config/i3blocks/scripts/cpu_usage
 interval=10
 min_width=100.00%
 
-[temp]
-label=
-command=~/.config/i3blocks/scripts/temperature
-interval=60
+# [temp]
+# label=
+# command=~/.config/i3blocks/scripts/temperature
+# interval=60
 
 [battery]
 command=~/.config/i3blocks/scripts/battery

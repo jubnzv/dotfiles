@@ -39,7 +39,8 @@ if [ "$BLOCK_BUTTON" -eq 1 ]; then
     # eow="$(task calc eow+1d)"
     t_sched_waiting="$(task scheduled.before:eow+1d +WAITING _unique id | wc -l)"
     notify-send -i "mail-task" -t 2500 "Agenda for week $(date +%V)" \
-    "   Active:  ${t_sched}
+    "  Context: ${t_context}
+        Active: ${t_sched}
        Waiting: ${t_sched_waiting}
            Due: ${t_due}
        Overdue: ${t_overdue}"
