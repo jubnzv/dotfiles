@@ -10,24 +10,30 @@
 
 # Use the command 'task show' to see all defaults and overrides
 
-# Files
 data.location=~/Org/taskwarrior
-
-# Color theme (uncomment one to use)
-#include /usr/share/taskwarrior/light-16.theme
-#include /usr/share/taskwarrior/light-256.theme
-#include /usr/share/taskwarrior/dark-16.theme
-include /usr/share/taskwarrior/dark-256.theme
-#include /usr/share/taskwarrior/dark-red-256.theme
-#include /usr/share/taskwarrior/dark-green-256.theme
-#include /usr/share/taskwarrior/dark-blue-256.theme
-#include /usr/share/taskwarrior/dark-violets-256.theme
-#include /usr/share/taskwarrior/dark-yellow-green.theme
-#include /usr/share/taskwarrior/dark-gray-256.theme
-#include /usr/share/taskwarrior/dark-gray-blue-256.theme
-#include /usr/share/taskwarrior/solarized-dark-256.theme
-#include /usr/share/taskwarrior/solarized-light-256.theme
-#include /usr/share/taskwarrior/no-color.theme
-
 confirmation = no
-weekstart = monday
+weekstart=monday
+locale=ru-RU
+
+alias.m=modify
+alias.d=done
+alias.D=delete
+alias.e=edit
+alias.cal=calendar
+alias.c=context
+
+# Color theme
+include ~/.config/taskwarrior/gruvbox-dark-256.theme
+
+# {{{ Reports configuration
+# Default
+report.list.columns=id,project,tags,scheduled,due.relative,urgency,description
+report.list.labels=ID,Project,Tags,Scheduled,Due,Score,Description
+
+report.simple.description=Simple list of open tasks by project
+report.simple.columns=id,project,description.count
+report.simple.labels=ID,Proj,Desc
+report.simple.sort=project+/,entry+
+report.simple.filter=status:pending
+#}}}
+
