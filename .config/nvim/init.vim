@@ -93,6 +93,7 @@ set background=dark
 set t_Co=256       " 256-colors mode
 colorscheme gruvbox
 let g:gruvbox_italic=1
+let g:gruvbox_terminal_colors = 1
 set t_ZH=^[[3m
 set t_ZR=^[[23m
 set title          " Show window title
@@ -156,6 +157,9 @@ autocmd! User GoyoLeave nested call <SID>goyo_leave()
 " Scrolling options
 set scrolloff=7     " 7 lines above/below cursor when scrolling
 set scroll=7        " Number of lines scrolled by C-u / C-d
+
+" Save global marks for up to 1000 files
+set viminfo='1000,f1
 
 " Autoindent when starting new line, or using o or O.
 " set autoindent
@@ -461,6 +465,20 @@ let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 set tags=./tags;
 let g:ctags_statusline=1
 
+let g:tagbar_type_rust = {
+  \ 'ctagstype' : 'rust',
+  \ 'kinds' : [
+      \'T:types,type definitions',
+      \'f:functions,function definitions',
+      \'g:enum,enumeration names',
+      \'s:structure names',
+      \'m:modules,module names',
+      \'c:consts,static constants',
+      \'t:traits',
+      \'i:impls,trait implementations',
+  \]
+  \}
+
 " {{{1 C/C++ settings
 autocmd bufreadpre *.c setlocal textwidth=79
 autocmd bufreadpre *.cpp setlocal textwidth=79
@@ -607,7 +625,7 @@ function! LSPUpdateStatus(status) abort
     call lightline#update()
 endfunction
 function! LightlineLSPStatus() abort
-  return g:lsp_status == 1 ? 'L ' : ''
+  return g:lsp_status == 1 ? 'Λ' : ''
 endfunction
 " 2}}}
 
