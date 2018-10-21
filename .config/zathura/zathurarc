@@ -1,7 +1,7 @@
 # Misc
 set guioptions s
 set statusbar-home-tilde true
-set selection-clipboard primary
+set selection-clipboard clipboard
 set adjust-open width
 set smooth-scroll true
 set recolor-reverse-video false
