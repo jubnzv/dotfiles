@@ -11,9 +11,8 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/kshenoy/vim-signature'          " Bookmarks extended
 Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/lyokha/vim-xkbswitch'           " ru keybinds in normal mode
-Plug 'https://github.com/terryma/vim-multiple-cursors'
-Plug 'https://github.com/rhysd/clever-f.vim'             " Convient `f` / `F`
+Plug 'https://github.com/lyokha/vim-xkbswitch'           " ru-RU key bindings in normal mode
+Plug 'https://github.com/rhysd/clever-f.vim'             " Convenient `f` and `F`
 " Plug 'https://github.com/christoomey/vim-tmux-navigator'
 " Plug 'https://github.com/benmills/vimux'
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
@@ -27,11 +26,12 @@ Plug 'https://github.com/junegunn/fzf', {
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/ap/vim-buftabline'        " Show buffers in the tabline
 Plug 'https://github.com/morhetz/gruvbox'          " Color scheme
-Plug 'https://github.com/chrisbra/Colorizer'       " Color colornames and codes
-Plug 'https://github.com/Yggdroot/indentLine'      " Show identation as vertical lines
-Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementaly highlight search results
+Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
+Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
+Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
 Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
-Plug 'https://github.com/junegunn/limelight.vim'   " `Hyperfocused writing`
+Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
+Plug 'https://github.com/reedes/vim-pencil'        " Convenient settings for text editing
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/itchyny/vim-cursorword'   " Underlines word under cursor
 " }}}2
@@ -45,7 +45,7 @@ Plug 'https://github.com/othree/xml.vim'                " Extended XML/XSD featu
 Plug 'https://github.com/dhruvasagar/vim-table-mode'    " Simplifies plain text tables creation
 Plug 'https://github.com/lervag/vimtex'                 " LaTeX support
 Plug 'https://github.com/plasticboy/vim-markdown'       " Extended markdown support
-Plug 'https://github.com/gu-fan/riv.vim'                " .rst
+Plug 'https://github.com/gu-fan/riv.vim'                " .rst notekeeping
 " }}}2
 
 " {{{2 Coding tools
@@ -132,7 +132,7 @@ let g:buftabline_indicators=1 " show modified
 
 " }}}1
 
-" {{{1 Goyo & Limelight settings
+" {{{ Goyo & Limelight settings
 map <F11> :Goyo<CR>
 
 function! s:goyo_enter()
@@ -152,7 +152,7 @@ endfunction
 
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave nested call <SID>goyo_leave()
-" }}}1
+" }}}
 
 " Scrolling options
 set scrolloff=7     " 7 lines above/below cursor when scrolling
@@ -347,6 +347,18 @@ function! WriteCreatingDirs()
 endfunction
 command! Mkw call WriteCreatingDirs()
 
+" Toggle conceal options
+fu! ToggleConceal()
+  if (&conceallevel == 0)
+    set conceallevel=2
+    set concealcursor=niv
+  else
+    set conceallevel=0
+    set concealcursor=auto
+  endif
+endfunction
+command! ToggleConceal call ToggleConceal()
+
 " {{{1 Nerdcommenter settings
 let g:NERDSpaceDelims = 1
 let g:NERDRemoveExtraSpaces = 1
@@ -361,18 +373,6 @@ else
     nmap <C-_> <leader>c<Space>
     vmap <C-_> <leader>c<Space>
 endif
-" }}}1
-
-" {{{1 Multiple cursors
-let g:multi_cursor_use_default_mapping=0
-let g:multi_cursor_start_word_key      = '<A-i>'
-let g:multi_cursor_select_all_word_key = '<A-u>'
-" let g:multi_cursor_start_key           = 'g<C-n>'
-" let g:multi_cursor_select_all_key      = 'g<A-n>'
-let g:multi_cursor_next_key            = '<A-i>'
-let g:multi_cursor_prev_key            = '<A-o>'
-let g:multi_cursor_skip_key            = '<A-q>'
-let g:multi_cursor_quit_key            = '<Esc>'
 " }}}1
 
 " Browse files
@@ -516,7 +516,6 @@ autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
 let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
-" let g:vim_markdown_conceal = 0
 
 autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
@@ -532,14 +531,28 @@ nnoremap <leader>mt :Toch<CR>
 let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 
-" {{{1 deoplete autocomplition
+" {{{ deoplete autocomplition setup
 let g:deoplete#enable_at_startup = 1
-
-" Keybindings
 inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
 inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
 inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-" }}}1
+inoremap <expr><A-o> deoplete#mappings#manual_complete()
+" }}}
+
+" {{{ Snippets configuration
+imap <A-l> <Plug>(neosnippet_expand_or_jump)
+smap <A-l> <Plug>(neosnippet_expand_or_jump)
+xmap <A-l> <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <expr><TAB>
+  \ pumvisible() ? "\<A-j>" :
+  \ neosnippet#expandable_or_jumpable() ?
+  \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+  \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" }}}
 
 " {{{1 LSP settings
 let g:LanguageClient_serverCommands = {
@@ -682,7 +695,7 @@ nnoremap <leader>vu :GitGutterUndoHunk<CR>
 " Sphinx & RST
 let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
 autocmd FileType rst setlocal sw=2 ts=2 expandtab
-autocmd FileType rst setlocal textwidth=79
+autocmd FileType rst setlocal textwidth=80
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
