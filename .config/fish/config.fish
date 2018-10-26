@@ -1,32 +1,21 @@
-# {{{ Misc global variables
+# Paths to various toolchains and SDK's
+set -gx EMSDK       ~/.local/opt/emsdk
+set -gx e2k_PATH    /opt/mcst/lcc-1.21.18.e2k-v3.3.14/
+set -gx e2k_CC      "$e2k_PATH"/bin.toolchain/e2k-linux-gcc
+set -gx e2k_PREFIX  "$e2k_PATH"/fs/usr/
+set -gx GOROOT      "/usr/local/go"
+set -gx GOPATH      $HOME/Dev/Go/
 
-# PATH
-set     PATH    $HOME/.local/opt/fzf/bin/   $PATH
-set     PATH    $HOME/.local/bin/           $PATH
-set     PATH    $HOME/.local/scripts/       $PATH
-
-# WASM toolchain
-set -gx EMSDK   ~/.local/opt/emsdk
-set     PATH    $EMSDK                      $PATH
-set     PATH    $EMSDK/clang/e1.38.11_64bit $PATH
-set     PATH    $EMSDK/node/8.9.1_64bit/bin $PATH
-set     PATH    $EMSDK/emscripten/1.38.11   $PATH
-
-# Golang settings
-# set -x  GOROOT      "/usr/lib/go-1.10"
-# set -x  GOTOOLDIR   "/usr/lib/go-1.10/pkg/tool/linux_amd64"
-set -x  GOROOT      "/usr/local/go"
-set     PATH        /usr/local/go/bin/             $PATH
-set -x  GOPATH      $HOME/Dev/Go/
-set     PATH        $GOPATH/bin/                   $PATH
-
-# Rust settings
-set     PATH        ~/.cargo/bin/                  $PATH
-
-# Elbrus cross-toolchain
-set     e2k_PATH    /opt/mcst/lcc-1.21.22.e2k-v4.3.14/
-set     e2k_CC      "$e2k_PATH"/bin.toolchain/e2k-linux-gcc
-set     e2k_PREFIX  "$e2k_PATH"/fs/usr/
+set PATH    $HOME/.local/opt/fzf/bin/   $PATH
+set PATH    $HOME/.local/bin/           $PATH
+set PATH    $HOME/.local/scripts/       $PATH
+set PATH    $EMSDK                      $PATH
+set PATH    $EMSDK/clang/e1.38.11_64bit $PATH
+set PATH    $EMSDK/node/8.9.1_64bit/bin $PATH
+set PATH    $EMSDK/emscripten/1.38.11   $PATH
+set PATH    /usr/local/go/bin/          $PATH
+set PATH    $GOPATH/bin/                $PATH
+set PATH    ~/.cargo/bin/               $PATH
 
 # Ripgrep config location
 set -gx RIPGREP_CONFIG_PATH     $HOME/.ripgreprc
@@ -35,16 +24,15 @@ set -gx RIPGREP_CONFIG_PATH     $HOME/.ripgreprc
 set EDITOR  nvim
 set VISUAL  nvim
 
-# Terminal settings consumed by ranger
-set TERMCMD "urxvt"
-set TERMINAL "urxvt -e"
-# }}}
+# Terminal settings (consumed by ranger)
+set TERMCMD     "urxvt"
+set TERMINAL    "urxvt -e"
 
 # Color theme
 theme_gruvbox dark medium
 
 # Colorized gcc output
-set -x GCC_COLORS 1
+set -gx GCC_COLORS 1
 
 # Delay time related to Vi switching to normal mode
 set fish_escape_delay_ms 100
@@ -53,17 +41,6 @@ set fish_escape_delay_ms 100
 set LESS '-RS#3NM~g'
 
 # {{{ Aliases
-# {{{2 common
-alias ag='ag --path-to-ignore ~/.agignore'
-alias agp='ag --pager="less -r"'
-alias agn='ag -n'
-alias agr='ag -r'
-alias ls='ls --color=auto'
-alias l='exa'
-alias ll='exa -l'
-alias lla='exa -l -a'
-alias lt='exa --sort=created -l --reverse'
-alias lta='exa --sort=created -l --reverse -a'
 alias q='exit'
 alias pd='pushd'
 alias pdd='popd'
@@ -71,28 +48,58 @@ alias pl='dirs -v'
 alias pc='dirs -c'
 alias s='sudo'
 alias svim='sudoedit'
-# 2}}}
 
-# {{{2 Wrappers for common utils
-alias ping='prettyping'
-# 2}}}
+alias ls='ls --color=auto'
+if which exa > /dev/null
+    alias l='exa'
+    alias ll='exa -l'
+    alias lla='exa -l -a'
+    alias lt='exa --sort=created -l --reverse'
+    alias lta='exa --sort=created -l --reverse -a'
+else
+    alias l='ls'
+    alias ll='ls -l'
+    alias lla='ls -la'
+    alias lt='ls -lt'
+    alias lta='ls -lat'
+end
 
-# {{{2 X apps
+if which rg > /dev/null
+    alias ag='rg'
+    alias agr='rg'                # Recursive
+    alias agn='rg --max-depth=1'  # Not recursive
+    alias rgn='rg --max-depth=1'  # Not recursive
+else if which ag > /dev/null
+    alias rg='ag --path-to-ignore ~/.agignore'
+    alias ag='ag --path-to-ignore ~/.agignore'
+    alias agr='ag -r'  # Recursive
+    alias agn='ag -n'  # Not recursive
+    alias rgn='ag -n'  # Not recursive
+else
+    alias rg='grep'
+    alias ag='grep'
+    alias agr='grep -Rn'  # Recursive
+    alias agn='grep -n'   # Not recursive
+    alias rgn='grep -n'   # Not recursive
+end
+
+if which prettyping > /dev/null
+    alias ping='prettyping'
+end
+
+# X apps
 alias zt='zathura'
 alias mrg='mirage'
-# 2}}}
 
-# {{{2 vim
+# vim
 alias vim='nvim'
 alias vi='nvim'
 alias v='nvim'
-# 2}}}
 
-# {{{2 ctags
+# ctags
 alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ct='ctags -R --exclude=.git -f tags'
-# 2}}}
 
 # {{{2 taskwarrior
 alias t="task"
@@ -118,7 +125,11 @@ alias tfD="task delete (__fzf_select_task)"
 alias tc="task context"
 alias tcn="task context none"
 
-alias cal="task calendar"
+if which taskwarrior > /dev/null
+    alias cal="task calendar"
+else
+    alias cal="cal -3"
+end
 # 2}}}
 # }}}
 
@@ -141,7 +152,6 @@ set __fish_git_prompt_char_stashstate ''
 set __fish_git_prompt_char_upstream_ahead '↑'
 set __fish_git_prompt_char_upstream_behind '↓'
 
-# Prompt
 function fish_prompt
     set last_status $status
     set_color $fish_color_cwd
@@ -158,7 +168,7 @@ if status --is-login
     end
 end
 
-# {{{1 FZF settings
+# {{{ FZF settings
 # https://github.com/nicodebo/base16-fzf/blob/master/fish/base16-gruvbox-dark-medium.fish
 set -l color00 '#282828'
 set -l color01 '#3c3836'
@@ -181,7 +191,7 @@ set -Ux FZF_DEFAULT_OPTS "--color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$
 
 # Default file searcher
 set -Ux FZF_DEFAULT_COMMAND 'fd --type f'
-# 1}}}
+# }}}
 
 function sssh
   while true; command ssh $argv; [ $status -ne 255 ] and break or sleep 1; end
