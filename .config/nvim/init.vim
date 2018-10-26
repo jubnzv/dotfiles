@@ -33,7 +33,7 @@ Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
 Plug 'https://github.com/reedes/vim-pencil'        " Convenient settings for text editing
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
-Plug 'https://github.com/itchyny/vim-cursorword'   " Underlines word under cursor
+Plug 'https://github.com/jubnzv/vim-cursorword'    " Underlines word under cursor
 " }}}2
 
 " {{{2 Text editing
@@ -86,18 +86,26 @@ set guioptions-=m  " Remove menu bar
 set guioptions-=T  " Remove toolbar
 set guioptions-=r  " Remove right-hand scroll bar
 set guioptions-=L  " Remove left-hand scroll bar
+
 set relativenumber
 set cursorline
 set laststatus=2   " Always show status line
-set background=dark
-set t_Co=256       " 256-colors mode
-colorscheme gruvbox
-let g:gruvbox_italic=1
-let g:gruvbox_terminal_colors = 1
-set t_ZH=^[[3m
-set t_ZR=^[[23m
 set title          " Show window title
 set signcolumn=yes
+set background=dark
+set t_Co=256       " 256-colors mode
+
+" Italic symbols in terminal
+set t_ZH=^[[3m
+set t_ZR=^[[23m
+
+" Gruvbox configuration
+let g:gruvbox_sign_column='bg0'
+let g:gruvbox_color_column='bg0'
+let g:gruvbox_number_column='bg0'
+colorscheme gruvbox
+hi CursorLine ctermbg=236
+hi CursorLineNr ctermbg=236
 
 " {{{2 Modeline | tabline
 let g:lightline = {
@@ -437,7 +445,6 @@ autocmd Filetype html setlocal tabstop=4
 
 " 80+ characters line highlight
 highlight ColorColumn ctermbg=236
-" call matchadd('ColorColumn', '\%80v', 100)
 set colorcolumn=80
 
 " {{{1 Trailing whitespaces
