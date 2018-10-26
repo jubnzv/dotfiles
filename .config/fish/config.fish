@@ -20,10 +20,16 @@ set     PATH        /usr/local/go/bin/             $PATH
 set -x  GOPATH      $HOME/Dev/Go/
 set     PATH        $GOPATH/bin/                   $PATH
 
+# Rust settings
+set     PATH        ~/.cargo/bin/                  $PATH
+
 # Elbrus cross-toolchain
 set     e2k_PATH    /opt/mcst/lcc-1.21.22.e2k-v4.3.14/
 set     e2k_CC      "$e2k_PATH"/bin.toolchain/e2k-linux-gcc
 set     e2k_PREFIX  "$e2k_PATH"/fs/usr/
+
+# Ripgrep config location
+set -gx RIPGREP_CONFIG_PATH     $HOME/.ripgreprc
 
 # Editor settings
 set EDITOR  nvim
@@ -40,10 +46,10 @@ theme_gruvbox dark medium
 # Colorized gcc output
 set -x GCC_COLORS 1
 
-# Deay time related to Vi switching to normal mode
+# Delay time related to Vi switching to normal mode
 set fish_escape_delay_ms 100
 
-# Pages options
+# Pager options
 set LESS '-RS#3NM~g'
 
 # {{{ Aliases
@@ -53,6 +59,11 @@ alias agp='ag --pager="less -r"'
 alias agn='ag -n'
 alias agr='ag -r'
 alias ls='ls --color=auto'
+alias l='exa'
+alias ll='exa -l'
+alias lla='exa -l -a'
+alias lt='exa --sort=created -l --reverse'
+alias lta='exa --sort=created -l --reverse -a'
 alias q='exit'
 alias pd='pushd'
 alias pdd='popd'
@@ -85,6 +96,7 @@ alias ct='ctags -R --exclude=.git -f tags'
 
 # {{{2 taskwarrior
 alias t="task"
+alias tl="task minimal"
 alias tdw="task due.before:eow+1d"
 alias tdd="task due:today"
 alias tcd="task end.after:today completed"
@@ -98,10 +110,15 @@ function __fzf_select_task -d 'select id one of taskwarrior tasks with fzf'
     echo $res | awk '{print $1}'
 end
 
-alias tf="t (__fzf_select_task)"
-alias tfe="t edit (__fzf_select_task)"
-alias tfd="t done (__fzf_select_task)"
-alias tfD="t delete (__fzf_select_task)"
+alias tf="task (__fzf_select_task)"
+alias tfe="task edit (__fzf_select_task)"
+alias tfd="task done (__fzf_select_task)"
+alias tfD="task delete (__fzf_select_task)"
+
+alias tc="task context"
+alias tcn="task context none"
+
+alias cal="task calendar"
 # 2}}}
 # }}}
 

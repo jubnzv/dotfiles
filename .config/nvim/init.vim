@@ -419,8 +419,8 @@ nnoremap <A-x> :Commands<CR>
 nnoremap <leader>m :Marks<CR>
 " Files from current directory
 nnoremap <A-p> :Files<CR>
-" Ag search
-nnoremap <leader>fs :Ag<CR>
+" Search using ripgrep
+nnoremap <leader>fs :Rg<CR>
 " Search from tags in directory
 nnoremap <leader>ft :Tags<CR>
 " Tags from a current file

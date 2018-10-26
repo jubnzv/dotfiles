@@ -88,7 +88,7 @@ CLI tools
 +-------------------+--------------------------------------------------------------+
 |      :code:`find` |                        `fd <https://github.com/sharkdp/fd>`_ |
 +-------------------+--------------------------------------------------------------+
-|      :code:`grep` |                                                   :code:`ag` |
+|      :code:`grep` |          `ripgrep <https://github.com/BurntSushi/ripgrep/>`_ |
 +-------------------+--------------------------------------------------------------+
 |      :code:`ping` |     `prettyping <https://github.com/denilsonsa/prettyping>`_ |
 +-------------------+--------------------------------------------------------------+
@@ -105,7 +105,7 @@ Organizer & PIM
   * `Daemon <https://github.com/jubnzv/go-taskwarrior/tree/master/examples/agenda-report>`_ that sends customized task reports inside local mailbox
   * Awesome `bugwarrior <https://github.com/ralphbean/bugwarrior>`_ script to
     fetch and structurize assigned issues from number of services
-  * Convient aliases in `fish <https://github.com/jubnzv/dotfiles/tree/master/.config/fish>`_ and :code:`.taskrc`
+  * Convenient aliases in `fish <https://github.com/jubnzv/dotfiles/tree/master/.config/fish>`_ and :code:`.taskrc`
 
 * `riv.vim <https://github.com/gu-fan/riv.vim>`_ for notekeeping
 
