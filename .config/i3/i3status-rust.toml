@@ -49,6 +49,11 @@ interval = 3
 format = "{1m}"
 
 [[block]]
+block = "taskwarrior"
+interval = 30
+
+[[block]]
 block = "battery"
 interval = 15
 format = "{percentage}% {time}"
+

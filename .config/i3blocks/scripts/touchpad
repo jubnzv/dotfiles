@@ -1,7 +1,0 @@
-#!/bin/sh
-
-if xinput list-props 11 | grep "Device Enabled .*:.*1" ; then
-    echo ""
-else
-    echo "!"
-fi
