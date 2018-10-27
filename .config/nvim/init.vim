@@ -33,7 +33,7 @@ Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
 Plug 'https://github.com/reedes/vim-pencil'        " Convenient settings for text editing
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
-Plug 'https://github.com/jubnzv/vim-cursorword'    " Underlines word under cursor
+Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
 " }}}2
 
 " {{{2 Text editing
@@ -106,6 +106,7 @@ let g:gruvbox_number_column='bg0'
 colorscheme gruvbox
 hi CursorLine ctermbg=236
 hi CursorLineNr ctermbg=236
+hi ColorColumn ctermbg=236
 
 " {{{2 Modeline | tabline
 let g:lightline = {
@@ -192,7 +193,7 @@ if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-" 1{{{ Make normal mode compatible with ru keymap
+" {{{ Make normal mode compatible with ru keymap
 " set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 " set keymap=russian-jcukenwin
 let g:XkbSwitchLib = "/usr/local/lib/libxkbswitch.so"
@@ -201,9 +202,9 @@ let g:XkbSwitchLib = "/usr/local/lib/libxkbswitch.so"
 let g:XkbSwitchEnabled = 0
 let g:XkbSwitchLoadRIMappings = 0
 let g:XkbSwitchIMappings = ['ru']
-" }}}1
+" }}}
 
-" {{{1 Buffers/windows manipulation
+" {{{ Buffers/windows manipulation
 set hidden
 nnoremap <C-k> :bnext<CR>
 nnoremap <C-j> :bprev<CR>
@@ -218,15 +219,12 @@ nmap <A-r> <C-^>
 " let MRU_File = $HOME.'/.vim/mru_file'
 " let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
 " nmap <c-s-t> :MRU<CR><CR>
-""" }}}1
+" }}}
 
-" {{{1 tmux integration
+" tmux integration
 if exists('$TMUX')
-    " Prefix key
     map ` <Nop>
-    " set termguicolors
 endif
-" }}}1
 
 " Undo options
 set undofile
@@ -249,7 +247,7 @@ noremap <Leader>m mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 " Open markdown *scratch*
 map <leader>x :e ~/Org/buffer.md<CR>
 
-" {{{1 Misc keybinds
+" {{{ Misc keybinds
 set timeoutlen=500
 inoremap jj <Esc>
 nnoremap <A-h> :noh<CR>
@@ -293,7 +291,7 @@ inoremap <Right> <Nop>
 :command! W w
 :command! Q q
 :command! E e
-" }}}1
+" }}}
 
 " Suppress auto-pairs bind
 let g:AutoPairsShortcutToggle = ''
@@ -314,7 +312,7 @@ set wildmode=longest,list
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<CR>
 
-" {{{1 Switch between relative and absolute lines numering
+" {{{ Switch between relative and absolute lines numering
 function! NumberToggle()
     if(&nu == 1)
         set nu!
@@ -325,16 +323,38 @@ function! NumberToggle()
     endif
 endfunction
 nnoremap <F9> :call NumberToggle()<CR>
-" }}}1
+" }}}
 
-" {{{1 Folding settings
+" {{{ Folding settings
 set foldmethod=syntax
 set foldnestmax=6
-set nofoldenable " disable folding when open file
+set nofoldenable " Disable folding when open file
 set foldlevel=2
-
-" {{{2 Foldcolumn behaviour
 set foldcolumn=0
+set fillchars=fold:\ 
+
+" Customized `CustomFoldText` function:
+" http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
+function! CustomFoldText()
+    let fs = v:foldstart
+    while getline(fs) =~ '^\s*$' | let fs = nextnonblank(fs + 1)
+    endwhile
+    if fs > v:foldend
+        let line = getline(v:foldstart)
+    else
+        let line = substitute(getline(fs), '\t', repeat(' ', &tabstop), 'g')
+    endif
+
+    let w = &l:textwidth - 3 - &foldcolumn - (&number ? 8 : 0)
+    let foldSize = 1 + v:foldend - v:foldstart
+    let foldLevelStr = string(v:foldlevel) . ""
+    let lineCount = line("$")
+    let foldSizeStr = printf("[" . foldSize . " lines | %.1f", (foldSize*1.0)/lineCount*100) . "%] "
+    let expansionString = " " . repeat(" ", w - strwidth(foldSizeStr.line.foldLevelStr))
+    return line . expansionString . foldSizeStr . foldLevelStr
+endf
+set foldtext=CustomFoldText()
+
 function! ToggleFoldColumn()
     if(&foldcolumn != 0)
         set foldcolumn=0
@@ -343,8 +363,7 @@ function! ToggleFoldColumn()
     endif
 endfunction
 nnoremap <leader>q :call ToggleFoldColumn()<CR>
-" }}}2
-" }}}1
+" }}}
 
 " E45: 'readonly' option is set (add ! to override)
 cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
@@ -367,7 +386,7 @@ fu! ToggleConceal()
 endfunction
 command! ToggleConceal call ToggleConceal()
 
-" {{{1 Nerdcommenter settings
+" {{{ Nerdcommenter settings
 let g:NERDSpaceDelims = 1
 let g:NERDRemoveExtraSpaces = 1
 let g:NERDCompactSexyComs = 1
@@ -381,13 +400,18 @@ else
     nmap <C-_> <leader>c<Space>
     vmap <C-_> <leader>c<Space>
 endif
-" }}}1
+" }}}
 
 " Browse files
 map <A-1> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
+let NERDTreeIgnore=[
+    \ ".*\\.class$",
+    \ ".*\\.o$",
+    \ ".*\\.pyc$",
+    \ ]
 
-" {{{1 Easymotion
+" {{{ Easymotion
 " Note: Use <C-o><cmd> in insert mode.
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
 map <A-;> <Plug>(easymotion-overwin-f)
@@ -396,45 +420,33 @@ map <A-l> <Plug>(easymotion-overwin-line)
 let g:EasyMotion_smartcase = 1
 " Smartsign (type `3` and match `3` & `#`)
 let g:EasyMotion_use_smartsign_us = 1
-" }}}1
+" }}}
 
-"{{{1 FZF settings
+"{{{ FZF settings
 let $FZF_DEFAULT_OPTS .= ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel'
+let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-" Command for git grep
-" - fzf#vim#grep(command, with_column, [options], [fullscreen])
+" Command for git grep:
+" fzf#vim#grep(command, with_column, [options], [fullscreen])
 command! -bang -nargs=* GGrep
   \ call fzf#vim#grep(
   \   'git grep --line-number '.shellescape(<q-args>), 0,
   \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
 
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-" Search vim keybinds
 nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
-" Vim commands
 nnoremap <A-x> :Commands<CR>
-" List bookmarks
 nnoremap <leader>m :Marks<CR>
-" Files from current directory
 nnoremap <A-p> :Files<CR>
-" Search using ripgrep
 nnoremap <leader>fs :Rg<CR>
-" Search from tags in directory
 nnoremap <leader>ft :Tags<CR>
-" Tags from a current file
 nnoremap <A-7> :BTags<CR>
-nnoremap <F7> :TagbarToggle<CR>
-" Commit messages search
 nnoremap <leader>vc :Commits<CR>
-" Staging files search
 nnoremap <leader>vs :GFiles?<CR>
-" List openned buffers
 nnoremap <A-b> :Buffers<CR>
-" List openned windows
 nnoremap <leader>wl :Windows<CR>
-" }}}1
+" }}}
 
 " Default identation settings
 set tabstop=4
@@ -443,22 +455,33 @@ set expandtab  " on pressing tab insert 4 spaces
 autocmd Filetype css setlocal tabstop=4
 autocmd Filetype html setlocal tabstop=4
 
-" 80+ characters line highlight
-highlight ColorColumn ctermbg=236
-set colorcolumn=80
+" {{{ 80+ characters line highlight
+function! s:SetColorColumn()
+    if &textwidth == 0
+        setlocal colorcolumn=80
+    else
+        setlocal colorcolumn=+0
+    endif
+endfunction
 
-" {{{1 Trailing whitespaces
-" http://vim.wikia.com/wiki/Highlight_unwanted_spaces
-" Highlight
+augroup colorcolumn
+    autocmd!
+    autocmd OptionSet textwidth call s:SetColorColumn()
+    autocmd BufEnter * call s:SetColorColumn()
+augroup end
+" }}}
+
+" {{{ Trailing whitespaces: http://vim.wikia.com/wiki/Highlight_unwanted_spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
 autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
 autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 autocmd InsertLeave * match ExtraWhitespace /\s\+$/
 autocmd BufWinLeave * call clearmatches()
+
 " Remove all trailing whitespaces
 nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
-" }}}1
+" }}}
 
 " Highlight search results incrementally
 map /  <Plug>(incsearch-forward)
@@ -471,7 +494,6 @@ let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 " ctags
 set tags=./tags;
 let g:ctags_statusline=1
-
 let g:tagbar_type_rust = {
   \ 'ctagstype' : 'rust',
   \ 'kinds' : [
@@ -485,58 +507,7 @@ let g:tagbar_type_rust = {
       \'i:impls,trait implementations',
   \]
   \}
-
-" {{{1 C/C++ settings
-autocmd bufreadpre *.c setlocal textwidth=79
-autocmd bufreadpre *.cpp setlocal textwidth=79
-autocmd bufreadpre *.h setlocal textwidth=79
-autocmd bufreadpre *.h set filetype=c
-nmap <A-a> :A<CR>
-" }}}1
-
-" {{{1 Golang mode settings
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-au FileType go nmap <leader>r <plug>(go-run)
-au FileType go nmap <leader>d <plug>(go-doc)
-au FileType go nmap <leader>f <plug>(go-fmt)
-" }}}1
-
-" {{{ Python settings
-"let g:python_highlight_all = 1
-"let g:python_highlight_space_errors=0
-let g:pymode_python = 'python3'
-
-" Fix imports order
-autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
-
-" flake8
-let no_flake8_maps = 1
-autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
-" }}}
-
-"{{{ Markdown
-let vim_markdown_preview_github=0
-let vim_markdown_preview_hotkey='<leader>mp'
-let vim_markdown_preview_browser='Chromium'
-
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go']
-let g:markdown_folding = 1
-
-" Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
-let g:vim_markdown_math = 1
-
-nnoremap <leader>mt :Toch<CR>
-" }}}
-
-" MatIEC configuration
-let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
-let matiec_mkbuilddir = 1
+nnoremap <F7> :TagbarToggle<CR>
 
 " {{{ deoplete autocomplition setup
 let g:deoplete#enable_at_startup = 1
@@ -553,17 +524,18 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 
 " SuperTab like snippets behavior.
 " Note: It must be "imap" and "smap".  It uses <Plug> mappings.
-imap <expr><TAB>
-  \ pumvisible() ? "\<A-j>" :
-  \ neosnippet#expandable_or_jumpable() ?
-  \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
-smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
-  \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" imap <expr><TAB>
+"   \ pumvisible() ? "\<A-j>" :
+"   \ neosnippet#expandable_or_jumpable() ?
+"   \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+" smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+"   \ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
 " }}}
 
 " {{{1 LSP settings
 let g:LanguageClient_serverCommands = {
     \ 'python': ['/usr/local/bin/pyls', '--log-file=/tmp/pyls.log'],
+    \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
     \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
     \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
     \ }
@@ -658,7 +630,66 @@ function! LSPToggle()
 endfunction
 " }}}1
 
-" {{{1 Datetime options
+" {{{ Doxygen
+" Disable syntax highlighting provided by default plugin
+let g:load_doxygen_syntax=0
+
+" Configure DoxygenToolchain
+let g:DoxygenToolkit_commentType = "C++"
+let g:DoxygenToolkit_compactOneLineDoc = "yes"
+let g:DoxygenToolkit_compactDoc = "yes"
+let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
+let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
+autocmd FileType c nnoremap <leader>d :Dox<CR>
+"}}}
+
+" {{{ Git workflow
+let g:gitgutter_override_sign_column_highlight = 0
+let g:gitgutter_map_keys = 0
+nmap [v <Plug>GitGutterPrevHunk
+nmap ]v <Plug>GitGutterNextHunk
+nnoremap <leader>vv :GitGutterPreviewHunk<CR>
+nnoremap <leader>vu :GitGutterUndoHunk<CR>
+" }}}
+
+" {{{ C/C++ settings
+autocmd bufreadpre *.c setlocal textwidth=80
+autocmd bufreadpre *.cpp setlocal textwidth=80
+autocmd bufreadpre *.h setlocal textwidth=80
+autocmd bufreadpre *.h set filetype=c
+nmap <A-a> :A<CR>
+" }}}
+
+" {{{ Golang settings
+let g:go_highlight_functions = 1
+let g:go_highlight_methods = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_types = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+au FileType go nmap <leader>r <plug>(go-run)
+au FileType go nmap <leader>d <plug>(go-doc)
+au FileType go nmap <leader>f <plug>(go-fmt)
+" }}}
+
+" {{{ Python settings
+"let g:python_highlight_all = 1
+"let g:python_highlight_space_errors=0
+let g:pymode_python = 'python3'
+
+" Fix imports order
+autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
+
+" flake8
+let no_flake8_maps = 1
+autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
+" }}}
+
+" MatIEC configuration
+let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
+let matiec_mkbuilddir = 1
+
+" {{{ Datetime options
 " language time C
 nnoremap <C-c>. "=strftime("%Y-%m-%d")<CR>P
 inoremap <C-c>. <C-R>=strftime("%Y-%m-%d")<CR>
@@ -676,44 +707,39 @@ function! LastModified()
   endif
 endfun
 autocmd BufWritePre * call LastModified()
-" }}}1
-
-" {{{1 Doxygen
-" Disable syntax highlighting provided by default plugin
-let g:load_doxygen_syntax=0
-
-" Configure DoxygenToolchain
-let g:DoxygenToolkit_commentType = "C++"
-let g:DoxygenToolkit_compactOneLineDoc = "yes"
-let g:DoxygenToolkit_compactDoc = "yes"
-let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
-let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
-autocmd FileType c nnoremap <leader>d :Dox<CR>
-"}}}1
-
-" Git workflow
-let g:gitgutter_override_sign_column_highlight = 0
-let g:gitgutter_map_keys = 0
-nmap [v <Plug>GitGutterPrevHunk
-nmap ]v <Plug>GitGutterNextHunk
-nnoremap <leader>vv :GitGutterPreviewHunk<CR>
-nnoremap <leader>vu :GitGutterUndoHunk<CR>
+" }}}
 
 " Sphinx & RST
 let g:riv_fold_auto_update = 0 " Disable auto-folding on `:w`
 autocmd FileType rst setlocal sw=2 ts=2 expandtab
 autocmd FileType rst setlocal textwidth=80
 
+"{{{ Markdown
+let vim_markdown_preview_github=0
+let vim_markdown_preview_hotkey='<leader>mp'
+let vim_markdown_preview_browser='Chromium'
+
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go', 'rust']
+let g:markdown_folding = 1
+
+" Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
+let g:vim_markdown_math = 1
+
+nnoremap <leader>mt :Toch<CR>
+" }}}
+
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 
 " {{{ File triggers
-" buildbot configuration file
-au BufNewFile,BufRead   master.cfg  set ft=python
+" buildbot configuration files
+au BufNewFile,BufRead   master.cfg      set ft=python
+au BufNewFile,BufRead   buildbot.tac    set ft=python
 " }}}
 
-" {{{1 which-key: redundant long keybindinds with mnemonics.
+" {{{ which-key: redundant long keybindinds with mnemonics.
 " Use it only when forget shorter keybind.
 "
 " Define prefix dictionary
@@ -838,6 +864,6 @@ let g:which_key_map.r = {
 call which_key#register('<Space>', "g:which_key_map")
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
-" 1}}}
+" }}}
 
-" vim: foldmethod=marker sw=4
+" vim: foldmethod=marker sw=4 tw=100
