@@ -21,12 +21,12 @@ set PATH    ~/.cargo/bin/               $PATH
 set -gx RIPGREP_CONFIG_PATH     $HOME/.ripgreprc
 
 # Editor settings
-set EDITOR  nvim
-set VISUAL  nvim
+set -gx EDITOR  nvim
+set -gx VISUAL  nvim
 
 # Terminal settings (consumed by ranger)
-set TERMCMD     "urxvt"
-set TERMINAL    "urxvt -e"
+set -gx TERMCMD     "urxvt"
+set -gx TERMINAL    "urxvt -e"
 
 # Color theme
 theme_gruvbox dark medium
@@ -38,7 +38,7 @@ set -gx GCC_COLORS 1
 set fish_escape_delay_ms 100
 
 # Pager options
-set LESS '-RS#3NM~g'
+set -gx LESS '-RS#3NM~g'
 
 # {{{ Aliases
 alias q='exit'
@@ -49,6 +49,23 @@ alias pc='dirs -c'
 alias s='sudo'
 alias svim='sudoedit'
 
+# vim
+alias v='nvim'
+alias vi='nvim'
+alias vim='nvim'
+alias vn='nvim -u NONE'
+
+# ctags
+alias cR='ctags -R'
+alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
+alias ct='ctags -R --exclude=.git -f tags'
+
+# X apps
+alias zt='zathura'
+alias mrg='mirage'
+
+# {{{2 Replacement for common unix utils
+# ls
 alias ls='ls --color=auto'
 if which exa > /dev/null
     alias l='exa'
@@ -56,6 +73,7 @@ if which exa > /dev/null
     alias lla='exa -l -a'
     alias lt='exa --sort=created -l --reverse'
     alias lta='exa --sort=created -l --reverse -a'
+    # set -U fish_user_abbreviations $fish_user_abbreviations 'ls=exa'
 else
     alias l='ls'
     alias ll='ls -l'
@@ -64,53 +82,53 @@ else
     alias lta='ls -lat'
 end
 
+# grep
+set -U fish_user_abbreviations $fish_user_abbreviations \
+        'ag=rg' \
+        'agn=rgn' \
+        'grep=rg'
 if which rg > /dev/null
     alias ag='rg'
-    alias agr='rg'                # Recursive
-    alias agn='rg --max-depth=1'  # Not recursive
-    alias rgn='rg --max-depth=1'  # Not recursive
+    alias rgn='rg --max-depth=1'
 else if which ag > /dev/null
     alias rg='ag --path-to-ignore ~/.agignore'
-    alias ag='ag --path-to-ignore ~/.agignore'
-    alias agr='ag -r'  # Recursive
-    alias agn='ag -n'  # Not recursive
-    alias rgn='ag -n'  # Not recursive
+    alias rgn='ag -n'
 else
     alias rg='grep'
-    alias ag='grep'
-    alias agr='grep -Rn'  # Recursive
-    alias agn='grep -n'   # Not recursive
-    alias rgn='grep -n'   # Not recursive
+    alias rgn='grep -n'
 end
 
+# find
+if not which fd > /dev/null
+    set -U fish_user_abbreviations $fish_user_abbreviations \
+        'find=fd'
+end
+
+# cat
+# if which bat > /dev/null
+#     set -U fish_user_abbreviations $fish_user_abbreviations \
+#         'cat=bat'
+# end
+
+# ping
 if which prettyping > /dev/null
-    alias ping='prettyping'
+    set -U fish_user_abbreviations $fish_user_abbreviations \
+        'ping=prettyping'
 end
-
-# X apps
-alias zt='zathura'
-alias mrg='mirage'
-
-# vim
-alias vim='nvim'
-alias vi='nvim'
-alias v='nvim'
-
-# ctags
-alias cR='ctags -R'
-alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
-alias ct='ctags -R --exclude=.git -f tags'
+# }}}2
 
 # {{{2 taskwarrior
 alias t="task"
 alias tl="task minimal"
 alias tdw="task due.before:eow+1d"
 alias tdd="task due:today"
-alias tcd="task end.after:today completed"
 alias tsw="task due.before:eow+1d or scheduled.before:eow+1d"
 alias tsd="task due:today or scheduled:today"
-alias tcw="task end.after:today-1wk completed"
-alias ta="task add"
+alias tc="task context"
+set -U fish_user_abbreviations $fish_user_abbreviations \
+    'tp=t proj:' \
+    'ta=t a' \
+    'tcn=t c none'
 
 function __fzf_select_task -d 'select id one of taskwarrior tasks with fzf'
     set -l res (task minimal 2> /dev/null | sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' | fzf)
@@ -122,10 +140,7 @@ alias tfe="task edit (__fzf_select_task)"
 alias tfd="task done (__fzf_select_task)"
 alias tfD="task delete (__fzf_select_task)"
 
-alias tc="task context"
-alias tcn="task context none"
-
-if which taskwarrior > /dev/null
+if which task > /dev/null
     alias cal="task calendar"
 else
     alias cal="cal -3"
@@ -138,7 +153,8 @@ end
 alias cs_f='cscope -R -L -2 ".*" | awk -F \' \' \'{print $2 "\t" $1}\' | sort | uniq'
 
 # git
-alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+set -U fish_user_abbreviations $fish_user_abbreviations \
+    'git_cfg=git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 alias git_changelog="git --no-pager log --no-merges --pretty=format:' %x20%x20 - %s (%an)' (git tag | grep -v -- -rc | tail -n 1)..HEAD ."
 
 # git prompt
@@ -151,6 +167,10 @@ set __fish_git_prompt_char_stagedstate ''
 set __fish_git_prompt_char_stashstate ''
 set __fish_git_prompt_char_upstream_ahead '↑'
 set __fish_git_prompt_char_upstream_behind '↓'
+
+# fish shell
+set -U fish_user_abbreviations $fish_user_abbreviations \
+    '_up=source ~/.config/fish/config.fish'
 
 function fish_prompt
     set last_status $status
@@ -188,9 +208,8 @@ set -l color0E '#d3869b'
 set -l color0F '#d65d0e'
 
 set -Ux FZF_DEFAULT_OPTS "--color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D,fg:$color04,header:$color0D,info:$color0A,pointer:$color0C,marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel"
-
-# Default file searcher
-set -Ux FZF_DEFAULT_COMMAND 'fd --type f'
+set -Ux FZF_DEFAULT_COMMAND 'fd --type f --follow'
+set -Ux FZF_CTRL_T_COMMAND 'fd --type file --follow'
 # }}}
 
 function sssh
