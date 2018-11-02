@@ -37,8 +37,8 @@ set -gx GCC_COLORS 1
 # Delay time related to Vi switching to normal mode
 set fish_escape_delay_ms 100
 
-# Pager options
-set -gx LESS '-RS#3NM~g'
+# Show line numbers in `less`
+# set -gx LESS '-RS#3NM~g'
 
 # {{{ Aliases
 alias q='exit'
@@ -104,11 +104,20 @@ if not which fd > /dev/null
         'find=fd'
 end
 
-# cat
-# if which bat > /dev/null
-#     set -U fish_user_abbreviations $fish_user_abbreviations \
-#         'cat=bat'
-# end
+# cat -> bat
+if which bat > /dev/null
+    set -U fish_user_abbreviations $fish_user_abbreviations \
+        'cat=bat'
+end
+
+# buku: boomarks manager
+if which buku > /dev/null
+    alias b='buku --suggest'
+    set -U fish_user_abbreviations $fish_user_abbreviations \
+        'bw=b -w' \
+        'bp=b -p' \
+        'ba=b -a'
+end
 
 # ping
 if which prettyping > /dev/null
@@ -155,7 +164,11 @@ alias cs_f='cscope -R -L -2 ".*" | awk -F \' \' \'{print $2 "\t" $1}\' | sort | 
 # git
 set -U fish_user_abbreviations $fish_user_abbreviations \
     'git_cfg=git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+
 alias git_changelog="git --no-pager log --no-merges --pretty=format:' %x20%x20 - %s (%an)' (git tag | grep -v -- -rc | tail -n 1)..HEAD ."
+alias git_restore_permissions="git diff -p -R --no-color \
+    | /bin/grep -E \"^(diff|(old|new) mode)\" --color=never  \
+    | git apply"
 
 # git prompt
 set __fish_git_prompt_showdirtystate 'yes'
@@ -168,9 +181,15 @@ set __fish_git_prompt_char_stashstate ''
 set __fish_git_prompt_char_upstream_ahead '↑'
 set __fish_git_prompt_char_upstream_behind '↓'
 
-# fish shell
+# Datetime abbrevations
 set -U fish_user_abbreviations $fish_user_abbreviations \
-    '_up=source ~/.config/fish/config.fish'
+    '_dtd=(date +%Y-%m-%d)' \
+    '_dtt=(date +%Y-%m-%d-%H:%M:%S)'
+
+# fish shell configuration
+set -U fish_user_abbreviations $fish_user_abbreviations \
+    '_up=source ~/.config/fish/config.fish' \
+    '_et=echo $TERM'
 
 function fish_prompt
     set last_status $status

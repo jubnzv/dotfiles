@@ -30,6 +30,8 @@ General
 
 * Web-browser: :code:`chromium` with `CVim <https://github.com/1995eaton/chromium-vim>`_ plugin
 
+* Mail / RSS client: :code:`thunderbird`
+
 * JetBrains IDE's with :code:`ideavim` and :code:`AceJump` plugins
 
 +------------------------------------------+---------------------+
@@ -79,6 +81,7 @@ CLI tools
 * Terminal emulator: :code:`rxvt-unicode-256color`
 * `fzf <https://github.com/junegunn/fzf>`_
 * `sshrc <https://github.com/Russell91/sshrc>`_ script
+* `buku <https://github.com/jarun/Buku>`_ bookmark manager
 * Replacements and wrappers for default utilities
 
 +-------------------+--------------------------------------------------------------+
@@ -87,6 +90,8 @@ CLI tools
 |        :code:`ls` |                        `exa <https://github.com/ogham/exa>`_ |
 +-------------------+--------------------------------------------------------------+
 |      :code:`find` |                        `fd <https://github.com/sharkdp/fd>`_ |
++-------------------+--------------------------------------------------------------+
+|       :code:`cat` |                      `bat <https://github.com/sharkdp/bat>`_ |
 +-------------------+--------------------------------------------------------------+
 |      :code:`grep` |          `ripgrep <https://github.com/BurntSushi/ripgrep/>`_ |
 +-------------------+--------------------------------------------------------------+

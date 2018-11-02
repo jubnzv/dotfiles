@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Toggle touchpad on X230.
+#
 
 # Old synaptics script:
 #
