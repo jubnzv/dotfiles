@@ -1,0 +1,41 @@
+# Include-Guard {{{
+snippet     once
+options     head
+alias       include-guard
+abbr #ifndef ... #define ... #endif
+    #ifndef ${1:#:SYMBOL}
+        #define $1
+
+        ${0:TARGET}
+    #endif /* !$1 */
+# }}}
+
+# Various warning and debug prints {{{
+# :g/\/\/\ prdeb$/d to clean them all
+snippet     prdeb
+options     head
+alias       debug-print
+    printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__); // prdeb
+
+
+snippet     prni
+options     head
+alias       non-implemented-print
+    printf("%s: Not implemented\n", __func__);
+# }}}
+
+# clang-format {{{
+snippet     cfmt
+options     head
+abbr /* clang-format */
+    /* clang-format off */
+        ${0:TARGET}
+    /* clang-format on */
+
+snippet     cfmts
+options     head
+abbr /* clang-format */
+    // clang-format 
+# }}}
+
+# vim:fdm=marker:foldlevel=0:

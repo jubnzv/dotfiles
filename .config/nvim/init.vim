@@ -4,30 +4,31 @@ if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
 
-" {{{1 Plugins
+" {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-" {{{2 General
+" {{{ General
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/kshenoy/vim-signature'          " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
 Plug 'https://github.com/lyokha/vim-xkbswitch'           " ru-RU key bindings in normal mode
 Plug 'https://github.com/rhysd/clever-f.vim'             " Convenient `f` and `F`
 Plug 'https://github.com/junegunn/vim-peekaboo'          " Shows vim registers content
-" Plug 'https://github.com/christoomey/vim-tmux-navigator'
-" Plug 'https://github.com/benmills/vimux'
+Plug 'https://github.com/tpope/vim-eunuch'               " Helpers for Shell
+Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
+" Plug 'https://github.com/tpope/vim-unimpaired'
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
-" }}}2
+" }}}
 
-" {{{2 UI & appearance
+" {{{ UI & appearance
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/ap/vim-buftabline'        " Show buffers in the tabline
-Plug 'https://github.com/morhetz/gruvbox'          " Color scheme
+Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
 Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
 Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
@@ -36,9 +37,10 @@ Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
 Plug 'https://github.com/reedes/vim-pencil'        " Convenient settings for text editing
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
-" }}}2
+Plug 'https://github.com/kien/rainbow_parentheses.vim'
+" }}}
 
-" {{{2 Text editing
+" {{{ Text editing
 Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'     " Doxygen helper
 Plug 'https://github.com/pearofducks/ansible-vim'       " Ansible format support
 Plug 'https://github.com/cespare/vim-toml'              " .toml
@@ -48,11 +50,12 @@ Plug 'https://github.com/dhruvasagar/vim-table-mode'    " Simplifies plain text 
 Plug 'https://github.com/lervag/vimtex'                 " LaTeX support
 Plug 'https://github.com/plasticboy/vim-markdown'       " Extended markdown support
 Plug 'https://github.com/gu-fan/riv.vim'                " .rst notekeeping
-" }}}2
+" }}}
 
-" {{{2 Coding tools
+" {{{ Coding tools
 Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'https://github.com/scrooloose/nerdcommenter'
+Plug 'https://github.com/andymass/vim-matchup'       " Better %
 Plug 'https://github.com/tpope/vim-fugitive'         " Git wrapper
 Plug 'https://github.com/airblade/vim-gitgutter'     " Show git diffs in the gutter
 Plug 'https://github.com/godlygeek/tabular'          " Create fancy tabularized comments
@@ -68,7 +71,7 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ 'do': 'bash install.sh',
   \ }
 
-" {{{3 Language-specific
+" {{{ Language-specific
 Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel C codestyle
 Plug 'https://github.com/nvie/vim-flake8'               " flake8 integration
 Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
@@ -76,12 +79,13 @@ Plug 'https://github.com/fatih/vim-go'                  " Golang plugin
 Plug 'https://github.com/dag/vim-fish'                  " fish scripting language support
 Plug 'https://github.com/junegunn/vader.vim'            " vimscript testing framework
 Plug 'https://github.com/Kuniwak/vint'                  " vimscript linter
+Plug 'https://github.com/tpope/vim-scriptease'          " Vim plugin for making Vim plugins
 Plug '~/Dev/IEC.vim'                                    " IEC 61131-3 support
-" }}}3
-" }}}2
+" }}}
+" }}}
 
 call plug#end()
-" }}}1
+" }}}
 
 " {{{ General
 
@@ -99,10 +103,10 @@ function! ParseModeline()
     setlocal nomodeline
   endif
 endfunction
-autocmd! BufReadPost,BufNewFile * call ParseModeline()
+au! BufReadPost,BufNewFile * call ParseModeline()
 
-" Use dash as word separator.
-set iskeyword+=-
+" Append word separators
+" set iskeyword+=-
 
 " Remove delay between complex keybindings.
 " It also required for `vim-which-key` plugin.
@@ -128,6 +132,7 @@ set mat=1
 
 " Ignore compiled files
 set wildignore=*.o,*~,*.pyc
+set wildignore+=*.aux,*.out,*.toc  " LaTeX
 
 " wildmenu: command line completion
 set wildmenu
@@ -153,7 +158,7 @@ endif
 
 " {{{ General keybindings
 
-" {{{2 Common
+" {{{ Common
 "
 " Binds that changes default vim behavior, separated from plugins
 " configuration.
@@ -188,6 +193,9 @@ nnoremap <leader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 nmap <F1> :echo <CR>
 imap <F1> <C-o>:echo <CR>
 
+" Disable the ever-annoying Ex mode shortcut key
+nnoremap Q @@
+
 " Search visually selected
 vnoremap // y/<C-R>"<CR>
 
@@ -198,6 +206,29 @@ noremap ;' :%s///cg<Left><Left><Left><Left>
 " Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
+
+" {{{ j/k | gj/gk
+" https://danielfgray.gitlab.io/computers/vimrc-guide/#Personal-tweaks
+function! Togglegjgk()
+  if !exists("g:togglegjgk") || g:togglegjgk==0
+    let g:togglegjgk=1
+    nnoremap j gj
+    nnoremap k gk
+    nnoremap gk k
+    nnoremap gj j
+    echo 'Switch to gj/gk'
+  else
+    let g:togglegjgk=0
+    nunmap j
+    nunmap k
+    nunmap gk
+    nunmap gj
+    echo 'Switch to j/k'
+  endif
+endfunction
+nnoremap <silent> <leader>tgj <Esc>:call Togglegjgk()<CR>
+command! Togglegjgk call Togglegjgk()
+" }}}
 
 " Toggle paste mode on and off
 map <leader>pp :setlocal paste!<CR>
@@ -236,19 +267,29 @@ map <leader>x :e ~/Org/buffer.md<CR>
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 
-" }}}2
+" }}}
 
 " Highlight search results incrementally (haya14busa/incsearch.vim)
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
-" Suppress auto-pairs bind
-let g:AutoPairsShortcutToggle = ''
+" {{{ Copy filename to '*' clipboard
+" http://vim.wikia.com/wiki/Copy_filename_to_clipboard
+if has('win32')
+  nmap ,cs :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
+  nmap ,cl :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
+  " This will copy the path in 8.3 short format, for DOS and Windows 9x
+  nmap ,c8 :let @*=substitute(expand("%:p:8"), "/", "\\", "g")<CR>
+else
+  nmap ,cs :let @*=expand("%")<CR>
+  nmap ,cl :let @*=expand("%:p")<CR>
+endif
+" }}}
 
 " }}}
 
-" {{{1 UI and appearance
+" {{{ UI and appearance
 set guioptions-=m  " Remove menu bar
 set guioptions-=T  " Remove toolbar
 set guioptions-=r  " Remove right-hand scroll bar
@@ -272,7 +313,7 @@ set guicursor+=c-ci-cr:block
 set t_ZH=^[[3m
 set t_ZR=^[[23m
 
-" Gruvbox configuration
+" Colorscheme configuration
 let g:gruvbox_sign_column='bg0'
 let g:gruvbox_color_column='bg0'
 let g:gruvbox_number_column='bg0'
@@ -282,7 +323,7 @@ hi CursorLineNr ctermbg=236
 hi ColorColumn ctermbg=236
 hi Todo ctermfg=130 guibg=#af3a03
 
-" {{{2 Modeline | tabline
+" {{{ Modeline | tabline
 let g:lightline = {
   \ 'colorscheme': 'gruvbox',
   \ 'active': {
@@ -311,9 +352,9 @@ let g:lightline = {
   \ },
   \ }
 let g:buftabline_indicators=1 " show modified
-" }}}2
+" }}}
 
-" {{{2 Switch between relative and absolute lines numbering
+" {{{ Switch between relative and absolute lines numbering
 function! NumberToggle()
   if(&nu == 1)
     set nu!
@@ -324,9 +365,9 @@ function! NumberToggle()
   endif
 endfunction
 nnoremap <F9> :call NumberToggle()<CR>
-" }}}2
+" }}}
 
-" {{{2 Goyo & Limelight settings
+" {{{ Goyo & Limelight settings
 map <F11> :Goyo<CR>
 
 function! s:goyo_enter()
@@ -344,11 +385,11 @@ function! s:goyo_leave()
   call buftabline#update(0)
 endfunction
 
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-" }}}2
+au! User GoyoEnter nested call <SID>goyo_enter()
+au! User GoyoLeave nested call <SID>goyo_leave()
+" }}}
 
-" }}}1
+" }}}
 
 " {{{ Make normal mode compatible with ru keymap
 " set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
@@ -384,6 +425,21 @@ if exists('$TMUX')
 endif
 " }}}
 
+" {{{ Multiple cursors
+let g:multi_cursor_use_default_mapping=1
+" }}}
+
+" {{{ Parens settings
+" Suppress auto-pairs bind
+let g:AutoPairsShortcutToggle = ''
+
+" Free statusline from Matchup
+let g:matchup_matchparen_status_offscreen=0
+
+" RainbowParentheses is disabled at the start
+nnoremap <leader>hp :RainbowParenthesesToggle<CR>
+" }}}
+
 " {{{ Folding settings
 set foldmethod=syntax
 set foldnestmax=6
@@ -406,11 +462,11 @@ function! CustomFoldText()
 
   let w = &l:textwidth - 3 - &foldcolumn - (&number ? 8 : 0)
   let foldSize = 1 + v:foldend - v:foldstart
-  let foldLevelStr = string(v:foldlevel) . ""
+  let foldLevelStr = "" . string(v:foldlevel)
   let lineCount = line("$")
-  let foldSizeStr = printf("[" . foldSize . " lines | %.1f", (foldSize*1.0)/lineCount*100) . "%] "
+  let foldSizeStr = printf("[%4dL|%4.1f%%]", foldSize, (foldSize*1.0)/lineCount*100)
   let expansionString = " " . repeat(" ", w - strwidth(foldSizeStr.line.foldLevelStr))
-  return line . expansionString . foldSizeStr . foldLevelStr
+  return  line . expansionString . foldLevelStr . " " . foldSizeStr
 endf
 set foldtext=CustomFoldText()
 
@@ -426,13 +482,13 @@ nnoremap <leader>q :call ToggleFoldColumn()<CR>
 
 " {{{ conceal
 " Toggle conceal options
-fu! ToggleConceal()
+function! ToggleConceal()
   if (&conceallevel == 0)
     set conceallevel=2
-    set concealcursor=niv
+    echo 'Enable conceal'
   else
     set conceallevel=0
-    set concealcursor=auto
+    echo 'Disable conceal'
   endif
 endfunction
 command! ToggleConceal call ToggleConceal()
@@ -471,7 +527,7 @@ function! LastModified()
     call setpos('.', save_cursor)
   endif
 endfun
-autocmd BufWritePre * call LastModified()
+au BufWritePre * call LastModified()
 " }}}
 
 " {{{ Easymotion
@@ -500,14 +556,14 @@ omap <A-z> <plug>(fzf-maps-o)
 nnoremap <A-x> :Commands<CR>
 " nnoremap <leader>m :Marks<CR>
 nnoremap <A-p> :Files<CR>
-" Note: rg version should be >= 1.10 (colored I/O fix)
+" Note: rg version should be >= 1.10 (colored I/O bottleneck fix)
 nnoremap <leader>fs :Rg<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
 nnoremap <leader>vc :Commits<CR>
 nnoremap <leader>vs :GFiles?<CR>
-nnoremap <A-b> :Buffers<CR>
-nnoremap <leader>wl :Windows<CR>
+nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>w :Windows<CR>
 " }}}
 
 " {{{ Nerdcommenter settings
@@ -536,9 +592,9 @@ function! s:SetColorColumn()
 endfunction
 
 augroup colorcolumn
-  autocmd!
-  autocmd OptionSet textwidth call s:SetColorColumn()
-  autocmd BufEnter * call s:SetColorColumn()
+  au!
+  au OptionSet textwidth call s:SetColorColumn()
+  au BufEnter * call s:SetColorColumn()
 augroup end
 " }}}
 
@@ -546,10 +602,10 @@ augroup end
 " http://vim.wikia.com/wiki/Highlight_unwanted_spaces
 highlight ExtraWhitespace ctermbg=red guibg=red
 match ExtraWhitespace /\s\+$/
-autocmd BufWinEnter * match ExtraWhitespace /\s\+$/
-autocmd InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
-autocmd InsertLeave * match ExtraWhitespace /\s\+$/
-autocmd BufWinLeave * call clearmatches()
+au BufWinEnter * match ExtraWhitespace /\s\+$/
+au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
+au InsertLeave * match ExtraWhitespace /\s\+$/
+au BufWinLeave * call clearmatches()
 
 " Remove all trailing whitespaces
 nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
@@ -586,9 +642,12 @@ inoremap <expr><A-o> deoplete#mappings#manual_complete()
 imap <A-l> <Plug>(neosnippet_expand_or_jump)
 smap <A-l> <Plug>(neosnippet_expand_or_jump)
 xmap <A-l> <Plug>(neosnippet_expand_target)
+
+" If your snippets trigger are same with builtin snippets, your snippets overwrite them.
+let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " }}}
 
-" {{{1 LSP settings
+" {{{ LSP settings
 let g:LanguageClient_serverCommands = {
   \ 'python': ['/usr/local/bin/pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
@@ -617,7 +676,7 @@ nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
 nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
 nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
 
-" {{{2 Diagnostic messages / linting
+" {{{ Diagnostic messages / linting
 let g:LanguageClient_diagnosticsEnable = 1
 
 " Use something different for highlighting
@@ -654,13 +713,13 @@ let g:LanguageClient_diagnosticsDisplay = {
   \       "signText": "hh",
   \       "signTexthl": "LSPInfoText",
   \   },}
-" }}}2
+" }}}
 
-" {{{2 Functions to show LSP status in modeline
+" {{{ Functions to show LSP status in modeline
 augroup LanguageClient_config
-  autocmd!
-  autocmd User LanguageClientStarted call LSPUpdateStatus(1)
-  autocmd User LanguageClientStopped call LSPUpdateStatus(0)
+  au!
+  au User LanguageClientStarted call LSPUpdateStatus(1)
+  au User LanguageClientStopped call LSPUpdateStatus(0)
 augroup END
 let g:lsp_status = 0
 function! LSPUpdateStatus(status) abort
@@ -675,16 +734,18 @@ endfunction
 function! LSPToggle()
   if (g:lsp_status == 0)
     execute ":LanguageClientStart"
+    echo 'Start LSP'
   else
     execute ":LanguageClientStop"
+    echo 'Stop LSP'
   endif
 endfunction
 command! LSPToggle call LSPToggle()
-" }}}1
+" }}}
 
 " {{{ Doxygen
-" Disable syntax highlighting provided by default plugin
-let g:load_doxygen_syntax=0
+" Enable syntax highlighting provided by default plugin
+let g:load_doxygen_syntax=1
 
 " Configure DoxygenToolchain
 let g:DoxygenToolkit_commentType = "C++"
@@ -692,7 +753,7 @@ let g:DoxygenToolkit_compactOneLineDoc = "yes"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
-autocmd FileType c nnoremap <leader>d :Dox<CR>
+au FileType c nnoremap <leader>d :Dox<CR>
 "}}}
 
 " {{{ Git workflow
@@ -705,15 +766,36 @@ nnoremap <leader>vv :GitGutterPreviewHunk<CR>
 nnoremap <leader>vu :GitGutterUndoHunk<CR>
 " }}}
 
+" {{{ Help buffer settings
+au FileType help noremap <buffer> q :q<cr>
+nnore <silent><buffer> K <Esc>:help <C-R><C-W><CR>
+" }}}
+
 " {{{ C/C++ settings
-autocmd bufreadpre *.c setlocal textwidth=80
-autocmd bufreadpre *.cpp setlocal textwidth=80
-autocmd bufreadpre *.h setlocal textwidth=80
-autocmd bufreadpre *.h set filetype=c
+au FileType c,cpp setlocal tw=80
+au bufreadpre *.h set filetype=c
+
+" Switch between header and sources
 nmap <A-a> :A<CR>
 
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
+
+" {{{ Commands
+au FileType c,cpp call CmdC()
+" Clean debug prints from `prdeb` snippet
+function! CmdC()
+  command! CleanDebugPrints :g/\/\/\ prdeb$/d
+endfunction
+" }}}
+
+" {{{ Abbrevations
+au FileType c,cpp call AbbrC()
+function! AbbrC()
+  " iabb dprint printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
+endfunction
+" }}}
+
 " }}}
 
 " {{{ Golang settings
@@ -729,27 +811,25 @@ au FileType go nmap <leader>f <plug>(go-fmt)
 " }}}
 
 " {{{ Python settings
-"let g:python_highlight_all = 1
-"let g:python_highlight_space_errors=0
-let g:pymode_python = 'python3'
-
 " Fix imports order
-autocmd FileType python nnoremap <Leader>ei :!isort %<CR><CR>
+au FileType python nnoremap <Leader>ei :!isort %<CR><CR>
 
 " flake8
 let no_flake8_maps = 1
-autocmd FileType python map <buffer> <F3> :call Flake8()<CR>
+au FileType python map <buffer> <F3> :call Flake8()<CR>
+
+au FileType python setlocal formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
 " }}}
 
 " {{{ vimscript
 let g:vim_indent_cont = 2
-autocmd FileType vim setlocal sw=4 ts=4 expandtab
-autocmd FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
+au FileType vim setlocal sw=4 ts=4 expandtab
+au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
 " }}}
 
 " {{{ HTML & CSS
-autocmd Filetype css setlocal ts=4
-autocmd Filetype html setlocal ts=4
+au Filetype css setlocal ts=4
+au Filetype html setlocal ts=4
 " }}}
 
 " {{{ IEC611-31
@@ -758,9 +838,9 @@ let matiec_mkbuilddir = 1
 " }}}
 
 " {{{ reStructuredText and sphinx
-autocmd FileType rst setlocal sw=4 ts=4 expandtab
-autocmd FileType rst setlocal textwidth=80
-autocmd Filetype rst setlocal foldmethod=syntax
+au FileType rst setlocal sw=4 ts=4 expandtab
+au FileType rst setlocal textwidth=80
+au Filetype rst setlocal foldmethod=expr
 
 " Disable auto-folding on `:w`
 let g:riv_fold_auto_update=0
@@ -774,15 +854,17 @@ let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
 
-autocmd BufNewFile,BufReadPost *.md set filetype=markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go', 'rust']
 let g:markdown_folding = 1
+au BufNewFile,BufReadPost *.md set filetype=markdown
 
 " Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
 let g:vim_markdown_math = 1
 " }}}
 
-" {{{ File triggers
+" {{{ Other files
+au FileType conf set foldmethod=marker foldenable
+
 " buildbot configuration files
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
@@ -794,8 +876,9 @@ au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenab
 " Define prefix dictionary
 let g:which_key_map =  {}
 
+" {{{ LSP
 let g:which_key_map.l = {
-  \ 'name' : '+lsp',
+  \ 'name' : '+LSP',
   \ 'a' : ['LanguageClient_textDocument_codeAction()'     , 'action']           ,
   \ 't' : ['LSPToggle()'                                  , 'toggle']           ,
   \ 'f' : ['LanguageClient#textDocument_formatting()'     , 'formatting']       ,
@@ -811,9 +894,11 @@ let g:which_key_map.l = {
   \ 'i' : ['LanguageClient#textDocument_implementation()'  , 'implementation']  ,
   \ },
   \ }
+" }}}
 
+" {{{ Git
 let g:which_key_map.g = {
-  \ 'name' : '+git',
+  \ 'name' : '+Git',
   \ 'c' : ['Gcommit', 'commit'],
   \ 's' : ['Gstatus', 'status'],
   \ 'b' : ['Gblame', 'blame'],
@@ -831,9 +916,11 @@ let g:which_key_map.g = {
   \ 'p' : ['GitGutterPreviewHunk'     , 'preview'],
   \ },
   \ }
+" }}}
 
+" {{{ Riv
 let g:which_key_map.r = {
-  \ 'name' : '+riv',
+  \ 'name' : '+Riv',
   \ 'i' : ['RivProjectIndex', 'index'],
   \ 'r' : ['RivReload', 'reload'],
   \ 't' : {
@@ -909,6 +996,7 @@ let g:which_key_map.r = {
   \ 'I' : ['RivIntro', 'intro'],
   \ },
   \ }
+" }}}
 
 call which_key#register('<Space>', "g:which_key_map")
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
