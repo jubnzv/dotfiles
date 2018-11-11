@@ -14,10 +14,10 @@ dotfiles
 Hardware
 ========
 
+* ThinkPad X200 (Core 2 Duo P8600 / 2 GiB DDR3-1066 RAM / 160 GB SSD); `libreboot <https://libreboot.org/docs/hardware/x200.html>`_ installed.
+
 * ThinkPad X230 (i5-3230M / 16 GiB DDR3-1600 RAM / WDC WDS500G2B0A 500 GB SSD)
   with `classic keyboard <http://www.thinkwiki.org/wiki/Install_Classic_Keyboard_on_xx30_Series_ThinkPads>`_.
-
-* ThinkPad X200 (Core 2 Duo P8600 / 2 GiB DDR3-1066 RAM / 160 GB SSD); `libreboot <https://libreboot.org/docs/hardware/x200.html>`_ installed.
 
 General
 =======

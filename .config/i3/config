@@ -199,6 +199,7 @@ bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-mo
 bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+F1 exec rofi-buku
 bindsym $mod+F2 exec rofi-google
+bindsym $mod+t exec $SCRIPTS_PATH/rofi-taskwarrior
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
@@ -323,22 +324,6 @@ mode --pango_markup "$mode_run_python" {
 	bindsym Escape  mode "default"
 }
 # }}}
-# {{{ Taskwarrior helpers
-set $mode_run_task <span bgcolor='#d79921' fgcolor='#282828'> Taskwarrior</span>\t\t\
-<span bgcolor='#bdae93' fgcolor='#282828'>[c]</span><span fgcolor='#bdae93'> calendar\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[t]</span><span fgcolor='#bdae93'> context\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[s]</span><span fgcolor='#bdae93'> shell</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> burndown</span>
-bindsym $mod+t mode "$mode_run_task"
-mode --pango_markup "$mode_run_task" {
-    bindsym c       exec urxvt -hold -e task calendar; mode "default"
-    bindsym t       exec notify-send "Current context: $(task _get rc.context)"; mode "default"
-    bindsym s       exec $TERMINAL -e 'tasksh'; mode "default"
-    bindsym b       exec urxvt -hold -e task burndown.weekly; mode "default"
-	bindsym Return  mode "default"
-	bindsym Escape  mode "default"
-}
-# }}}
 
 # }}}
 
@@ -365,4 +350,4 @@ bar {
 }
 # }}}
 
-# vim: set foldmethod=marker foldlevel=0 tw=120:
+# vim:foldmethod=marker:foldlevel=0:tw=120:
