@@ -1,20 +1,13 @@
-# [Created by task 2.5.1 8/20/2017 19:08:57]
-# Taskwarrior program configuration file.
-# For more documentation, see http://taskwarrior.org or try 'man task', 'man task-color',
-# 'man task-sync' or 'man taskrc'
-
-# Here is an example of entries that use the default, override and blank values
-#   variable=foo   -- By specifying a value, this overrides the default
-#   variable=      -- By specifying no value, this means no default
-#   #variable=foo  -- By commenting out the line, or deleting it, this uses the default
-
 # Use the command 'task show' to see all defaults and overrides
-
 data.location=~/Org/taskwarrior
 confirmation = no
 weekstart=monday
 locale=ru-RU
+calendar.holidays=sparse
 
+# Aliases
+alias.a=add
+alias.an=annotate
 alias.m=modify
 alias.d=done
 alias.D=delete
@@ -25,7 +18,19 @@ alias.c=context
 # Color theme
 include ~/.config/taskwarrior/gruvbox-dark-256.theme
 
-# {{{ Reports configuration
+# Holidays
+include ~/.local/share/taskwarrior/holidays.ru-RU.rc
+
+# Bugwarrior configuration
+include ~/.config/taskwarrior/bugwarrior.rc
+
+# tasksh configuration
+include ~/.config/taskwarrior/tasksh.rc
+
+# Personal contexts settings
+include ~/.config/taskwarrior/context.rc
+
+# {{{ Custom reports
 # Default
 report.list.columns=id,project,tags,scheduled,due.relative,urgency,description
 report.list.labels=ID,Project,Tags,Scheduled,Due,Score,Description
@@ -37,3 +42,4 @@ report.simple.sort=project+/,entry+
 report.simple.filter=status:pending
 #}}}
 
+# vim:ft=conf:foldlevel=0:tw=100:
