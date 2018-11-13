@@ -170,6 +170,9 @@ abbr '_dtt=(date +%Y-%m-%d-%H:%M:%S)'
 abbr '_up=source ~/.config/fish/config.fish'
 abbr '_et=echo $TERM'
 
+# Custom scripts
+abbr 'gi_up=update-gitignore'
+
 # }}}
 
 # {{{ git prompt
