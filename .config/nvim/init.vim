@@ -18,6 +18,7 @@ Plug 'https://github.com/tpope/vim-eunuch'               " Helpers for Shell
 Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
+Plug 'https://github.com/tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
 " Plug 'https://github.com/tpope/vim-unimpaired'
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -64,6 +65,7 @@ Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
 Plug 'https://github.com/terryma/vim-expand-region'  " Visually select increasingly larger regions
 Plug 'https://github.com/ludovicchabant/vim-gutentags'
+Plug 'https://github.com/Shougo/echodoc.vim'         " Displays function signatures from completions in the command line
 Plug 'https://github.com/Shougo/neosnippet.vim'
 Plug 'https://github.com/Shougo/neosnippet-snippets'
 Plug 'autozimu/LanguageClient-neovim', {
@@ -73,6 +75,7 @@ Plug 'autozimu/LanguageClient-neovim', {
 
 " {{{ Language-specific
 Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel C codestyle
+Plug 'https://github.com/raimon49/requirements.txt.vim', {'for': 'requirements'}
 Plug 'https://github.com/nvie/vim-flake8'               " flake8 integration
 Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
 Plug 'https://github.com/fatih/vim-go'                  " Golang plugin
@@ -260,8 +263,8 @@ command! Mkw call WriteCreatingDirs()
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
-" Open markdown *scratch*
-map <leader>x :e ~/Org/buffer.md<CR>
+" Open *scratch* buffer
+map <leader>x :e ~/Org/scratch.rst<CR>
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
@@ -296,8 +299,9 @@ set guioptions-=r  " Remove right-hand scroll bar
 set guioptions-=L  " Remove left-hand scroll bar
 
 " Don't display the intro message on starting Vim.
-set shortmess+=I
+set shortmess+=Ic
 
+set noshowmode
 set relativenumber
 set cursorline
 set laststatus=2   " Always show status line
@@ -500,7 +504,8 @@ set shiftwidth=4
 set expandtab  " On pressing tab insert 4 spaces
 " }}}
 
-" {{{ Browse files
+" {{{ File operations
+" {{{ NerdTREE
 map <A-1> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore=[
@@ -508,6 +513,18 @@ let NERDTreeIgnore=[
   \ ".*\\.o$",
   \ ".*\\.pyc$",
   \ ]
+" }}}
+
+" {{{ Eunuch
+cnoreabbrev <expr> Rename <SID>FillInRenameFilename()
+ function! s:FillInRenameFilename() abort
+  if getcmdtype() == ':' && getcmdline() =~ '^[rR]ename$'
+    return 'Rename ' . expand('%:t')
+  else
+    return getcmdline()
+  endif
+endfunction
+" }}}
 " }}}
 
 " {{{ Datetime
@@ -634,8 +651,22 @@ nnoremap <F7> :TagbarToggle<CR>
 let g:deoplete#enable_at_startup = 1
 inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
 inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr><A-l> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr><A-o> deoplete#mappings#manual_complete()
+
+call deoplete#custom#source('_',
+  \ 'matchers', ['matcher_full_fuzzy'])
+call deoplete#custom#source('LanguageClient',
+  \ 'min_pattern_length',
+  \ 2)
+
+" There are some problems with LC cquery autosuggestions expanding:
+" https://github.com/autozimu/LanguageClient-neovim/issues/379
+" https://github.com/Shougo/deoplete.nvim/issues/724#issuecomment-381312149
+call deoplete#custom#option('ignore_sources', {
+  \ 'cpp': ['LanguageClient'],
+  \ 'c': ['LanguageClient'],
+  \})
 " }}}
 
 " {{{ Snippets configuration
@@ -648,6 +679,18 @@ let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " }}}
 
 " {{{ LSP settings
+
+" Disable autostart for Linux Kernel codebase
+function! LSPAutostart()
+  let l:path = expand('%:p')
+  if l:path =~ 'linux-' || l:path =~ 'Kernel'
+    let g:LanguageClient_autoStart = 0
+  else
+    let g:LanguageClient_autoStart = 1
+  endif
+endfunction
+au! BufReadPost,BufNewFile *.c call LSPAutostart()
+
 let g:LanguageClient_serverCommands = {
   \ 'python': ['/usr/local/bin/pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
@@ -743,13 +786,19 @@ endfunction
 command! LSPToggle call LSPToggle()
 " }}}
 
+" {{{ echodoc
+let g:echodoc#enable_at_startup=1
+let g:echodoc#enable_force_overwrite=1
+let g:echodoc#type="echo"
+" }}}
+
 " {{{ Doxygen
 " Enable syntax highlighting provided by default plugin
 let g:load_doxygen_syntax=1
 
 " Configure DoxygenToolchain
-let g:DoxygenToolkit_commentType = "C++"
-let g:DoxygenToolkit_compactOneLineDoc = "yes"
+let g:DoxygenToolkit_commentType = "C"
+let g:DoxygenToolkit_compactOneLineDoc = "no"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
@@ -766,11 +815,6 @@ nnoremap <leader>vv :GitGutterPreviewHunk<CR>
 nnoremap <leader>vu :GitGutterUndoHunk<CR>
 " }}}
 
-" {{{ Help buffer settings
-au FileType help noremap <buffer> q :q<cr>
-nnore <silent><buffer> K <Esc>:help <C-R><C-W><CR>
-" }}}
-
 " {{{ C/C++ settings
 au FileType c,cpp setlocal tw=80
 au bufreadpre *.h set filetype=c
@@ -778,14 +822,22 @@ au bufreadpre *.h set filetype=c
 " Switch between header and sources
 nmap <A-a> :A<CR>
 
+" clang include fixer
+let g:clang_include_fixer_path = "clang-include-fixer-7"
+au FileType c,cpp noremap <leader>ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+
+" End semicolon
+au Filetype c,cpp inoremap ;<CR> <end>;<CR>
+au Filetype c,cpp inoremap ;;<CR> <down><end>;<CR>
+
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 
 " {{{ Commands
 au FileType c,cpp call CmdC()
-" Clean debug prints from `prdeb` snippet
+" Clean debug prints from `prdbg` snippet
 function! CmdC()
-  command! CleanDebugPrints :g/\/\/\ prdeb$/d
+  command! CleanDebugPrints :g/\/\/\ prdbg$/d
 endfunction
 " }}}
 
@@ -825,6 +877,8 @@ au FileType python setlocal formatexpr=LanguageClient#textDocument_rangeFormatti
 let g:vim_indent_cont = 2
 au FileType vim setlocal sw=4 ts=4 expandtab
 au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
+au FileType vim nnore <silent><buffer> K <Esc>:help <C-R><C-W><CR>
+au FileType help noremap <buffer> q :q<cr>
 " }}}
 
 " {{{ HTML & CSS

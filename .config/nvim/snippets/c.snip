@@ -10,32 +10,77 @@ abbr #ifndef ... #define ... #endif
     #endif /* !$1 */
 # }}}
 
-# Various warning and debug prints {{{
-# :g/\/\/\ prdeb$/d to clean them all
-snippet     prdeb
+# Various printing routines {{{
+
+# Debug print
+# :g/\/\/\ prdbg$/d to clean them all
+snippet     prdbg
 options     head
 alias       debug-print
-    printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__); // prdeb
+    printf("%s:%s:%d ${0:MSG}\n", __FILE__, __func__, __LINE__); // prdbg
 
-
+# Non-implemented print
 snippet     prni
 options     head
-alias       non-implemented-print
+alias       print-non-implemented
     printf("%s: Not implemented\n", __func__);
+
+# Print bits of integer
+snippet prb
+options head
+alias   print-bits
+    int i;
+    for (i = 0; i < ${1:#:NB}; i++) {
+        printf("%c", (${2:#:SRC} & (1 << i)) ? '1' : '0');
+        if ((i + 1) % 16 == 0)
+            printf("\n");
+    }
+
 # }}}
 
-# clang-format {{{
-snippet     cfmt
-options     head
-abbr /* clang-format */
-    /* clang-format off */
-        ${0:TARGET}
-    /* clang-format on */
+# Common bitwise opearations {{{
 
-snippet     cfmts
+# Set a bit
+snippet     bws
+# abbr |=
+    |= (1 << ${0:BIT})
+
+# Clear a bit
+snippet     bwc
+# abbr &=
+    &= ~(1 << ${0:BIT})
+
+# Toggle a bit
+snippet     bwt
+# abbr ^=
+    ^= (1 << ${0:BIT})
+
+# Test a bit
+snippet     bwtt
+    & (1 << ${0:BIT})
+
+# }}}
+
+# Comments {{{
+
+snippet cmret
+    0 if success, -1 otherwise
+
+snippet cmrete
+    0 if success, -1 and sets errno otherwise
+
+# clang-format {{{
+snippet     cmft
 options     head
-abbr /* clang-format */
+    // clang-format off
+        ${0:TARGET}
+    // clang-format on
+
+snippet     cmfts
     // clang-format 
+# }}}
+
+
 # }}}
 
 # vim:fdm=marker:foldlevel=0:
