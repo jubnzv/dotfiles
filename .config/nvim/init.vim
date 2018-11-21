@@ -199,6 +199,10 @@ imap <F1> <C-o>:echo <CR>
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@
 
+" Navigate to errors list
+nnoremap ]e :cnext <CR>
+nnoremap [e :cprevious<CR>
+
 " Search visually selected
 vnoremap // y/<C-R>"<CR>
 
@@ -355,6 +359,7 @@ let g:lightline = {
   \   'readonly': 'error'
   \ },
   \ }
+
 let g:buftabline_indicators=1 " show modified
 " }}}
 
@@ -410,22 +415,90 @@ let g:XkbSwitchIMappings = ['ru']
 set hidden
 nnoremap <C-k> :bnext<CR>
 nnoremap <C-j> :bprev<CR>
-nnoremap <C-F4> :bdelete<CR>
+nnoremap <A-]> :bnext<CR>
+nnoremap <A-[> :bprev<CR>
+
+" Emacs-like splits navigation
 nnoremap <C-x>1 :only<CR>
 nnoremap <C-x>2 :split<CR>
 nnoremap <C-x>3 :vsplit<CR>
 nnoremap <C-x>o <C-w><C-w><CR>
+
+" Close buffer function
+function! BufferClose()
+  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0)
+    exec ':q'
+  else
+    exec ':bd'
+  endif
+endfunction
+nnoremap <C-F4> :call BufferClose()<CR>
+
 " Switch between current and last buffer
 nmap <A-r> <C-^>
+
 " Reopen last closed buffer
 " let MRU_File = $HOME.'/.vim/mru_file'
 " let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
 " nmap <c-s-t> :MRU<CR><CR>
 " }}}
 
+" {{{ neovim's terminal configuration
+
+" Popup-like terminal implementation. Thanks to:
+" https://www.reddit.com/r/vim/comments/8n5bzs/using_neovim_is_there_a_way_to_display_a_terminal/dzt3fix
+let g:term_buf = 0
+let g:term_win = 0
+function! TermToggle(height)
+    if win_gotoid(g:term_win)
+        hide
+    else
+        botright new
+        exec "resize " . a:height
+        try
+            exec "buffer " . g:term_buf
+        catch
+            call termopen($SHELL, {"detach": 0})
+            let g:term_buf = bufnr("")
+            set nonumber
+            set norelativenumber
+            set signcolumn=no
+        endtry
+        startinsert!
+        let g:term_win = win_getid()
+    endif
+endfunction
+
+" Terminal go back to normal mode
+tnoremap :q! <C-\><C-n>:q!<CR>
+
+" Close terminal buffer after exit from shell process.
+" https://www.reddit.com/r/neovim/comments/7xonzm/how_to_close_a_terminal_buffer_automatically_if/dud0vxn
+function! OnTermClose()
+    try
+        $;?.
+    catch
+        return
+    endtry
+    if match(getline('.'), 'make: \*\*\* \[[^\]]\+] Error ') == -1
+        call feedkeys('a ')
+    endif
+endfunction
+
+augroup term_augroup
+    autocmd!
+    au TermClose * silent call OnTermClose()
+augroup END
+" }}}
+
 " {{{ tmux integration
 if exists('$TMUX')
   map ` <Nop>
+  map <A-`> <Nop>
+else
+  nnoremap <A-`> :call TermToggle(12)<CR>
+  inoremap <A-`> <Esc>:call TermToggle(12)<CR>
+  tnoremap <A-`> <C-\><C-n>:call TermToggle(12)<CR>
 endif
 " }}}
 
@@ -660,13 +733,8 @@ call deoplete#custom#source('LanguageClient',
   \ 'min_pattern_length',
   \ 2)
 
-" There are some problems with LC cquery autosuggestions expanding:
-" https://github.com/autozimu/LanguageClient-neovim/issues/379
-" https://github.com/Shougo/deoplete.nvim/issues/724#issuecomment-381312149
-call deoplete#custom#option('ignore_sources', {
-  \ 'cpp': ['LanguageClient'],
-  \ 'c': ['LanguageClient'],
-  \})
+set completeopt+=preview
+" autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 " }}}
 
 " {{{ Snippets configuration
@@ -678,19 +746,9 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " }}}
 
-" {{{ LSP settings
-
-" Disable autostart for Linux Kernel codebase
-function! LSPAutostart()
-  let l:path = expand('%:p')
-  if l:path =~ 'linux-' || l:path =~ 'Kernel'
-    let g:LanguageClient_autoStart = 0
-  else
-    let g:LanguageClient_autoStart = 1
-  endif
-endfunction
-au! BufReadPost,BufNewFile *.c call LSPAutostart()
-
+" {{{ LanguageClient settings
+let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['/usr/local/bin/pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
@@ -701,25 +759,44 @@ let g:LanguageClient_rootMarkers = {
   \ 'cpp': ['compile_commands.json', 'build'],
   \ 'c': ['compile_commands.json', 'build'],
   \ }
-set completefunc=LanguageClient#complete
+" set completefunc=LanguageClient#complete
 
-" FIXME: Can be broken with cquery on some projects. Use default `gq`.
+" There are some problems with LC cquery autosuggestions expanding when using neosnippet:
+" https://github.com/autozimu/LanguageClient-neovim/issues/379
+" https://github.com/Shougo/deoplete.nvim/issues/724#issuecomment-381312149
+let g:LanguageClient_hasSnippetSupport = 0
+
+" FIXME: Can be broken with cquery on some projects: use default `gq` instead.
 " set formatexpr=LanguageClient_textDocument_rangeFormatting()
 set formatexpr=""
 
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
+" {{{ Keybindings for supported languages
+function! LCKeymap()
+  if has_key(g:LanguageClient_serverCommands, &filetype)
+    nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
+    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+    nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
+    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
+    nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+    nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
+  endif
+endfunction
+autocmd FileType * call LCKeymap()
+"  }}}
 
-nnoremap ]e :cnext <CR>
-nnoremap [e :cprevious<CR>
-nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
-nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
-nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
-nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
-nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
+" {{{ Disable autostart for Linux Kernel codebase
+function! LCAutostart()
+  let l:path = expand('%:p')
+  if l:path =~ 'linux-' || l:path =~ 'Kernel'
+    let g:LanguageClient_autoStart = 0
+  else
+    let g:LanguageClient_autoStart = 1
+  endif
+endfunction
+au! BufReadPost,BufNewFile *.c call LCAutostart()
+" }}}
 
-" {{{ Diagnostic messages / linting
+" {{{ Format options for LSP diagnostic messages in signcolumn
 let g:LanguageClient_diagnosticsEnable = 1
 
 " Use something different for highlighting
@@ -758,7 +835,7 @@ let g:LanguageClient_diagnosticsDisplay = {
   \   },}
 " }}}
 
-" {{{ Functions to show LSP status in modeline
+" {{{ Functions to show LanguageClient status in modeline
 augroup LanguageClient_config
   au!
   au User LanguageClientStarted call LSPUpdateStatus(1)
@@ -774,16 +851,18 @@ function! LightlineLSPStatus() abort
 endfunction
 " 2}}}
 
-function! LSPToggle()
+" {{{ Toggle LanguageClient
+function! LCToggle()
   if (g:lsp_status == 0)
     execute ":LanguageClientStart"
-    echo 'Start LSP'
+    echo 'Starting LanguageClient...'
   else
     execute ":LanguageClientStop"
-    echo 'Stop LSP'
+    echo 'Stopping LanguageClient...'
   endif
 endfunction
-command! LSPToggle call LSPToggle()
+command! LCToggle call LCToggle()
+" }}}
 " }}}
 
 " {{{ echodoc
@@ -827,6 +906,7 @@ let g:clang_include_fixer_path = "clang-include-fixer-7"
 au FileType c,cpp noremap <leader>ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
 " End semicolon
+au Filetype c,cpp inoremap ;j <end>;<C-o>
 au Filetype c,cpp inoremap ;<CR> <end>;<CR>
 au Filetype c,cpp inoremap ;;<CR> <down><end>;<CR>
 
@@ -924,137 +1004,7 @@ au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenab
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
 " }}}
 
-" {{{ which-key: redundant long keybindinds with mnemonics.
-" Use it only when forget shorter keybind.
-"
-" Define prefix dictionary
-let g:which_key_map =  {}
-
-" {{{ LSP
-let g:which_key_map.l = {
-  \ 'name' : '+LSP',
-  \ 'a' : ['LanguageClient_textDocument_codeAction()'     , 'action']           ,
-  \ 't' : ['LSPToggle()'                                  , 'toggle']           ,
-  \ 'f' : ['LanguageClient#textDocument_formatting()'     , 'formatting']       ,
-  \ 'h' : ['LanguageClient#textDocument_hover()'          , 'hover']            ,
-  \ 'r' : ['LanguageClient#textDocument_references()'     , 'references']       ,
-  \ 'R' : ['LanguageClient#textDocument_rename()'         , 'rename']           ,
-  \ 's' : ['LanguageClient#textDocument_documentSymbol()' , 'document-symbol']  ,
-  \ 'S' : ['LanguageClient#workspace_symbol()'            , 'workspace-symbol'] ,
-  \ 'g' : {
-  \ 'name': '+goto',
-  \ 'd' : ['LanguageClient#textDocument_definition()'     , 'definition']       ,
-  \ 't' : ['LanguageClient#textDocument_typeDefinition()' , 'type-definition']  ,
-  \ 'i' : ['LanguageClient#textDocument_implementation()'  , 'implementation']  ,
-  \ },
-  \ }
-" }}}
-
-" {{{ Git
-let g:which_key_map.g = {
-  \ 'name' : '+Git',
-  \ 'c' : ['Gcommit', 'commit'],
-  \ 's' : ['Gstatus', 'status'],
-  \ 'b' : ['Gblame', 'blame'],
-  \ 'd' : ['Gdiff', 'diff'],
-  \ 'f' : ['Gfetch', 'fetch'] ,
-  \ 'p' : ['Gpull', 'pull'] ,
-  \ 'P' : ['Gpush', 'pull'] ,
-  \ 'r' : ['Grebase', 'rebase'] ,
-  \ 'm' : ['Gmerge', 'merge'] ,
-  \ 'D' : ['Gdelete', 'delete'],
-  \ 'e' : ['Gedit', 'edit'] ,
-  \ 'M' : ['Gmove', 'move'] ,
-  \ 'g' : {
-  \ 'name': '+Gutter',
-  \ 'p' : ['GitGutterPreviewHunk'     , 'preview'],
-  \ },
-  \ }
-" }}}
-
-" {{{ Riv
-let g:which_key_map.r = {
-  \ 'name' : '+Riv',
-  \ 'i' : ['RivProjectIndex', 'index'],
-  \ 'r' : ['RivReload', 'reload'],
-  \ 't' : {
-  \ 'name': '+title',
-  \ '0' : ['RivTitle0', '0'],
-  \ '1' : ['RivTitle1', '1'],
-  \ '2' : ['RivTitle2', '2'],
-  \ '3' : ['RivTitle3', '3'],
-  \ '4' : ['RivTitle4', '4'],
-  \ '5' : ['RivTitle5', '5'],
-  \ '6' : ['RivTitle6', '6'],
-  \ },
-  \ 'o' : {
-  \ 'name': '+todo',
-  \ 'a' : ['RivTodoAsk', 'ask'],
-  \ 'd' : ['RivTodoDate', 'date'],
-  \ 'D' : ['RivTodoDel', 'delete'],
-  \ 'p' : ['RivTodoPrior', 'priority'],
-  \ 't' : ['RivTodoToggle', 'toggle'],
-  \ 'u' : ['RivTodoUpdateCache', 'update'],
-  \ '1' : ['RivTodoType1', 'type: [  ] '],
-  \ '2' : ['RivTodoType2', 'type: TODO '],
-  \ '3' : ['RivTodoType2', 'type: FIXME'],
-  \ '4' : ['RivTodoType4', 'type: START'],
-  \ },
-  \ 'a' : {
-  \ 'name': '+table',
-  \ 'c' : ['RivTableCreate', 'create'],
-  \ 'f' : ['RivTableFormat', 'format'],
-  \ 'n' : ['RivTableNextCell', 'next cell'],
-  \ 'p' : ['RivTablePrevCell', 'prev cell'],
-  \ },
-  \ 'l' : {
-  \ 'name': '+list',
-  \ 't' : ['RivListToggle', 'toggle'],
-  \ 'd' : ['RivListDelete', 'delete'],
-  \ 'n' : ['RivListNew', 'new'],
-  \ 'b' : ['RivListSub', 'sub'],
-  \ 'p' : ['RivListSup', 'sup'],
-  \ '0' : ['RivListType0', 'type: * '],
-  \ '1' : ['RivListType1', 'type: 1.'],
-  \ '2' : ['RivListType2', 'type: a.'],
-  \ '3' : ['RivListType3', 'type: A)'],
-  \ '4' : ['RivListType4', 'type: i)'],
-  \ },
-  \ 'c' : {
-  \ 'name': '+create',
-  \ 'c' : ['RivCreateContent', 'content'],
-  \ 'd' : ['RivCreateDate', 'date'],
-  \ 'e' : ['RivCreateEmphasis', 'emphasis'],
-  \ 'm' : ['RivCreateExplicitMark', 'mark'],
-  \ 'f' : ['RivCreateFoot', 'foot'],
-  \ 'g' : ['RivCreateGitLink', 'git link'],
-  \ 'h' : ['RivCreateHyperLink', 'hyperlink'],
-  \ 'i' : ['RivCreateInterpreted', 'interpreted'],
-  \ 'l' : ['RivCreateLink', 'link'],
-  \ 'B' : ['RivCreateLiteralBlock', 'code block'],
-  \ 'I' : ['RivCreateLiteralInline', 'code inline'],
-  \ 's' : ['RivCreateStrong', 'strong'],
-  \ 't' : ['RivCreateTime', 'time'],
-  \ 'T' : ['RivCreateTransition', 'transition'],
-  \ },
-  \ 'h' : {
-  \ 'name': '+help',
-  \ 'd' : ['RivDirectives', 'directives'],
-  \ 'q' : ['RivQuickStart', 'quick start'],
-  \ 'f' : ['RivHelpFile', 'file?'],
-  \ 's' : ['RivHelpSection', 'section?'],
-  \ 't' : ['RivHelpTodo', 'todo?'],
-  \ 'p' : ['RivPrimer', 'primer'],
-  \ 'S' : ['RivSpecification', 'specification'],
-  \ 'i' : ['RivInstruction', 'instruction'],
-  \ 'I' : ['RivIntro', 'intro'],
-  \ },
-  \ }
-" }}}
-
-call which_key#register('<Space>', "g:which_key_map")
-nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
-vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
-" }}}
+" Load redundant which-key bindings
+source ~/.config/nvim/which-key.vim
 
 " vim:foldmethod=marker:foldenable:sw=2:tw=100
