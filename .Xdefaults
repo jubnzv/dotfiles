@@ -27,6 +27,20 @@ Xcursor.size: 16
 
 URxvt:meta8: False
 
+!! Make C-F* sequences works
+URxvt.keysym.C-F1              : \033[1;5P
+URxvt.keysym.C-F2              : \033[1;5Q
+URxvt.keysym.C-F2              : \033[1;5R
+URxvt.keysym.C-F4              : \033[1;5S
+URxvt.keysym.C-F5              : \033[15;5~
+URxvt.keysym.C-F6              : \033[17;5~
+URxvt.keysym.C-F7              : \033[18;5~
+URxvt.keysym.C-F8              : \033[19;5~
+URxvt.keysym.C-F9              : \033[20;5~
+URxvt.keysym.C-F10             : \033[21;5~
+URxvt.keysym.C-F11             : \033[23;5~
+URxvt.keysym.C-F11             : \033[24;5~
+
 !! Perl extensions {{{1
 URxvt.perl-lib          : /home/jubnzv/.local/opt/urxvt-perls/
 URxvt.perl-ext-common   : default,matcher,keyboard-select,resize-font
