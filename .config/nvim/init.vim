@@ -518,6 +518,9 @@ let g:matchup_matchparen_status_offscreen=0
 
 " RainbowParentheses is disabled at the start
 nnoremap <leader>hp :RainbowParenthesesToggle<CR>
+
+" Insert fold block
+let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commentstring, '%s')[0] . " }}}"
 " }}}
 
 " {{{ Folding settings
@@ -899,6 +902,7 @@ nnoremap <leader>vu :GitGutterUndoHunk<CR>
 
 " {{{ C/C++ settings
 au FileType c,cpp setlocal tw=80
+au FileType c,cpp setlocal commentstring=//\ %s
 au bufreadpre *.h set filetype=c
 
 " Switch between header and sources
