@@ -129,9 +129,11 @@ bindsym $mod+Shift+plus move workspace to output right
 # Switch between screens
 bindsym $mod+Tab focus output right
 
-# Switch between windows
+# Switch between windows on workspace
 bindsym $mod+comma focus left
 bindsym $mod+period focus right
+bindsym $mod+bracketleft focus left
+bindsym $mod+bracketright focus right
 
 # Switch between workspaces (all screens)
 bindsym $mod+Next workspace next

@@ -419,20 +419,21 @@ nnoremap <A-]> :bnext<CR>
 nnoremap <A-[> :bprev<CR>
 
 " Emacs-like splits navigation
-nnoremap <C-x>1 :only<CR>
-nnoremap <C-x>2 :split<CR>
-nnoremap <C-x>3 :vsplit<CR>
-nnoremap <C-x>o <C-w><C-w><CR>
+" nnoremap <C-x>1 :only<CR>
+" nnoremap <C-x>2 :split<CR>
+" nnoremap <C-x>3 :vsplit<CR>
+" nnoremap <C-x>o <C-w><C-w><CR>
 
-" Close buffer function
+" Close buffer
 function! BufferClose()
-  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0)
+  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
     exec ':q'
   else
     exec ':bd'
   endif
 endfunction
 nnoremap <C-F4> :call BufferClose()<CR>
+nnoremap <leader>bd :bd<CR>
 
 " Switch between current and last buffer
 nmap <A-r> <C-^>
@@ -444,7 +445,6 @@ nmap <A-r> <C-^>
 " }}}
 
 " {{{ neovim's terminal configuration
-
 " Popup-like terminal implementation. Thanks to:
 " https://www.reddit.com/r/vim/comments/8n5bzs/using_neovim_is_there_a_way_to_display_a_terminal/dzt3fix
 let g:term_buf = 0
@@ -469,9 +469,6 @@ function! TermToggle(height)
     endif
 endfunction
 
-" Terminal go back to normal mode
-tnoremap :q! <C-\><C-n>:q!<CR>
-
 " Close terminal buffer after exit from shell process.
 " https://www.reddit.com/r/neovim/comments/7xonzm/how_to_close_a_terminal_buffer_automatically_if/dud0vxn
 function! OnTermClose()
@@ -481,12 +478,18 @@ function! OnTermClose()
         return
     endtry
     if match(getline('.'), 'make: \*\*\* \[[^\]]\+] Error ') == -1
-        call feedkeys('a ')
+        call feedkeys('\<CR>')
     endif
 endfunction
 
-augroup term_augroup
+" Terminal-mode keybinds
+tnoremap :q! <C-\><C-n>:q!<CR>
+tnoremap <Esc> <C-\><C-n>
+tnoremap <C-v><Esc> <C-\><C-n>
+
+augroup Term
     autocmd!
+    au TermOpen * startinsert
     au TermClose * silent call OnTermClose()
 augroup END
 " }}}
@@ -496,9 +499,9 @@ if exists('$TMUX')
   map ` <Nop>
   map <A-`> <Nop>
 else
-  nnoremap <A-`> :call TermToggle(12)<CR>
-  inoremap <A-`> <Esc>:call TermToggle(12)<CR>
-  tnoremap <A-`> <C-\><C-n>:call TermToggle(12)<CR>
+  nnoremap <silent> <A-`> :call TermToggle(12)<CR>
+  inoremap <silent> <A-`> <Esc>:call TermToggle(12)<CR>
+  tnoremap <silent> <A-`> <C-\><C-n>:call TermToggle(12)<CR>
 endif
 " }}}
 
@@ -632,7 +635,7 @@ let g:EasyMotion_use_smartsign_us = 1
 " }}}
 
 " {{{ FZF
-let $FZF_DEFAULT_OPTS .= ' --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel'
+" let $FZF_DEFAULT_OPTS .= ' --ansi --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 command! -bang -nargs=* GGrep
@@ -876,8 +879,8 @@ let g:echodoc#type="echo"
 let g:load_doxygen_syntax=1
 
 " Configure DoxygenToolchain
-let g:DoxygenToolkit_commentType = "C"
-let g:DoxygenToolkit_compactOneLineDoc = "no"
+let g:DoxygenToolkit_commentType = "C++"
+let g:DoxygenToolkit_compactOneLineDoc = "yes"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
