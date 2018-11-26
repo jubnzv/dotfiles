@@ -44,6 +44,8 @@ let g:which_key_map.g = {
   \ 'g' : {
   \ 'name': '+Gutter',
   \ 'p' : ['GitGutterPreviewHunk'     , 'preview'],
+  \ 's' : ['GitGutterStageHunk'     , 'stage'],
+  \ 'u' : ['GitGutterUndoHunk'     , 'undo'],
   \ },
   \ }
 " }}}

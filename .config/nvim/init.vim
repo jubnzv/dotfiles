@@ -11,7 +11,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'https://github.com/scrooloose/nerdtree'
 Plug 'https://github.com/kshenoy/vim-signature'          " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/lyokha/vim-xkbswitch'           " ru-RU key bindings in normal mode
 Plug 'https://github.com/rhysd/clever-f.vim'             " Convenient `f` and `F`
 Plug 'https://github.com/junegunn/vim-peekaboo'          " Shows vim registers content
 Plug 'https://github.com/tpope/vim-eunuch'               " Helpers for Shell
@@ -19,7 +18,6 @@ Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'https://github.com/tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
-" Plug 'https://github.com/tpope/vim-unimpaired'
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
@@ -91,13 +89,70 @@ call plug#end()
 " }}}
 
 " {{{ General
+set viminfo='1000,f1                        " Save global marks for up to 1000 files
+set scrolloff=7                             " 7 lines above/below cursor when scrolling
+set scroll=7                                " Number of lines scrolled by <C-u> and <C-d>
+set undofile
+set undodir=$HOME/.vim/undo
+set undolevels=1000
+set undoreload=10000
+set clipboard=unnamedplus,unnamed           " Use system clipboard
+set showmatch                               " Show matching brackets when text indicator is over them
+set mat=1                                   " How many tenths of a second to blink when matching brackets
+set wildmenu                                " wildmenu: command line completion
+set wildmode=longest,list
+set wildignore=*.o,*~,*.pyc,*.aux,*.out,*.toc
+set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
+set notimeout                               " Remove delay between complex keybindings.
+set noautochdir                             " Set working directory to the current file
+set autoindent                              " Autoindent when starting new line, or using o or O.
+set noautoread                              " Don't reload unchanged files automatically.
+set hidden
+set tabstop=4
+set shiftwidth=4
+set expandtab                               " On pressing tab insert 4 spaces
 
-" Scrolling options
-set scrolloff=7     " 7 lines above/below cursor when scrolling
-set scroll=7        " Number of lines scrolled by <C-u> and <C-d>
+" {{{ Cyrillic layout in normal mode
+set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
+set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
+" }}}
+" }}}
 
-" Save global marks for up to 1000 files
-set viminfo='1000,f1
+" {{{ UI options
+set guioptions-=m                           " Remove menu bar
+set guioptions-=T                           " Remove toolbar
+set guioptions-=r                           " Remove right-hand scroll bar
+set guioptions-=L                           " Remove left-hand scroll bar
+set shortmess+=Ic                           "  Don't display the intro message on starting vim
+set noshowmode
+set relativenumber
+set cursorline
+set laststatus=2                            " Always show status line
+set title                                   " Show window title
+set signcolumn=yes
+set background=dark
+set t_Co=256                                " 256-colors mode
+set guicursor+=c-ci-cr:block                " Cursor style
+
+" Italic symbols in terminal
+set t_ZH=^[[3m
+set t_ZR=^[[23m
+
+" Gruvbox configuration
+let g:gruvbox_sign_column='bg0'
+let g:gruvbox_color_column='bg0'
+let g:gruvbox_number_column='bg0'
+colorscheme gruvbox
+
+" Highlighting
+hi CursorLine ctermbg=236
+hi CursorLineNr ctermbg=236
+hi ColorColumn ctermbg=236
+hi Todo ctermfg=130 guibg=#af3a03
+" }}}
+
+" {{{ Common functions and commands
 
 " Don't parse modelines on temporary paths (google: "vim modeline vulnerability").
 function! ParseModeline()
@@ -108,58 +163,27 @@ function! ParseModeline()
 endfunction
 au! BufReadPost,BufNewFile * call ParseModeline()
 
-" Append word separators
-" set iskeyword+=-
-
-" Remove delay between complex keybindings.
-" It also required for `vim-which-key` plugin.
-set notimeout
-
-" Undo options
-set undofile
-set undodir=$HOME/.vim/undo
-set undolevels=1000
-set undoreload=10000
-
-" Edit files in the same directory
-cabbr %% <C-R>=expand('%:p:h')<CR>
-
-" Integrate with system clipboard
-set clipboard=unnamedplus,unnamed
-
-" Show matching brackets when text indicator is over them
-set showmatch
-
-" How many tenths of a second to blink when matching brackets
-set mat=1
-
-" Ignore compiled files
-set wildignore=*.o,*~,*.pyc
-set wildignore+=*.aux,*.out,*.toc  " LaTeX
-
-" wildmenu: command line completion
-set wildmenu
-set wildmode=longest,list
-
-" Time in milliseconds to wait for a mapped sequence to complete.
-set timeoutlen=500
-
 " Jump to the last position when reopening a file (see `/etc/vim/vimrc`)
 if has("autocmd")
   au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 endif
 
-" Set working directory to the current file
-" set autochdir
-
-" Autoindent when starting new line, or using o or O.
-" set autoindent
-
-" Reload unchanged files automatically.
-" set autoread
+" {{{ Switch between relative and absolute lines numbering
+function! NumberToggle()
+  if(&nu == 1)
+    set nu!
+    set rnu
+  else
+    set nornu
+    set nu
+  endif
+endfunction
+nnoremap <F9> :call NumberToggle()<CR>
 " }}}
 
-" {{{ General keybindings
+" }}}
+
+" {{{ Keybindings
 
 " {{{ Common
 "
@@ -168,6 +192,9 @@ endif
 "
 inoremap jj <Esc>
 nnoremap <A-h> :noh<CR>
+
+" Edit files in the same directory
+cabbr %% <C-R>=expand('%:p:h')<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -244,12 +271,6 @@ map <leader>pp :setlocal paste!<CR>
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>i
 
-" Disable annoying arrows
-inoremap <Up> <Nop>
-inoremap <Down> <Nop>
-inoremap <Left> <Nop>
-inoremap <Right> <Nop>
-
 " Fix some common typos
 :command! W w
 :command! Q q
@@ -296,42 +317,7 @@ endif
 
 " }}}
 
-" {{{ UI and appearance
-set guioptions-=m  " Remove menu bar
-set guioptions-=T  " Remove toolbar
-set guioptions-=r  " Remove right-hand scroll bar
-set guioptions-=L  " Remove left-hand scroll bar
-
-" Don't display the intro message on starting Vim.
-set shortmess+=Ic
-
-set noshowmode
-set relativenumber
-set cursorline
-set laststatus=2   " Always show status line
-set title          " Show window title
-set signcolumn=yes
-set background=dark
-set t_Co=256       " 256-colors mode
-
-" Cursor style
-set guicursor+=c-ci-cr:block
-
-" Italic symbols in terminal
-set t_ZH=^[[3m
-set t_ZR=^[[23m
-
-" Colorscheme configuration
-let g:gruvbox_sign_column='bg0'
-let g:gruvbox_color_column='bg0'
-let g:gruvbox_number_column='bg0'
-colorscheme gruvbox
-hi CursorLine ctermbg=236
-hi CursorLineNr ctermbg=236
-hi ColorColumn ctermbg=236
-hi Todo ctermfg=130 guibg=#af3a03
-
-" {{{ Modeline | tabline
+" {{{ Lightline
 let g:lightline = {
   \ 'colorscheme': 'gruvbox',
   \ 'active': {
@@ -363,19 +349,6 @@ let g:lightline = {
 let g:buftabline_indicators=1 " show modified
 " }}}
 
-" {{{ Switch between relative and absolute lines numbering
-function! NumberToggle()
-  if(&nu == 1)
-    set nu!
-    set rnu
-  else
-    set nornu
-    set nu
-  endif
-endfunction
-nnoremap <F9> :call NumberToggle()<CR>
-" }}}
-
 " {{{ Goyo & Limelight settings
 map <F11> :Goyo<CR>
 
@@ -398,31 +371,11 @@ au! User GoyoEnter nested call <SID>goyo_enter()
 au! User GoyoLeave nested call <SID>goyo_leave()
 " }}}
 
-" }}}
-
-" {{{ Make normal mode compatible with ru keymap
-" set langmap=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ,фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
-" set keymap=russian-jcukenwin
-let g:XkbSwitchLib = "/usr/local/lib/libxkbswitch.so"
-" echo libcall(g:XkbSwitchLib, 'Xkb_Switch_getXkbLayout', '')
-" call libcall(g:XkbSwitchLib, 'Xkb_Switch_setXkbLayout', 'us')
-let g:XkbSwitchEnabled = 0
-let g:XkbSwitchLoadRIMappings = 0
-let g:XkbSwitchIMappings = ['ru']
-" }}}
-
 " {{{ Buffers/windows manipulation routines
-set hidden
 nnoremap <C-k> :bnext<CR>
 nnoremap <C-j> :bprev<CR>
 nnoremap <A-]> :bnext<CR>
 nnoremap <A-[> :bprev<CR>
-
-" Emacs-like splits navigation
-" nnoremap <C-x>1 :only<CR>
-" nnoremap <C-x>2 :split<CR>
-" nnoremap <C-x>3 :vsplit<CR>
-" nnoremap <C-x>o <C-w><C-w><CR>
 
 " Close buffer
 function! BufferClose()
@@ -437,11 +390,6 @@ nnoremap <leader>bd :bd<CR>
 
 " Switch between current and last buffer
 nmap <A-r> <C-^>
-
-" Reopen last closed buffer
-" let MRU_File = $HOME.'/.vim/mru_file'
-" let MRU_Exclude_Files = '^/tmp/.*\|^/var/tmp/.*'
-" nmap <c-s-t> :MRU<CR><CR>
 " }}}
 
 " {{{ neovim's terminal configuration
@@ -484,8 +432,8 @@ endfunction
 
 " Terminal-mode keybinds
 tnoremap :q! <C-\><C-n>:q!<CR>
-tnoremap <Esc> <C-\><C-n>
 tnoremap <C-v><Esc> <C-\><C-n>
+" tnoremap <Esc> <C-\><C-n>
 
 augroup Term
     autocmd!
@@ -524,12 +472,15 @@ let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commen
 " }}}
 
 " {{{ Folding settings
+
+" {{{ Folding options
 set foldmethod=syntax
 set foldnestmax=6
-set nofoldenable " Disable folding when open file
+set nofoldenable                            " Disable folding when open file
 set foldlevel=2
 set foldcolumn=0
 set fillchars=fold:\ 
+" }}}
 
 " Customized `CustomFoldText` function:
 " http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
@@ -577,12 +528,6 @@ endfunction
 command! ToggleConceal call ToggleConceal()
 " }}}
 
-" {{{ Default indentation settings
-set tabstop=4
-set shiftwidth=4
-set expandtab  " On pressing tab insert 4 spaces
-" }}}
-
 " {{{ File operations
 " {{{ NerdTREE
 map <A-1> :NERDTreeToggle<CR>
@@ -628,17 +573,14 @@ au BufWritePre * call LastModified()
 
 " {{{ Easymotion
 " Note: Use <C-o><cmd> in insert mode.
-let g:EasyMotion_do_mapping = 0 " Disable default mappings
+let g:EasyMotion_do_mapping = 0                     " Disable default mappings
+let g:EasyMotion_smartcase = 1                      " Turn on case insensitive feature
+let g:EasyMotion_use_smartsign_us = 1               " Smartsign (type `3` and match `3` & `#`)
 map <A-;> <Plug>(easymotion-overwin-f)
 map <A-l> <Plug>(easymotion-overwin-line)
-" Turn on case insensitive feature
-let g:EasyMotion_smartcase = 1
-" Smartsign (type `3` and match `3` & `#`)
-let g:EasyMotion_use_smartsign_us = 1
 " }}}
 
 " {{{ FZF
-" let $FZF_DEFAULT_OPTS .= ' --ansi --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel'
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
 command! -bang -nargs=* GGrep
@@ -650,7 +592,6 @@ nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
 nnoremap <A-x> :Commands<CR>
-" nnoremap <leader>m :Marks<CR>
 nnoremap <A-p> :Files<CR>
 " Note: rg version should be >= 1.10 (colored I/O bottleneck fix)
 nnoremap <leader>fs :Rg<CR>
@@ -668,6 +609,7 @@ let g:NERDRemoveExtraSpaces = 1
 let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
 let g:NERDAltDelims_c = 1
+
 " Commenting by <C-/> like Intellij
 if has('win32')
   nmap <C-/> <leader>c<Space>
@@ -928,13 +870,6 @@ function! CmdC()
 endfunction
 " }}}
 
-" {{{ Abbrevations
-au FileType c,cpp call AbbrC()
-function! AbbrC()
-  " iabb dprint printf("%s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
-endfunction
-" }}}
-
 " }}}
 
 " {{{ Golang settings
@@ -1014,4 +949,4 @@ au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenab
 " Load redundant which-key bindings
 source ~/.config/nvim/which-key.vim
 
-" vim:foldmethod=marker:foldenable:sw=2:tw=100
+" vim:foldmethod=marker:foldenable:sw=2:tw=120
