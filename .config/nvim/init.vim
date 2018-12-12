@@ -3,6 +3,7 @@ let mapleader = "\<Space>"
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
+let g:python3_host_prog  = '/usr/bin/python3.6'
 
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
@@ -14,10 +15,10 @@ Plug 'https://github.com/easymotion/vim-easymotion'
 Plug 'https://github.com/rhysd/clever-f.vim'             " Convenient `f` and `F`
 Plug 'https://github.com/junegunn/vim-peekaboo'          " Shows vim registers content
 Plug 'https://github.com/tpope/vim-eunuch'               " Helpers for Shell
-Plug 'https://github.com/terryma/vim-multiple-cursors'
 Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
 Plug 'https://github.com/tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'https://github.com/tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
+Plug 'https://github.com/will133/vim-dirdiff'            " Diff two directories
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
@@ -33,14 +34,11 @@ Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertica
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
 Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
 Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
-Plug 'https://github.com/reedes/vim-pencil'        " Convenient settings for text editing
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
-Plug 'https://github.com/kien/rainbow_parentheses.vim'
 " }}}
 
 " {{{ Text editing
-Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'     " Doxygen helper
 Plug 'https://github.com/pearofducks/ansible-vim'       " Ansible format support
 Plug 'https://github.com/cespare/vim-toml'              " .toml
 Plug 'https://github.com/chr4/nginx.vim'                " Nginx configuration files
@@ -51,19 +49,20 @@ Plug 'https://github.com/plasticboy/vim-markdown'       " Extended markdown supp
 Plug 'https://github.com/gu-fan/riv.vim'                " .rst notekeeping
 " }}}
 
-" {{{ Coding tools
+" {{{ Writing code
 Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'https://github.com/scrooloose/nerdcommenter'
-Plug 'https://github.com/andymass/vim-matchup'       " Better %
-Plug 'https://github.com/tpope/vim-fugitive'         " Git wrapper
-Plug 'https://github.com/airblade/vim-gitgutter'     " Show git diffs in the gutter
-Plug 'https://github.com/godlygeek/tabular'          " Create fancy tabularized comments
-Plug 'https://github.com/majutsushi/tagbar'          " Display sorted tags in a window
+Plug 'https://github.com/andymass/vim-matchup'         " Better %
+Plug 'https://github.com/tpope/vim-fugitive'           " Git wrapper
+Plug 'https://github.com/airblade/vim-gitgutter'       " Show git diffs in the gutter
+Plug 'https://github.com/godlygeek/tabular'            " Create fancy tabularized comments
+Plug 'https://github.com/majutsushi/tagbar'            " Display sorted tags in a window
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/terryma/vim-expand-region'  " Visually select increasingly larger regions
-Plug 'https://github.com/ludovicchabant/vim-gutentags'
-Plug 'https://github.com/Shougo/echodoc.vim'         " Displays function signatures from completions in the command line
+Plug 'https://github.com/terryma/vim-expand-region'    " Visually select increasingly larger regions
+Plug 'https://github.com/ludovicchabant/vim-gutentags' " Re-generate ctags on a fly
+Plug 'https://github.com/Shougo/echodoc.vim'           " Displays function signatures from completions in the command line
+Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'    " Doxygen helper
 Plug 'https://github.com/Shougo/neosnippet.vim'
 Plug 'https://github.com/Shougo/neosnippet-snippets'
 Plug 'autozimu/LanguageClient-neovim', {
@@ -74,10 +73,9 @@ Plug 'autozimu/LanguageClient-neovim', {
 " {{{ Language-specific
 Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel C codestyle
 Plug 'https://github.com/raimon49/requirements.txt.vim', {'for': 'requirements'}
-Plug 'https://github.com/nvie/vim-flake8'               " flake8 integration
 Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
 Plug 'https://github.com/fatih/vim-go'                  " Golang plugin
-Plug 'https://github.com/dag/vim-fish'                  " fish scripting language support
+Plug 'https://github.com/alfredodeza/pytest.vim'
 Plug 'https://github.com/junegunn/vader.vim'            " vimscript testing framework
 Plug 'https://github.com/Kuniwak/vint'                  " vimscript linter
 Plug 'https://github.com/tpope/vim-scriptease'          " Vim plugin for making Vim plugins
@@ -124,7 +122,7 @@ set guioptions-=m                           " Remove menu bar
 set guioptions-=T                           " Remove toolbar
 set guioptions-=r                           " Remove right-hand scroll bar
 set guioptions-=L                           " Remove left-hand scroll bar
-set shortmess+=Ic                           "  Don't display the intro message on starting vim
+set shortmess+=Ic                           " Don't display the intro message on starting vim
 set noshowmode
 set relativenumber
 set cursorline
@@ -179,6 +177,19 @@ function! NumberToggle()
   endif
 endfunction
 nnoremap <F9> :call NumberToggle()<CR>
+" }}}
+
+" {{{ Toggle conceal options
+function! ToggleConceal()
+  if (&conceallevel == 0)
+    set conceallevel=2
+    echo 'Enable conceal'
+  else
+    set conceallevel=0
+    echo 'Disable conceal'
+  endif
+endfunction
+command! ToggleConceal call ToggleConceal()
 " }}}
 
 " }}}
@@ -260,7 +271,7 @@ function! Togglegjgk()
     echo 'Switch to j/k'
   endif
 endfunction
-nnoremap <silent> <leader>tgj <Esc>:call Togglegjgk()<CR>
+nnoremap <silent> <leader>T <Esc>:call Togglegjgk()<CR>
 command! Togglegjgk call Togglegjgk()
 " }}}
 
@@ -289,18 +300,13 @@ command! Mkw call WriteCreatingDirs()
 noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
 " Open *scratch* buffer
-map <leader>x :e ~/Org/scratch.rst<CR>
+map <leader>x :e ~/Org/scratch.md<CR>
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 
 " }}}
-
-" Highlight search results incrementally (haya14busa/incsearch.vim)
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
 
 " {{{ Copy filename to '*' clipboard
 " http://vim.wikia.com/wiki/Copy_filename_to_clipboard
@@ -315,6 +321,13 @@ else
 endif
 " }}}
 
+" Highlight search results incrementally (haya14busa/incsearch.vim)
+map /  <Plug>(incsearch-forward)
+map ?  <Plug>(incsearch-backward)
+map g/ <Plug>(incsearch-stay)
+
+" Tabularize
+cnoreabbrev Tab Tabularize
 " }}}
 
 " {{{ Lightline
@@ -372,10 +385,13 @@ au! User GoyoLeave nested call <SID>goyo_leave()
 " }}}
 
 " {{{ Buffers/windows manipulation routines
-nnoremap <C-k> :bnext<CR>
-nnoremap <C-j> :bprev<CR>
+" nnoremap <C-k> :bnext<CR>
+" nnoremap <C-j> :bprev<CR>
 nnoremap <A-]> :bnext<CR>
 nnoremap <A-[> :bprev<CR>
+nnoremap ]b :bnext<CR>
+nnoremap [b :bprev<CR>
+" nnoremap <leader>br :bufdo e<CR>
 
 " Close buffer
 function! BufferClose()
@@ -386,7 +402,6 @@ function! BufferClose()
   endif
 endfunction
 nnoremap <C-F4> :call BufferClose()<CR>
-nnoremap <leader>bd :bd<CR>
 
 " Switch between current and last buffer
 nmap <A-r> <C-^>
@@ -453,19 +468,12 @@ else
 endif
 " }}}
 
-" {{{ Multiple cursors
-let g:multi_cursor_use_default_mapping=1
-" }}}
-
 " {{{ Parens settings
 " Suppress auto-pairs bind
 let g:AutoPairsShortcutToggle = ''
 
 " Free statusline from Matchup
 let g:matchup_matchparen_status_offscreen=0
-
-" RainbowParentheses is disabled at the start
-nnoremap <leader>hp :RainbowParenthesesToggle<CR>
 
 " Insert fold block
 let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commentstring, '%s')[0] . " }}}"
@@ -482,7 +490,7 @@ set foldcolumn=0
 set fillchars=fold:\ 
 " }}}
 
-" Customized `CustomFoldText` function:
+" {{{ Customized `CustomFoldText` function:
 " http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
 function! CustomFoldText()
   let fs = v:foldstart
@@ -503,6 +511,7 @@ function! CustomFoldText()
   return  line . expansionString . foldLevelStr . " " . foldSizeStr
 endf
 set foldtext=CustomFoldText()
+" }}}
 
 function! ToggleFoldColumn()
   if(&foldcolumn != 0)
@@ -514,21 +523,6 @@ endfunction
 nnoremap <leader>q :call ToggleFoldColumn()<CR>
 " }}}
 
-" {{{ conceal
-" Toggle conceal options
-function! ToggleConceal()
-  if (&conceallevel == 0)
-    set conceallevel=2
-    echo 'Enable conceal'
-  else
-    set conceallevel=0
-    echo 'Disable conceal'
-  endif
-endfunction
-command! ToggleConceal call ToggleConceal()
-" }}}
-
-" {{{ File operations
 " {{{ NerdTREE
 map <A-1> :NERDTreeToggle<CR>
 let NERDTreeQuitOnOpen=1
@@ -536,19 +530,9 @@ let NERDTreeIgnore=[
   \ ".*\\.class$",
   \ ".*\\.o$",
   \ ".*\\.pyc$",
+  \ "depcomp$",
+  \ "install-sh$",
   \ ]
-" }}}
-
-" {{{ Eunuch
-cnoreabbrev <expr> Rename <SID>FillInRenameFilename()
- function! s:FillInRenameFilename() abort
-  if getcmdtype() == ':' && getcmdline() =~ '^[rR]ename$'
-    return 'Rename ' . expand('%:t')
-  else
-    return getcmdline()
-  endif
-endfunction
-" }}}
 " }}}
 
 " {{{ Datetime
@@ -583,24 +567,37 @@ map <A-l> <Plug>(easymotion-overwin-line)
 " {{{ FZF
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-command! -bang -nargs=* GGrep
-  \ call fzf#vim#grep(
-  \   'git grep --line-number '.shellescape(<q-args>), 0,
-  \   { 'dir': systemlist('git rev-parse --show-toplevel')[0] }, <bang>0)
+" Pass raw arguments directly to ag command
+command! -bang -nargs=+ -complete=dir Rag call fzf#vim#ag_raw(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+
+" Recently used files
+command! FZFMru call fzf#run({
+  \ 'source':  reverse(s:all_files()),
+  \ 'sink':    'edit',
+  \ 'options': '-m -x +s',
+  \ 'down':    '40%' })
+
+function! s:all_files()
+return extend(
+\ filter(copy(v:oldfiles),
+\        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/'"),
+\ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
+endfunction
 
 nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
 nnoremap <A-x> :Commands<CR>
 nnoremap <A-p> :Files<CR>
-" Note: rg version should be >= 1.10 (colored I/O bottleneck fix)
-nnoremap <leader>fs :Rg<CR>
+nnoremap <leader>fs :Ag<CR>
+nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
 nnoremap <leader>vc :Commits<CR>
 nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
+nnoremap <leader>mr :FZFMru <cr>
 " }}}
 
 " {{{ Nerdcommenter settings
@@ -649,6 +646,9 @@ au BufWinLeave * call clearmatches()
 nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 " }}}
 
+" Convert the ^M linebreak to 'normal' linebreaks
+nnoremap <silent> <Leader>ed :set ff=unix<CR> :e ++ff=dos<CR>
+
 " {{{ ctags
 set tags=./tags;
 let g:ctags_statusline=1
@@ -695,19 +695,25 @@ let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " }}}
 
 " {{{ LanguageClient settings
+" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
-  \ 'python': ['/usr/local/bin/pyls', '--log-file=/tmp/pyls.log'],
-  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'stable', 'rls'],
-  \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
-  \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cq.log'],
+  \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
+  \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
+  \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
   \ }
 let g:LanguageClient_rootMarkers = {
   \ 'cpp': ['compile_commands.json', 'build'],
   \ 'c': ['compile_commands.json', 'build'],
   \ }
-" set completefunc=LanguageClient#complete
+
+let g:LanguageClient_waitOutputTimeout = 5
+
+" TODO:
+" *LanguageClient_textDocument_rangeFormatting()*
+" *LanguageClient#textDocument_documentHighlight()*
+" *LanguageClient_clearDocumentHighlight()*
 
 " There are some problems with LC cquery autosuggestions expanding when using neosnippet:
 " https://github.com/autozimu/LanguageClient-neovim/issues/379
@@ -721,27 +727,27 @@ set formatexpr=""
 " {{{ Keybindings for supported languages
 function! LCKeymap()
   if has_key(g:LanguageClient_serverCommands, &filetype)
-    nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<CR>
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
     nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
     nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
     nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+    nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
     nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
   endif
 endfunction
-autocmd FileType * call LCKeymap()
-"  }}}
+" }}}
 
-" {{{ Disable autostart for Linux Kernel codebase
-function! LCAutostart()
+" {{{ Disable LSP autostart for projects on given paths
+function! LCDisableAutostart(ignored_paths)
   let l:path = expand('%:p')
-  if l:path =~ 'linux-' || l:path =~ 'Kernel'
-    let g:LanguageClient_autoStart = 0
-  else
-    let g:LanguageClient_autoStart = 1
-  endif
+  for ign_path in a:ignored_paths
+    if l:path =~ ign_path
+      let g:LanguageClient_autoStart = 0
+    else
+      let g:LanguageClient_autoStart = 1
+    endif
+  endfor
 endfunction
-au! BufReadPost,BufNewFile *.c call LCAutostart()
 " }}}
 
 " {{{ Format options for LSP diagnostic messages in signcolumn
@@ -797,7 +803,7 @@ endfunction
 function! LightlineLSPStatus() abort
   return g:lsp_status == 1 ? 'Λ' : ''
 endfunction
-" 2}}}
+" }}}
 
 " {{{ Toggle LanguageClient
 function! LCToggle()
@@ -845,7 +851,11 @@ nnoremap <leader>vu :GitGutterUndoHunk<CR>
 " {{{ C/C++ settings
 au FileType c,cpp setlocal tw=80
 au FileType c,cpp setlocal commentstring=//\ %s
-au bufreadpre *.h set filetype=c
+au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
+au FileType c,cpp call LCKeymap()
+
+" Use C filetype for headers by default
+au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
 nmap <A-a> :A<CR>
@@ -854,19 +864,20 @@ nmap <A-a> :A<CR>
 let g:clang_include_fixer_path = "clang-include-fixer-7"
 au FileType c,cpp noremap <leader>ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
-" End semicolon
-au Filetype c,cpp inoremap ;j <end>;<C-o>
-au Filetype c,cpp inoremap ;<CR> <end>;<CR>
-au Filetype c,cpp inoremap ;;<CR> <down><end>;<CR>
-
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 
-" {{{ Commands
-au FileType c,cpp call CmdC()
-" Clean debug prints from `prdbg` snippet
+" {{{ Commands and binds
+au FileType c call CmdC()
 function! CmdC()
-  command! CleanDebugPrints :g/\/\/\ prdbg$/d
+    " Clean debug prints from `prdbg` snippet
+    command! CleanDebugPrints :g/\/\/\ prdbg$/d
+
+    " `ag` in C sources
+    command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
+    command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
+    command! -bang -nargs=* AgFileType call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
+    nnoremap <leader>ff :AgFileType<CR>
 endfunction
 " }}}
 
@@ -885,14 +896,18 @@ au FileType go nmap <leader>f <plug>(go-fmt)
 " }}}
 
 " {{{ Python settings
-" Fix imports order
 au FileType python nnoremap <Leader>ei :!isort %<CR><CR>
+au FileType python set tw=0
+au FileType python set foldmethod=indent foldnestmax=2
+au FileType python call LCKeymap()
 
-" flake8
-let no_flake8_maps = 1
-au FileType python map <buffer> <F3> :call Flake8()<CR>
-
-au FileType python setlocal formatexpr=LanguageClient#textDocument_rangeFormatting_sync()
+" {{{ Commands and binds
+au FileType python call CmdPy()
+function! CmdPy()
+    command! -bang -nargs=* AgFileType call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
+    nnoremap <leader>ff :AgFileType<CR>
+endfunction
+" }}}
 " }}}
 
 " {{{ vimscript
@@ -903,17 +918,12 @@ au FileType vim nnore <silent><buffer> K <Esc>:help <C-R><C-W><CR>
 au FileType help noremap <buffer> q :q<cr>
 " }}}
 
-" {{{ HTML & CSS
-au Filetype css setlocal ts=4
-au Filetype html setlocal ts=4
-" }}}
-
 " {{{ IEC611-31
 let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 " }}}
 
-" {{{ reStructuredText and sphinx
+" {{{ reStructuredText
 au FileType rst setlocal sw=4 ts=4 expandtab
 au FileType rst setlocal textwidth=80
 au Filetype rst setlocal foldmethod=expr
@@ -940,10 +950,20 @@ let g:vim_markdown_math = 1
 
 " {{{ Other files
 au FileType conf set foldmethod=marker foldenable
+au Filetype css setlocal ts=4
+au Filetype html setlocal ts=4
 
 " buildbot configuration files
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
+
+" Taskwarrior tasks (`task [id] edit`)
+au BufRead *.task /Description:
+
+" Always start on first line of git commit message
+au FileType gitcommit call setpos('.', [0, 1, 1, 0])
+
+au BufNewFile,BufRead .clang-format set ft=config
 " }}}
 
 " Load redundant which-key bindings

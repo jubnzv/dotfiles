@@ -130,4 +130,21 @@ let g:which_key_map.r = {
   \ }
 " }}}
 
+" {{{ Pytest
+"
+" Note: Should be replaced later as autocmd to use similar binds
+" with test plugins for other languages.
+"
+let g:which_key_map.t = {
+  \ 'name' : '+Pytest',
+  \ 'f' : ['Pytest file', 'file'],
+  \ 'c' : ['Pytest class', 'class'],
+  \ 'm' : ['Pytest method', 'method'],
+  \ 'p' : ['Pytest project', 'project'],
+  \ 'd' : ['Pytest function', 'function'],
+  \ 's' : ['Pytest session', 'session'],
+  \ 'e' : ['Pytest fails', 'fails'],
+  \ }
+" }}}
+
 " vim:foldmethod=marker:foldenable:sw=2:tw=100

@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Diff two directories with `DirDiff` vim plugin.
+#
+
+if [ $# -ne 2 ]; then
+  echo "Usage: $0 <dir1> <dir2>";
+  exit 0
+elif [ ! -d $1 ]; then
+  echo "There are some problems with $1"
+  exit 1
+elif [ ! -d $2 ]; then
+  echo "There are some problems with $2"
+  exit 1
+fi
+
+${EDITOR:-vim} -R -c "DirDiff $*"
