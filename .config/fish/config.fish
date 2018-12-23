@@ -29,6 +29,10 @@ set -gx VISUAL  nvim
 set -gx TERMCMD     "urxvt"
 set -gx TERMINAL    "urxvt -e"
 
+# pyflakes hack for pyls: extend builtins with gettext's `_`.
+# It's required to suppress `undefined function` errors.
+set -gx PYFLAKES_BUILTINS   "'_'"
+
 # Color theme
 theme_gruvbox dark medium
 
@@ -60,7 +64,6 @@ alias vn='nvim -u NONE'
 # ctags
 alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
-alias ct='ctags -R --exclude=.git -f tags'
 
 # X apps
 alias zt='zathura'
@@ -76,6 +79,8 @@ if which exa > /dev/null
     alias lla='exa -l -a'
     alias lt='exa --sort=created -l --reverse'
     alias lta='exa --sort=created -l --reverse -a'
+    abbr 'lth=lt | head'
+    alias lT='exa -T'
 else
     alias l='ls'
     alias ll='ls -l'
@@ -83,6 +88,12 @@ else
     alias lla='ls -la'
     alias lt='ls -lt'
     alias lta='ls -lat'
+    abbr 'lth=lt | head'
+    if which tree > /dev/null
+        alias lT='tree'
+    else
+        alias lT='ls -lR'
+    end
 end
 
 # grep
@@ -108,8 +119,10 @@ end
 # cat -> bat
 if which bat > /dev/null
     abbr 'ct=bat'
+    abbr 'bt=bat'
 else
     abbr 'ct=cat'
+    abbr 'bt=bat'
 end
 
 # buku: boomarks manager
@@ -162,6 +175,10 @@ alias cs_f='cscope -R -L -2 ".*" | awk -F \' \' \'{print $2 "\t" $1}\' | sort | 
 # git
 abbr 'git_cfg=git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 
+# Some debugging stuff
+abbr 'uls=ulimit -c unlimited'
+# abbr 'gdc=gdb a.out core'
+
 # Datetime
 abbr '_dtd=(date +%Y-%m-%d)'
 abbr '_dtt=(date +%Y-%m-%d-%H:%M:%S)'
@@ -193,7 +210,7 @@ set fish_greeting
 function fish_prompt
     set last_status $status
     set_color $fish_color_cwd
-    printf '%s' (prompt_pwd)
+    printf '%s ' (prompt_pwd)
     set_color normal
     printf '%s ' (__fish_git_prompt)
     set_color normal

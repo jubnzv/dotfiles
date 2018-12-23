@@ -2,7 +2,7 @@
 rofi.terminal:  urxvt
 
 ! Appearance
-rofi.font: FantasqueSansMono 13
+rofi.font: Iosevka 13
 rofi.color-enabled: true
 rofi.theme:         gruvbox-dark
 

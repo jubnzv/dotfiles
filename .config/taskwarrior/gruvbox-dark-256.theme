@@ -40,12 +40,12 @@ color.debug=color5
 # Task state
 color.completed=
 color.deleted=
-color.active=color11
+color.active=color3
 color.recurring=color4
 color.scheduled=
 color.until=
-color.blocked=color0 on color3
-color.blocking=color9 on color3
+color.blocked=color23
+color.blocking=color0 on color23
 
 # Project
 color.project.none=

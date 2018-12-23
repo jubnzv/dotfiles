@@ -1,0 +1,139 @@
+#
+# Global properties
+#
+
+align=right
+separator=true
+separator_block_width=8
+
+#
+# Widgets
+#
+
+[volume]
+label=
+command=~/.config/i3blocks/scripts/volume
+instance=Master
+interval=once
+signal=1
+
+[brightness]
+label=
+command=~/.config/i3blocks/scripts/brightness
+interval=once
+signal=2
+
+# [connections]
+# command=~/.config/i3blocks/scripts/connections
+# markup=pango
+# interval=120
+
+[disk-root]
+label=
+command=~/.config/i3blocks/scripts/disk
+instance=/
+interval=120
+
+[memory]
+label=
+command=~/.config/i3blocks/scripts/memory
+interval=30
+
+[cpu]
+label=
+command=~/.config/i3blocks/scripts/cpu_usage
+interval=10
+min_width=100.00%
+
+# [temp]
+# label=
+# command=~/.config/i3blocks/scripts/temperature
+# interval=60
+
+[battery]
+command=~/.config/i3blocks/scripts/battery
+interval=30
+
+[taskw]
+label=
+command=~/.config/i3blocks/scripts/taskw
+interval=60
+
+#
+# Currently unused
+#
+
+# [layout]
+# command=xkb-switch
+# interval=5
+
+# [date]
+# label=
+# command=date '+%a %d %h %Y'
+# interval=3600
+
+# [colors]
+# full_text=<span foreground="#419501" font_desc='Hack'></span>
+# markup=pango
+# interval=once
+
+# [time]
+# label=
+# command=date '+%H:%M'
+# interval=5
+
+# [vpn-status]
+# command=~/.config/i3blocks/scripts/etoken.sh
+# interval=10
+
+# [window]
+# command=~/.config/i3blocks/scripts/window
+# interval=5
+
+# [webcam]
+# label=
+# command=~/.config/i3blocks/scripts/webcam
+# interval=5
+
+# [emacs-server-status]
+# command=~/.config/i3blocks/scripts/emacs-server.sh
+# markup=pango
+# interval=10
+
+# [cmus]
+# command=~/.config/i3blocks/scripts/cmus.sh
+# label=
+# interval=once
+
+# [brightness]
+# label=
+# command=~/.config/i3blocks/scripts/brightness
+# interval=once
+# signal=2
+
+# [touchpad]
+# label=
+# command=~/.config/i3blocks/scripts/touchpad
+# interval=5
+
+# [localmail]
+# label=
+# command=~/.config/i3blocks/scripts/localmail.sh
+# interval=3600
+
+# [focused window]
+# command=xtitle
+# interval=5
+# color=#ffffff
+
+# [wifi]
+# label=
+# command=~/.config/i3blocks/scripts/wifi
+# instance=wlp3s0
+# interval=7
+
+# [openvpn]
+# label=
+# command=~/.config/i3blocks/scripts/openvpn
+# interval=20
+

@@ -8,79 +8,81 @@ let g:python3_host_prog  = '/usr/bin/python3.6'
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-" {{{ General
-Plug 'https://github.com/scrooloose/nerdtree'
-Plug 'https://github.com/kshenoy/vim-signature'          " Extended marks support
+" {{{ Common: motion, navigation, extended commands
+Plug 'https://github.com/scrooloose/nerdtree'       " A tree explorer plugin for vim
+Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/rhysd/clever-f.vim'             " Convenient `f` and `F`
-Plug 'https://github.com/junegunn/vim-peekaboo'          " Shows vim registers content
-Plug 'https://github.com/tpope/vim-eunuch'               " Helpers for Shell
-Plug 'https://github.com/junegunn/fzf.vim'               " Fuzzy-finder integration
-Plug 'https://github.com/tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
-Plug 'https://github.com/tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
-Plug 'https://github.com/will133/vim-dirdiff'            " Diff two directories
+Plug 'https://github.com/rhysd/clever-f.vim'        " Convenient `f` and `F`
+Plug 'https://github.com/tpope/vim-eunuch'          " Helpers for Shell
+Plug 'https://github.com/tpope/vim-speeddating'     " <C-a>/<C-x> for dates and timestamps
+Plug 'https://github.com/tpope/vim-repeat'          " Remap `.` in a way that plugins can tap into it
+Plug 'https://github.com/will133/vim-dirdiff'       " Diff two directories
+Plug 'https://github.com/andymass/vim-matchup'      " Better `%` for some modes
+Plug 'https://github.com/godlygeek/tabular'         " Vim script for text filtering and alignment
+Plug 'https://github.com/tpope/vim-surround'
+Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets, parens, quotes in pair
+Plug 'https://github.com/tpope/vim-obsession'
+" }}}
+
+" {{{ UI & appearance
+Plug 'https://github.com/itchyny/lightline.vim'
+Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
+Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
+Plug 'https://github.com/junegunn/vim-peekaboo'    " Shows vim registers content into vertical split
+Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
+Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
+Plug 'https://github.com/junegunn/goyo.vim'        " Distraction-free writing in Vim
+Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
+Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
+Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
+" }}}
+
+" {{{ Git
+Plug 'https://github.com/tpope/vim-fugitive'
+Plug 'https://github.com/airblade/vim-gitgutter'
+Plug 'https://github.com/junegunn/gv.vim'
+" }}}
+
+" {{{ fzf
+Plug 'https://github.com/junegunn/fzf.vim'
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
 " }}}
 
-" {{{ UI & appearance
-Plug 'https://github.com/itchyny/lightline.vim'
-Plug 'https://github.com/ap/vim-buftabline'        " Show buffers in the tabline
-Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
-Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
-Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
-Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
-Plug 'https://github.com/junegunn/goyo.vim'        " `Zen-mode`
-Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
-Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
-Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
-" }}}
-
-" {{{ Text editing
-Plug 'https://github.com/pearofducks/ansible-vim'       " Ansible format support
-Plug 'https://github.com/cespare/vim-toml'              " .toml
-Plug 'https://github.com/chr4/nginx.vim'                " Nginx configuration files
-Plug 'https://github.com/othree/xml.vim'                " Extended XML/XSD features
-Plug 'https://github.com/dhruvasagar/vim-table-mode'    " Simplifies plain text tables creation
-Plug 'https://github.com/lervag/vimtex'                 " LaTeX support
-Plug 'https://github.com/plasticboy/vim-markdown'       " Extended markdown support
-Plug 'https://github.com/gu-fan/riv.vim'                " .rst notekeeping
+" {{{ Writing text/configuration/markdown
+Plug 'https://github.com/pearofducks/ansible-vim'
+Plug 'https://github.com/cespare/vim-toml'
+Plug 'https://github.com/dhruvasagar/vim-table-mode'
+Plug 'https://github.com/lervag/vimtex'
+Plug 'https://github.com/plasticboy/vim-markdown'
+" Plug 'https://github.com/gu-fan/riv.vim'
+Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 " }}}
 
 " {{{ Writing code
-Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'https://github.com/scrooloose/nerdcommenter'
-Plug 'https://github.com/andymass/vim-matchup'         " Better %
-Plug 'https://github.com/tpope/vim-fugitive'           " Git wrapper
-Plug 'https://github.com/airblade/vim-gitgutter'       " Show git diffs in the gutter
-Plug 'https://github.com/godlygeek/tabular'            " Create fancy tabularized comments
-Plug 'https://github.com/majutsushi/tagbar'            " Display sorted tags in a window
-Plug 'https://github.com/tpope/vim-surround'
-Plug 'https://github.com/jiangmiao/auto-pairs'
-Plug 'https://github.com/terryma/vim-expand-region'    " Visually select increasingly larger regions
-Plug 'https://github.com/ludovicchabant/vim-gutentags' " Re-generate ctags on a fly
+Plug 'https://github.com/majutsushi/tagbar'            " Vim plugin that displays tags in a window
+Plug 'https://github.com/ludovicchabant/vim-gutentags' " Auto (re)generate tag files
+Plug 'https://github.com/terryma/vim-expand-region'    " Visually select increasingly larger regions of text
 Plug 'https://github.com/Shougo/echodoc.vim'           " Displays function signatures from completions in the command line
-Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'    " Doxygen helper
+Plug 'https://github.com/scrooloose/nerdcommenter'
 Plug 'https://github.com/Shougo/neosnippet.vim'
 Plug 'https://github.com/Shougo/neosnippet-snippets'
+Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'autozimu/LanguageClient-neovim', {
   \ 'branch': 'next',
   \ 'do': 'bash install.sh',
   \ }
-
-" {{{ Language-specific
-Plug 'https://github.com/vivien/vim-linux-coding-style' " Kernel C codestyle
-Plug 'https://github.com/raimon49/requirements.txt.vim', {'for': 'requirements'}
-Plug 'https://github.com/nacitar/a.vim'                 " Quick switch to .h
-Plug 'https://github.com/fatih/vim-go'                  " Golang plugin
-Plug 'https://github.com/alfredodeza/pytest.vim'
-Plug 'https://github.com/junegunn/vader.vim'            " vimscript testing framework
-Plug 'https://github.com/Kuniwak/vint'                  " vimscript linter
-Plug 'https://github.com/tpope/vim-scriptease'          " Vim plugin for making Vim plugins
-Plug '~/Dev/IEC.vim'                                    " IEC 61131-3 support
-" }}}
+Plug 'https://github.com/jubnzv/DoxygenToolkit.vim', { 'for': [ 'c', 'cpp' ] }
+Plug 'https://github.com/vivien/vim-linux-coding-style', { 'for': 'c' }
+Plug 'https://github.com/nacitar/a.vim', { 'for': 'c' }
+Plug 'https://github.com/raimon49/requirements.txt.vim', { 'for': 'requirements' }
+Plug 'https://github.com/fatih/vim-go', { 'for': 'go' }
+Plug 'https://github.com/alfredodeza/pytest.vim', { 'for': 'python' }
+Plug 'https://github.com/junegunn/vader.vim', { 'on': 'Vader', 'for': 'vader' }
+Plug 'https://github.com/tpope/vim-scriptease'
+Plug '~/Dev/IEC.vim'
 " }}}
 
 call plug#end()
@@ -189,7 +191,7 @@ function! ToggleConceal()
     echo 'Disable conceal'
   endif
 endfunction
-command! ToggleConceal call ToggleConceal()
+command! Tconc call ToggleConceal()
 " }}}
 
 " }}}
@@ -204,8 +206,13 @@ command! ToggleConceal call ToggleConceal()
 inoremap jj <Esc>
 nnoremap <A-h> :noh<CR>
 
-" Edit files in the same directory
-cabbr %% <C-R>=expand('%:p:h')<CR>
+" Editing neighbors
+" cabbr %% <C-R>=expand('%:p:h')<CR>
+cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
+map <leader>ew :e %%
+map <leader>es :sp %%
+map <leader>ev :vsp %%
+map <leader>et :tabe %%
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -241,8 +248,11 @@ nnoremap Q @@
 nnoremap ]e :cnext <CR>
 nnoremap [e :cprevious<CR>
 
-" Search visually selected
+" Search visually selected text
 vnoremap // y/<C-R>"<CR>
+
+" Search in visal selected area
+vnoremap <M-/> <Esc>/\%V
 
 " Replace with `F` / `f` / `t` / `T`
 noremap ;; :%s///g<Left><Left><Left>
@@ -271,8 +281,7 @@ function! Togglegjgk()
     echo 'Switch to j/k'
   endif
 endfunction
-nnoremap <silent> <leader>T <Esc>:call Togglegjgk()<CR>
-command! Togglegjgk call Togglegjgk()
+command! Tgjgk call Togglegjgk()
 " }}}
 
 " Toggle paste mode on and off
@@ -303,10 +312,30 @@ noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 map <leader>x :e ~/Org/scratch.md<CR>
 
 " Spellchecking
-map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
-imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
+map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
+imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 
 " }}}
+
+nnoremap <silent>]b :bn<CR>
+nnoremap <silent>[b :bp<CR>
+" nnoremap <silent><C-k> :bn<CR>
+" nnoremap <silent><C-j> :bp<CR>
+" nnoremap <leader>b :ls<CR>:b<space>
+" nnoremap <leader>br :bufdo e<CR>
+
+" Close buffer
+function! BufferClose()
+  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
+    exec ':q'
+  else
+    exec ':bd'
+  endif
+endfunction
+nnoremap <C-F4> :call BufferClose()<CR>
+
+" Switch between current and last buffer
+nnoremap <A-r> <C-^>
 
 " {{{ Copy filename to '*' clipboard
 " http://vim.wikia.com/wiki/Copy_filename_to_clipboard
@@ -382,29 +411,6 @@ endfunction
 
 au! User GoyoEnter nested call <SID>goyo_enter()
 au! User GoyoLeave nested call <SID>goyo_leave()
-" }}}
-
-" {{{ Buffers/windows manipulation routines
-" nnoremap <C-k> :bnext<CR>
-" nnoremap <C-j> :bprev<CR>
-nnoremap <A-]> :bnext<CR>
-nnoremap <A-[> :bprev<CR>
-nnoremap ]b :bnext<CR>
-nnoremap [b :bprev<CR>
-" nnoremap <leader>br :bufdo e<CR>
-
-" Close buffer
-function! BufferClose()
-  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
-    exec ':q'
-  else
-    exec ':bd'
-  endif
-endfunction
-nnoremap <C-F4> :call BufferClose()<CR>
-
-" Switch between current and last buffer
-nmap <A-r> <C-^>
 " }}}
 
 " {{{ neovim's terminal configuration
@@ -487,7 +493,7 @@ set foldnestmax=6
 set nofoldenable                            " Disable folding when open file
 set foldlevel=2
 set foldcolumn=0
-set fillchars=fold:\ 
+set fillchars=fold:\
 " }}}
 
 " {{{ Customized `CustomFoldText` function:
@@ -583,6 +589,15 @@ return extend(
 \        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/'"),
 \ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
 endfunction
+"
+" Augmenting Ag command using fzf#vim#with_preview function
+" :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
+" :Ag! - Start fzf in fullscreen and display the preview window above
+command! -bang -nargs=* Ag
+\ call fzf#vim#ag(<q-args>,
+\                 <bang>0 ? fzf#vim#with_preview('up:60%')
+\                         : fzf#vim#with_preview('right:50%', '?'),
+\                 <bang>0)
 
 nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
@@ -643,11 +658,11 @@ au InsertLeave * match ExtraWhitespace /\s\+$/
 au BufWinLeave * call clearmatches()
 
 " Remove all trailing whitespaces
-nnoremap <silent> <Leader>es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 " }}}
 
 " Convert the ^M linebreak to 'normal' linebreaks
-nnoremap <silent> <Leader>ed :set ff=unix<CR> :e ++ff=dos<CR>
+nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
 
 " {{{ ctags
 set tags=./tags;
@@ -728,6 +743,7 @@ set formatexpr=""
 function! LCKeymap()
   if has_key(g:LanguageClient_serverCommands, &filetype)
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+    nnoremap gD :only<bar>vsplit<CR>gd
     nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
     nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
     nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
@@ -815,7 +831,7 @@ function! LCToggle()
     echo 'Stopping LanguageClient...'
   endif
 endfunction
-command! LCToggle call LCToggle()
+command! Tlsp call LCToggle()
 " }}}
 " }}}
 
@@ -862,7 +878,7 @@ nmap <A-a> :A<CR>
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
-au FileType c,cpp noremap <leader>ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
@@ -956,6 +972,8 @@ au Filetype html setlocal ts=4
 " buildbot configuration files
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
+
+au BufNewFile,BufRead   .pdbrc set ft=python
 
 " Taskwarrior tasks (`task [id] edit`)
 au BufRead *.task /Description:

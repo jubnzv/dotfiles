@@ -45,7 +45,7 @@ URxvt.keysym.C-F11             : \033[24;5~
 URxvt.perl-lib          : /home/jubnzv/.local/opt/urxvt-perls/
 URxvt.perl-ext-common   : default,matcher,keyboard-select,resize-font
 !! Matcher
-URxvt.urlLauncher       : chromium
+URxvt.urlLauncher       : firefox
 URxvt.matcher.button    : 1
 !! Keboard-select
 URxvt.keysym.M-Tab      : perl:keyboard-select:activate
