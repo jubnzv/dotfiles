@@ -164,35 +164,7 @@ endfunction
 au! BufReadPost,BufNewFile * call ParseModeline()
 
 " Jump to the last position when reopening a file (see `/etc/vim/vimrc`)
-if has("autocmd")
-  au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-endif
-
-" {{{ Switch between relative and absolute lines numbering
-function! NumberToggle()
-  if(&nu == 1)
-    set nu!
-    set rnu
-  else
-    set nornu
-    set nu
-  endif
-endfunction
-nnoremap <F9> :call NumberToggle()<CR>
-" }}}
-
-" {{{ Toggle conceal options
-function! ToggleConceal()
-  if (&conceallevel == 0)
-    set conceallevel=2
-    echo 'Enable conceal'
-  else
-    set conceallevel=0
-    echo 'Disable conceal'
-  endif
-endfunction
-command! Tconc call ToggleConceal()
-" }}}
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " }}}
 
@@ -262,31 +234,6 @@ noremap ;' :%s///cg<Left><Left><Left><Left>
 vnoremap < <gv
 vnoremap > >gv
 
-" {{{ j/k | gj/gk
-" https://danielfgray.gitlab.io/computers/vimrc-guide/#Personal-tweaks
-function! Togglegjgk()
-  if !exists("g:togglegjgk") || g:togglegjgk==0
-    let g:togglegjgk=1
-    nnoremap j gj
-    nnoremap k gk
-    nnoremap gk k
-    nnoremap gj j
-    echo 'Switch to gj/gk'
-  else
-    let g:togglegjgk=0
-    nunmap j
-    nunmap k
-    nunmap gk
-    nunmap gj
-    echo 'Switch to j/k'
-  endif
-endfunction
-command! Tgjgk call Togglegjgk()
-" }}}
-
-" Toggle paste mode on and off
-map <leader>pp :setlocal paste!<CR>
-
 " Make C-S work as `Save`
 nmap <c-s> :w<CR>
 imap <c-s> <Esc>:w<CR>i
@@ -324,15 +271,57 @@ nnoremap <silent>[b :bp<CR>
 " nnoremap <leader>b :ls<CR>:b<space>
 " nnoremap <leader>br :bufdo e<CR>
 
-" Close buffer
-function! BufferClose()
-  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
-    exec ':q'
+" Command ':Bclose' executes ':bd' to delete buffer in current window.
+" The window will show the alternate buffer (Ctrl-^) if it exists,
+" or the previous buffer (:bp), or a blank buffer if no previous.
+" Command ':Bclose!' is the same, but executes ':bd!' (discard changes).
+" An optional argument can specify which buffer to close (name or number).
+function! Bclose(bang, buffer)
+  if empty(a:buffer)
+    let btarget = bufnr('%')
+  elseif a:buffer =~ '^\d\+$'
+    let btarget = bufnr(str2nr(a:buffer))
   else
-    exec ':bd'
+    let btarget = bufnr(a:buffer)
   endif
+  if btarget < 0
+    call s:Warn('No matching buffer for '.a:buffer)
+    return
+  endif
+  if empty(a:bang) && getbufvar(btarget, '&modified')
+    call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
+    return
+  endif
+  " Numbers of windows that view target buffer which we will delete.
+  let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
+  let wcurrent = winnr()
+  for w in wnums
+    execute w.'wincmd w'
+    let prevbuf = bufnr('#')
+    if prevbuf > 0 && buflisted(prevbuf) && prevbuf != w
+      buffer #
+    else
+      bprevious
+    endif
+    if btarget == bufnr('%')
+      " Numbers of listed buffers which are not the target to be deleted.
+      let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
+      " Listed, not target, and not displayed.
+      let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
+      " Take the first buffer, if any (could be more intelligent).
+      let bjump = (bhidden + blisted + [-1])[0]
+      if bjump > 0
+        execute 'buffer '.bjump
+      else
+        execute 'enew'.a:bang
+      endif
+    endif
+  endfor
+  execute 'bdelete'.a:bang.' '.btarget
+  execute wcurrent.'wincmd w'
 endfunction
-nnoremap <C-F4> :call BufferClose()<CR>
+command! -bang -complete=buffer -nargs=? Bclose call Bclose('<bang>', '<args>')
+nnoremap <C-F4> :Bclose<CR>
 
 " Switch between current and last buffer
 nnoremap <A-r> <C-^>
@@ -414,30 +403,6 @@ au! User GoyoLeave nested call <SID>goyo_leave()
 " }}}
 
 " {{{ neovim's terminal configuration
-" Popup-like terminal implementation. Thanks to:
-" https://www.reddit.com/r/vim/comments/8n5bzs/using_neovim_is_there_a_way_to_display_a_terminal/dzt3fix
-let g:term_buf = 0
-let g:term_win = 0
-function! TermToggle(height)
-    if win_gotoid(g:term_win)
-        hide
-    else
-        botright new
-        exec "resize " . a:height
-        try
-            exec "buffer " . g:term_buf
-        catch
-            call termopen($SHELL, {"detach": 0})
-            let g:term_buf = bufnr("")
-            set nonumber
-            set norelativenumber
-            set signcolumn=no
-        endtry
-        startinsert!
-        let g:term_win = win_getid()
-    endif
-endfunction
-
 " Close terminal buffer after exit from shell process.
 " https://www.reddit.com/r/neovim/comments/7xonzm/how_to_close_a_terminal_buffer_automatically_if/dud0vxn
 function! OnTermClose()
@@ -452,9 +417,12 @@ function! OnTermClose()
 endfunction
 
 " Terminal-mode keybinds
-tnoremap :q! <C-\><C-n>:q!<CR>
 tnoremap <C-v><Esc> <C-\><C-n>
-" tnoremap <Esc> <C-\><C-n>
+tnoremap <Esc> <C-\><C-n>
+tnoremap <expr> <A-y> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+
+" Highlight unfocused cursor
+highlight TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=96 guibg=#8f3f71 cterm=NONE gui=NONE
 
 augroup Term
     autocmd!
@@ -466,11 +434,6 @@ augroup END
 " {{{ tmux integration
 if exists('$TMUX')
   map ` <Nop>
-  map <A-`> <Nop>
-else
-  nnoremap <silent> <A-`> :call TermToggle(12)<CR>
-  inoremap <silent> <A-`> <Esc>:call TermToggle(12)<CR>
-  tnoremap <silent> <A-`> <C-\><C-n>:call TermToggle(12)<CR>
 endif
 " }}}
 
@@ -518,15 +481,6 @@ function! CustomFoldText()
 endf
 set foldtext=CustomFoldText()
 " }}}
-
-function! ToggleFoldColumn()
-  if(&foldcolumn != 0)
-    set foldcolumn=0
-  else
-    set foldcolumn=3
-  endif
-endfunction
-nnoremap <leader>q :call ToggleFoldColumn()<CR>
 " }}}
 
 " {{{ NerdTREE
@@ -589,12 +543,12 @@ return extend(
 \        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/'"),
 \ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
 endfunction
-"
+
 " Augmenting Ag command using fzf#vim#with_preview function
 " :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
 " :Ag! - Start fzf in fullscreen and display the preview window above
 command! -bang -nargs=* Ag
-\ call fzf#vim#ag(<q-args>,
+\ call fzf#vim#ag(<q-args>, '--path-to-ignore ~/.ignore',
 \                 <bang>0 ? fzf#vim#with_preview('up:60%')
 \                         : fzf#vim#with_preview('right:50%', '?'),
 \                 <bang>0)
@@ -608,11 +562,14 @@ nnoremap <leader>fs :Ag<CR>
 nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
+nnoremap <leader>fm :Marks<cr>
 nnoremap <leader>vc :Commits<CR>
 nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
 nnoremap <leader>mr :FZFMru <cr>
+
+autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
 " }}}
 
 " {{{ Nerdcommenter settings
@@ -712,6 +669,7 @@ let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " {{{ LanguageClient settings
 " let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
 let g:LanguageClient_loadSettings = 1
+let g:LanguageClient_autoStart = 1
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
@@ -753,18 +711,16 @@ function! LCKeymap()
 endfunction
 " }}}
 
-" {{{ Disable LSP autostart for projects on given paths
+" Suppress autostart for large codebases
 function! LCDisableAutostart(ignored_paths)
   let l:path = expand('%:p')
   for ign_path in a:ignored_paths
     if l:path =~ ign_path
       let g:LanguageClient_autoStart = 0
-    else
-      let g:LanguageClient_autoStart = 1
+      break
     endif
   endfor
 endfunction
-" }}}
 
 " {{{ Format options for LSP diagnostic messages in signcolumn
 let g:LanguageClient_diagnosticsEnable = 1
@@ -821,18 +777,6 @@ function! LightlineLSPStatus() abort
 endfunction
 " }}}
 
-" {{{ Toggle LanguageClient
-function! LCToggle()
-  if (g:lsp_status == 0)
-    execute ":LanguageClientStart"
-    echo 'Starting LanguageClient...'
-  else
-    execute ":LanguageClientStop"
-    echo 'Stopping LanguageClient...'
-  endif
-endfunction
-command! Tlsp call LCToggle()
-" }}}
 " }}}
 
 " {{{ echodoc
@@ -860,8 +804,9 @@ let g:gitgutter_map_keys = 0
 
 nmap [v <Plug>GitGutterPrevHunk
 nmap ]v <Plug>GitGutterNextHunk
-nnoremap <leader>vv :GitGutterPreviewHunk<CR>
-nnoremap <leader>vu :GitGutterUndoHunk<CR>
+nnoremap <leader>gv :GitGutterPreviewHunk<CR>
+nnoremap <leader>gu :GitGutterUndoHunk<CR>
+nnoremap <leader>gs :GitGutterStageHunk<CR>
 " }}}
 
 " {{{ C/C++ settings
@@ -982,6 +927,74 @@ au BufRead *.task /Description:
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 
 au BufNewFile,BufRead .clang-format set ft=config
+" }}}
+
+" {{{ Toggling features
+function! ToggleConceal()
+  if (&conceallevel == 0)
+    set conceallevel=2
+    echo 'Enable conceal'
+  else
+    set conceallevel=0
+    echo 'Disable conceal'
+  endif
+endfunction
+
+function! ToggleNumber()
+  if(&nu == 1)
+    set nu!
+    set rnu
+  else
+    set nornu
+    set nu
+  endif
+endfunction
+
+function! ToggleFoldColumn()
+  if(&foldcolumn != 0)
+    set foldcolumn=0
+  else
+    set foldcolumn=3
+  endif
+endfunction
+
+function! Togglegjgk()
+  if !exists("g:togglegjgk") || g:togglegjgk==0
+    let g:togglegjgk=1
+    nnoremap j gj
+    nnoremap k gk
+    nnoremap gk k
+    nnoremap gj j
+    echo 'Switch to gj/gk'
+  else
+    let g:togglegjgk=0
+    nunmap j
+    nunmap k
+    nunmap gk
+    nunmap gj
+    echo 'Switch to j/k'
+  endif
+endfunction
+
+function! ToggleLSP()
+  if (g:lsp_status == 0)
+    execute ":LanguageClientStart"
+    let g:LanguageClient_autoStart = 1
+    echo 'Enable LSP'
+  else
+    execute ":LanguageClientStop"
+    let g:LanguageClient_autoStart = 0
+    echo 'Disable LSP'
+  endif
+endfunction
+
+nnoremap <leader>Tfc :call ToggleFoldColumn()<CR>
+nnoremap <leader>Tc :call ToggleConceal()<CR>
+nnoremap <leader>Tg :call Togglegjgk()<CR>
+nnoremap <leader>TL :call ToggleLSP()<CR>
+nnoremap <leader>Tp :setlocal paste!<CR>
+nnoremap <leader>Tn :call ToggleNumber()<CR>
+nnoremap <leader>TC :ColorToggle<CR>
 " }}}
 
 " Load redundant which-key bindings
