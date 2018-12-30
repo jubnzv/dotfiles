@@ -222,9 +222,9 @@ bindsym XF86AudioPause exec cmus-remote --pause && pkill -RTMIN+3 i3blocks
 bindsym XF86AudioStop exec cmus-remote --stop && pkill -RTMIN+3 i3blocks
 
 # Volume control
-bindsym XF86AudioRaiseVolume exec amixer -c 0 -q set Master 4%+ unmute && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioLowerVolume exec amixer -c 0 -q set Master 4%- unmute && pkill -RTMIN+1 i3blocks
-bindsym XF86AudioMute exec amixer -c 0 -q set Master toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +4% && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -4% && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+1 i3blocks
 bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 
 # i3bar control
