@@ -74,13 +74,12 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ 'branch': 'next',
   \ 'do': 'bash install.sh',
   \ }
-Plug 'https://github.com/jubnzv/DoxygenToolkit.vim', { 'for': [ 'c', 'cpp' ] }
-Plug 'https://github.com/vivien/vim-linux-coding-style', { 'for': 'c' }
-Plug 'https://github.com/nacitar/a.vim', { 'for': 'c' }
+Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
+Plug 'https://github.com/vivien/vim-linux-coding-style'
+Plug 'https://github.com/nacitar/a.vim'
 Plug 'https://github.com/raimon49/requirements.txt.vim', { 'for': 'requirements' }
 Plug 'https://github.com/fatih/vim-go', { 'for': 'go' }
 Plug 'https://github.com/alfredodeza/pytest.vim', { 'for': 'python' }
-Plug 'https://github.com/junegunn/vader.vim', { 'on': 'Vader', 'for': 'vader' }
 Plug 'https://github.com/tpope/vim-scriptease'
 Plug '~/Dev/IEC.vim'
 " }}}
@@ -271,57 +270,14 @@ nnoremap <silent>[b :bp<CR>
 " nnoremap <leader>b :ls<CR>:b<space>
 " nnoremap <leader>br :bufdo e<CR>
 
-" Command ':Bclose' executes ':bd' to delete buffer in current window.
-" The window will show the alternate buffer (Ctrl-^) if it exists,
-" or the previous buffer (:bp), or a blank buffer if no previous.
-" Command ':Bclose!' is the same, but executes ':bd!' (discard changes).
-" An optional argument can specify which buffer to close (name or number).
-function! Bclose(bang, buffer)
-  if empty(a:buffer)
-    let btarget = bufnr('%')
-  elseif a:buffer =~ '^\d\+$'
-    let btarget = bufnr(str2nr(a:buffer))
+function! BufferClose()
+  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
+    exec ':q'
   else
-    let btarget = bufnr(a:buffer)
+    exec ':bd'
   endif
-  if btarget < 0
-    call s:Warn('No matching buffer for '.a:buffer)
-    return
-  endif
-  if empty(a:bang) && getbufvar(btarget, '&modified')
-    call s:Warn('No write since last change for buffer '.btarget.' (use :Bclose!)')
-    return
-  endif
-  " Numbers of windows that view target buffer which we will delete.
-  let wnums = filter(range(1, winnr('$')), 'winbufnr(v:val) == btarget')
-  let wcurrent = winnr()
-  for w in wnums
-    execute w.'wincmd w'
-    let prevbuf = bufnr('#')
-    if prevbuf > 0 && buflisted(prevbuf) && prevbuf != w
-      buffer #
-    else
-      bprevious
-    endif
-    if btarget == bufnr('%')
-      " Numbers of listed buffers which are not the target to be deleted.
-      let blisted = filter(range(1, bufnr('$')), 'buflisted(v:val) && v:val != btarget')
-      " Listed, not target, and not displayed.
-      let bhidden = filter(copy(blisted), 'bufwinnr(v:val) < 0')
-      " Take the first buffer, if any (could be more intelligent).
-      let bjump = (bhidden + blisted + [-1])[0]
-      if bjump > 0
-        execute 'buffer '.bjump
-      else
-        execute 'enew'.a:bang
-      endif
-    endif
-  endfor
-  execute 'bdelete'.a:bang.' '.btarget
-  execute wcurrent.'wincmd w'
 endfunction
-command! -bang -complete=buffer -nargs=? Bclose call Bclose('<bang>', '<args>')
-nnoremap <C-F4> :Bclose<CR>
+nnoremap <C-F4> :call BufferClose()<CR>
 
 " Switch between current and last buffer
 nnoremap <A-r> <C-^>
@@ -562,12 +518,12 @@ nnoremap <leader>fs :Ag<CR>
 nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
-nnoremap <leader>fm :Marks<cr>
+nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>vc :Commits<CR>
 nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
-nnoremap <leader>mr :FZFMru <cr>
+nnoremap <leader>mr :FZFMru <CR>
 
 autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
 " }}}

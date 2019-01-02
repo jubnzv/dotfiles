@@ -12,18 +12,16 @@ abbr #ifndef ... #define ... #endif
 
 # Various printing routines {{{
 
-# Debug print
+# Debug prints
 # :g/\/\/\ prdbg$/d to clean them all
 snippet     prdbg
 options     head
 alias       debug-print
-    printf("%s:%s:%d ${0:MSG}\n", __FILE__, __func__, __LINE__); // prdbg
-
-# Non-implemented print
-snippet     prni
+    printf("%s:%d ${0:MSG}\n", __func__, __LINE__); // prdbg
+snippet     prdbgk
 options     head
-alias       print-non-implemented
-    printf("%s: Not implemented\n", __func__);
+alias       debug-print
+    printk("%s:%d ${0:MSG}\n", __func__, __LINE__); // prdbg
 
 # Print bits of integer
 snippet prb

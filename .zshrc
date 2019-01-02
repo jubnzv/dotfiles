@@ -110,7 +110,7 @@ alias vi='nvim'
 alias vim='nvim'
 alias vc='nvim -u NONE'
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
-alias vi3='nvim ~/.config/i3; i3-msg restart'
+alias vi3='nvim ~/.config/i3/config; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
 function vn() {
     nvim ~/Org/Notes/$*
@@ -159,6 +159,7 @@ else
 fi
 
 # grep / ripgrep / silversearcher. Ag is my choice.
+alias ag='ag --path-to-ignore ~/.ignore'
 if [[ -x "$(command -v rg)" ]]; then
     alias rg='ag --path-to-ignore ~/.ignore'
     alias rgn='ag -n'
@@ -306,6 +307,11 @@ export _Z_EXCLUDE_DIRS=(
 )
 # }}}
 
+# }}}
+
+# {{{ nnn configuration
+export DISABLE_FILE_OPEN_ON_NAV=0
+export NNN_BMS='d:~/Documents;D:~/Downloads/;u:~/Uni/;m:/mnt/;M:/media/jubnzv/;w:~/Work/;e:~/Dev/'
 # }}}
 
 # {{{ Git
