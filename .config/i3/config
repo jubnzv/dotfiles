@@ -61,6 +61,7 @@ exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/setup-keys
 exec --no-startup-id $SCRIPTS_PATH/xrandr-dual-on
+exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
@@ -186,10 +187,9 @@ bindsym $mod+Control+q exec $TERMINAL -e nvim
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
-bindsym $mod+Control+r exec $TERMINAL -e nnn
+bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+x exec xterm
-bindsym $mod+Control+f workspace 4$tile_04_f; exec zathura
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
 
 # Brightness control
@@ -242,25 +242,22 @@ bindsym Shift+F4 --release [class=".*"] border none
 
 # {{{ Bind modes
 
-# {{{ Multi-monitor control
-set $mode_exec_xrandr <span fgcolor='#bdae93'>Display options</span>\t \
-<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'></span>\t  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span> <span fgcolor='#bdae93'> </span>\t  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span> <span fgcolor='#bdae93'> </span>\t  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[4]</span> <span fgcolor='#fabd2f'>  </span><span fgcolor='#bdae93'> </span>\t \
-<span bgcolor='#bdae93' fgcolor='#282828'>[5]</span> <span fgcolor='#bdae93'> </span>\t\t \
-<span bgcolor='#fabd2f' fgcolor='#282828'>auto</span>  \
+# {{{ Peripherial devices control
+set $mode_exec_peripherial <span fgcolor='#bdae93'>Peripherial</span>\t\t\t \
+<span fgcolor='#bdae93'></span>   \
+<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'>single</span>  \
+<span bgcolor='#bdae93' fgcolor='#282828'>[m]</span> <span fgcolor='#bdae93'>manual </span> \
 <span bgcolor='#8ec07c' fgcolor='#282828'>[e]</span> <span fgcolor='#8ec07c'>on</span>  \
-<span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>
-bindsym XF86Display mode $mode_exec_xrandr
-mode --pango_markup "$mode_exec_xrandr" {
+<span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>\t\t\t \
+<span fgcolor='#bdae93'></span>   \
+<span bgcolor='#bdae93' fgcolor='#282828'>[t]</span> <span fgcolor='#bdae93'>on</span>
+bindsym XF86Display mode $mode_exec_peripherial
+mode --pango_markup "$mode_exec_peripherial" {
      bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
-     bindsym 2 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto; mode "default"
-     bindsym 3 exec xrandr --output LVDS-1 --auto --output VGA-1 --left-of LVDS-1 --auto; mode "default"
-     bindsym 4 exec xrandr --output LVDS-1 --auto --output VGA-1 --right-of LVDS-1 --auto --output HDMI-3 --left-of LVDS-1 --auto; mode "default"
-     bindsym 5 exec arandr; mode "default"
+     bindsym m exec arandr; mode "default"
      bindsym e exec $SCRIPTS_PATH/xrandr-dual-on; mode "default"
      bindsym d exec $SCRIPTS_PATH/xrandr-dual-off; mode "default"
+     bindsym t exec $SCRIPTS_PATH/touchpad-toggle -v; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }

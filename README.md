@@ -25,12 +25,13 @@
 | Shell                | zsh         |
 | Terminal multiplexer | tmux        |
 | Terminal emulator    | kitty       |
+| Connections manager  | wicd        |
 
 ## Desktop environment
 
 + `i3` window manager
 
-  * Status: `i3-status-rust`
+  * Status: `i3blocks`
   * Application launcher: `rofi`
   * Notification daemon: `dunst`
   * Keymap indicator: `fbxkb`

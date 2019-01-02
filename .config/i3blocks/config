@@ -23,11 +23,6 @@ command=~/.config/i3blocks/scripts/brightness
 interval=once
 signal=2
 
-# [connections]
-# command=~/.config/i3blocks/scripts/connections
-# markup=pango
-# interval=120
-
 [disk-root]
 label=
 command=~/.config/i3blocks/scripts/disk
@@ -45,11 +40,6 @@ command=~/.config/i3blocks/scripts/cpu_usage
 interval=10
 min_width=100.00%
 
-# [temp]
-# label=
-# command=~/.config/i3blocks/scripts/temperature
-# interval=60
-
 [battery]
 command=~/.config/i3blocks/scripts/battery
 interval=30
@@ -58,6 +48,7 @@ interval=30
 label=
 command=~/.config/i3blocks/scripts/taskw
 interval=60
+markup=pango
 
 #
 # Currently unused
@@ -100,11 +91,6 @@ interval=60
 # markup=pango
 # interval=10
 
-# [cmus]
-# command=~/.config/i3blocks/scripts/cmus.sh
-# label=
-# interval=once
-
 # [brightness]
 # label=
 # command=~/.config/i3blocks/scripts/brightness
@@ -136,4 +122,14 @@ interval=60
 # label=
 # command=~/.config/i3blocks/scripts/openvpn
 # interval=20
+
+# [temp]
+# label=
+# command=~/.config/i3blocks/scripts/temperature
+# interval=60
+
+# [connections]
+# command=~/.config/i3blocks/scripts/connections
+# markup=pango
+# interval=120
 
