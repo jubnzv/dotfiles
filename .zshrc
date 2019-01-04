@@ -116,6 +116,12 @@ function vn() {
     nvim ~/Org/Notes/$*
 }
 
+# emacs
+alias em='emacs -nw'
+function emn() {
+    emacs -nw ~/Org/Notes/
+}
+
 # ctags
 alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'

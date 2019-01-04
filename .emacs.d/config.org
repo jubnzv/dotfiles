@@ -8,54 +8,9 @@ Inspired by following setups and guides:
 
 + https://github.com/andreyorst/dotfiles/tree/master/.emacs.d
 + https://github.com/noctuid/evil-guide
-
-** UI defaults
-
+  
 #+BEGIN_SRC emacs-lisp
-(ignore-errors
-    (menu-bar-mode -1)
-    (scroll-bar-mode -1)
-    (tool-bar-mode -1)
-    (tooltip-mode -1)
-    (fset 'menu-bar-open nil))
-#+END_SRC
-
-*** Font
-
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka-11")
-#+END_SRC
-
-
-** Fixing Emacs defaults
-
-**** Bell
-
-#+BEGIN_SRC emacs-lisp
-    (setq ring-bell-function 'ignore)
-#+END_SRC
-
-**** Custom
-
-#+BEGIN_SRC emacs-lisp
-   (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-   (load custom-file :noerror)
-#+END_SRC
-
-**** Backups
-
-#+BEGIN_SRC emacs-lisp
-    (setq backup-by-copying t
-        create-lockfiles nil
-        backup-directory-alist '(("." . "~/.cache/emacs-backups"))
-        auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
-#+END_SRC
-
-
-**** Use system clipboard
-     
-#+BEGIN_SRC emacs-lisp
-(setq x-select-enable-clipboard t)
+(setq user-mail-address "jubnzv@gmail.com")
 #+END_SRC
 
 ** Packages
@@ -66,7 +21,7 @@ Inspired by following setups and guides:
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/") t)
+    '("melpa" . "https://melpa.org/packages/") t)
 (package-initialize)
 (when (not package-archive-contents) (package-refresh-contents))
 #+END_SRC
@@ -81,7 +36,7 @@ Inspired by following setups and guides:
 #+END_SRC
 
 *** Load use-package extensions
-    
+
 The :chords keyword allows you to define key-chord bindings for use-package declarations in the same manner as the :bind keyword.
 
 #+BEGIN_SRC emacs-lisp
@@ -90,21 +45,89 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
   :config (key-chord-mode 1))
 #+END_SRC
 
-** Global keybindings
-   
-*** Use C-s to save current buffer
+** UI
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-s") 'save-buffer)  
+(ignore-errors
+    (menu-bar-mode -1)
+    (scroll-bar-mode -1)
+    (tool-bar-mode -1)
+    (tooltip-mode -1)
+    (fset 'menu-bar-open nil))
 #+END_SRC
 
-*** Ace-jump mode
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p) 
+#+END_SRC
+
+*** Show line numbers
 
 #+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
-  :ensure t ;; install the ace-jump-mode package if not installed
-  :bind ("M-;" . ace-jump-mode))
-#+end_SRC
+(use-package linum-relative
+  :ensure t
+  :config
+  (linum-relative-global-mode))
+#+END_SRC
+
+*** Disable startup screen
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+#+END_SRC
+
+*** Disable cursor blinking
+    
+#+BEGIN_SRC emacs-lisp
+(blink-cursor-mode 0)
+#+END_SRC
+
+*** Color scheme
+
+#+BEGIN_SRC emacs-lisp
+(use-package gruvbox-theme :ensure t)
+#+END_SRC
+
+*** Font
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil :font "Iosevka-12")
+#+END_SRC
+
+** Fixing Emacs defaults
+
+**** scrolloff
+
+#+BEGIN_SRC emacs-lisp
+(setq scroll-margin 7)
+#+END_SRC
+     
+**** Disable bell
+
+#+BEGIN_SRC emacs-lisp
+(setq ring-bell-function 'ignore)
+#+END_SRC
+
+**** Custom file
+
+#+BEGIN_SRC emacs-lisp
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file :noerror)
+#+END_SRC
+
+**** Disable backup files
+
+#+BEGIN_SRC emacs-lisp
+    (setq backup-by-copying t
+        create-lockfiles nil
+        backup-directory-alist '(("." . "~/.cache/emacs-backups"))
+        auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
+#+END_SRC
+
+**** Use system clipboard
+
+#+BEGIN_SRC emacs-lisp
+(setq x-select-enable-clipboard t)
+#+END_SRC
 
 ** Evil mode
 
@@ -112,10 +135,10 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil
-  :ensure t ;; install the evil package if not installed
-  :init     ;; tweak evil's configuration before loading it
+  :ensure t
+  :init
   (setq evil-search-module 'evil-search)
-  (setq evil-want-C-i-jump nil)         ;; fix TAB key behaviour in evil-org extension
+  (setq evil-want-C-i-jump nil) ;; fix TAB key behaviour in evil-org extension
   (setq evil-ex-complete-emacs-commands nil)
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
@@ -125,8 +148,25 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
   (evil-mode))
 #+END_SRC
 
-*** Evil keybindings
+*** Evil surround
     
+#+BEGIN_SRC emacs-lisp
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+#+END_SRC
+
+*** Evil keybindings
+
+**** Define leader key
+
+#+BEGIN_SRC emacs-lisp
+(defvar evil-leader-map (make-sparse-keymap)
+    "Keymap for \"leader key\" shortcuts.")
+(define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
+#+END_SRC
+
 **** Map jj to leave insert mode
 
 #+BEGIN_SRC emacs-lisp
@@ -136,7 +176,7 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+END_SRC
 
 *** Setup for org-mode
-    
+
 #+BEGIN_SRC emacs-lisp
 (use-package evil-org
   :ensure t
@@ -148,4 +188,92 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
               (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
+#+END_SRC
+
+** Global keybindings
+
+*** Use C-s to save current buffer
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-s") 'save-buffer)
+#+END_SRC
+
+*** Ace-jump mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package ace-jump-mode
+  :ensure t ;; install the ace-jump-mode package if not installed
+  :bind ("M-;" . ace-jump-mode))
+#+end_SRC
+
+*** Reload configuration file
+    
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
+#+END_SRC
+
+*** :noh
+     
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-h") 'evil-ex-nohighlight)
+#+END_SRC
+
+** Fuzzy completion with ivy & co
+
+These three tools are available in a single github repository: https://github.com/abo-abo/swiper.
+
+*Ivy* - a generic completion frontend for Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+    :ensure t
+    :config
+    (ivy-mode 1))
+#+END_SRC
+
+*Counsel* - a collection of Ivy-enhanced versions of common Emacs commands.
+
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+    :ensure t)
+#+END_SRC
+
+*Swiper* - isearch with an overview. It looks like :Ag command in fzf.vim, but it works without any external tools.
+
+#+BEGIN_SRC emacs-lisp
+(use-package swiper
+    :ensure t)
+#+END_SRC
+
+*** Keybindings
+
+Following keybindings are very similar to FZF section in my vim/zsh configuration.
+
+#+BEGIN_SRC emacs-lisp
+(define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
+(define-key ivy-minibuffer-map (kbd "M-q") 'minibuffer-keyboard-quit)
+(define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
+(define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "b"  'ivy-switch-buffer)
+(define-key evil-leader-map "fs" 'counsel-ag)
+#+END_SRC
+** Hugo integration
+
+Integration layer for [[https://gohugo.io][hugo]] static site generator.
+
+#+BEGIN_SRC emacs-lisp
+(use-package easy-hugo
+    :ensure t
+    :init
+    (setq easy-hugo-basedir "~/Idie/")
+    (setq easy-hugo-url "https://idie.ru/")
+    (setq easy-hugo-root "~/Idie/public/")
+    (setq easy-hugo-previewtime "300"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "H"  'easy-hugo)
 #+END_SRC
