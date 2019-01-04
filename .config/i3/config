@@ -182,7 +182,7 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-bindsym $mod+Control+q exec $TERMINAL -e nvim
+bindsym $mod+Control+q exec $TERMINAL -e emacs -nw
 # bindsym $mod+Control+Return exec $SCRIPTS_PATH/urxvt-from-here
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
