@@ -8,7 +8,7 @@ Inspired by following setups and guides:
 
 + https://github.com/andreyorst/dotfiles/tree/master/.emacs.d
 + https://github.com/noctuid/evil-guide
-  
+
 #+BEGIN_SRC emacs-lisp
 (setq user-mail-address "jubnzv@gmail.com")
 #+END_SRC
@@ -57,16 +57,61 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p) 
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+*** Modeline
+
+#+BEGIN_SRC emacs-lisp
+(use-package doom-modeline
+  :ensure t
+  :defer t
+  :config
+  (setq doom-modeline-height 15)
+  (setq doom-modeline-icon nil)
+  :hook (after-init . doom-modeline-init))
+#+END_SRC
+
+*** Highlight matching parens
+
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+#+END_SRC
+
+*** Show trailing whitespaces
+
+#+BEGIN_SRC emacs-lisp
+(setq show-trailing-whitespace t)
+(setq whitespace-style '(face trailing spaces space-mark))
+#+END_SRC
+
+*** Highlight current line
+
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t)
+#+END_SRC
+
+*** redisplay-dont-pause
+
+The variable ~redisplay-dont-pause~, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
+
+Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
+
+#+BEGIN_SRC emacs-lisp
+(setq redisplay-dont-pause t)
+#+END_SRC
+
+*** Show columns numbers
+
+#+BEGIN_SRC emacs-lisp
+(column-number-mode)
 #+END_SRC
 
 *** Show line numbers
 
 #+BEGIN_SRC emacs-lisp
-(use-package linum-relative
-  :ensure t
-  :config
-  (linum-relative-global-mode))
+(setq display-line-numbers-current-absolute t)
+(setq display-line-numbers 'visual)
 #+END_SRC
 
 *** Disable startup screen
@@ -76,7 +121,7 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+END_SRC
 
 *** Disable cursor blinking
-    
+
 #+BEGIN_SRC emacs-lisp
 (blink-cursor-mode 0)
 #+END_SRC
@@ -100,7 +145,7 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+BEGIN_SRC emacs-lisp
 (setq scroll-margin 7)
 #+END_SRC
-     
+
 **** Disable bell
 
 #+BEGIN_SRC emacs-lisp
@@ -149,7 +194,7 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+END_SRC
 
 *** Evil surround
-    
+
 #+BEGIN_SRC emacs-lisp
 (use-package evil-surround
   :ensure t
@@ -207,15 +252,21 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 #+end_SRC
 
 *** Reload configuration file
-    
+
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
 #+END_SRC
 
 *** :noh
-     
+
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-h") 'evil-ex-nohighlight)
+#+END_SRC
+
+*** Remove trailing whitespaces
+
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "es"  'delete-trailing-whitespace)
 #+END_SRC
 
 ** Fuzzy completion with ivy & co
@@ -276,4 +327,44 @@ Integration layer for [[https://gohugo.io][hugo]] static site generator.
 
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "H"  'easy-hugo)
+#+END_SRC
+
+** Indentation
+
+*** Display the indention levels with thin vertical lines
+
+Similar vim's plugin: https://github.com/Yggdroot/indentLine
+
+#+BEGIN_SRC emacs-lisp
+(use-package indent-guide
+    :ensure t
+    :diminish indent-guide-mode
+    :config
+    (indent-guide-global-mode 1))
+#+END_SRC
+
+** Autocompletion
+
+*** Company
+
+Company is a text completion framework for Emacs that very similar with vim's deoplete.
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+    :ensure t
+    :diminish company-mode
+    :config
+    (setq company-backends (remove 'company-ropemacs company-backends))
+    (setq company-tooltip-limit 20)
+    (setq company-idle-delay 0)
+    (global-company-mode 1))
+#+END_SRC
+
+**** Keybindings
+
+#+BEGIN_SRC emacs-lisp
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+(define-key company-search-map (kbd "M-j") 'company-select-next)
+(define-key company-search-map (kbd "M-k") 'company-select-previous)
 #+END_SRC

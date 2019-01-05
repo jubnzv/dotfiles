@@ -25,10 +25,27 @@
 
 (fset 'yes-or-no-p 'y-or-n-p)
 
-(use-package linum-relative
+(use-package doom-modeline
   :ensure t
+  :defer t
   :config
-  (linum-relative-global-mode))
+  (setq doom-modeline-height 15)
+  (setq doom-modeline-icon nil)
+  :hook (after-init . doom-modeline-init))
+
+(show-paren-mode t)
+
+(setq show-trailing-whitespace t)
+(setq whitespace-style '(face trailing spaces space-mark))
+
+(global-hl-line-mode t)
+
+(setq redisplay-dont-pause t)
+
+(column-number-mode)
+
+(setq display-line-numbers-current-absolute t)
+(setq display-line-numbers 'visual)
 
 (setq inhibit-startup-screen t)
 
@@ -99,6 +116,8 @@
 
 (global-set-key (kbd "M-h") 'evil-ex-nohighlight)
 
+(define-key evil-leader-map "es"  'delete-trailing-whitespace)
+
 (use-package ivy
     :ensure t
     :config
@@ -127,3 +146,23 @@
     (setq easy-hugo-previewtime "300"))
 
 (define-key evil-leader-map "H"  'easy-hugo)
+
+(use-package indent-guide
+    :ensure t
+    :diminish indent-guide-mode
+    :config
+    (indent-guide-global-mode 1))
+
+(use-package company
+    :ensure t
+    :diminish company-mode
+    :config
+    (setq company-backends (remove 'company-ropemacs company-backends))
+    (setq company-tooltip-limit 20)
+    (setq company-idle-delay 0)
+    (global-company-mode 1))
+
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+(define-key company-search-map (kbd "M-j") 'company-select-next)
+(define-key company-search-map (kbd "M-k") 'company-select-previous)
