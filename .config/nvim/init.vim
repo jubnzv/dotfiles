@@ -31,8 +31,6 @@ Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and co
 Plug 'https://github.com/junegunn/vim-peekaboo'    " Shows vim registers content into vertical split
 Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
-Plug 'https://github.com/junegunn/goyo.vim'        " Distraction-free writing in Vim
-Plug 'https://github.com/junegunn/limelight.vim'   " Highlight current paragraph
 Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
 " }}}
@@ -41,6 +39,7 @@ Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'https://github.com/junegunn/gv.vim'
+Plug 'https://github.com/sodapopcan/vim-twiggy'         " Git branch management
 " }}}
 
 " {{{ fzf
@@ -111,11 +110,10 @@ set tabstop=4
 set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 
-" {{{ Cyrillic layout in normal mode
+" Cyrillic layout in normal mode
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
-" }}}
 " }}}
 
 " {{{ UI options
@@ -177,14 +175,6 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 inoremap jj <Esc>
 nnoremap <A-h> :noh<CR>
 
-" Editing neighbors
-" cabbr %% <C-R>=expand('%:p:h')<CR>
-cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
-map <leader>ew :e %%
-map <leader>es :sp %%
-map <leader>ev :vsp %%
-map <leader>et :tabe %%
-
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
 
@@ -234,10 +224,10 @@ vnoremap < <gv
 vnoremap > >gv
 
 " Make C-S work as `Save`
-nmap <c-s> :w<CR>
-imap <c-s> <Esc>:w<CR>i
+nmap <C-s> :w<CR>
+imap <C-s> <Esc>:w<CR>i
 
-" Fix some common typos
+" Fix common typos
 :command! W w
 :command! Q q
 :command! E e
@@ -263,12 +253,18 @@ imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 
 " }}}
 
-nnoremap <silent>]b :bn<CR>
-nnoremap <silent>[b :bp<CR>
-" nnoremap <silent><C-k> :bn<CR>
-" nnoremap <silent><C-j> :bp<CR>
-" nnoremap <leader>b :ls<CR>:b<space>
-" nnoremap <leader>br :bufdo e<CR>
+nnoremap <silent>gb :bn<CR>
+nnoremap <silent>gB :bp<CR>
+
+" Editing neighbors
+cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
+map <leader>ew :e %%
+map <leader>es :sp %%
+map <leader>ev :vsp %%
+map <leader>et :tabe %%
+
+" Refresh current buffer content
+nnoremap <leader>B :checktime<CR>
 
 function! BufferClose()
   if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
@@ -282,16 +278,13 @@ nnoremap <C-F4> :call BufferClose()<CR>
 " Switch between current and last buffer
 nnoremap <A-r> <C-^>
 
-" {{{ Copy filename to '*' clipboard
-" http://vim.wikia.com/wiki/Copy_filename_to_clipboard
+" {{{ Copy file path to system clipboard
 if has('win32')
-  nmap ,cs :let @*=substitute(expand("%"), "/", "\\", "g")<CR>
-  nmap ,cl :let @*=substitute(expand("%:p"), "/", "\\", "g")<CR>
-  " This will copy the path in 8.3 short format, for DOS and Windows 9x
-  nmap ,c8 :let @*=substitute(expand("%:p:8"), "/", "\\", "g")<CR>
+  nmap <silent> <leader>cr :let @+=substitute(expand("%"), "/", "\\", "g")<CR>:echo "Copied: " . expand("%")<CR>
+  nmap <silent> <leader>ca :let @+=substitute(expand("%:p"), "/", "\\", "g")<CR>:echo "Copied: " . expand("%:p")<CR>
 else
-  nmap ,cs :let @*=expand("%")<CR>
-  nmap ,cl :let @*=expand("%:p")<CR>
+  nmap <silent> <leader>cr :let @+=expand("%")<CR>:echo "Copied: " . expand("%")<CR>
+  nmap <silent> <leader>ca :let @+=expand("%:p")<CR>:echo "Copied: " . expand("%:p")<CR>
 endif
 " }}}
 
@@ -334,28 +327,6 @@ let g:lightline = {
   \ }
 
 let g:buftabline_indicators=1 " show modified
-" }}}
-
-" {{{ Goyo & Limelight settings
-map <F11> :Goyo<CR>
-
-function! s:goyo_enter()
-  set scrolloff=999
-  Limelight
-  set showtabline=0
-  set signcolumn=no
-endfunction
-
-function! s:goyo_leave()
-  set scrolloff=7
-  Limelight!
-  set showtabline=2
-  set signcolumn=yes
-  call buftabline#update(0)
-endfunction
-
-au! User GoyoEnter nested call <SID>goyo_enter()
-au! User GoyoLeave nested call <SID>goyo_leave()
 " }}}
 
 " {{{ neovim's terminal configuration
@@ -488,10 +459,10 @@ command! -bang -nargs=+ -complete=dir Rag call fzf#vim#ag_raw(<q-args>, {'option
 
 " Recently used files
 command! FZFMru call fzf#run({
-  \ 'source':  reverse(s:all_files()),
-  \ 'sink':    'edit',
-  \ 'options': '-m -x +s',
-  \ 'down':    '40%' })
+\  'source':  v:oldfiles,
+\  'sink':    'e',
+\  'options': '-m -x +s',
+\  'down':    '40%'})
 
 function! s:all_files()
 return extend(
@@ -523,7 +494,7 @@ nnoremap <leader>vc :Commits<CR>
 nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
-nnoremap <leader>mr :FZFMru <CR>
+nnoremap <leader>er :FZFMru <CR>
 
 autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
 " }}}
@@ -763,6 +734,7 @@ nmap ]v <Plug>GitGutterNextHunk
 nnoremap <leader>gv :GitGutterPreviewHunk<CR>
 nnoremap <leader>gu :GitGutterUndoHunk<CR>
 nnoremap <leader>gs :GitGutterStageHunk<CR>
+nnoremap <leader>gT :Twiggy<CR>
 " }}}
 
 " {{{ C/C++ settings
