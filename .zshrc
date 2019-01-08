@@ -46,9 +46,13 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats '  %b'
 setopt prompt_subst
 
-function precmd() {
-	vcs_info
+# Set another cursor color when running inside tmux
+zle-line-init () {
+if ! [[ -z "$TMUX" ]]; then
+    echo -ne "\033]12;Grey\007"
+fi
 }
+zle -N zle-line-init
 
 PS1='%{$fg[yellow]%}$(shrink_path -f)%{$reset_color%}%{$fg[cyan]%}${vcs_info_msg_0_}%{$reset_color%} '
 # }}}
