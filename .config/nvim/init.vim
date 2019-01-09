@@ -21,7 +21,7 @@ Plug 'https://github.com/andymass/vim-matchup'      " Better `%` for some modes
 Plug 'https://github.com/godlygeek/tabular'         " Vim script for text filtering and alignment
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets, parens, quotes in pair
-Plug 'https://github.com/tpope/vim-obsession'
+Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
 " }}}
 
 " {{{ UI & appearance
@@ -181,19 +181,6 @@ nnoremap Y y$
 " Insert newline without entering insert mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
-
-" Emacs-like binds in command more
-cmap <C-p> <Up>
-cmap <C-n> <Down>
-cmap <C-b> <Left>
-cmap <C-f> <Right>
-cmap <C-a> <Home>
-cmap <C-e> <End>
-cnoremap <C-d> <Del>
-cnoremap <C-h> <BS>
-cnoremap <C-k> <C-f>D<C-c><C-c>:<Up>
-cnoremap <M-b> <S-Left>
-cnoremap <M-f> <S-Right>
 
 " Reload vimrc
 nnoremap <leader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
