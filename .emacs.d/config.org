@@ -2,9 +2,9 @@
 
 This is my Emacs configuration file written as Org document.
 
-I use Emacs mainly for note taking via org-mode. For convience, I tried to configure the usual keybindings from my neovim configuration.
+I use Emacs mainly for note taking via org-mode. For convinience, I tried to configure the usual keybindings from my neovim configuration.
 
-Inspired by following setups and guides:
+Collection of useful links:
 
 + https://github.com/andreyorst/dotfiles/tree/master/.emacs.d
 + https://github.com/noctuid/evil-guide
@@ -193,6 +193,38 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   (evil-mode))
 #+END_SRC
 
+*** Define leader key
+
+#+BEGIN_SRC emacs-lisp
+(defvar evil-leader-map (make-sparse-keymap)
+    "Keymap for \"leader key\" shortcuts.")
+(define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
+#+END_SRC
+
+*** Map jj to leave insert mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package key-chord
+  :config
+  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
+#+END_SRC
+
+*** Make evil works inside M-x package-list-packages
+
+See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'evil
+    ;; use evil mode in the buffer created from calling `list-packages'.
+    (add-to-list 'evil-buffer-regexps '("*Packages*" . normal))
+    (with-eval-after-load 'package
+    ;; movement keys j,k,l,h set up for free by defaulting to normal mode.
+    ;; mark, unmark, install
+    (evil-define-key 'normal package-menu-mode-map (kbd "m") #'package-menu-mark-install)
+    (evil-define-key 'normal package-menu-mode-map (kbd "u") #'package-menu-mark-unmark)
+    (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
+#+END_SRC
+
 *** Evil surround
 
 #+BEGIN_SRC emacs-lisp
@@ -202,25 +234,25 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   (global-evil-surround-mode 1))
 #+END_SRC
 
-*** Evil keybindings
-
-**** Define leader key
+*** Evil nerdcommenter
 
 #+BEGIN_SRC emacs-lisp
-(defvar evil-leader-map (make-sparse-keymap)
-    "Keymap for \"leader key\" shortcuts.")
-(define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
+(use-package evil-nerd-commenter
+  :ensure t)
 #+END_SRC
-
-**** Map jj to leave insert mode
 
 #+BEGIN_SRC emacs-lisp
-(use-package key-chord
-    :config
-    (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
+(define-key evil-leader-map "ci" 'evilnc-comment-or-uncomment-lines)
+(define-key evil-leader-map "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(define-key evil-leader-map "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(define-key evil-leader-map "cc" 'evilnc-copy-and-comment-lines)
+(define-key evil-leader-map "cp" 'evilnc-comment-or-uncomment-paragraphs)
+(define-key evil-leader-map "cr" 'comment-or-uncomment-region)
+(define-key evil-leader-map "cv" 'evilnc-toggle-invert-comment-line-by-line)
+(define-key evil-leader-map "."  'evilnc-copy-and-comment-operator)
 #+END_SRC
 
-*** Setup for org-mode
+*** evil-org
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil-org
@@ -229,8 +261,7 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
-            (lambda ()
-              (evil-org-set-key-theme)))
+            (lambda () (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 #+END_SRC
@@ -305,35 +336,69 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (define-key ivy-minibuffer-map (kbd "M-q") 'minibuffer-keyboard-quit)
 (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+(define-key ivy-minibuffer-map (kbd "M-l") 'ivy-alt-done)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "b"  'ivy-switch-buffer)
 (define-key evil-leader-map "fs" 'counsel-ag)
 #+END_SRC
+** org-mode
+
+*** Embedded code blocks
+
+Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '(
+  (shell . t)
+  (python . t)
+))
+#+END_SRC
+
 ** Hugo integration
 
 Integration layer for [[https://gohugo.io][hugo]] static site generator.
 
 #+BEGIN_SRC emacs-lisp
 (use-package easy-hugo
-    :ensure t
-    :init
-    (setq easy-hugo-basedir "~/Idie/")
-    (setq easy-hugo-url "https://idie.ru/")
-    (setq easy-hugo-root "~/Idie/public/")
-    (setq easy-hugo-previewtime "300"))
+  :ensure t
+  :init
+  (setq easy-hugo-basedir "~/Idie/")
+  (setq easy-hugo-url "https://idie.ru/")
+  (setq easy-hugo-root "~/Idie/public/")
+  (setq easy-hugo-postdir "~/Idie/content/notes/")
+  (setq easy-hugo-previewtime "300"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "H"  'easy-hugo)
 #+END_SRC
 
+** Snippets
+
+Collection of snippets:
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet-snippets
+  :ensure t)
+#+END_SRC
+
+Initialize ~yasnippet~ plugin itself:
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :after yasnippet-snippets)
+#+END_SRC
+
 ** Indentation
 
 *** Display the indention levels with thin vertical lines
 
-Similar vim's plugin: https://github.com/Yggdroot/indentLine
+Similar vim's plugin: https://github.com/Yggdroot/indentLine.
+
+But there is following annoying limitation: it [[https://github.com/zk-phi/indent-guide/issues/36][can't]] always display all indent guide in a buffer. I did not find any other alternatives for emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package indent-guide
@@ -343,28 +408,25 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine
     (indent-guide-global-mode 1))
 #+END_SRC
 
-** Autocompletion
-
-*** Company
+** Autocompletion with company-mode
 
 Company is a text completion framework for Emacs that very similar with vim's deoplete.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_SRC emacs-lisp
 (use-package company
-    :ensure t
-    :diminish company-mode
-    :config
-    (setq company-backends (remove 'company-ropemacs company-backends))
-    (setq company-tooltip-limit 20)
-    (setq company-idle-delay 0)
-    (global-company-mode 1))
+  :ensure t
+  :diminish company-mode
+  :config
+  (setq company-tooltip-limit 20)
+  (setq company-idle-delay 0)
+  (global-company-mode 1))
 #+END_SRC
 
-**** Keybindings
-
-#+BEGIN_SRC emacs-lisp
+#+begin_SRC emacs-lisp
 (define-key company-active-map (kbd "M-j") 'company-select-next)
 (define-key company-active-map (kbd "M-k") 'company-select-previous)
+(define-key company-active-map (kbd "M-l") 'company-complete-common)
 (define-key company-search-map (kbd "M-j") 'company-select-next)
 (define-key company-search-map (kbd "M-k") 'company-select-previous)
+(define-key company-search-map (kbd "M-l") 'company-complete-common)
 #+END_SRC

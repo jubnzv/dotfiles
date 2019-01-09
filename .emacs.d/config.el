@@ -82,18 +82,40 @@
   :config   ;; tweak evil after loading it
   (evil-mode))
 
-(use-package evil-surround
-  :ensure t
-  :config
-  (global-evil-surround-mode 1))
-
 (defvar evil-leader-map (make-sparse-keymap)
     "Keymap for \"leader key\" shortcuts.")
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
 
 (use-package key-chord
-    :config
-    (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
+  :config
+  (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
+
+(with-eval-after-load 'evil
+    ;; use evil mode in the buffer created from calling `list-packages'.
+    (add-to-list 'evil-buffer-regexps '("*Packages*" . normal))
+    (with-eval-after-load 'package
+    ;; movement keys j,k,l,h set up for free by defaulting to normal mode.
+    ;; mark, unmark, install
+    (evil-define-key 'normal package-menu-mode-map (kbd "m") #'package-menu-mark-install)
+    (evil-define-key 'normal package-menu-mode-map (kbd "u") #'package-menu-mark-unmark)
+    (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
+
+(use-package evil-surround
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+
+(use-package evil-nerd-commenter
+  :ensure t)
+
+(define-key evil-leader-map "ci" 'evilnc-comment-or-uncomment-lines)
+(define-key evil-leader-map "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(define-key evil-leader-map "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(define-key evil-leader-map "cc" 'evilnc-copy-and-comment-lines)
+(define-key evil-leader-map "cp" 'evilnc-comment-or-uncomment-paragraphs)
+(define-key evil-leader-map "cr" 'comment-or-uncomment-region)
+(define-key evil-leader-map "cv" 'evilnc-toggle-invert-comment-line-by-line)
+(define-key evil-leader-map "."  'evilnc-copy-and-comment-operator)
 
 (use-package evil-org
   :ensure t
@@ -101,8 +123,7 @@
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
-            (lambda ()
-              (evil-org-set-key-theme)))
+            (lambda () (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
@@ -133,19 +154,33 @@
 (define-key ivy-minibuffer-map (kbd "M-q") 'minibuffer-keyboard-quit)
 (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
+(define-key ivy-minibuffer-map (kbd "M-l") 'ivy-alt-done)
 
 (define-key evil-leader-map "b"  'ivy-switch-buffer)
 (define-key evil-leader-map "fs" 'counsel-ag)
 
+(org-babel-do-load-languages 'org-babel-load-languages '(
+  (shell . t)
+  (python . t)
+))
+
 (use-package easy-hugo
-    :ensure t
-    :init
-    (setq easy-hugo-basedir "~/Idie/")
-    (setq easy-hugo-url "https://idie.ru/")
-    (setq easy-hugo-root "~/Idie/public/")
-    (setq easy-hugo-previewtime "300"))
+  :ensure t
+  :init
+  (setq easy-hugo-basedir "~/Idie/")
+  (setq easy-hugo-url "https://idie.ru/")
+  (setq easy-hugo-root "~/Idie/public/")
+  (setq easy-hugo-postdir "~/Idie/content/notes/")
+  (setq easy-hugo-previewtime "300"))
 
 (define-key evil-leader-map "H"  'easy-hugo)
+
+(use-package yasnippet-snippets
+  :ensure t)
+
+(use-package yasnippet
+  :ensure t
+  :after yasnippet-snippets)
 
 (use-package indent-guide
     :ensure t
@@ -154,15 +189,16 @@
     (indent-guide-global-mode 1))
 
 (use-package company
-    :ensure t
-    :diminish company-mode
-    :config
-    (setq company-backends (remove 'company-ropemacs company-backends))
-    (setq company-tooltip-limit 20)
-    (setq company-idle-delay 0)
-    (global-company-mode 1))
+  :ensure t
+  :diminish company-mode
+  :config
+  (setq company-tooltip-limit 20)
+  (setq company-idle-delay 0)
+  (global-company-mode 1))
 
 (define-key company-active-map (kbd "M-j") 'company-select-next)
 (define-key company-active-map (kbd "M-k") 'company-select-previous)
+(define-key company-active-map (kbd "M-l") 'company-complete-common)
 (define-key company-search-map (kbd "M-j") 'company-select-next)
 (define-key company-search-map (kbd "M-k") 'company-select-previous)
+(define-key company-search-map (kbd "M-l") 'company-complete-common)
