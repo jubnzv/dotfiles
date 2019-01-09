@@ -48,7 +48,7 @@ setopt prompt_subst
 
 # Set another cursor color when running inside tmux
 zle-line-init () {
-if ! [[ -z "$TMUX" ]]; then
+if [[ -z "$TMUX" ]]; then
     echo -ne "\033]12;Grey\007"
 fi
 }
@@ -116,6 +116,7 @@ alias vc='nvim -u NONE'
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
+alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
 function vn() {
     nvim ~/Org/Notes/$*
 }
