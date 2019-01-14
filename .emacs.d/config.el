@@ -182,11 +182,23 @@
   :ensure t
   :after yasnippet-snippets)
 
-(use-package indent-guide
-    :ensure t
-    :diminish indent-guide-mode
-    :config
-    (indent-guide-global-mode 1))
+;(use-package indent-guide
+;    :ensure t
+;    :diminish indent-guide-mode
+;    :config
+;    (indent-guide-global-mode 1))
+
+(use-package highlight-indent-guides
+  :ensure t
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+)
+
+(use-package smartparens
+  :ensure t
+  :config
+  (smartparens-global-mode))
 
 (use-package company
   :ensure t

@@ -7,7 +7,9 @@ I use Emacs mainly for note taking via org-mode. For convinience, I tried to con
 Collection of useful links:
 
 + https://github.com/andreyorst/dotfiles/tree/master/.emacs.d
-+ https://github.com/noctuid/evil-guide
++ https://github.com/noctuid/evil-guide - Guide for using emacs with evil
++ https://github.com/caisah/emacs.dz - Awesome emacs config files including nice evil configurations.
+
 
 #+BEGIN_SRC emacs-lisp
 (setq user-mail-address "jubnzv@gmail.com")
@@ -401,11 +403,29 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
 But there is following annoying limitation: it [[https://github.com/zk-phi/indent-guide/issues/36][can't]] always display all indent guide in a buffer. I did not find any other alternatives for emacs.
 
 #+BEGIN_SRC emacs-lisp
-(use-package indent-guide
-    :ensure t
-    :diminish indent-guide-mode
-    :config
-    (indent-guide-global-mode 1))
+;(use-package indent-guide
+;    :ensure t
+;    :diminish indent-guide-mode
+;    :config
+;    (indent-guide-global-mode 1))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :ensure t
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+)
+#+END_SRC
+
+** Auto parens
+
+#+begin_SRC emacs-lisp
+(use-package smartparens
+  :ensure t
+  :config
+  (smartparens-global-mode))
 #+END_SRC
 
 ** Autocompletion with company-mode
@@ -430,3 +450,4 @@ Company is a text completion framework for Emacs that very similar with vim's de
 (define-key company-search-map (kbd "M-k") 'company-select-previous)
 (define-key company-search-map (kbd "M-l") 'company-complete-common)
 #+END_SRC
+
