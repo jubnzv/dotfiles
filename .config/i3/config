@@ -164,6 +164,7 @@ bindsym $mod+m workspace number 14$tile_14_music
 # Moar workspace control
 bindsym $mod+u [urgent=latest] focus
 bindsym $mod+r workspace back_and_forth
+bindsym $mod+6 workspace back_and_forth
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
@@ -182,12 +183,13 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-bindsym $mod+Control+q exec emacs
-bindsym $mod+Return exec $TERMINAL -e tmux
-bindsym $mod+Control+Return exec $TERMINAL
+bindsym $mod+Control+q exec emacsclient -c
+bindsym $mod+Return exec $TERMINAL
+bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
-bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus && pkill -RTMIN+3 i3blocks
-bindsym $mod+Control+r exec $TERMINAL -e ranger
+bindsym $mod+Control+F5 workspace 2$tile_02_w; exec chromium --profile-directory=Dev
+bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
+bindsym $mod+Control+f workspace 4$tile_04_f; exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX

@@ -35,6 +35,7 @@ Collection of useful links:
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+(setq use-package-always-ensure t)
 #+END_SRC
 
 *** Load use-package extensions
@@ -131,7 +132,11 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 *** Color scheme
 
 #+BEGIN_SRC emacs-lisp
-(use-package gruvbox-theme :ensure t)
+(use-package gruvbox-theme
+  :ensure t
+  :init
+  (load-theme 'gruvbox t)
+)
 #+END_SRC
 
 *** Font
@@ -142,26 +147,26 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 
 ** Fixing Emacs defaults
 
-**** scrolloff
+*** scrolloff
 
 #+BEGIN_SRC emacs-lisp
 (setq scroll-margin 7)
 #+END_SRC
 
-**** Disable bell
+*** Disable bell
 
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
 #+END_SRC
 
-**** Custom file
+*** Custom file
 
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file :noerror)
 #+END_SRC
 
-**** Disable backup files
+*** Disable backup files
 
 #+BEGIN_SRC emacs-lisp
     (setq backup-by-copying t
@@ -170,10 +175,26 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
         auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
 #+END_SRC
 
-**** Use system clipboard
+*** Use system clipboard
 
 #+BEGIN_SRC emacs-lisp
 (setq x-select-enable-clipboard t)
+#+END_SRC
+
+*** Daemon mode fixes
+
+When using emacsclient, some settings do not get set in the newly created frame.
+I did not understand what caused it, and here is some dirty fixes.
+
+#+BEGIN_SRC emacs-lisp
+(if (daemonp)
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+    (select-frame frame)
+    (setq display-line-numbers-current-absolute t)
+    (setq display-line-numbers 'visual)
+    (set-face-attribute 'default nil :font "Iosevka-12")
+   )))
 #+END_SRC
 
 ** Evil mode

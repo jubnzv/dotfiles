@@ -11,6 +11,7 @@
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
+(setq use-package-always-ensure t)
 
 (use-package use-package-chords
   :ensure t
@@ -51,7 +52,11 @@
 
 (blink-cursor-mode 0)
 
-(use-package gruvbox-theme :ensure t)
+(use-package gruvbox-theme
+  :ensure t
+  :init
+  (load-theme 'gruvbox t)
+)
 
 (set-face-attribute 'default nil :font "Iosevka-12")
 
@@ -68,6 +73,15 @@
     auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
 
 (setq x-select-enable-clipboard t)
+
+(if (daemonp)
+  (add-hook 'after-make-frame-functions
+    (lambda (frame)
+    (select-frame frame)
+    (setq display-line-numbers-current-absolute t)
+    (setq display-line-numbers 'visual)
+    (set-face-attribute 'default nil :font "Iosevka-12")
+   )))
 
 (use-package evil
   :ensure t
