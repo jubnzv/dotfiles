@@ -1,3 +1,10 @@
+" TODO:
+" * Alternative C keymap when LSP is off
+" * Try https://github.com/neoclide/coc.nvim instead deoplete + LanguageClient
+" * ccls language server: https://github.com/MaskRay/ccls
+" * Rust: `cargo doc` integration
+" * Tmux splits support
+
 set nocompatible
 let mapleader = "\<Space>"
 if &shell =~# 'fish$'
@@ -210,9 +217,12 @@ noremap ;' :%s///cg<Left><Left><Left><Left>
 vnoremap < <gv
 vnoremap > >gv
 
-" Make C-S work as `Save`
+nmap <leader>xc :q<CR>
+
+" Save buffer
 nmap <C-s> :w<CR>
 imap <C-s> <Esc>:w<CR>i
+nmap <leader>xs :w<CR>
 
 " Fix common typos
 :command! W w
@@ -231,13 +241,9 @@ command! Mkw call WriteCreatingDirs()
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
-" Open *scratch* buffer
-map <leader>x :e ~/Org/scratch.md<CR>
-
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
-
 " }}}
 
 nnoremap <silent>gb :bn<CR>
@@ -261,6 +267,7 @@ function! BufferClose()
   endif
 endfunction
 nnoremap <C-F4> :call BufferClose()<CR>
+nnoremap <leader>xk :call BufferClose()<CR>
 
 " Switch between current and last buffer
 nnoremap <A-r> <C-^>
@@ -411,6 +418,7 @@ let NERDTreeIgnore=[
 
 " {{{ Datetime
 " language time C
+nnoremap <leader>c. "=strftime("%Y-%m-%d")<CR>P
 nnoremap <C-c>. "=strftime("%Y-%m-%d")<CR>P
 inoremap <C-c>. <C-R>=strftime("%Y-%m-%d")<CR>
 " If buffer modified, update any 'Last modified: ' in the first 20 lines.
@@ -435,7 +443,6 @@ let g:EasyMotion_do_mapping = 0                     " Disable default mappings
 let g:EasyMotion_smartcase = 1                      " Turn on case insensitive feature
 let g:EasyMotion_use_smartsign_us = 1               " Smartsign (type `3` and match `3` & `#`)
 map <A-;> <Plug>(easymotion-overwin-f)
-map <A-l> <Plug>(easymotion-overwin-line)
 " }}}
 
 " {{{ FZF
@@ -471,7 +478,6 @@ nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
 nnoremap <A-x> :Commands<CR>
-nnoremap <A-p> :Files<CR>
 nnoremap <leader>fs :Ag<CR>
 nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 nnoremap <leader>ft :Tags<CR>
@@ -482,6 +488,8 @@ nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
 nnoremap <leader>er :FZFMru <CR>
+
+nnoremap <leader>xf :Files<CR>
 
 autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
 " }}}
@@ -587,6 +595,7 @@ let g:LanguageClient_autoStart = 1
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
+  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
   \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
   \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
   \ }
@@ -596,11 +605,7 @@ let g:LanguageClient_rootMarkers = {
   \ }
 
 let g:LanguageClient_waitOutputTimeout = 5
-
-" TODO:
-" *LanguageClient_textDocument_rangeFormatting()*
-" *LanguageClient#textDocument_documentHighlight()*
-" *LanguageClient_clearDocumentHighlight()*
+" let g:LanguageClient_hoverPreview = "Never"
 
 " There are some problems with LC cquery autosuggestions expanding when using neosnippet:
 " https://github.com/autozimu/LanguageClient-neovim/issues/379
@@ -611,16 +616,19 @@ let g:LanguageClient_hasSnippetSupport = 0
 " set formatexpr=LanguageClient_textDocument_rangeFormatting()
 set formatexpr=""
 
-" {{{ Keybindings for supported languages
+" {{{ Keybindings
+" I keep it as separated function to use this hotkeys when LSP is not started, e.g. use ctags/cscope binds for goto
+" definition / goto implementation in large C projects when LSP is slow.
 function! LCKeymap()
   if has_key(g:LanguageClient_serverCommands, &filetype)
-    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-    nnoremap gD :only<bar>vsplit<CR>gd
-    nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<CR>
-    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<CR>
-    nnoremap <silent> <M-,> :call LanguageClient_textDocument_references()<cr>
+    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
+    nnoremap gD :only<bar>vsplit<cr>gd
+    nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
+    nnoremap <silent> K :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <silent> gm :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
-    nnoremap <silent> gs :call LanguageClient#workspace_symbol()<CR>
+    nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
+    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
   endif
 endfunction
 " }}}
@@ -693,6 +701,13 @@ endfunction
 
 " }}}
 
+" {{{ Notekeeping
+nnoremap <leader>oN :Files ~/Org/Notes/<CR>
+nnoremap <leader>oB :Files ~/Idie/content/<CR>
+nnoremap <leader>on :e ~/Org/Notes/
+nnoremap <leader>os :e ~/Org/scratch.md<CR>
+" }}}
+
 " {{{ echodoc
 let g:echodoc#enable_at_startup=1
 let g:echodoc#enable_force_overwrite=1
@@ -716,12 +731,8 @@ au FileType c nnoremap <leader>d :Dox<CR>
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
-nmap [v <Plug>GitGutterPrevHunk
-nmap ]v <Plug>GitGutterNextHunk
-nnoremap <leader>gv :GitGutterPreviewHunk<CR>
-nnoremap <leader>gu :GitGutterUndoHunk<CR>
-nnoremap <leader>gs :GitGutterStageHunk<CR>
-nnoremap <leader>gT :Twiggy<CR>
+nnoremap [v <Plug>GitGutterPrevHunk
+nnoremap ]v <Plug>GitGutterNextHunk
 " }}}
 
 " {{{ C/C++ settings
@@ -742,6 +753,10 @@ au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-incl
 
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
+
+" {{{ Rust settings
+au FileType rust call LCKeymap()
+" }}}
 
 " {{{ Commands and binds
 au FileType c call CmdC()
@@ -817,11 +832,15 @@ let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='Chromium'
 
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go', 'rust']
-let g:markdown_folding = 1
-au BufNewFile,BufReadPost *.md set filetype=markdown
 
+let g:vim_markdown_folding_style_pythonic = 1
+let g:vim_markdown_folding_disabled = 0
+let g:vim_markdown_conceal = 0
 " Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
 let g:vim_markdown_math = 1
+let g:vim_markdown_new_list_item_indent = 0
+
+au BufNewFile,BufReadPost *.md set filetype=markdown foldenable
 " }}}
 
 " {{{ Other files
