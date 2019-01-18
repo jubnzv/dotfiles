@@ -6,6 +6,9 @@ This is my Emacs configuration file written as Org document.
 
 I use Emacs mainly for note taking via org-mode. For convinience, I tried to configure the usual keybindings from my neovim configuration.
 
+** TODO
+*** Try diagramming with https://github.com/arnm/ob-mermaid
+
 ** Resources
 
 *** Guides
@@ -72,6 +75,12 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
 
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+Show file name and mode in window title:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default frame-title-format '("%b (%m) — Emacs"))
 #+END_SRC
 
 ** Modeline
@@ -180,13 +189,19 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 (load custom-file :noerror)
 #+END_SRC
 
-** Disable backup files
+** Keep backup files in separate directory
 
 #+BEGIN_SRC emacs-lisp
     (setq backup-by-copying t
         create-lockfiles nil
         backup-directory-alist '(("." . "~/.cache/emacs-backups"))
         auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
+#+END_SRC
+
+Disable auto save
+
+#+BEGIN_SRC emacs-lisp
+(setq auto-save-default nil)
 #+END_SRC
 
 ** Use system clipboard
@@ -214,23 +229,31 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   (evil-mode))
 #+END_SRC
 
-** Define leader key
+** Essential key bindings
 
+~<Space>~ is my leader:
 #+BEGIN_SRC emacs-lisp
 (defvar evil-leader-map (make-sparse-keymap)
     "Keymap for \"leader key\" shortcuts.")
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
 #+END_SRC
 
-** Map jj to leave insert mode
-
+Map jj to leave insert mode:
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
   :config
   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
 #+END_SRC
 
-** Make evil works inside M-x package-list-packages
+Common emacs commands. Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "xf"  'counsel-find-file)
+(define-key evil-leader-map "xs"  'save-buffer)
+(define-key evil-leader-map "xk"  'kill-buffer)
+(define-key evil-leader-map " "  'counsel-M-x)
+#+END_SRC
+
+** Evil mode inside M-x package-list-packages
 
 See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/
 
@@ -289,19 +312,11 @@ See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_
 
 * Global keybindings
 
-** Replace long emacs keybindings with evil <leader>
-
-Similar solution can be found in Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
-
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "xf"  'counsel-find-file)
-(define-key evil-leader-map "xs"  'save-buffer)
-(define-key evil-leader-map "xk"  'kill-buffer)
-#+END_SRC
-
 ** Use C-s to save current buffer
 
-#+BEGIN_SRC emacs-lisp
+Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
+
+#+BEGIN_SRC emacs-lisp :tangle no
 (global-set-key (kbd "C-s") 'save-buffer)
 #+END_SRC
 
@@ -322,7 +337,7 @@ Similar solution can be found in Chen Bin's [[https://github.com/redguardtoo/ema
 ** :noh
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-h") 'evil-ex-nohighlight)
+(define-key evil-leader-map "h"  'evil-ex-nohighlight)
 #+END_SRC
 
 ** Remove trailing whitespaces
@@ -376,6 +391,13 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 #+END_SRC
 * org-mode
 
+** General options
+
+** Start-up with soft-wrap enabled
+#+BEGIN_SRC emacs-lisp
+(setq org-startup-truncated nil)
+#+END_SRC
+
 ** Embedded code blocks
 
 Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
@@ -383,8 +405,7 @@ Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (shell . t)
-  (python . t)
-))
+  (python . t)))
 #+END_SRC
 
 * Hugo integration
@@ -420,22 +441,6 @@ Initialize ~yasnippet~ plugin itself:
 (use-package yasnippet
   :ensure t
   :after yasnippet-snippets)
-#+END_SRC
-
-* Indentation
-
-** Display the indention levels with thin vertical lines
-
-Similar vim's plugin: https://github.com/Yggdroot/indentLine.
-
-But there is following annoying limitation: it [[https://github.com/zk-phi/indent-guide/issues/36][can't]] always display all indent guide in a buffer. I did not find any other alternatives for emacs.
-
-#+BEGIN_SRC emacs-lisp
-(use-package highlight-indent-guides
-  :ensure t
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
 * Auto parens
@@ -496,4 +501,48 @@ defun jubnzv:appearance-setup-hook (&rest args)
 (if (daemonp)
   (add-hook 'after-make-frame-functions 'jubnzv:appearance-setup-hook)
   (add-hook 'after-init-hook 'jubnzv:appearance-setup-hook))
+#+END_SRC
+
+* Programming facilities
+
+I start using Emacs for some of my Rust experiments.
+
+** Indentation
+
+*** Display the indention levels with thin vertical lines
+
+Similar vim's plugin: https://github.com/Yggdroot/indentLine.
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :ensure t
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
+#+END_SRC
+
+** git integration
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t)
+
+(use-package evil-magit
+  :ensure t)
+#+END_SRC
+
+** ctags
+
+#+BEGIN_SRC emacs-lisp
+(use-package counsel-etags
+  :ensure t)
+
+(define-key evil-leader-map "ft" 'counsel-etags-find-tag)
+#+END_SRC
+
+** Rust
+
+#+BEGIN_SRC emacs-lisp
+(use-package rust-mode
+  :ensure t)
 #+END_SRC
