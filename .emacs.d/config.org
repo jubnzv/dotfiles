@@ -210,6 +210,14 @@ Disable auto save
 (setq x-select-enable-clipboard t)
 #+END_SRC
 
+** Treat underscore as part of the word
+
+This is default behaviour of vim.
+
+#+BEGIN_SRC emacs-lisp
+   (modify-syntax-entry ?_ "w")
+#+END_SRC
+
 * Evil mode
 
 ** Bootstrap evil with use-package
@@ -249,7 +257,9 @@ Common emacs commands. Similar approach is used in excellent Chen Bin's [[https:
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "xf"  'counsel-find-file)
 (define-key evil-leader-map "xs"  'save-buffer)
+(define-key evil-leader-map "s"  'save-buffer)
 (define-key evil-leader-map "xk"  'kill-buffer)
+(define-key evil-leader-map "xc"  'save-buffers-kill-terminal)
 (define-key evil-leader-map " "  'counsel-M-x)
 #+END_SRC
 
@@ -363,7 +373,9 @@ These three tools are available in a single github repository: https://github.co
 
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
-  :ensure t)
+  :ensure t
+  :config
+  (global-set-key (kbd "M-x") 'counsel-M-x))
 #+END_SRC
 
 *Swiper* - isearch with an overview. It looks like :Ag command in fzf.vim, but it works without any external tools.
@@ -531,6 +543,20 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
   :ensure t)
 #+END_SRC
 
+** Projectile
+
+This plugin is required to keep current directory when moving through project files.
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :diminish projectile-mode
+  :init
+  (projectile-mode +1)
+  :bind
+  (("C-c p" . projectile-command-map)))
+
+(use-package counsel-projectile)
+#+END_SRC
+
 ** ctags
 
 #+BEGIN_SRC emacs-lisp
@@ -538,6 +564,23 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
   :ensure t)
 
 (define-key evil-leader-map "ft" 'counsel-etags-find-tag)
+#+END_SRC
+
+** LSP
+
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-mode
+  :commands lsp
+  :config
+  (setq lsp-highlight-symbol-at-point nil))
+
+(use-package lsp-ui :commands lsp-ui-mode)
+#+END_SRC
+
+Backend for company:
+#+BEGIN_SRC emacs-lisp
+(use-package company-lsp
+  :ensure t)
 #+END_SRC
 
 ** Rust
