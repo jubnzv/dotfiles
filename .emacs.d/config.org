@@ -157,6 +157,22 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 (setq scroll-margin 7)
 #+END_SRC
 
+** Undo-tree
+
+There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :config
+  (setq undo-tree-auto-save-history t
+        undo-tree-history-directory-alist
+        `(("." . ,(concat user-emacs-directory "undo"))))
+  (unless (file-exists-p (concat user-emacs-directory "undo"))
+  (make-directory (concat user-emacs-directory "undo")))
+  (global-undo-tree-mode 1))
+#+END_SRC
+
 ** Disable bell
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
@@ -356,6 +372,7 @@ These three tools are available in a single github repository: https://github.co
 (use-package counsel
   :ensure t
   :config
+  (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
   (global-set-key (kbd "M-x") 'counsel-M-x))
 #+END_SRC
 
@@ -384,11 +401,16 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 #+END_SRC
 * org-mode
 
-** General
+** General options
 
-*** Start-up with soft-wrap enabled
+Enable soft-wrap:
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated nil)
+#+END_SRC
+
+Show inline images (~file:/~ links):
+#+BEGIN_SRC emacs-lisp
+(setq org-startup-with-inline-images t)
 #+END_SRC
 
 ** Keybindings
