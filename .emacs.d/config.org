@@ -392,10 +392,16 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 #+END_SRC
 
 ** Keybindings
+
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map
   "<" (lambda () (interactive) (org-demote-or-promote 1)) ; out-dent
   ">" 'org-demote-or-promote) ; indent
+#+END_SRC
+
+Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O~/~o~ behaviour.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+END_SRC
 
 ** Embedded code blocks
@@ -640,6 +646,16 @@ See this [[http://blog.binchen.org/posts/how-to-be-extremely-efficient-in-emacs.
 	keyfreq-file-lock "~/.emacs.d/keyfreq.lock")
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
+#+END_SRC
+
+** Log called commands in a buffer
+
+Useful to find called commands names to bind them later.
+#+BEGIN_SRC emacs-lisp
+(use-package command-log-mode
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook 'command-log-mode))
 #+END_SRC
 
 * Hooks to set everything up
