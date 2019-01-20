@@ -409,16 +409,59 @@ Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
 
 ** Download images to org-mode
 
-How to use:
+How to use it:
 1. Copy image URI
-2. Use ~org-download-image~. Image will be saved in current directory and embedded in org file.
+2. Call ~org-download-yank~ (~, D y~).
+Image will be saved in ~./images~ directory and embedded in org file.
 
+*** Custom download function
+
+Thanks to [[https://gist.github.com/daviderestivo/ad3dfa38d3f7266d014ce469aafd18dc][daviderestivo]].
+
+This is an helper function for org-download. It creates an \"./image\" folder within the same directory of the org file.
+Images are separated inside that image folder by additional folders one per org file.
+
+/Links/:
++ More info can be found [[https://github.com/abo-abo/org-download/issues/40][here]]
++ Usage example in [[https://github.com/abo-abo/org-download/commit/137c3d2aa083283a3fc853f9ecbbc03039bf397b][commit message]]
+
+#+BEGIN_SRC emacs-lisp
+(defun jubnzv/org-download-method (link)
+  (let ((filename
+         (file-name-nondirectory
+          (car (url-path-and-query
+                (url-generic-parse-url link)))))
+        (dir (concat
+              (file-name-directory (buffer-file-name))
+              (format "%s/%s/%s"
+                      "images"
+                      (file-name-base (buffer-file-name))
+                      (org-download--dir-2)))))
+    (progn
+      (setq filename-with-timestamp (format "%s%s.%s"
+                                            (file-name-sans-extension filename)
+                                            (format-time-string org-download-timestamp)
+                                            (file-name-extension filename)))
+      ;; Check if directory exists otherwise creates it
+      (unless (file-exists-p dir)
+        (make-directory dir t))
+      (message (format "Image: %s saved!" (expand-file-name filename-with-timestamp dir)))
+(expand-file-name filename-with-timestamp dir))))
+#+END_SRC
+
+*** Plugin initialization
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
   :ensure t
   :config
+  (setq org-download-method 'jubnzv/org-download-method)
   ;; Drag-and-drop to `dired`
   (add-hook 'dired-mode-hook 'org-download-enable))
+#+END_SRC
+
+*** Keybindings
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map ",Dy" 'org-download-yank)
 #+END_SRC
 
 * Hugo integration
