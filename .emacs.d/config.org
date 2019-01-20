@@ -279,11 +279,16 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
 (define-key evil-leader-map "es"  'delete-trailing-whitespace)
 #+END_SRC
 
-** Ace-jump mode
+** Avy
+
+It works like [[https://github.com/easymotion/vim-easymotion][easymotion]].
+
 #+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
+(use-package avy
   :ensure t
-  :bind ("M-;" . ace-jump-mode))
+  :config
+  (global-set-key (kbd "M-;") 'avy-goto-char)
+  (global-set-key (kbd "M-C-;") 'avy-resume))
 #+end_SRC
 ** Which-key mode
 
