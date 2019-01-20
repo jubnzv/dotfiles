@@ -4,11 +4,6 @@
 
 This is my Emacs configuration file written as Org document.
 
-I use Emacs mainly for note taking via org-mode. For convinience, I tried to configure the usual keybindings from my neovim configuration.
-
-** TODO
-*** Try diagramming with https://github.com/arnm/ob-mermaid
-
 ** Resources
 
 *** Guides
@@ -20,6 +15,7 @@ I use Emacs mainly for note taking via org-mode. For convinience, I tried to con
 + [[https://github.com/IvanMalison/dotfiles][IvanMalison]]
 
 * User info
+
 #+BEGIN_SRC emacs-lisp
 (setq user-full-name
   (replace-regexp-in-string "\n$" ""
@@ -31,8 +27,7 @@ I use Emacs mainly for note taking via org-mode. For convinience, I tried to con
 
 * Packages
 
-** Load package manager
-
+Initialize package manager:
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
@@ -42,8 +37,7 @@ I use Emacs mainly for note taking via org-mode. For convinience, I tried to con
 (when (not package-archive-contents) (package-refresh-contents))
 #+END_SRC
 
-** Bootstrap use-package
-
+Bootstrap use-package:
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -52,9 +46,9 @@ I use Emacs mainly for note taking via org-mode. For convinience, I tried to con
 (setq use-package-always-ensure t)
 #+END_SRC
 
-** Load use-package extensions
+Load use-package extensions:
 
-The :chords keyword allows you to define key-chord bindings for use-package declarations in the same manner as the :bind keyword.
+The ~:chords~ keyword allows you to define key-chord bindings for use-package declarations in the same manner as the :bind keyword.
 
 #+BEGIN_SRC emacs-lisp
 (use-package use-package-chords
@@ -73,18 +67,58 @@ The :chords keyword allows you to define key-chord bindings for use-package decl
   (fset 'menu-bar-open nil))
 #+END_SRC
 
+** Use ~y~/~n~ instead ~yes~/~no~
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
-Show file name and mode in window title:
+** Disable cursor blinking
+#+BEGIN_SRC emacs-lisp
+(blink-cursor-mode 0)
+#+END_SRC
 
+** Window title
+
+Show file name and mode in window title:
 #+BEGIN_SRC emacs-lisp
 (setq-default frame-title-format '("%b (%m) — Emacs"))
 #+END_SRC
 
-** Modeline
+** Highlight matching parens
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode t)
+#+END_SRC
 
+** Show trailing whitespaces
+#+BEGIN_SRC emacs-lisp
+(setq-default show-trailing-whitespace t)
+(setq-default whitespace-style '(face trailing spaces space-mark))
+#+END_SRC
+
+** Highlight current line
+#+BEGIN_SRC emacs-lisp
+(global-hl-line-mode t)
+#+END_SRC
+
+** Show columns numbers
+#+BEGIN_SRC emacs-lisp
+(column-number-mode)
+#+END_SRC
+
+** Show line numbers
+#+BEGIN_SRC emacs-lisp
+(setq-default display-line-numbers-current-absolute t)
+(setq-default display-line-numbers 'visual)
+#+END_SRC
+
+** ~redisplay-dont-pause~
+The variable ~redisplay-dont-pause~, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
+Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
+#+BEGIN_SRC emacs-lisp
+(setq redisplay-dont-pause t)
+#+END_SRC
+
+** Modeline configuration
 #+BEGIN_SRC emacs-lisp
 (use-package doom-modeline
   :ensure t
@@ -95,102 +129,46 @@ Show file name and mode in window title:
   :hook (after-init . doom-modeline-init))
 #+END_SRC
 
-** Highlight matching parens
-
-#+BEGIN_SRC emacs-lisp
-(show-paren-mode t)
-#+END_SRC
-
-** Show trailing whitespaces
-
-#+BEGIN_SRC emacs-lisp
-(setq-default show-trailing-whitespace t)
-(setq-default whitespace-style '(face trailing spaces space-mark))
-#+END_SRC
-
-** Highlight current line
-
-#+BEGIN_SRC emacs-lisp
-(global-hl-line-mode t)
-#+END_SRC
-
-** redisplay-dont-pause
-
-The variable ~redisplay-dont-pause~, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
-
-Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
-
-#+BEGIN_SRC emacs-lisp
-(setq redisplay-dont-pause t)
-#+END_SRC
-
-** Show columns numbers
-
-#+BEGIN_SRC emacs-lisp
-(column-number-mode)
-#+END_SRC
-
-** Show line numbers
-
-#+BEGIN_SRC emacs-lisp
-(setq-default display-line-numbers-current-absolute t)
-(setq-default display-line-numbers 'visual)
-
-;(when (version<= "26.0.50" emacs-version )
-;  (global-display-line-numbers-mode))
-#+END_SRC
-
-** Disable startup screen
-
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
-#+END_SRC
-
-** Disable cursor blinking
-
-#+BEGIN_SRC emacs-lisp
-(blink-cursor-mode 0)
-#+END_SRC
-
 ** Color scheme
-
 #+BEGIN_SRC emacs-lisp
 (use-package gruvbox-theme
   :ensure t
   :init
-  (load-theme 'gruvbox t)
-)
+  (load-theme 'gruvbox t))
 #+END_SRC
 
 ** Font
-
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :font "Iosevka-12")
 #+END_SRC
 
-* Fixing Emacs defaults
+* Emacs default options
+
+** Initial buffer
+Instead default startup screen open ~*scratch*~ with org-mode:
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq initial-major-mode 'org-mode)
+#+END_SRC
 
 ** scrolloff
-
 #+BEGIN_SRC emacs-lisp
 (setq scroll-margin 7)
 #+END_SRC
 
 ** Disable bell
-
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
 #+END_SRC
 
 ** Custom file
-
 #+BEGIN_SRC emacs-lisp
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file :noerror)
 #+END_SRC
 
 ** Keep backup files in separate directory
-
 #+BEGIN_SRC emacs-lisp
     (setq backup-by-copying t
         create-lockfiles nil
@@ -198,30 +176,26 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
         auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
 #+END_SRC
 
-Disable auto save
-
+** Disable auto save
 #+BEGIN_SRC emacs-lisp
 (setq auto-save-default nil)
 #+END_SRC
 
 ** Use system clipboard
-
 #+BEGIN_SRC emacs-lisp
 (setq x-select-enable-clipboard t)
 #+END_SRC
 
 ** Treat underscore as part of the word
 
-This is default behaviour of vim.
-
+This is default behaviour in vim.
 #+BEGIN_SRC emacs-lisp
-   (modify-syntax-entry ?_ "w")
+(modify-syntax-entry ?_ "w")
 #+END_SRC
 
 * Evil mode
 
-** Bootstrap evil with use-package
-
+** Bootstrap Evil
 #+BEGIN_SRC emacs-lisp
 (use-package evil
   :ensure t
@@ -239,21 +213,25 @@ This is default behaviour of vim.
 
 ** Essential key bindings
 
-~<Space>~ is my leader:
+Here is most essential keybindings that available in every major mode.
+
+*** ~<Space>~ is my leader
 #+BEGIN_SRC emacs-lisp
 (defvar evil-leader-map (make-sparse-keymap)
     "Keymap for \"leader key\" shortcuts.")
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
 #+END_SRC
 
-Map jj to leave insert mode:
+*** ~jj~ to leave insert mode:
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
   :config
   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
 #+END_SRC
 
-Common emacs commands. Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
+*** Common Emacs commands
+
+Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "xf"  'counsel-find-file)
 (define-key evil-leader-map "xs"  'save-buffer)
@@ -263,7 +241,49 @@ Common emacs commands. Similar approach is used in excellent Chen Bin's [[https:
 (define-key evil-leader-map " "  'counsel-M-x)
 #+END_SRC
 
-** Evil mode inside M-x package-list-packages
+*** Reload configuration file
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
+#+END_SRC
+
+*** :noh
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "h"  'evil-ex-nohighlight)
+#+END_SRC
+
+*** Use ~C-s~ to save current buffer
+
+Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
+#+BEGIN_SRC emacs-lisp :tangle no
+(global-set-key (kbd "C-s") 'save-buffer)
+#+END_SRC
+
+*** Remove trailing whitespaces
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "es"  'delete-trailing-whitespace)
+#+END_SRC
+
+** Ace-jump mode
+#+BEGIN_SRC emacs-lisp
+(use-package ace-jump-mode
+  :ensure t
+  :bind ("M-;" . ace-jump-mode))
+#+end_SRC
+** Which-key mode
+
+[[https://github.com/justbur/emacs-which-key][which-key]] is a package that displays available keybindings in popup.
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :after evil
+  :config
+  (setq which-key-allow-evil-operators t)
+  (which-key-mode))
+#+END_SRC
+
+** Evil mode integration
+*** Evil mode inside M-x package-list-packages
 
 See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/
 
@@ -279,8 +299,7 @@ See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_
   (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
 #+END_SRC
 
-** Evil surround
-
+*** Evil surround
 #+BEGIN_SRC emacs-lisp
 (use-package evil-surround
   :ensure t
@@ -288,7 +307,7 @@ See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_
   (global-evil-surround-mode 1))
 #+END_SRC
 
-** Evil nerdcommenter
+*** Evil nerdcommenter
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil-nerd-commenter
@@ -302,58 +321,20 @@ See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_
 (define-key evil-leader-map "cc" 'evilnc-copy-and-comment-lines)
 (define-key evil-leader-map "cp" 'evilnc-comment-or-uncomment-paragraphs)
 (define-key evil-leader-map "cr" 'comment-or-uncomment-region)
+(define-key evil-leader-map "cr" 'comment-or-uncomment-region)
 (define-key evil-leader-map "cv" 'evilnc-toggle-invert-comment-line-by-line)
 (define-key evil-leader-map "."  'evilnc-copy-and-comment-operator)
 #+END_SRC
 
-** evil-org
-
+*** Evil-org
 #+BEGIN_SRC emacs-lisp
 (use-package evil-org
   :ensure t
-  :after org
+  :after (evil org)
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
-            (lambda () (evil-org-set-key-theme)))
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
-#+END_SRC
-
-* Global keybindings
-
-** Use C-s to save current buffer
-
-Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(global-set-key (kbd "C-s") 'save-buffer)
-#+END_SRC
-
-** Ace-jump mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
-  :ensure t
-  :bind ("M-;" . ace-jump-mode))
-#+end_SRC
-
-** Reload configuration file
-
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
-#+END_SRC
-
-** :noh
-
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "h"  'evil-ex-nohighlight)
-#+END_SRC
-
-** Remove trailing whitespaces
-
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "es"  'delete-trailing-whitespace)
+            (lambda () (evil-org-set-key-theme))))
 #+END_SRC
 
 * Fuzzy completion with ivy & co
@@ -403,21 +384,41 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 #+END_SRC
 * org-mode
 
-** General options
+** General
 
-** Start-up with soft-wrap enabled
+*** Start-up with soft-wrap enabled
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated nil)
+#+END_SRC
+
+** Keybindings
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map
+  "<" (lambda () (interactive) (org-demote-or-promote 1)) ; out-dent
+  ">" 'org-demote-or-promote) ; indent
 #+END_SRC
 
 ** Embedded code blocks
 
 Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
-
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (shell . t)
   (python . t)))
+#+END_SRC
+
+** Download images to org-mode
+
+How to use:
+1. Copy image URI
+2. Use ~org-download-image~. Image will be saved in current directory and embedded in org file.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+  :ensure t
+  :config
+  ;; Drag-and-drop to `dired`
+  (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
 * Hugo integration
@@ -456,35 +457,11 @@ Initialize ~yasnippet~ plugin itself:
 #+END_SRC
 
 * Auto parens
-
 #+begin_SRC emacs-lisp
 (use-package smartparens
   :ensure t
   :config
   (smartparens-global-mode))
-#+END_SRC
-
-* Autocompletion with company-mode
-
-Company is a text completion framework for Emacs that very similar with vim's deoplete.
-
-#+begin_SRC emacs-lisp
-(use-package company
-  :ensure t
-  :diminish company-mode
-  :config
-  (setq company-tooltip-limit 20)
-  (setq company-idle-delay 0)
-  (global-company-mode 1))
-#+END_SRC
-
-#+begin_SRC emacs-lisp
-(define-key company-active-map (kbd "M-j") 'company-select-next)
-(define-key company-active-map (kbd "M-k") 'company-select-previous)
-(define-key company-active-map (kbd "M-l") 'company-complete-common)
-(define-key company-search-map (kbd "M-j") 'company-select-next)
-(define-key company-search-map (kbd "M-k") 'company-select-previous)
-(define-key company-search-map (kbd "M-l") 'company-complete-common)
 #+END_SRC
 
 * Spell checking
@@ -494,25 +471,6 @@ ispell can be configured to skip over regions that match regexes.
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
-#+END_SRC
-
-* Hooks to set everything up
-
-When using ~emacsclient~, some settings do not get set in the newly created frame.
-
-I have now removed any customization options that requires this hooks. But it may be very useful later.
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(defvar jubnzv:appearance-setup-done nil)
-
-defun jubnzv:appearance-setup-hook (&rest args)
-  (unless jubnzv:appearance-setup-done
-    (apply 'jubnzv:appearance args)
-    (setq jubnzv:appearance-setup-done t)))
-
-(if (daemonp)
-  (add-hook 'after-make-frame-functions 'jubnzv:appearance-setup-hook)
-  (add-hook 'after-init-hook 'jubnzv:appearance-setup-hook))
 #+END_SRC
 
 * Programming facilities
@@ -541,6 +499,13 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
 
 (use-package evil-magit
   :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-gutter
+  :ensure t
+  :config
+  (global-git-gutter-mode +1))
 #+END_SRC
 
 ** Projectile
@@ -583,9 +548,72 @@ Backend for company:
   :ensure t)
 #+END_SRC
 
+** Autocompletion with company-mode
+
+Company is a text completion framework for Emacs that very similar with vim's deoplete.
+#+begin_SRC emacs-lisp
+(use-package company
+  :ensure t
+  :diminish company-mode
+  :config
+  (setq company-tooltip-limit 20)
+  (setq company-idle-delay 0)
+  (global-company-mode 1))
+#+END_SRC
+
+#+begin_SRC emacs-lisp
+(define-key company-active-map (kbd "M-j") 'company-select-next)
+(define-key company-active-map (kbd "M-k") 'company-select-previous)
+(define-key company-active-map (kbd "M-l") 'company-complete-common)
+(define-key company-search-map (kbd "M-j") 'company-select-next)
+(define-key company-search-map (kbd "M-k") 'company-select-previous)
+(define-key company-search-map (kbd "M-l") 'company-complete-common)
+#+END_SRC
+
 ** Rust
 
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode
   :ensure t)
+#+END_SRC
+* Learning Emacs
+
+** Track frequently used commands with ~keyfreq~
+
+The frequently used commands should be assigned efficient key bindings.
+See this [[http://blog.binchen.org/posts/how-to-be-extremely-efficient-in-emacs.html][post]] by Bin Chen.
+
+#+BEGIN_SRC emacs-lisp
+(use-package keyfreq
+  :ensure t
+  :config
+  ;; TODO: Exclude most common commands
+  ; (setq keyfreq-excluded-commands
+  ;     '(forward-char
+  ;       backward-char
+  ;       previous-line
+  ;       next-line))
+  (setq keyfreq-file "~/.emacs.d/keyfreq"
+	keyfreq-file-lock "~/.emacs.d/keyfreq.lock")
+  (keyfreq-mode 1)
+  (keyfreq-autosave-mode 1))
+#+END_SRC
+
+* Hooks to set everything up
+
+When using ~emacsclient~, some settings do not get set in the newly created frame.
+
+I have now removed any customization options that requires this hooks. But it may be very useful later.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defvar jubnzv:appearance-setup-done nil)
+
+defun jubnzv:appearance-setup-hook (&rest args)
+  (unless jubnzv:appearance-setup-done
+    (apply 'jubnzv:appearance args)
+    (setq jubnzv:appearance-setup-done t)))
+
+(if (daemonp)
+  (add-hook 'after-make-frame-functions 'jubnzv:appearance-setup-hook)
+  (add-hook 'after-init-hook 'jubnzv:appearance-setup-hook))
 #+END_SRC
