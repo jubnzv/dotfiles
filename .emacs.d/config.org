@@ -7,7 +7,8 @@ This is my Emacs configuration file written as Org document.
 ** Resources
 
 *** Guides
-+ https://github.com/noctuid/evil-guide - Guide for using emacs with evil
++ [[https://github.com/noctuid/evil-guide][noctuid/evil-guide]]
++ Article: [[How to read Emacs Lisp][http://emacslife.com/how-to-read-emacs-lisp.html]]
 
 *** Dotfiles
 + [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Awesome emacs config files including nice evil configurations.
@@ -89,11 +90,19 @@ Show file name and mode in window title:
 (show-paren-mode t)
 #+END_SRC
 
-** Show trailing whitespaces
+** Show trailing whitespaces in essential modes
+
 #+BEGIN_SRC emacs-lisp
-(setq-default show-trailing-whitespace t)
 (setq-default whitespace-style '(face trailing spaces space-mark))
+(add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t)))
+(add-hook 'org-mode-hook (lambda () (setq show-trailing-whitespace t)))
 #+END_SRC
+
+To available it in all buffers enable that:
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq-default show-trailing-whitespace t)
+#+END_SRC
+
 
 ** Highlight current line
 #+BEGIN_SRC emacs-lisp
@@ -173,6 +182,11 @@ There are no standard way to implement persistent undo in Emacs. I use modified 
   (global-undo-tree-mode 1))
 #+END_SRC
 
+** Save buffer position after exit
+#+BEGIN_SRC emacs-lisp
+(save-place-mode 1)
+#+END_SRC
+
 ** Disable bell
 #+BEGIN_SRC emacs-lisp
 (setq ring-bell-function 'ignore)
@@ -209,7 +223,7 @@ This is default behaviour in vim.
 (modify-syntax-entry ?_ "w")
 #+END_SRC
 
-* Evil mode
+* Evil mode and common keybindings
 
 ** Bootstrap Evil
 #+BEGIN_SRC emacs-lisp
@@ -249,12 +263,12 @@ Here is most essential keybindings that available in every major mode.
 
 Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "xf"  'counsel-find-file)
-(define-key evil-leader-map "xs"  'save-buffer)
-(define-key evil-leader-map "s"  'save-buffer)
-(define-key evil-leader-map "xk"  'kill-buffer)
-(define-key evil-leader-map "xc"  'save-buffers-kill-terminal)
-(define-key evil-leader-map " "  'counsel-M-x)
+(define-key evil-leader-map "xf" 'counsel-find-file)
+(define-key evil-leader-map "xs" 'save-buffer)
+(define-key evil-leader-map "s" 'save-buffer)
+(define-key evil-leader-map "xk" 'kill-buffer)
+(define-key evil-leader-map "xc" 'save-buffers-kill-terminal)
+(define-key evil-leader-map " " 'counsel-M-x)
 #+END_SRC
 
 *** Reload configuration file
@@ -277,6 +291,17 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
 *** Remove trailing whitespaces
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "es"  'delete-trailing-whitespace)
+#+END_SRC
+
+*** Instant access to config.org
+
+#+BEGIN_SRC emacs-lisp
+(defun open-org-config-file ()
+  "Open Emacs configuration file in another window."
+  (interactive)
+  (find-file-other-window (expand-file-name "config.org" user-emacs-directory)))
+
+(define-key evil-leader-map "CC"  'open-org-config-file)
 #+END_SRC
 
 ** Avy
@@ -306,7 +331,7 @@ It works like [[https://github.com/easymotion/vim-easymotion][easymotion]].
 ** Evil mode integration
 *** Evil mode inside M-x package-list-packages
 
-See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/
+See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
 
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'evil
@@ -360,10 +385,11 @@ See: https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_
 
 * Fuzzy completion with ivy & co
 
-These three tools are available in a single github repository: https://github.com/abo-abo/swiper.
+These three tools are available in a single github [[https://github.com/abo-abo/swiper][repository]].
+
+** Ivy
 
 *Ivy* - a generic completion frontend for Emacs.
-
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
   :ensure t
@@ -371,18 +397,27 @@ These three tools are available in a single github repository: https://github.co
   (ivy-mode 1))
 #+END_SRC
 
-*Counsel* - a collection of Ivy-enhanced versions of common Emacs commands.
+** Counsel
 
+*Counsel* - a collection of Ivy-enhanced versions of common Emacs commands.
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
   :ensure t
   :config
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
-  (global-set-key (kbd "M-x") 'counsel-M-x))
+  (global-set-key (kbd "M-x") 'counsel-M-x)
+  ;; Set matching style
+  (setq ivy-re-builders-alist
+    '((swiper . ivy--regex-plus)
+      (counsel-rg . ivy--regex-plus)
+      (counsel-projectile-switch-project . ivy--regex-plus)
+      (counsel-projectile-rg . ivy--regex-plus)
+      (t . ivy--regex-plus))))
 #+END_SRC
 
-*Swiper* - isearch with an overview. It looks like :Ag command in fzf.vim, but it works without any external tools.
+** Swiper
 
+*Swiper* - isearch with an overview. It looks like :Ag command in fzf.vim, but it works without any external tools.
 #+BEGIN_SRC emacs-lisp
 (use-package swiper
   :ensure t)
@@ -402,7 +437,7 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "b"  'ivy-switch-buffer)
-(define-key evil-leader-map "fs" 'counsel-ag)
+(define-key evil-leader-map "fs" 'counsel-rg)
 #+END_SRC
 * org-mode
 
@@ -420,6 +455,8 @@ Show inline images (~file:/~ links):
 
 ** Keybindings
 
+Generally, I use ~,~ prefix as local leader for org-mode commands.
+
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map
   "<" (lambda () (interactive) (org-demote-or-promote 1)) ; out-dent
@@ -429,6 +466,12 @@ Show inline images (~file:/~ links):
 Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O~/~o~ behaviour.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map ",f" 'counsel-org-goto)
+(evil-declare-key 'normal org-mode-map ",t" 'counsel-org-tag)
+(evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
 #+END_SRC
 
 ** Embedded code blocks
@@ -557,7 +600,7 @@ I start using Emacs for some of my Rust experiments.
 
 *** Display the indention levels with thin vertical lines
 
-Similar vim's plugin: https://github.com/Yggdroot/indentLine.
+Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
 
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-indent-guides
@@ -567,16 +610,24 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
-** git integration
+** Magit: git integration layer
 
+*** Initialization
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t)
-
-(use-package evil-magit
-  :ensure t)
 #+END_SRC
 
+*** Integration with evil-mode
+#+BEGIN_SRC emacs-lisp
+(use-package evil-magit
+  :after (evil magit)
+  :ensure t
+  :config
+  (setq evil-magit-state 'normal))
+#+END_SRC
+
+*** git-gutter
 #+BEGIN_SRC emacs-lisp
 (use-package git-gutter
   :ensure t
@@ -584,18 +635,53 @@ Similar vim's plugin: https://github.com/Yggdroot/indentLine.
   (global-git-gutter-mode +1))
 #+END_SRC
 
+*** Keybindings
+
+~<leader>v~ prefix.
+
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "vs"  'magit-status)
+#+END_SRC
+
 ** Projectile
 
 This plugin is required to keep current directory when moving through project files.
+
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
+  :ensure t
   :diminish projectile-mode
   :init
-  (projectile-mode +1)
-  :bind
-  (("C-c p" . projectile-command-map)))
+  (projectile-mode +1))
+#+END_SRC
 
-(use-package counsel-projectile)
+Use Ivy UI for Projectile:
+#+BEGIN_SRC emacs-lisp
+(use-package counsel-projectile
+  :ensure t
+  :config
+  ; Open magit-status after switch project.
+  ; See: https://github.com/ericdanan/counsel-projectile/issues/62
+  ; (counsel-projectile-modify-action
+  ;  'counsel-projectile-switch-project-action
+  ;  '((default counsel-projectile-switch-project-action-vc)))
+)
+#+END_SRC
+
+Keybindings:
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "pp"  'counsel-projectile-switch-project)
+(define-key evil-leader-map "pf"  'counsel-projectile-find-file)
+(define-key evil-leader-map "pd"  'counsel-projectile-find-dir)
+(define-key evil-leader-map "pb"  'counsel-projectile-switch-to-buffer)
+(define-key evil-leader-map "pD"  'projectile-dired)
+(define-key evil-leader-map "pR"  'projectile-toggle-project-read-only)
+(define-key evil-leader-map "pK"  'projectile-kill-buffers)
+(define-key evil-leader-map "pT"  'projectile-regenerate-tags)
+(define-key evil-leader-map "pS"  'projectile-run-eshell)
+(define-key evil-leader-map "pM"  'projectile-compile-project)
+(define-key evil-leader-map "pC"  'projectile-configure-project)
+(define-key evil-leader-map "pv"  'projectile-vc)
 #+END_SRC
 
 ** ctags
@@ -659,16 +745,36 @@ Company is a text completion framework for Emacs that very similar with vim's de
 The frequently used commands should be assigned efficient key bindings.
 See this [[http://blog.binchen.org/posts/how-to-be-extremely-efficient-in-emacs.html][post]] by Bin Chen.
 
+See generated report with ~keyfreq-html~.
+
 #+BEGIN_SRC emacs-lisp
 (use-package keyfreq
   :ensure t
   :config
-  ;; TODO: Exclude most common commands
-  ; (setq keyfreq-excluded-commands
-  ;     '(forward-char
-  ;       backward-char
-  ;       previous-line
-  ;       next-line))
+  ; Exclude most common commands
+  (setq keyfreq-excluded-commands
+      '(forward-char
+        backward-char
+        previous-line
+        next-line
+	save-buffer
+	; self-insert-command
+        ; See: http://emacshorrors.com/posts/self-insert-command.html
+	self-insert-command
+	org-self-insert-command
+	; Evil
+	evil-delete-backward-char-and-join
+	evil-normal-state
+	evil-jump-backward
+	evil-forward-char
+	evil-backward-char
+	evil-org-delete-char
+	evil-insert
+	evil-previous-line
+	evil-next-line
+	evil-ex-nohighlight
+	evil-forward-word-begin
+	evil-backward-word-begin))
   (setq keyfreq-file "~/.emacs.d/keyfreq"
 	keyfreq-file-lock "~/.emacs.d/keyfreq.lock")
   (keyfreq-mode 1)
