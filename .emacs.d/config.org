@@ -4,14 +4,12 @@
 
 This is my Emacs configuration file written as Org document.
 
-** Resources
+** Resources / links
 
-*** Guides
 + [[https://github.com/noctuid/evil-guide][noctuid/evil-guide]]
 + Article: [[How to read Emacs Lisp][http://emacslife.com/how-to-read-emacs-lisp.html]]
-
-*** Dotfiles
-+ [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Awesome emacs config files including nice evil configurations.
++ Talk [[https://www.youtube.com/watch?v=gfZDwYeBlO4][Play Emacs like an instrument]] by Alain M. Lafon and his [[https://github.com/munen/emacs.d/][Emacs configuration]] written in org-mode
++ [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Emacs configuration files including interesting evil-mode setups.
 + [[https://github.com/andreyorst/dotfiles/tree/master/.emacs.d][andreyorst]] - Clean and easy to read emacs configuration in org-mode
 + [[https://github.com/IvanMalison/dotfiles][IvanMalison]]
 
@@ -98,11 +96,10 @@ Show file name and mode in window title:
 (add-hook 'org-mode-hook (lambda () (setq show-trailing-whitespace t)))
 #+END_SRC
 
-To available it in all buffers enable that:
+Activate this to make it available in all other modes:
 #+BEGIN_SRC emacs-lisp :tangle no
 (setq-default show-trailing-whitespace t)
 #+END_SRC
-
 
 ** Highlight current line
 #+BEGIN_SRC emacs-lisp
@@ -166,6 +163,11 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 (setq scroll-margin 7)
 #+END_SRC
 
+** Work with recent files
+#+BEGIN_SRC emacs-lisp
+(recentf-mode t)
+#+END_SRC
+
 ** Undo-tree
 
 There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
@@ -198,12 +200,33 @@ There are no standard way to implement persistent undo in Emacs. I use modified 
 (load custom-file :noerror)
 #+END_SRC
 
+** Tabs
+Set default tab width to 2 for all buffers:
+#+BEGIN_SRC emacs-lisp
+(setq-default tab-width 2)
+#+END_SRC
+
+Use 2 spaces instead of a tab:
+#+BEGIN_SRC emacs-lisp
+(setq-default tab-width 2 indent-tabs-mode nil)
+#+END_SRC
+
+Indentation cannot insert tabs:
+#+BEGIN_SRC emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+END_SRC
+
 ** Keep backup files in separate directory
 #+BEGIN_SRC emacs-lisp
     (setq backup-by-copying t
         create-lockfiles nil
         backup-directory-alist '(("." . "~/.cache/emacs-backups"))
         auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
+#+END_SRC
+
+** Confirm before closing Emacs
+#+BEGIN_SRC emacs-lisp
+(setq confirm-kill-emacs 'y-or-n-p)
 #+END_SRC
 
 ** Disable auto save
@@ -225,7 +248,7 @@ This is default behaviour in vim.
 
 * Evil mode and common keybindings
 
-** Bootstrap Evil
+** Evil: bootstrap and initial configuraiton
 #+BEGIN_SRC emacs-lisp
 (use-package evil
   :ensure t
@@ -252,6 +275,24 @@ Here is most essential keybindings that available in every major mode.
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
 #+END_SRC
 
+*** Fix ~C-i~ behaviour
+#+BEGIN_SRC emacs-lisp
+(define-key evil-normal-state-map (kbd "<C-i>") 'evil-jump-forward)
+#+END_SRC
+
+*** Increment / Decrement numbers
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-=") 'evil-numbers/inc-at-pt)
+(global-set-key (kbd "C--") 'evil-numbers/dec-at-pt)
+(define-key evil-normal-state-map (kbd "C-=") 'evil-numbers/inc-at-pt)
+(define-key evil-normal-state-map (kbd "C--") 'evil-numbers/dec-at-pt)
+#+END_SRC
+
+*** Use ~j/k~ for browsing wrapped lines
+#+BEGIN_SRC emacs-lisp
+(define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
+(define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
+#+END_SRC
 *** ~jj~ to leave insert mode:
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
@@ -264,6 +305,7 @@ Here is most essential keybindings that available in every major mode.
 Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "xf" 'counsel-find-file)
+(define-key evil-leader-map "xr" 'counsel-recentf)
 (define-key evil-leader-map "xs" 'save-buffer)
 (define-key evil-leader-map "s" 'save-buffer)
 (define-key evil-leader-map "xk" 'kill-buffer)
@@ -294,7 +336,6 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
 #+END_SRC
 
 *** Instant access to config.org
-
 #+BEGIN_SRC emacs-lisp
 (defun open-org-config-file ()
   "Open Emacs configuration file in another window."
@@ -302,6 +343,51 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
   (find-file-other-window (expand-file-name "config.org" user-emacs-directory)))
 
 (define-key evil-leader-map "CC"  'open-org-config-file)
+#+END_SRC
+
+*** Expand region
+
+Increase selected region by semantic units (similar to [[https://github.com/terryma/vim-expand-region][vim-expand-region]]).
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :ensure t
+  :config)
+
+(evil-declare-key 'normal global-map "+" 'er/expand-region)
+(evil-declare-key 'visual global-map "+" 'er/expand-region)
+(evil-declare-key 'normal global-map "_" 'er/contract-region)
+(evil-declare-key 'visual global-map "_" 'er/contract-region)
+#+END_SRC
+
+*** Killing buffers
+
+See related [[https://www.emacswiki.org/emacs/KillingBuffers][EmacsWiki page]].
+
+Kill all buffers, expect the current one:
+#+BEGIN_SRC emacs-lisp
+(defun kill-other-buffers ()
+  "Kill all other buffers."
+  (interactive)
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+(define-key evil-leader-map "Ko"  'kill-other-buffers)
+#+END_SRC
+
+Kill all dired buffers:
+#+BEGIN_SRC emacs-lisp
+(defun kill-all-dired-buffers ()
+  "Kill all dired buffers."
+  (interactive)
+  (save-excursion
+    (let ((count 0))
+      (dolist (buffer (buffer-list))
+        (set-buffer buffer)
+        (when (equal major-mode 'dired-mode)
+          (setq count (1+ count))
+          (kill-buffer buffer)))
+      (message "Killed %i dired buffer(s)." count))))
+
+(define-key evil-leader-map "KD"  'kill-all-dired-buffers)
 #+END_SRC
 
 ** Avy
@@ -406,6 +492,8 @@ These three tools are available in a single github [[https://github.com/abo-abo/
   :config
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
   (global-set-key (kbd "M-x") 'counsel-M-x)
+  ;; Global ignore patterns
+  (setq counsel-find-file-ignore-regexp "^.cquery")
   ;; Set matching style
   (setq ivy-re-builders-alist
     '((swiper . ivy--regex-plus)
@@ -439,6 +527,13 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (define-key evil-leader-map "b"  'ivy-switch-buffer)
 (define-key evil-leader-map "fs" 'counsel-rg)
 #+END_SRC
+* dired-mode
+
+Human readable units:
+#+BEGIN_SRC emacs-lisp
+(setq-default dired-listing-switches "-alh")
+#+END_SRC
+
 * org-mode
 
 ** General options
@@ -481,6 +576,11 @@ Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (shell . t)
   (python . t)))
+#+END_SRC
+
+Don't confirm codeblock evaluation:
+#+BEGIN_SRC emacs-lisp
+(setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
 ** Download images to org-mode
@@ -594,14 +694,29 @@ ispell can be configured to skip over regions that match regexes.
 
 * Programming facilities
 
-I start using Emacs for some of my Rust experiments.
+** Misc keybindings
+
+Jump to errors:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal prog-mode-map "]e" 'flymake-goto-next-error)
+(evil-declare-key 'normal prog-mode-map "[e" 'flymake-goto-prev-error)
+#+END_SRC
+
+** Code folding
+
++ ~zc~: Fold
++ ~za~: Unfold
++ ~zR~: Unfold everything
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+#+END_SRC
 
 ** Indentation
 
 *** Display the indention levels with thin vertical lines
 
 Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
-
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-indent-guides
   :ensure t
@@ -635,7 +750,13 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (global-git-gutter-mode +1))
 #+END_SRC
 
-*** Keybindings
+Jump between changes:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal prog-mode-map "]v" 'git-gutter:next-hunk)
+(evil-declare-key 'normal prog-mode-map "[v" 'git-gutter:prev-hunk)
+#+END_SRC
+
+*** General keybindings
 
 ~<leader>v~ prefix.
 
@@ -652,7 +773,10 @@ This plugin is required to keep current directory when moving through project fi
   :ensure t
   :diminish projectile-mode
   :init
-  (projectile-mode +1))
+  (projectile-mode +1)
+  :config
+  ;; Ignore cache from LSP clients
+  (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index"))
 #+END_SRC
 
 Use Ivy UI for Projectile:
@@ -690,7 +814,7 @@ Keybindings:
 (use-package counsel-etags
   :ensure t)
 
-(define-key evil-leader-map "ft" 'counsel-etags-find-tag)
+(define-key evil-leader-map "ft" 'counsel-etags-list-tag)
 #+END_SRC
 
 ** LSP
@@ -700,11 +824,26 @@ Keybindings:
   :commands lsp
   :config
   (setq lsp-highlight-symbol-at-point nil))
-
-(use-package lsp-ui :commands lsp-ui-mode)
 #+END_SRC
 
-Backend for company:
+#+BEGIN_SRC emacs-lisp
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode
+  :config
+  ;; It may produces messy output for long strings. I should fix it later.
+  ;; (setq lsp-ui-sideline-enable nil)
+  )
+#+END_SRC
+
+Jump to references with ivy:
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-xref
+  :ensure t
+  :after ivy)
+#+END_SRC
+
+Company backend:
 #+BEGIN_SRC emacs-lisp
 (use-package company-lsp
   :ensure t)
@@ -733,11 +872,39 @@ Company is a text completion framework for Emacs that very similar with vim's de
 #+END_SRC
 
 ** Rust
-
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode
   :ensure t)
 #+END_SRC
+
+** C/C++
+
+*** Common
+#+BEGIN_SRC emacs-lisp
+(add-hook 'c-mode-common-hook
+          '(lambda()
+             (setq indent-tabs-mode t
+                   c-basic-offset 4
+                   tab-width 4
+		   (lsp-cquery-enable))))
+#+END_SRC
+
+*** cquery
+
+[[https://github.com/cquery-project/emacs-cquery][emacs-cquery]] mode provides some nice extensions for lsp. See [[https://github.com/cquery-project/cquery/wiki/Emacs][their wiki]] for more.
+
+#+BEGIN_SRC emacs-lisp
+(use-package cquery
+  :ensure t
+  :after lsp-mode
+  :custom
+  (cquery-executable "/usr/local/bin/cquery")
+  (cquery-extra-args '("--log-file=/tmp/cq.log"))
+  :config
+  (setq cquery-cache-dir "~/.cquery_cached_index")
+  (setq cquery-sem-highlight-method 'font-lock))
+#+END_SRC
+
 * Learning Emacs
 
 ** Track frequently used commands with ~keyfreq~
@@ -789,6 +956,13 @@ Useful to find called commands names to bind them later.
   :ensure t
   :config
   (add-hook 'org-mode-hook 'command-log-mode))
+#+END_SRC
+
+** Keybindings
+
+Those commands are rarely used, so bind them with ~<leader>5~ prefix.
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "5l"  'clm/toggle-command-log-buffer)
 #+END_SRC
 
 * Hooks to set everything up

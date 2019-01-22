@@ -1,0 +1,29 @@
+#+TITLE: TODO list for my Emacs configuration
+
+* General
+** TODO Highlight current word
+* dired-mode
+** TODO Initial configuration, keybindings
+* Programming
+** General [0/2]
+*** TODO Snippets
+*** TODO Workflow to automate remote debugging on embedded targets
+** C/C++ [0/1]
+*** TODO Doxygen: snippets
+* org-mode
+** org-download
+*** Handle error if file extension is unknown (e.g.: incorrect link was yanked)
+** TODO [#C] agenda
+*** TODO Initial setup and configuration
+*** TODO Auto-import external tasks like bugwarrior [0/3]
+**** TODO GitLab
+**** TODO Redmine
+**** TODO Github
+*** TODO Notifications
+See: https://github.com/akhramov/org-wild-notifier.el
+
+** TODO [#C] Diagramming in org-mode
+See: https://github.com/arnm/ob-mermaid
+
+* LaTeX
+** Initial configuration
