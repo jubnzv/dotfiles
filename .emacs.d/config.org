@@ -6,12 +6,13 @@ This is my Emacs configuration file written as Org document.
 
 ** Resources / links
 
++ Emacs [[http://doc.endlessparentheses.com/][online documentation]]
 + [[https://github.com/noctuid/evil-guide][noctuid/evil-guide]]
 + Article: [[How to read Emacs Lisp][http://emacslife.com/how-to-read-emacs-lisp.html]]
 + Talk [[https://www.youtube.com/watch?v=gfZDwYeBlO4][Play Emacs like an instrument]] by Alain M. Lafon and his [[https://github.com/munen/emacs.d/][Emacs configuration]] written in org-mode
 + [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Emacs configuration files including interesting evil-mode setups.
-+ [[https://github.com/andreyorst/dotfiles/tree/master/.emacs.d][andreyorst]] - Clean and easy to read emacs configuration in org-mode
-+ [[https://github.com/IvanMalison/dotfiles][IvanMalison]]
++ [[https://github.com/andreyorst/dotfiles/tree/master/.emacs.d][andreyorst/dotfiles]] - Clean and easy to read emacs configuration in org-mode
++ [[https://github.com/IvanMalison/dotfiles/tree/master/dotfiles/emacs.d][IvanMalison/dotfiles]] (available in [[https://ivanmalison.github.io/dotfiles][readable format]])
 
 * User info
 
@@ -66,7 +67,7 @@ The ~:chords~ keyword allows you to define key-chord bindings for use-package de
   (fset 'menu-bar-open nil))
 #+END_SRC
 
-** Use ~y~/~n~ instead ~yes~/~no~
+** Use ~y/n~ instead ~yes/no~
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
@@ -335,16 +336,6 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
 (define-key evil-leader-map "es"  'delete-trailing-whitespace)
 #+END_SRC
 
-*** Instant access to config.org
-#+BEGIN_SRC emacs-lisp
-(defun open-org-config-file ()
-  "Open Emacs configuration file in another window."
-  (interactive)
-  (find-file-other-window (expand-file-name "config.org" user-emacs-directory)))
-
-(define-key evil-leader-map "CC"  'open-org-config-file)
-#+END_SRC
-
 *** Expand region
 
 Increase selected region by semantic units (similar to [[https://github.com/terryma/vim-expand-region][vim-expand-region]]).
@@ -485,6 +476,14 @@ These three tools are available in a single github [[https://github.com/abo-abo/
 
 ** Counsel
 
+Smex is a package that required to show most recent commands with ~counsel-M-x~.
+#+BEGIN_SRC emacs-lisp
+(use-package smex
+  :ensure t
+  :config
+  (setq smex-save-file (concat user-emacs-directory "smex-items")))
+#+END_SRC
+
 *Counsel* - a collection of Ivy-enhanced versions of common Emacs commands.
 #+BEGIN_SRC emacs-lisp
 (use-package counsel
@@ -558,7 +557,7 @@ Generally, I use ~,~ prefix as local leader for org-mode commands.
   ">" 'org-demote-or-promote) ; indent
 #+END_SRC
 
-Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O~/~o~ behaviour.
+Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behaviour.
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+END_SRC
@@ -662,17 +661,19 @@ Integration layer for [[https://gohugo.io][hugo]] static site generator.
 * Snippets
 
 Collection of snippets:
-
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet-snippets :ensure t)
 #+END_SRC
 
 Initialize ~yasnippet~ plugin itself:
-
 #+BEGIN_SRC emacs-lisp
 (use-package yasnippet
   :ensure t
-  :after yasnippet-snippets)
+  :after yasnippet-snippets
+  :config
+  (define-key yas-minor-mode-map (kbd "<tab>") nil)
+  (define-key yas-minor-mode-map (kbd "TAB") nil)
+  (define-key yas-minor-mode-map (kbd "M-l") yas-maybe-expand))
 #+END_SRC
 
 * Auto parens
@@ -686,7 +687,6 @@ Initialize ~yasnippet~ plugin itself:
 * Spell checking
 
 ispell can be configured to skip over regions that match regexes.
-
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
@@ -768,6 +768,7 @@ Jump between changes:
 
 This plugin is required to keep current directory when moving through project files.
 
+*** Plugin initialization
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
@@ -779,7 +780,7 @@ This plugin is required to keep current directory when moving through project fi
   (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index"))
 #+END_SRC
 
-Use Ivy UI for Projectile:
+*** Counsel backend
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-projectile
   :ensure t
@@ -792,7 +793,20 @@ Use Ivy UI for Projectile:
 )
 #+END_SRC
 
-Keybindings:
+*** org-projectile
+
+[[https://github.com/IvanMalison/org-projectile][org-projectile]] provides functions for the creation of org-mode TODOs that are associated with projectile projects.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-projectile
+  :ensure t
+  :config
+  (org-projectile-per-project)
+  (setq org-projectile-per-project-filepath "TODO.org")
+  (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
+#+END_SRC
+
+*** Keybindings
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "pp"  'counsel-projectile-switch-project)
 (define-key evil-leader-map "pf"  'counsel-projectile-find-file)
@@ -806,6 +820,7 @@ Keybindings:
 (define-key evil-leader-map "pM"  'projectile-compile-project)
 (define-key evil-leader-map "pC"  'projectile-configure-project)
 (define-key evil-leader-map "pv"  'projectile-vc)
+(define-key evil-leader-map "pO"  'org-projectile-project-todo-completing-read)
 #+END_SRC
 
 ** ctags
@@ -846,7 +861,11 @@ Jump to references with ivy:
 Company backend:
 #+BEGIN_SRC emacs-lisp
 (use-package company-lsp
-  :ensure t)
+  :ensure t
+  :after company
+  :config
+  (push 'company-lsp company-backends)
+  (setq company-lsp-enable-snippet t))
 #+END_SRC
 
 ** Autocompletion with company-mode
@@ -855,10 +874,13 @@ Company is a text completion framework for Emacs that very similar with vim's de
 #+begin_SRC emacs-lisp
 (use-package company
   :ensure t
+  :after company-lsp
   :diminish company-mode
   :config
   (setq company-tooltip-limit 20)
   (setq company-idle-delay 0)
+  ;; Configure available backends
+  (add-to-list 'company-backends 'company-yasnippet t)
   (global-company-mode 1))
 #+END_SRC
 
@@ -874,7 +896,9 @@ Company is a text completion framework for Emacs that very similar with vim's de
 ** Rust
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode
-  :ensure t)
+  :ensure t
+  :config
+  (setq rust-rustfmt-bin "~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"))
 #+END_SRC
 
 ** C/C++
@@ -958,11 +982,29 @@ Useful to find called commands names to bind them later.
   (add-hook 'org-mode-hook 'command-log-mode))
 #+END_SRC
 
+** Instant access to Emacs configuration
+#+BEGIN_SRC emacs-lisp
+(defun open-org-config-file ()
+  "Open Emacs configuration file in another window."
+  (interactive)
+  (find-file-other-window (expand-file-name "config.org" user-emacs-directory)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun open-org-config-todo-file ()
+  "Open TODO.org for Emacs configuration in another window."
+  (interactive)
+  (find-file-other-window (expand-file-name "TODO.org" user-emacs-directory)))
+#+END_SRC
+
 ** Keybindings
 
-Those commands are rarely used, so bind them with ~<leader>5~ prefix.
+~<leader>C~ prefix.
+
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "5l"  'clm/toggle-command-log-buffer)
+(define-key evil-leader-map "Cl"  'clm/toggle-command-log-buffer)
+(define-key evil-leader-map "CC"  'open-org-config-file)
+(define-key evil-leader-map "Ct"  'open-org-config-todo-file)
 #+END_SRC
 
 * Hooks to set everything up

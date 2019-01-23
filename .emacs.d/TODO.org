@@ -2,14 +2,21 @@
 
 * General
 ** TODO Highlight current word
+** TODO Motions in evil are weired: check =<C-i> / <C-o>=.
+** TODO Undo-tree history saving works occasionally
 * dired-mode
 ** TODO Initial configuration, keybindings
 * Programming
-** General [0/2]
+** General [0/4]
+*** TODO 80 column ruler
 *** TODO Snippets
+Check company backend.
 *** TODO Workflow to automate remote debugging on embedded targets
+*** TODO tagtreebar alternative
 ** C/C++ [0/1]
 *** TODO Doxygen: snippets
+** Rust [0/1]
+*** TODO Configure toolchains to make all tools from rustup work
 * org-mode
 ** org-download
 *** Handle error if file extension is unknown (e.g.: incorrect link was yanked)
