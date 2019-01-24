@@ -148,7 +148,7 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :font "Iosevka-12")
 #+END_SRC
-
+/
 * Emacs default options
 
 ** Initial buffer
@@ -269,6 +269,23 @@ This is default behaviour in vim.
 
 Here is most essential keybindings that available in every major mode.
 
+*** Prevent [[https://web.eecs.umich.edu/~cscott/rsi.html##whatis][RSI]]
+
+Disable some default keybindings to safe my arms. I got used them years before when first started with plain Emacs.
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x C-c") nil)
+(global-set-key (kbd "C-x C-s") nil)
+(global-set-key (kbd "C-x C-f") nil)
+(global-set-key (kbd "M-x") nil)
+
+;; Window management is implemented by evil's <C-w>
+(global-set-key (kbd "C-x 1") nil)
+(global-set-key (kbd "C-x 2") nil)
+(global-set-key (kbd "C-x 3") nil)
+(global-set-key (kbd "C-x 4") nil)
+(global-set-key (kbd "C-x 5") nil)
+#+END_SRC
+
 *** ~<Space>~ is my leader
 #+BEGIN_SRC emacs-lisp
 (defvar evil-leader-map (make-sparse-keymap)
@@ -325,7 +342,6 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 #+END_SRC
 
 *** Use ~C-s~ to save current buffer
-
 Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
 #+BEGIN_SRC emacs-lisp :tangle no
 (global-set-key (kbd "C-s") 'save-buffer)
@@ -537,40 +553,129 @@ Human readable units:
 
 ** General options
 
+Where are my Org files typically located:
+#+BEGIN_SRC emacs-lisp
+(setq org-directory "~/Org/")
+(setq org-agenda-files "~/Org/Agenda/")
+#+END_SRC
+
 Enable soft-wrap:
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated nil)
 #+END_SRC
 
-Show inline images (~file:/~ links):
+Show inline images (~file://~ links):
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-with-inline-images t)
 #+END_SRC
 
-** Keybindings
+Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behaviour when insert after heading:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
+#+END_SRC
 
-Generally, I use ~,~ prefix as local leader for org-mode commands.
+** Functions
 
+Fold everything but the current headline.
+See this [[https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline][stackoverflow question]].
+
+#+BEGIN_SRC emacs-lisp
+(defun org-show-current-heading-tidily ()
+  (interactive)  ;Inteactive
+  "Show next entry, keeping other entries closed."
+  (if (save-excursion (end-of-line) (outline-invisible-p))
+      (progn (org-show-entry) (show-children))
+    (outline-back-to-heading)
+    (unless (and (bolp) (org-on-heading-p))
+      (org-up-heading-safe)
+      (hide-subtree)
+      (error "Boundary reached"))
+    (org-overview)
+    (org-reveal t)
+    (org-show-entry)
+    (show-children)))
+#+END_SRC
+
+Recipe from [[https://orgmode.org/worg/org-hacks.html#org98f0887][org-hacks]]:
+#+BEGIN_SRC emacs-lisp
+(defun org-back-to-top-level-heading ()
+  "Go back to the current top level heading."
+  (interactive)
+  (or (re-search-backward "^\* " nil t)
+      (goto-char (point-min))))
+#+END_SRC
+
+** General keybindings
+
+Structure movement and editing:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map "gp" 'org-back-to-top-level-heading)
+(evil-declare-key 'normal org-mode-map "gh" 'counsel-org-goto)
+(evil-declare-key 'normal org-mode-map "gt" 'counsel-org-tag)
+#+END_SRC
+
+Narrow headings like codeblocks:
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map
   "<" (lambda () (interactive) (org-demote-or-promote 1)) ; out-dent
   ">" 'org-demote-or-promote) ; indent
 #+END_SRC
 
-Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behaviour.
+=,= prefix as local leader for other org-mode commands:
 #+BEGIN_SRC emacs-lisp
-(add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
+(evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
+(evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
+(evil-declare-key 'normal org-mode-map ",x" 'org-babel-execute)
+#+END_SRC
+
+** Notekeeping with org-capture
+
+Notekeeping with =org-capture= described in [[http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Sacha Chua's blog]]. There is also related [[https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/][post]] on reddit.
+
+Default file for org-capture:
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "~/Org/scratch.org")
+#+END_SRC
+
+Capture templates:
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates nil)
+(add-to-list 'org-capture-templates '("n" "Note"))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",f" 'counsel-org-goto)
-(evil-declare-key 'normal org-mode-map ",t" 'counsel-org-tag)
-(evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
+(evil-declare-key 'normal org-mode-map ",cc" 'org-capture)
+#+END_SRC
+
+** org-brain: concept-mapping
+
+[[https://github.com/Kungsgeten/org-brain][org-brain]] is a plugin that implements a variant of concept mapping in Emacs, using org-mode.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-brain
+  :ensure t
+  :init
+  (setq org-brain-path (expand-file-name "brain" org-directory))
+  (with-eval-after-load 'evil
+    (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
+  :config
+  (setq org-id-track-globally t)
+  (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+          "* %i%?" :empty-lines 1)
+        org-capture-templates)
+  (setq org-brain-visualize-default-choices 'all)
+  (setq org-brain-title-max-length 12))
+#+END_SRC
+
+Keybindings:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map ",bv" 'org-brain-visualize)
 #+END_SRC
 
 ** Embedded code blocks
 
-Allow code evaluation with ~org-babel-execute~ (~C-c C-c~):
+Allow code evaluation with ~org-babel-execute~:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (shell . t)
@@ -586,7 +691,7 @@ Don't confirm codeblock evaluation:
 
 How to use it:
 1. Copy image URI
-2. Call ~org-download-yank~ (~, D y~).
+2. Call ~org-download-yank~.
 Image will be saved in ~./images~ directory and embedded in org file.
 
 *** Custom download function
@@ -641,8 +746,7 @@ Images are separated inside that image folder by additional folders one per org 
 
 * Hugo integration
 
-Integration layer for [[https://gohugo.io][hugo]] static site generator.
-
+Integration with [[https://gohugo.io][hugo]] static site generator.
 #+BEGIN_SRC emacs-lisp
 (use-package easy-hugo
   :ensure t
@@ -762,6 +866,7 @@ Jump between changes:
 
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "vs"  'magit-status)
+(define-key evil-leader-map "vR"  'magit-reset-popup)
 #+END_SRC
 
 ** Projectile
@@ -881,16 +986,14 @@ Company is a text completion framework for Emacs that very similar with vim's de
   (setq company-idle-delay 0)
   ;; Configure available backends
   (add-to-list 'company-backends 'company-yasnippet t)
+  ;; Keybindings
+  (define-key company-active-map (kbd "M-j") 'company-select-next)
+  (define-key company-active-map (kbd "M-k") 'company-select-previous)
+  (define-key company-active-map (kbd "M-l") 'company-complete-common)
+  (define-key company-search-map (kbd "M-j") 'company-select-next)
+  (define-key company-search-map (kbd "M-k") 'company-select-previous)
+  (define-key company-search-map (kbd "M-l") 'company-complete-common)
   (global-company-mode 1))
-#+END_SRC
-
-#+begin_SRC emacs-lisp
-(define-key company-active-map (kbd "M-j") 'company-select-next)
-(define-key company-active-map (kbd "M-k") 'company-select-previous)
-(define-key company-active-map (kbd "M-l") 'company-complete-common)
-(define-key company-search-map (kbd "M-j") 'company-select-next)
-(define-key company-search-map (kbd "M-k") 'company-select-previous)
-(define-key company-search-map (kbd "M-l") 'company-complete-common)
 #+END_SRC
 
 ** Rust
@@ -905,12 +1008,16 @@ Company is a text completion framework for Emacs that very similar with vim's de
 
 *** Common
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-common-hook
-          '(lambda()
-             (setq indent-tabs-mode t
-                   c-basic-offset 4
-                   tab-width 4
-		   (lsp-cquery-enable))))
+(add-hook 'c-mode-common-hook '(lambda()
+  (setq indent-tabs-mode t
+     c-basic-offset 4
+     tab-width 4)
+  ;; vim's :A
+  (local-set-key  (kbd "M-a") 'ff-find-other-file)
+  ;; Show function name in modeline
+  (which-function-mode 1)
+  (lsp-cquery-enable)
+  (lsp-ui-mode)))
 #+END_SRC
 
 *** cquery
