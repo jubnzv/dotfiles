@@ -4,6 +4,8 @@
 
 This is my Emacs configuration file written as Org document.
 
+/Note/: source code blocks marked with =:tangle no= (e.g.: =#+BEGIN_SRC emacs-lisp :tangle no=) will be disabled.
+
 ** Resources / links
 
 + Emacs [[http://doc.endlessparentheses.com/][online documentation]]
@@ -48,8 +50,7 @@ Bootstrap use-package:
 
 Load use-package extensions:
 
-The ~:chords~ keyword allows you to define key-chord bindings for use-package declarations in the same manner as the :bind keyword.
-
+The ~:chords~ keyword allows you to define key-chord bindings for use-package declarations in the same manner as the =:bind= keyword.
 #+BEGIN_SRC emacs-lisp
 (use-package use-package-chords
   :ensure t
@@ -148,7 +149,7 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'default nil :font "Iosevka-12")
 #+END_SRC
-/
+
 * Emacs default options
 
 ** Initial buffer
@@ -172,7 +173,6 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 ** Undo-tree
 
 There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
-
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :ensure t
@@ -202,6 +202,7 @@ There are no standard way to implement persistent undo in Emacs. I use modified 
 #+END_SRC
 
 ** Tabs
+
 Set default tab width to 2 for all buffers:
 #+BEGIN_SRC emacs-lisp
 (setq-default tab-width 2)
@@ -266,7 +267,6 @@ This is default behaviour in vim.
 #+END_SRC
 
 ** Essential key bindings
-
 Here is most essential keybindings that available in every major mode.
 
 *** Prevent [[https://web.eecs.umich.edu/~cscott/rsi.html##whatis][RSI]]
@@ -311,6 +311,7 @@ Disable some default keybindings to safe my arms. I got used them years before w
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
 #+END_SRC
+
 *** ~jj~ to leave insert mode:
 #+BEGIN_SRC emacs-lisp
 (use-package key-chord
@@ -336,12 +337,13 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 (define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
 #+END_SRC
 
-*** :noh
+*** =:noh=
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "h"  'evil-ex-nohighlight)
 #+END_SRC
 
 *** Use ~C-s~ to save current buffer
+
 Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
 #+BEGIN_SRC emacs-lisp :tangle no
 (global-set-key (kbd "C-s") 'save-buffer)
@@ -399,8 +401,7 @@ Kill all dired buffers:
 
 ** Avy
 
-It works like [[https://github.com/easymotion/vim-easymotion][easymotion]].
-
+It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 #+BEGIN_SRC emacs-lisp
 (use-package avy
   :ensure t
@@ -408,10 +409,10 @@ It works like [[https://github.com/easymotion/vim-easymotion][easymotion]].
   (global-set-key (kbd "M-;") 'avy-goto-char)
   (global-set-key (kbd "M-C-;") 'avy-resume))
 #+end_SRC
+
 ** Which-key mode
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a package that displays available keybindings in popup.
-
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
   :ensure t
@@ -422,10 +423,10 @@ It works like [[https://github.com/easymotion/vim-easymotion][easymotion]].
 #+END_SRC
 
 ** Evil mode integration
-*** Evil mode inside M-x package-list-packages
+
+*** Evil mode inside =M-x package-list-packages=
 
 See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
-
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'evil
   ;; use evil mode in the buffer created from calling `list-packages'.
@@ -439,6 +440,7 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 #+END_SRC
 
 *** Evil surround
+
 #+BEGIN_SRC emacs-lisp
 (use-package evil-surround
   :ensure t
@@ -492,7 +494,7 @@ These three tools are available in a single github [[https://github.com/abo-abo/
 
 ** Counsel
 
-Smex is a package that required to show most recent commands with ~counsel-M-x~.
+*Smex* is a package that required to show most recent commands with ~counsel-M-x~.
 #+BEGIN_SRC emacs-lisp
 (use-package smex
   :ensure t
@@ -529,7 +531,6 @@ Smex is a package that required to show most recent commands with ~counsel-M-x~.
 ** Keybindings
 
 Following keybindings are very similar to FZF section in my vim/zsh configuration.
-
 #+BEGIN_SRC emacs-lisp
 (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
 (define-key ivy-minibuffer-map (kbd "M-q") 'minibuffer-keyboard-quit)
@@ -559,6 +560,11 @@ Where are my Org files typically located:
 (setq org-agenda-files "~/Org/Agenda/")
 #+END_SRC
 
+Enable org-indent-mode:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 'org-indent-mode)
+#+END_SRC
+
 Enable soft-wrap:
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated nil)
@@ -576,9 +582,7 @@ Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behavio
 
 ** Functions
 
-Fold everything but the current headline.
-See this [[https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline][stackoverflow question]].
-
+Fold everything but the current headline. See this [[https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline][stackoverflow question]].
 #+BEGIN_SRC emacs-lisp
 (defun org-show-current-heading-tidily ()
   (interactive)  ;Inteactive
@@ -624,11 +628,12 @@ Narrow headings like codeblocks:
 =,= prefix as local leader for other org-mode commands:
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
+(evil-declare-key 'normal org-mode-map ",ct" 'org-todo)
 (evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
 (evil-declare-key 'normal org-mode-map ",x" 'org-babel-execute)
 #+END_SRC
 
-** Notekeeping with org-capture
+** Notekeeping with =org-capture=
 
 Notekeeping with =org-capture= described in [[http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Sacha Chua's blog]]. There is also related [[https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/][post]] on reddit.
 
@@ -647,10 +652,9 @@ Capture templates:
 (evil-declare-key 'normal org-mode-map ",cc" 'org-capture)
 #+END_SRC
 
-** org-brain: concept-mapping
+** =org-brain=: concept-mapping
 
 [[https://github.com/Kungsgeten/org-brain][org-brain]] is a plugin that implements a variant of concept mapping in Emacs, using org-mode.
-
 #+BEGIN_SRC emacs-lisp
 (use-package org-brain
   :ensure t
@@ -690,9 +694,14 @@ Don't confirm codeblock evaluation:
 ** Download images to org-mode
 
 How to use it:
-1. Copy image URI
-2. Call ~org-download-yank~.
-Image will be saved in ~./images~ directory and embedded in org file.
++ Image from network:
+  1. Copy image URI
+  2. Call ~org-download-yank~.
+  Image will be saved in ~./images~ directory and embedded in org file.
++ Screenshot with =screengrab=:
+  1. Call screengrab
+  2. Save selected region in ~/tmp/screenshot.png~
+  3. Call ~org-download-screenshot~
 
 *** Custom download function
 
@@ -742,6 +751,7 @@ Images are separated inside that image folder by additional folders one per org 
 *** Keybindings
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map ",Dy" 'org-download-yank)
+(evil-declare-key 'normal org-mode-map ",Ds" 'org-download-screenshot)
 #+END_SRC
 
 * Hugo integration
@@ -863,7 +873,6 @@ Jump between changes:
 *** General keybindings
 
 ~<leader>v~ prefix.
-
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "vs"  'magit-status)
 (define-key evil-leader-map "vR"  'magit-reset-popup)
@@ -901,7 +910,6 @@ This plugin is required to keep current directory when moving through project fi
 *** org-projectile
 
 [[https://github.com/IvanMalison/org-projectile][org-projectile]] provides functions for the creation of org-mode TODOs that are associated with projectile projects.
-
 #+BEGIN_SRC emacs-lisp
 (use-package org-projectile
   :ensure t
@@ -929,7 +937,6 @@ This plugin is required to keep current directory when moving through project fi
 #+END_SRC
 
 ** ctags
-
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
   :ensure t)
@@ -1023,7 +1030,6 @@ Company is a text completion framework for Emacs that very similar with vim's de
 *** cquery
 
 [[https://github.com/cquery-project/emacs-cquery][emacs-cquery]] mode provides some nice extensions for lsp. See [[https://github.com/cquery-project/cquery/wiki/Emacs][their wiki]] for more.
-
 #+BEGIN_SRC emacs-lisp
 (use-package cquery
   :ensure t
@@ -1107,7 +1113,6 @@ Useful to find called commands names to bind them later.
 ** Keybindings
 
 ~<leader>C~ prefix.
-
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "Cl"  'clm/toggle-command-log-buffer)
 (define-key evil-leader-map "CC"  'open-org-config-file)
