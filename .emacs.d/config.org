@@ -652,31 +652,6 @@ Capture templates:
 (evil-declare-key 'normal org-mode-map ",cc" 'org-capture)
 #+END_SRC
 
-** =org-brain=: concept-mapping
-
-[[https://github.com/Kungsgeten/org-brain][org-brain]] is a plugin that implements a variant of concept mapping in Emacs, using org-mode.
-#+BEGIN_SRC emacs-lisp
-(use-package org-brain
-  :ensure t
-  :init
-  (setq org-brain-path (expand-file-name "brain" org-directory))
-  (with-eval-after-load 'evil
-    (evil-set-initial-state 'org-brain-visualize-mode 'emacs))
-  :config
-  (setq org-id-track-globally t)
-  (setq org-id-locations-file "~/.emacs.d/.org-id-locations")
-  (push '("b" "Brain" plain (function org-brain-goto-end)
-          "* %i%?" :empty-lines 1)
-        org-capture-templates)
-  (setq org-brain-visualize-default-choices 'all)
-  (setq org-brain-title-max-length 12))
-#+END_SRC
-
-Keybindings:
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",bv" 'org-brain-visualize)
-#+END_SRC
-
 ** Embedded code blocks
 
 Allow code evaluation with ~org-babel-execute~:
