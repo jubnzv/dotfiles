@@ -119,6 +119,16 @@ Activate this to make it available in all other modes:
 (setq-default display-line-numbers 'visual)
 #+END_SRC
 
+** Page breaks
+
+Fancy [[https://www.emacswiki.org/emacs/PageBreaks][page breaks]]:
+#+BEGIN_SRC emacs-lisp
+(use-package page-break-lines
+  :ensure t
+  :config
+  (page-break-lines-mode))
+#+END_SRC
+
 ** ~redisplay-dont-pause~
 The variable ~redisplay-dont-pause~, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
 Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
@@ -162,6 +172,7 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 
 ** scrolloff
 #+BEGIN_SRC emacs-lisp
+(setq scroll-step 1) ;; Don't center frame
 (setq scroll-margin 7)
 #+END_SRC
 
@@ -256,12 +267,18 @@ This is default behaviour in vim.
   :ensure t
   :init
   (setq evil-search-module 'evil-search)
-  (setq evil-want-C-i-jump nil) ;; fix TAB key behaviour in evil-org extension
-  (setq evil-ex-complete-emacs-commands nil)
+  ;; Vim keybinds behaviour
+  (setq evil-want-C-i-jump t)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-Y-yank-to-eol t)
+  ;; Case-sensitive search
+  (setq evil-ex-search-case 'sensitive)
+  ;; Emacs commands (M-x) in Evil command mode
+  (setq evil-ex-complete-emacs-commands t)
+  ;; Windows behaviour
   (setq evil-vsplit-window-right t)
   (setq evil-split-window-below t)
   (setq evil-shift-round nil)
-  (setq evil-want-C-u-scroll t)
   :config
   (evil-mode))
 #+END_SRC
@@ -452,10 +469,13 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 
 #+BEGIN_SRC emacs-lisp
 (use-package evil-nerd-commenter
-  :ensure t)
+  :ensure t
+  :after evil
+  :config
+  (evilnc-default-hotkeys nil t))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (define-key evil-leader-map "ci" 'evilnc-comment-or-uncomment-lines)
 (define-key evil-leader-map "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
 (define-key evil-leader-map "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
@@ -508,7 +528,6 @@ These three tools are available in a single github [[https://github.com/abo-abo/
   :ensure t
   :config
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
-  (global-set-key (kbd "M-x") 'counsel-M-x)
   ;; Global ignore patterns
   (setq counsel-find-file-ignore-regexp "^.cquery")
   ;; Set matching style
@@ -543,7 +562,35 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (define-key evil-leader-map "b"  'ivy-switch-buffer)
 (define-key evil-leader-map "fs" 'counsel-rg)
 #+END_SRC
-* dired-mode
+* Working with files
+
+** Helpers for UNIX
+
+Those functions works like tpope's [[https://github.com/tpope/vim-eunuch][vim-eunuch]] to provide access to common shell commands.
+
+** Delete current file and buffer
+
+See [[https://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/][this post]].
+#+BEGIN_SRC emacs-lisp
+(defun delete-file-and-buffer ()
+  "Kill the current buffer and deletes the file it is visiting."
+  (interactive)
+  (let ((filename (buffer-file-name)))
+    (when filename
+      (if (vc-backend filename)
+          (vc-delete-file filename)
+        (progn
+          (delete-file filename)
+          (message "Deleted file %s" filename)
+          (kill-buffer))))))
+#+END_SRC
+
+*** Define evil commands
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "Del[ele]" 'delete-file-and-buffer)
+#+END_SRC
+
+** dired-mode
 
 Human readable units:
 #+BEGIN_SRC emacs-lisp
@@ -609,7 +656,7 @@ Recipe from [[https://orgmode.org/worg/org-hacks.html#org98f0887][org-hacks]]:
       (goto-char (point-min))))
 #+END_SRC
 
-** General keybindings
+** Keybindings and evil-mode commands
 
 Structure movement and editing:
 #+BEGIN_SRC emacs-lisp
@@ -631,6 +678,13 @@ Narrow headings like codeblocks:
 (evil-declare-key 'normal org-mode-map ",ct" 'org-todo)
 (evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
 (evil-declare-key 'normal org-mode-map ",x" 'org-babel-execute)
+#+END_SRC
+
+
+Commands:
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "Cal[endar]" 'calendar)
+(evil-ex-define-cmd "Agenda" 'org-agenda)
 #+END_SRC
 
 ** Notekeeping with =org-capture=
@@ -759,6 +813,7 @@ Initialize ~yasnippet~ plugin itself:
 (use-package yasnippet
   :ensure t
   :after yasnippet-snippets
+  :init (yas-global-mode yas-minor-mode)
   :config
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -814,7 +869,7 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
-** Magit: git integration layer
+** Magit
 
 *** Initialization
 #+BEGIN_SRC emacs-lisp
@@ -839,18 +894,33 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (global-git-gutter-mode +1))
 #+END_SRC
 
+*** Keybindings
+
+~<leader>v~ prefix.
+
+Magit commands:
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "vs"  'magit-status)
+(define-key evil-leader-map "vR"  'magit-reset-popup)
+(define-key evil-leader-map "vd"  'magit-diff-popup)
+(define-key evil-leader-map "vb"  'magit-branch-popup)
+(define-key evil-leader-map "vh"  'magit-stash-popup)
+(define-key evil-leader-map "vl"  'magit-log-popup)
+(define-key evil-leader-map "vp"  'magit-push-popup)
+(define-key evil-leader-map "vr"  'magit-remote-popup)
+#+END_SRC
+
+Staging with =git-gutter=:
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "vU"  'git-gutter:revert-hunk)
+(define-key evil-leader-map "vS"  'git-gutter:stage-hunk)
+(define-key evil-leader-map "vV"  'git-gutter:popup-diff)
+#+END_SRC
+
 Jump between changes:
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal prog-mode-map "]v" 'git-gutter:next-hunk)
 (evil-declare-key 'normal prog-mode-map "[v" 'git-gutter:prev-hunk)
-#+END_SRC
-
-*** General keybindings
-
-~<leader>v~ prefix.
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "vs"  'magit-status)
-(define-key evil-leader-map "vR"  'magit-reset-popup)
 #+END_SRC
 
 ** Projectile
@@ -984,6 +1054,11 @@ Company is a text completion framework for Emacs that very similar with vim's de
   :ensure t
   :config
   (setq rust-rustfmt-bin "~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"))
+#+END_SRC
+
+*** Keybindings
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal rust-mode-map ",ef" 'rust-format-buffer)
 #+END_SRC
 
 ** C/C++
