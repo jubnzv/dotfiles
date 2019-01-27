@@ -676,6 +676,7 @@ Narrow headings like codeblocks:
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
 (evil-declare-key 'normal org-mode-map ",ct" 'org-todo)
+(evil-declare-key 'normal org-mode-map ",cq" 'org-set-tags)
 (evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
 (evil-declare-key 'normal org-mode-map ",x" 'org-babel-execute)
 #+END_SRC
@@ -798,7 +799,37 @@ Integration with [[https://gohugo.io][hugo]] static site generator.
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "H"  'easy-hugo)
+(define-key evil-leader-map "Xh"  'easy-hugo)
+#+END_SRC
+
+* Read RSS with =elfeed=
+
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed
+  :ensure t)
+#+END_SRC
+
+[[https://github.com/remyhonig/elfeed-org][elfeed-org]] plugin provides elfeed RSS configuration with org-mode files.
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed-org
+  :ensure t
+  :after elfeed
+  :config
+  (elfeed-org)
+  (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed-feeds.org")))
+#+END_SRC
+
+Evil keybindings in elfeed-mode:
+#+BEGIN_SRC emacs-lisp
+(evil-define-key 'normal 'elfeed-search-mode-map (kbd "g") 'elfeed-search-browse-url)
+(evil-define-key 'normal 'elfeed-search-mode-map (kbd "q") 'elfeed-search-quit-window)
+(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",u") 'elfeed-search-fetch)
+(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",y") 'elfeed-search-yank)
+(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",f") 'elfeed-search-set-filter)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "Xf"  'elfeed)
 #+END_SRC
 
 * Snippets
@@ -1092,7 +1123,7 @@ Company is a text completion framework for Emacs that very similar with vim's de
   (setq cquery-sem-highlight-method 'font-lock))
 #+END_SRC
 
-* Learning Emacs
+* Learning and configuring Emacs
 
 ** Track frequently used commands with ~keyfreq~
 
@@ -1145,19 +1176,12 @@ Useful to find called commands names to bind them later.
   (add-hook 'org-mode-hook 'command-log-mode))
 #+END_SRC
 
-** Instant access to Emacs configuration
+** Instant access to Emacs configuration files
 #+BEGIN_SRC emacs-lisp
-(defun open-org-config-file ()
-  "Open Emacs configuration file in another window."
+(defun open-config-file (file-path)
+  "Open file from ~/.emacs.d in another window."
   (interactive)
-  (find-file-other-window (expand-file-name "config.org" user-emacs-directory)))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun open-org-config-todo-file ()
-  "Open TODO.org for Emacs configuration in another window."
-  (interactive)
-  (find-file-other-window (expand-file-name "TODO.org" user-emacs-directory)))
+  (find-file-other-window (expand-file-name file-path user-emacs-directory)))
 #+END_SRC
 
 ** Keybindings
@@ -1165,8 +1189,9 @@ Useful to find called commands names to bind them later.
 ~<leader>C~ prefix.
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "Cl"  'clm/toggle-command-log-buffer)
-(define-key evil-leader-map "CC"  'open-org-config-file)
-(define-key evil-leader-map "Ct"  'open-org-config-todo-file)
+(define-key evil-leader-map "CC"  (lambda() (interactive) (open-config-file "config.org")))
+(define-key evil-leader-map "Ct"  (lambda() (interactive) (open-config-file "TODO.org")))
+(define-key evil-leader-map "Cf"  (lambda() (interactive) (open-config-file "elfeed-feeds.org")))
 #+END_SRC
 
 * Hooks to set everything up
