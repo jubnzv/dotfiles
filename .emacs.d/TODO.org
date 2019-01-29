@@ -1,8 +1,8 @@
 #+TITLE: TODO list for my Emacs configuration
 
 * General
-** TODO Highlight current word (vim-illuminate)
-** TODO Motions in evil are weired: check =<C-i> / <C-o>=.
+** TODO Highlight current word (=vim-illuminate=)
+** Show bookmark markers in gutter (=vim signature=)
 ** TODO Undo-tree history saving works occasionally
 ** TODO Initialize nerdtree: https://github.com/jaypei/emacs-neotree
 * dired-mode
@@ -10,18 +10,21 @@
 * Programming
 ** General [0/4]
 *** TODO 80 column ruler
+*** TODO Folding seems weird
 *** TODO Snippets
 Check company backend.
-*** TODO Workflow to automate remote debugging on embedded targets
 *** TODO tagtreebar alternative
 ** C/C++ [0/1]
 *** TODO Doxygen: snippets
+** Workflow for embedded development
+*** TODO Remote gdb server integration
+*** TODO How to automate build-deploy-debug steps for remote targets?
 ** Rust [0/1]
 *** TODO Configure toolchains to make all tools from rustup work
 * org-mode
 ** TODO [#C] agenda
 *** TODO Initial setup and configuration
-*** TODO Auto-import external tasks like bugwarrior [0/3]
+*** TODO Auto-import tasks from external issue trackers (see =bugwarrior=) [0/3]
 **** TODO GitLab
 **** TODO Redmine
 **** TODO Github
@@ -32,5 +35,6 @@ See: https://github.com/akhramov/org-wild-notifier.el
 See: https://github.com/arnm/ob-mermaid
 ** TODO Bibliography references management available in both: org-mode and exported LaTeX
 See: https://github.com/jkitchin/org-ref
+** Try Emacs PDF viewer with org-mode + https://github.com/weirdNox/org-noter
 * LaTeX
 ** TODO Initial configuration

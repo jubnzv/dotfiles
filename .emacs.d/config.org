@@ -6,15 +6,17 @@ This is my Emacs configuration file written as Org document.
 
 /Note/: source code blocks marked with =:tangle no= (e.g.: =#+BEGIN_SRC emacs-lisp :tangle no=) will be disabled.
 
-** Resources / links
+** Resources
 
-+ Emacs [[http://doc.endlessparentheses.com/][online documentation]]
++ Emacs [[http://doc.endlessparentheses.com/][online documentation]] by endlessparentheses
++ Detailed [[http://doc.norang.ca/org-mode.html][org-mode guide]] by Bernt Hansen
 + [[https://github.com/noctuid/evil-guide][noctuid/evil-guide]]
 + Article: [[How to read Emacs Lisp][http://emacslife.com/how-to-read-emacs-lisp.html]]
 + Talk [[https://www.youtube.com/watch?v=gfZDwYeBlO4][Play Emacs like an instrument]] by Alain M. Lafon and his [[https://github.com/munen/emacs.d/][Emacs configuration]] written in org-mode
 + [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Emacs configuration files including interesting evil-mode setups.
 + [[https://github.com/andreyorst/dotfiles/tree/master/.emacs.d][andreyorst/dotfiles]] - Clean and easy to read emacs configuration in org-mode
 + [[https://github.com/IvanMalison/dotfiles/tree/master/dotfiles/emacs.d][IvanMalison/dotfiles]] (available in [[https://ivanmalison.github.io/dotfiles][readable format]])
++ [[https://github.com/kshenoy/dotfiles/blob/master/emacs.org][kshenoy/dotfiles]] another literate config with interesting solutions in org and evilmodes.
 
 * User info
 
@@ -627,6 +629,18 @@ Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behavio
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+END_SRC
 
+** Calendar buffer settings
+
+Set start week on monday:
+#+BEGIN_SRC emacs-lisp
+(setq calendar-week-start-day 1)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'calendar-load-hook '(lambda ()
+  (setq mark-holidays-in-calendar t)))
+#+END_SRC
+
 ** Functions
 
 Fold everything but the current headline. See this [[https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline][stackoverflow question]].
@@ -712,8 +726,23 @@ Capture templates:
 Allow code evaluation with ~org-babel-execute~:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
+  (plantuml . t)
   (shell . t)
   (python . t)))
+#+END_SRC
+
+PlantUML configuration:
+#+BEGIN_SRC emacs-lisp
+(setq org-plantuml-jar-path
+      (expand-file-name "/usr/share/plantuml/plantuml.jar"))
+#+END_SRC
+
+Instantly show generated image:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-babel-after-execute-hook
+          (lambda ()
+            (when org-inline-image-overlays
+              (org-redisplay-inline-images))))
 #+END_SRC
 
 Don't confirm codeblock evaluation:
@@ -806,26 +835,38 @@ Integration with [[https://gohugo.io][hugo]] static site generator.
 
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
-  :ensure t)
+  :ensure t
+  :config
+  (setq elfeed-set-max-connections 5)
+  (setf url-queue-timeout 10))
 #+END_SRC
 
 [[https://github.com/remyhonig/elfeed-org][elfeed-org]] plugin provides elfeed RSS configuration with org-mode files.
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed-org
   :ensure t
-  :after elfeed
-  :config
+  :init
   (elfeed-org)
+  :config
   (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed-feeds.org")))
+#+END_SRC
+
+Mark all read:
+#+BEGIN_SRC emacs-lisp
+(defun elfeed-mark-all-as-read ()
+      (interactive)
+      (mark-whole-buffer)
+      (elfeed-search-untag-all-unread))
 #+END_SRC
 
 Evil keybindings in elfeed-mode:
 #+BEGIN_SRC emacs-lisp
-(evil-define-key 'normal 'elfeed-search-mode-map (kbd "g") 'elfeed-search-browse-url)
-(evil-define-key 'normal 'elfeed-search-mode-map (kbd "q") 'elfeed-search-quit-window)
-(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",u") 'elfeed-search-fetch)
-(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",y") 'elfeed-search-yank)
-(evil-define-key 'normal 'elfeed-search-mode-map (kbd ",f") 'elfeed-search-set-filter)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "<return>") 'elfeed-search-browse-url)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "q") 'elfeed-search-quit-window)
+(evil-define-key 'normal elfeed-search-mode-map (kbd ",u") 'elfeed-search-fetch)
+(evil-define-key 'normal elfeed-search-mode-map (kbd ",y") 'elfeed-search-yank)
+(evil-define-key 'normal elfeed-search-mode-map (kbd ",f") 'elfeed-search-set-filter)
+(evil-define-key 'normal elfeed-search-mode-map (kbd ",D") 'elfeed-mark-all-as-read)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -844,7 +885,7 @@ Initialize ~yasnippet~ plugin itself:
 (use-package yasnippet
   :ensure t
   :after yasnippet-snippets
-  :init (yas-global-mode yas-minor-mode)
+  :commands (yas-reload-all yas-minor-mode)
   :config
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
@@ -943,9 +984,9 @@ Magit commands:
 
 Staging with =git-gutter=:
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "vU"  'git-gutter:revert-hunk)
-(define-key evil-leader-map "vS"  'git-gutter:stage-hunk)
-(define-key evil-leader-map "vV"  'git-gutter:popup-diff)
+(define-key evil-leader-map "v-"  'git-gutter:revert-hunk)
+(define-key evil-leader-map "v="  'git-gutter:stage-hunk)
+(define-key evil-leader-map "vv"  'git-gutter:popup-diff)
 #+END_SRC
 
 Jump between changes:
@@ -1106,6 +1147,11 @@ Company is a text completion framework for Emacs that very similar with vim's de
   (which-function-mode 1)
   (lsp-cquery-enable)
   (lsp-ui-mode)))
+#+END_SRC
+
+Enable snippets:
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-common-hook (lambda() (yas-reload-all)(yas-minor-mode)))
 #+END_SRC
 
 *** cquery
