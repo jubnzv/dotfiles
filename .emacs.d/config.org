@@ -182,7 +182,20 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 
 ** Work with recent files
 #+BEGIN_SRC emacs-lisp
-(recentf-mode t)
+(use-package recentf
+  :ensure t
+  :init
+  (add-hook 'after-init-hook #'recentf-mode)
+  (setq recentf-max-saved-items 300)
+  :config
+  (add-to-list 'recentf-exclude (expand-file-name package-user-dir))
+  (add-to-list 'recentf-exclude ".cache")
+  (add-to-list 'recentf-exclude ".mypy_cache")
+  (add-to-list 'recentf-exclude ".elfeed")
+  (add-to-list 'recentf-exclude "bookmarks")
+  (add-to-list 'recentf-exclude "recentf")
+  (add-to-list 'recentf-exclude "url")
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'"))
 #+END_SRC
 
 ** Undo-tree
