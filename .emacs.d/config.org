@@ -117,8 +117,10 @@ Activate this to make it available in all other modes:
 
 ** Show line numbers
 #+BEGIN_SRC emacs-lisp
-(setq-default display-line-numbers-current-absolute t)
-(setq-default display-line-numbers 'visual)
+(setq-default display-line-numbers-current-absolute nil
+              display-line-numbers 'visual
+              display-line-numbers-widen nil
+              display-line-numbers-width 2)
 #+END_SRC
 
 ** Page breaks
@@ -283,6 +285,12 @@ This is default behaviour in vim.
   (setq evil-shift-round nil)
   :config
   (evil-mode))
+#+END_SRC
+
+Evil-numbers:
+#+BEGIN_SRC emacs-lisp
+(use-package evil-numbers
+  :ensure t)
 #+END_SRC
 
 ** Essential key bindings
@@ -910,12 +918,17 @@ ispell can be configured to skip over regions that match regexes.
 
 * Programming facilities
 
-** Misc keybindings
+** Flycheck: display errors
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t)
+#+END_SRC
 
 Jump to errors:
 #+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal prog-mode-map "]e" 'flymake-goto-next-error)
-(evil-declare-key 'normal prog-mode-map "[e" 'flymake-goto-prev-error)
+(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
+(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
 #+END_SRC
 
 ** Code folding
@@ -963,7 +976,8 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
 (use-package git-gutter
   :ensure t
   :config
-  (global-git-gutter-mode +1))
+  (global-git-gutter-mode +1)
+  (setq git-gutter:window-width 2))
 #+END_SRC
 
 *** Keybindings
@@ -1007,8 +1021,8 @@ This plugin is required to keep current directory when moving through project fi
   :init
   (projectile-mode +1)
   :config
-  ;; Ignore cache from LSP clients
-  (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index"))
+  (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index")
+  (setq projectile-project-compilation-cmd ""))
 #+END_SRC
 
 *** Counsel backend
@@ -1067,17 +1081,18 @@ This plugin is required to keep current directory when moving through project fi
 (use-package lsp-mode
   :commands lsp
   :config
-  (setq lsp-highlight-symbol-at-point nil))
+  (setq lsp-highlight-symbol-at-point nil)
+  (setq lsp-prefer-flymake nil)
+  (setq lsp-auto-guess-root t))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package lsp-ui
   :ensure t
-  :commands lsp-ui-mode
+  :init (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   :config
-  ;; It may produces messy output for long strings. I should fix it later.
-  ;; (setq lsp-ui-sideline-enable nil)
-  )
+  ;; FIXME: It may produces messy output for long strings
+  (setq lsp-ui-sideline-enable nil))
 #+END_SRC
 
 Jump to references with ivy:
@@ -1121,11 +1136,20 @@ Company is a text completion framework for Emacs that very similar with vim's de
 #+END_SRC
 
 ** Rust
+
+*** Common
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode
   :ensure t
   :config
   (setq rust-rustfmt-bin "~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'rust-mode-hook '(lambda()
+  (flycheck-mode)
+  (yas-reload-all)
+  (yas-minor-mode)))
 #+END_SRC
 
 *** Keybindings
@@ -1143,15 +1167,12 @@ Company is a text completion framework for Emacs that very similar with vim's de
      tab-width 4)
   ;; vim's :A
   (local-set-key  (kbd "M-a") 'ff-find-other-file)
-  ;; Show function name in modeline
-  (which-function-mode 1)
+  (which-function-mode 1) ;; show function name in modeline
+  (flycheck-mode)
   (lsp-cquery-enable)
-  (lsp-ui-mode)))
-#+END_SRC
-
-Enable snippets:
-#+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-common-hook (lambda() (yas-reload-all)(yas-minor-mode)))
+  (lsp-ui-mode)
+  (yas-reload-all)
+  (yas-minor-mode)))
 #+END_SRC
 
 *** cquery
@@ -1169,6 +1190,27 @@ Enable snippets:
   (setq cquery-sem-highlight-method 'font-lock))
 #+END_SRC
 
+*** =disaster= – Disassemble C/C++ code under cursor
+
+#+BEGIN_SRC emacs-lisp
+(use-package disaster
+  :ensure t)
+#+END_SRC
+
+** Python
+
+*** Common
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook
+            (lambda ()
+              (lsp-python-enable)))
+#+END_SRC
+
+*** virtualenv
+#+BEGIN_SRC emacs-lisp
+(use-package pyvenv
+  :ensure t)
+#+END_SRC
 * Learning and configuring Emacs
 
 ** Track frequently used commands with ~keyfreq~
