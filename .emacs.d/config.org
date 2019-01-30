@@ -748,6 +748,8 @@ Allow code evaluation with ~org-babel-execute~:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (plantuml . t)
+  (ditaa . t)
+  (emacs-lisp . t)
   (shell . t)
   (python . t)))
 #+END_SRC
@@ -755,7 +757,13 @@ Allow code evaluation with ~org-babel-execute~:
 PlantUML configuration:
 #+BEGIN_SRC emacs-lisp
 (setq org-plantuml-jar-path
-      (expand-file-name "/usr/share/plantuml/plantuml.jar"))
+  (expand-file-name "/usr/share/plantuml/plantuml.jar"))
+#+END_SRC
+
+Ditaa configuration:
+#+BEGIN_SRC emacs-lisp
+(setq org-ditaa-jar-path
+  (expand-file-name "/usr/share/ditaa/ditaa.jar"))
 #+END_SRC
 
 Instantly show generated image:
@@ -769,6 +777,17 @@ Instantly show generated image:
 Don't confirm codeblock evaluation:
 #+BEGIN_SRC emacs-lisp
 (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+** Cross-references with =org-ref=
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+  :ensure t
+  :config
+  (setq org-ref-completion-library 'org-ref-ivy-cite)
+  (setq org-ref-bibliography-notes "~/Org/references_notes.org"
+        org-ref-default-bibliography '("~/Documents/references.bib")
+        org-ref-pdf-directory "~/Documents/bibtex-pdfs/"))
 #+END_SRC
 
 ** Download images to org-mode
