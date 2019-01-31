@@ -27,7 +27,7 @@ let g:which_key_map.l = {
 " }}}
 
 " {{{ Git
-let g:which_key_map.G = {
+let g:which_key_map.v = {
   \ 'name' : '+Git',
   \ 'c' : ['Gcommit', 'commit'],
   \ 's' : ['Gstatus', 'status'],
@@ -42,12 +42,9 @@ let g:which_key_map.G = {
   \ 'e' : ['Gedit', 'edit'] ,
   \ 'M' : ['Gmove', 'move'] ,
   \ 'B' : ['Twiggy', 'branches'],
-  \ 'G' : {
-  \ 'name': '+Gutter',
   \ 'v' : ['GitGutterPreviewHunk'     , 'preview'],
-  \ 'u' : ['GitGutterUndoHunk'     , 'undo'],
-  \ 's' : ['GitGutterStageHunk'     , 'stage'],
-  \ },
+  \ '-' : ['GitGutterUndoHunk'     , 'undo'],
+  \ '=' : ['GitGutterStageHunk'     , 'stage'],
   \ }
 " }}}
 

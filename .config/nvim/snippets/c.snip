@@ -1,4 +1,4 @@
-# Include-Guard {{{
+# {{{ Include-Guard
 snippet     once
 options     head
 alias       include-guard
@@ -10,7 +10,7 @@ abbr #ifndef ... #define ... #endif
     #endif /* !$1 */
 # }}}
 
-# Various printing routines {{{
+# {{{ Various printing routines
 
 # Debug prints
 # :g/\/\/\ prdbg$/d to clean them all
@@ -36,8 +36,7 @@ alias   print-bits
 
 # }}}
 
-# Common bitwise opearations {{{
-
+# {{{ Common bitwise opearations
 # Set a bit
 snippet     bws
 # abbr |=
@@ -59,23 +58,18 @@ snippet     bwtt
 
 # }}}
 
-# Comments {{{
-
+# {{{ Comments
 snippet cmret
     0 if success, -1 otherwise
-
 snippet cmrete
     0 if success, -1 and sets errno otherwise
 
 # clang-format {{{
 snippet     cmft
 options     head
-    // clang-format off
-        ${0:TARGET}
-    // clang-format on
-
-snippet     cmfts
-    // clang-format 
+    /* clang-format off */
+        ${0}
+    /* clang-format on */
 # }}}
 
 

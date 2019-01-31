@@ -1,10 +1,3 @@
-" TODO:
-" * Alternative C keymap when LSP is off
-" * Try https://github.com/neoclide/coc.nvim instead deoplete + LanguageClient
-" * ccls language server: https://github.com/MaskRay/ccls
-" * Rust: `cargo doc` integration
-" * Tmux splits support
-
 set nocompatible
 let mapleader = "\<Space>"
 if &shell =~# 'fish$'
@@ -84,7 +77,6 @@ Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
 Plug 'https://github.com/vivien/vim-linux-coding-style'
 Plug 'https://github.com/nacitar/a.vim'
 Plug 'https://github.com/raimon49/requirements.txt.vim', { 'for': 'requirements' }
-Plug 'https://github.com/fatih/vim-go', { 'for': 'go' }
 Plug 'https://github.com/alfredodeza/pytest.vim', { 'for': 'python' }
 Plug 'https://github.com/tpope/vim-scriptease'
 Plug '~/Dev/IEC.vim'
@@ -180,7 +172,7 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " configuration.
 "
 inoremap jj <Esc>
-nnoremap <A-h> :noh<CR>
+nnoremap <leader>h :noh<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -220,9 +212,9 @@ vnoremap > >gv
 nmap <leader>xc :q<CR>
 
 " Save buffer
-nmap <C-s> :w<CR>
-imap <C-s> <Esc>:w<CR>i
-nmap <leader>xs :w<CR>
+" nmap <C-s> :w<CR>
+" imap <C-s> <Esc>:w<CR>i
+nmap <leader>s :w<CR>
 
 " Fix common typos
 :command! W w
@@ -374,10 +366,10 @@ let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commen
 " {{{ Folding options
 set foldmethod=syntax
 set foldnestmax=6
-set nofoldenable                            " Disable folding when open file
+set nofoldenable       " Disable folding when open file
 set foldlevel=2
 set foldcolumn=0
-set fillchars=fold:\
+set fillchars=fold:\ 
 " }}}
 
 " {{{ Customized `CustomFoldText` function:
@@ -477,21 +469,30 @@ command! -bang -nargs=* Ag
 nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
-nnoremap <A-x> :Commands<CR>
-nnoremap <leader>fs :Ag<CR>
-nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
+autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
+
+nnoremap <leader><space> :Commands<CR>
+nnoremap <leader>xf :Files<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
 nnoremap <leader>fm :Marks<CR>
-nnoremap <leader>vc :Commits<CR>
-nnoremap <leader>vs :GFiles?<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
-nnoremap <leader>er :FZFMru <CR>
+nnoremap <leader>xr :FZFMru <CR>
+nnoremap q: :History/<CR>
 
-nnoremap <leader>xf :Files<CR>
+nnoremap <leader>fs :Ag<CR>
+nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 
-autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
+" Search in specific file types
+command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
+command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
+command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
+command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
+command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40%'})
+nnoremap <leader>fac :AgCC<CR>
+nnoremap <leader>fap :AgPython<CR>
+nnoremap <leader>far :AgRust<CR>
 " }}}
 
 " {{{ Nerdcommenter settings
@@ -543,6 +544,9 @@ nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar
 " Convert the ^M linebreak to 'normal' linebreaks
 nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
 
+" Avoid syntax highlighting for large files
+autocmd BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
+
 " {{{ ctags
 set tags=./tags;
 let g:ctags_statusline=1
@@ -576,13 +580,15 @@ call deoplete#custom#source('LanguageClient',
   \ 2)
 
 set completeopt+=preview
-" autocmd InsertLeave,CompleteDone * if pumvisible() == 0 | pclose | endif
 " }}}
 
-" {{{ Snippets configuration
+" {{{ neosnippet
 imap <A-l> <Plug>(neosnippet_expand_or_jump)
 smap <A-l> <Plug>(neosnippet_expand_or_jump)
 xmap <A-l> <Plug>(neosnippet_expand_target)
+
+" let g:neosnippet#enable_completed_snippet = 1
+" let g:neosnippet#enable_complete_done = 0
 
 " If your snippets trigger are same with builtin snippets, your snippets overwrite them.
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
@@ -591,7 +597,10 @@ let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 " {{{ LanguageClient settings
 " let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
 let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_autoStart = 1
+let g:LanguageClient_autoStart = 0
+let g:LanguageClient_hasSnippetSupport = 1
+let g:LanguageClient_waitOutputTimeout = 5
+let g:LanguageClient_hoverPreview = "Never"
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
@@ -603,14 +612,6 @@ let g:LanguageClient_rootMarkers = {
   \ 'cpp': ['compile_commands.json', 'build'],
   \ 'c': ['compile_commands.json', 'build'],
   \ }
-
-let g:LanguageClient_waitOutputTimeout = 5
-" let g:LanguageClient_hoverPreview = "Never"
-
-" There are some problems with LC cquery autosuggestions expanding when using neosnippet:
-" https://github.com/autozimu/LanguageClient-neovim/issues/379
-" https://github.com/Shougo/deoplete.nvim/issues/724#issuecomment-381312149
-let g:LanguageClient_hasSnippetSupport = 0
 
 " FIXME: Can be broken with cquery on some projects: use default `gq` instead.
 " set formatexpr=LanguageClient_textDocument_rangeFormatting()
@@ -624,7 +625,7 @@ function! LCKeymap()
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
     nnoremap gD :only<bar>vsplit<cr>gd
     nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
-    nnoremap <silent> K :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <silent> gK :call LanguageClient#textDocument_hover()<cr>
     nnoremap <silent> gm :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
     nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
@@ -719,8 +720,8 @@ let g:echodoc#type="echo"
 let g:load_doxygen_syntax=1
 
 " Configure DoxygenToolchain
-let g:DoxygenToolkit_commentType = "C++"
-let g:DoxygenToolkit_compactOneLineDoc = "yes"
+let g:DoxygenToolkit_commentType = "C"
+let g:DoxygenToolkit_compactOneLineDoc = "no"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
@@ -731,13 +732,13 @@ au FileType c nnoremap <leader>d :Dox<CR>
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
-nnoremap [v <Plug>GitGutterPrevHunk
-nnoremap ]v <Plug>GitGutterNextHunk
+nmap [v <Plug>GitGutterPrevHunk
+nmap ]v <Plug>GitGutterNextHunk
 " }}}
 
-" {{{ C/C++ settings
+" {{{ C/C++
+" au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp setlocal tw=80
-au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
 au FileType c,cpp call LCKeymap()
 
@@ -754,51 +755,25 @@ au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-incl
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 
-" {{{ Rust settings
-au FileType rust call LCKeymap()
-" }}}
-
 " {{{ Commands and binds
 au FileType c call CmdC()
 function! CmdC()
     " Clean debug prints from `prdbg` snippet
     command! CleanDebugPrints :g/\/\/\ prdbg$/d
-
-    " `ag` in C sources
-    command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
-    command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
-    command! -bang -nargs=* AgFileType call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
-    nnoremap <leader>ff :AgFileType<CR>
 endfunction
 " }}}
 
 " }}}
-
-" {{{ Golang settings
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-au FileType go nmap <leader>r <plug>(go-run)
-au FileType go nmap <leader>d <plug>(go-doc)
-au FileType go nmap <leader>f <plug>(go-fmt)
+"
+" {{{ Rust
+au FileType rust call LCKeymap()
 " }}}
 
-" {{{ Python settings
-au FileType python nnoremap <Leader>ei :!isort %<CR><CR>
+" {{{ Python
+au FileType python nnoremap <Leader>Ei :!isort %<CR><CR>
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
 au FileType python call LCKeymap()
-
-" {{{ Commands and binds
-au FileType python call CmdPy()
-function! CmdPy()
-    command! -bang -nargs=* AgFileType call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
-    nnoremap <leader>ff :AgFileType<CR>
-endfunction
-" }}}
 " }}}
 
 " {{{ vimscript
@@ -810,7 +785,7 @@ au FileType help noremap <buffer> q :q<cr>
 " }}}
 
 " {{{ IEC611-31
-let matiec_path = '/home/jubnzv/Dev/Beremiz/matiec/'
+let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 " }}}
 
@@ -829,9 +804,9 @@ let g:riv_fold_info_pos='left'
 " {{{ Markdown
 let vim_markdown_preview_github=0
 let vim_markdown_preview_hotkey='<leader>mp'
-let vim_markdown_preview_browser='Chromium'
+let vim_markdown_preview_browser='firefox'
 
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'go', 'rust']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
 
 let g:vim_markdown_folding_style_pythonic = 1
 let g:vim_markdown_folding_disabled = 0
@@ -922,13 +897,13 @@ function! ToggleLSP()
   endif
 endfunction
 
-nnoremap <leader>Tfc :call ToggleFoldColumn()<CR>
-nnoremap <leader>Tc :call ToggleConceal()<CR>
-nnoremap <leader>Tg :call Togglegjgk()<CR>
-nnoremap <leader>TL :call ToggleLSP()<CR>
-nnoremap <leader>Tp :setlocal paste!<CR>
-nnoremap <leader>Tn :call ToggleNumber()<CR>
-nnoremap <leader>TC :ColorToggle<CR>
+nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
+nnoremap <leader>tc :call ToggleConceal()<CR>
+nnoremap <leader>tg :call Togglegjgk()<CR>
+nnoremap <leader>tL :call ToggleLSP()<CR>
+nnoremap <leader>tp :setlocal paste!<CR>
+nnoremap <leader>tn :call ToggleNumber()<CR>
+nnoremap <leader>tC :ColorToggle<CR>
 " }}}
 
 " Load redundant which-key bindings
