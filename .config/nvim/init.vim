@@ -24,6 +24,10 @@ Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets,
 Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
 " }}}
 
+" {{{ tmux integration
+Plug 'https://github.com/christoomey/vim-tmux-navigator'
+" }}}
+
 " {{{ UI & appearance
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
