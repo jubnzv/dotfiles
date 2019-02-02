@@ -635,6 +635,11 @@ Enable org-indent-mode:
 (add-hook 'org-mode-hook 'org-indent-mode)
 #+END_SRC
 
+Keep track of when a certain TODO item was finished:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-done 'time)
+#+END_SRC
+
 Enable soft-wrap:
 #+BEGIN_SRC emacs-lisp
 (setq org-startup-truncated nil)
@@ -655,11 +660,6 @@ Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behavio
 Set start week on monday:
 #+BEGIN_SRC emacs-lisp
 (setq calendar-week-start-day 1)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'calendar-load-hook '(lambda ()
-  (setq mark-holidays-in-calendar t)))
 #+END_SRC
 
 ** Functions
@@ -709,18 +709,31 @@ Narrow headings like codeblocks:
 
 =,= prefix as local leader for other org-mode commands:
 #+BEGIN_SRC emacs-lisp
+;; C-c:
 (evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
 (evil-declare-key 'normal org-mode-map ",ct" 'org-todo)
 (evil-declare-key 'normal org-mode-map ",cq" 'org-set-tags)
+(evil-declare-key 'normal org-mode-map ",cc" 'org-babel-execute)
+;; C-x:
+(evil-declare-key 'normal org-mode-map ",nb" 'org-narrow-to-block)
+(evil-declare-key 'normal org-mode-map ",ne" 'org-narrow-to-element)
+(evil-declare-key 'normal org-mode-map ",nt" 'org-narrow-to-tree)
+(evil-declare-key 'normal org-mode-map ",nw" 'widen)
+;; etc.:
 (evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
-(evil-declare-key 'normal org-mode-map ",x" 'org-babel-execute)
 #+END_SRC
-
 
 Commands:
 #+BEGIN_SRC emacs-lisp
 (evil-ex-define-cmd "Cal[endar]" 'calendar)
 (evil-ex-define-cmd "Agenda" 'org-agenda)
+#+END_SRC
+
+** ox-hugo: exporter backend for Hugo
+#+BEGIN_SRC emacs-lisp
+(use-package ox-hugo
+  :ensure t
+  :after ox)
 #+END_SRC
 
 ** Notekeeping with =org-capture=
@@ -739,7 +752,7 @@ Capture templates:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",cc" 'org-capture)
+(evil-declare-key 'normal org-mode-map ",CC" 'org-capture)
 #+END_SRC
 
 ** Embedded code blocks
@@ -751,6 +764,7 @@ Allow code evaluation with ~org-babel-execute~:
   (ditaa . t)
   (emacs-lisp . t)
   (shell . t)
+  (C . t)
   (python . t)))
 #+END_SRC
 
@@ -783,6 +797,7 @@ Don't confirm codeblock evaluation:
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
   :ensure t
+  :defer t
   :config
   (setq org-ref-completion-library 'org-ref-ivy-cite)
   (setq org-ref-bibliography-notes "~/Org/references_notes.org"
@@ -853,29 +868,11 @@ Images are separated inside that image folder by additional folders one per org 
 (evil-declare-key 'normal org-mode-map ",Ds" 'org-download-screenshot)
 #+END_SRC
 
-* Hugo integration
-
-Integration with [[https://gohugo.io][hugo]] static site generator.
-#+BEGIN_SRC emacs-lisp
-(use-package easy-hugo
-  :ensure t
-  :init
-  (setq easy-hugo-basedir "~/Idie/")
-  (setq easy-hugo-url "https://idie.ru/")
-  (setq easy-hugo-root "~/Idie/public/")
-  (setq easy-hugo-postdir "~/Idie/content/notes/")
-  (setq easy-hugo-previewtime "300"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "Xh"  'easy-hugo)
-#+END_SRC
-
 * Read RSS with =elfeed=
-
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
   :ensure t
+  :defer t
   :config
   (setq elfeed-set-max-connections 5)
   (setf url-queue-timeout 10))
@@ -891,7 +888,7 @@ Integration with [[https://gohugo.io][hugo]] static site generator.
   (setq rmh-elfeed-org-files (list "~/.emacs.d/elfeed-feeds.org")))
 #+END_SRC
 
-Mark all read:
+Mark all entries as read:
 #+BEGIN_SRC emacs-lisp
 (defun elfeed-mark-all-as-read ()
       (interactive)
@@ -925,6 +922,7 @@ Initialize ~yasnippet~ plugin itself:
 (use-package yasnippet
   :ensure t
   :after yasnippet-snippets
+  :defer t
   :commands (yas-reload-all yas-minor-mode)
   :config
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
