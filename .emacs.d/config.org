@@ -11,6 +11,7 @@ This is my Emacs configuration file written as Org document.
 + Emacs [[http://doc.endlessparentheses.com/][online documentation]] by endlessparentheses
 + Detailed [[http://doc.norang.ca/org-mode.html][org-mode guide]] by Bernt Hansen
 + [[https://github.com/noctuid/evil-guide][noctuid/evil-guide]]
++ [[https://github.com/emacs-evil/evil-collection/][emacs-evil/evil-collection]] evil-mode bindings
 + Article: [[How to read Emacs Lisp][http://emacslife.com/how-to-read-emacs-lisp.html]]
 + Talk [[https://www.youtube.com/watch?v=gfZDwYeBlO4][Play Emacs like an instrument]] by Alain M. Lafon and his [[https://github.com/munen/emacs.d/][Emacs configuration]] written in org-mode
 + [[https://github.com/caisah/emacs.dz][caisah/emacs.dz]] - Emacs configuration files including interesting evil-mode setups.
@@ -156,7 +157,15 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 (use-package gruvbox-theme
   :ensure t
   :init
-  (load-theme 'gruvbox t))
+  (load-theme 'gruvbox-dark-medium t))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'line-number nil
+                    :background "gruvbox-dark0")
+(set-face-attribute 'line-number-current-line nil
+                    :background "#gruvbox-dark0"
+                    :foreground "#fabd2f")
 #+END_SRC
 
 ** Font
@@ -195,6 +204,7 @@ Instead default startup screen open ~*scratch*~ with org-mode:
   (add-to-list 'recentf-exclude "bookmarks")
   (add-to-list 'recentf-exclude "recentf")
   (add-to-list 'recentf-exclude "url")
+  (add-to-list 'recentf-exclude "TAGS")
   (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'"))
 #+END_SRC
 
@@ -276,9 +286,18 @@ This is default behaviour in vim.
 (modify-syntax-entry ?_ "w")
 #+END_SRC
 
+** Choose default external apps
+
+Web-browser:
+#+BEGIN_SRC emacs-lisp
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+#+END_SRC
+
 * Evil mode and common keybindings
 
 ** Evil: bootstrap and initial configuraiton
+
 #+BEGIN_SRC emacs-lisp
 (use-package evil
   :ensure t
@@ -303,7 +322,8 @@ This is default behaviour in vim.
 Evil-numbers:
 #+BEGIN_SRC emacs-lisp
 (use-package evil-numbers
-  :ensure t)
+  :ensure t
+  :after evil)
 #+END_SRC
 
 ** Essential key bindings
@@ -439,6 +459,11 @@ Kill all dired buffers:
 (define-key evil-leader-map "KD"  'kill-all-dired-buffers)
 #+END_SRC
 
+*** Launching applications
+#+BEGIN_SRC emacs-lisp
+(define-key evil-leader-map "Xf"  'elfeed)
+#+END_SRC
+
 ** Avy
 
 It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
@@ -463,7 +488,6 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 #+END_SRC
 
 ** Evil mode integration
-
 *** Evil mode inside =M-x package-list-packages=
 
 See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
@@ -586,12 +610,11 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (define-key evil-leader-map "fs" 'counsel-rg)
 #+END_SRC
 * Working with files
-
 ** Helpers for UNIX
 
 Those functions works like tpope's [[https://github.com/tpope/vim-eunuch][vim-eunuch]] to provide access to common shell commands.
 
-** Delete current file and buffer
+*** Delete current file and buffer
 
 See [[https://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/][this post]].
 #+BEGIN_SRC emacs-lisp
@@ -608,11 +631,32 @@ See [[https://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/][this post]
           (kill-buffer))))))
 #+END_SRC
 
-*** Define evil commands
+*** Rename current file and buffer
+
+Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .emacs]].
 #+BEGIN_SRC emacs-lisp
-(evil-ex-define-cmd "Del[ele]" 'delete-file-and-buffer)
+(defun rename-file-and-buffer (new-name)
+  "Renames both current buffer and file it's visiting to NEW-NAME."
+  (interactive "sNew name: ")
+  (let ((name (buffer-name))
+        (filename (buffer-file-name)))
+    (if (not filename)
+        (message "Buffer '%s' is not visiting a file!" name)
+      (if (get-buffer new-name)
+          (message "A buffer named '%s' already exists!" new-name)
+        (progn
+          (rename-file filename new-name 1)
+          (rename-buffer new-name)
+          (set-visited-file-name new-name)
+          (set-buffer-modified-p nil))))))
 #+END_SRC
 
+
+*** Define evil commands
+#+BEGIN_SRC emacs-lisp
+(evil-ex-define-cmd "Delele" 'delete-file-and-buffer)
+(evil-ex-define-cmd "Rename" 'rename-file-and-buffer)
+#+END_SRC
 ** dired-mode
 
 Human readable units:
@@ -620,8 +664,12 @@ Human readable units:
 (setq-default dired-listing-switches "-alh")
 #+END_SRC
 
-* org-mode
+Free my =<leader>=:
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "SPC") nil)
+#+END_SRC
 
+* org-mode
 ** General options
 
 Where are my Org files typically located:
@@ -896,25 +944,29 @@ Mark all entries as read:
       (elfeed-search-untag-all-unread))
 #+END_SRC
 
-Evil keybindings in elfeed-mode:
+Keybindings:
 #+BEGIN_SRC emacs-lisp
 (evil-define-key 'normal elfeed-search-mode-map (kbd "<return>") 'elfeed-search-browse-url)
 (evil-define-key 'normal elfeed-search-mode-map (kbd "q") 'elfeed-search-quit-window)
-(evil-define-key 'normal elfeed-search-mode-map (kbd ",u") 'elfeed-search-fetch)
-(evil-define-key 'normal elfeed-search-mode-map (kbd ",y") 'elfeed-search-yank)
-(evil-define-key 'normal elfeed-search-mode-map (kbd ",f") 'elfeed-search-set-filter)
-(evil-define-key 'normal elfeed-search-mode-map (kbd ",D") 'elfeed-mark-all-as-read)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "U") 'elfeed-search-fetch)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "y") 'elfeed-search-yank)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "f") 'elfeed-search-set-filter)
+(evil-define-key 'normal elfeed-search-mode-map (kbd "D") 'elfeed-mark-all-as-read)
 #+END_SRC
 
+* Eshell
+
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "Xf"  'elfeed)
+(evil-declare-key 'normal eshell-mode-map (kbd "M-j") 'eshell-previous-prompt)
+(evil-declare-key 'normal eshell-mode-map (kbd "M-k") 'eshell-next-prompt)
 #+END_SRC
 
 * Snippets
 
 Collection of snippets:
 #+BEGIN_SRC emacs-lisp
-(use-package yasnippet-snippets :ensure t)
+(use-package yasnippet-snippets
+  :ensure t)
 #+END_SRC
 
 Initialize ~yasnippet~ plugin itself:
@@ -1007,7 +1059,7 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   :ensure t
   :config
   (global-git-gutter-mode +1)
-  (setq git-gutter:window-width 2))
+  (setq git-gutter:window-width 1))
 #+END_SRC
 
 *** Keybindings
@@ -1052,6 +1104,9 @@ This plugin is required to keep current directory when moving through project fi
   (projectile-mode +1)
   :config
   (add-to-list 'projectile-globally-ignored-directories ".cquery_cached_index")
+  (setq projectile-enable-caching t)
+  (setq projectile-completion-system 'ivy)
+  (setq projectile-sort-order 'recently-active)
   (setq projectile-project-compilation-cmd ""))
 #+END_SRC
 
@@ -1059,6 +1114,9 @@ This plugin is required to keep current directory when moving through project fi
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-projectile
   :ensure t
+  :after (counsel projectile)
+  :init
+  (counsel-projectile-mode)
   :config
   ; Open magit-status after switch project.
   ; See: https://github.com/ericdanan/counsel-projectile/issues/62
@@ -1084,6 +1142,7 @@ This plugin is required to keep current directory when moving through project fi
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "pp"  'counsel-projectile-switch-project)
 (define-key evil-leader-map "pf"  'counsel-projectile-find-file)
+(define-key evil-leader-map "pF"  'projectile-find-file-in-known-projects)
 (define-key evil-leader-map "pd"  'counsel-projectile-find-dir)
 (define-key evil-leader-map "pb"  'counsel-projectile-switch-to-buffer)
 (define-key evil-leader-map "pD"  'projectile-dired)
@@ -1166,12 +1225,11 @@ Company is a text completion framework for Emacs that very similar with vim's de
 #+END_SRC
 
 ** Rust
-
 *** Common
 #+BEGIN_SRC emacs-lisp
 (use-package rust-mode
   :ensure t
-  :config
+  :init
   (setq rust-rustfmt-bin "~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"))
 #+END_SRC
 
@@ -1241,7 +1299,12 @@ Company is a text completion framework for Emacs that very similar with vim's de
 (use-package pyvenv
   :ensure t)
 #+END_SRC
-* Learning and configuring Emacs
+* Exploring Emacs
+** Profile startup with =ESUP=
+#+BEGIN_SRC emacs-lisp
+(use-package esup
+  :ensure t)
+#+END_SRC
 
 ** Track frequently used commands with ~keyfreq~
 
@@ -1321,7 +1384,7 @@ I have now removed any customization options that requires this hooks. But it ma
 #+BEGIN_SRC emacs-lisp :tangle no
 (defvar jubnzv:appearance-setup-done nil)
 
-defun jubnzv:appearance-setup-hook (&rest args)
+(defun jubnzv:appearance-setup-hook (&rest args)
   (unless jubnzv:appearance-setup-done
     (apply 'jubnzv:appearance args)
     (setq jubnzv:appearance-setup-done t)))
