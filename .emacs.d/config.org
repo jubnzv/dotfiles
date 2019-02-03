@@ -279,13 +279,6 @@ Indentation cannot insert tabs:
 (setq x-select-enable-clipboard t)
 #+END_SRC
 
-** Treat underscore as part of the word
-
-This is default behaviour in vim.
-#+BEGIN_SRC emacs-lisp
-(modify-syntax-entry ?_ "w")
-#+END_SRC
-
 ** Choose default external apps
 
 Web-browser:
@@ -544,6 +537,29 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
   (add-hook 'evil-org-mode-hook
             (lambda () (evil-org-set-key-theme))))
 #+END_SRC
+
+* =perspective-mode=: tmux-like workspaces
+
+I use =`= prefix to switch workspaces as well as in my =tmux= configuration. For this, I need to unbind default =evil-goto-mark= action.
+
+#+BEGIN_SRC emacs-lisp
+(use-package perspective
+  :ensure t
+  :after (evil)
+  :init
+  (persp-mode)
+  :config
+  (define-key evil-motion-state-map "`" nil)
+  (evil-declare-key 'normal global-map "`k" 'persp-kill)
+  (evil-declare-key 'normal global-map "`," 'persp-rename)
+  (evil-declare-key 'normal global-map "`r" 'persp-switch-last)
+  (evil-declare-key 'normal global-map "`s" 'persp-switch))
+
+  (evil-declare-key 'normal global-map (kbd "M-]") 'persp-next)
+  (evil-declare-key 'normal global-map (kbd "M-[") 'persp-prev)
+#+END_SRC
+
+I also use =persp-projectile= plugin which creates and deletes workspaces when I switch between =projectile= projects. See its configuration bellow.
 
 * Fuzzy completion with ivy & co
 
@@ -956,7 +972,40 @@ Keybindings:
 
 * Eshell
 
+
 #+BEGIN_SRC emacs-lisp
+(defun eshell-other-window ()
+  "Open a `eshell' in a new window."
+  (interactive)
+  (let ((buf (eshell)))
+    (switch-to-buffer (other-buffer buf))
+    (switch-to-buffer-other-window buf)))
+#+END_SRC
+
+Function from [[https://github.com/howardabrams/dot-files/][howardabrams/dot-files]]. It makes small popup shell.
+#+BEGIN_SRC emacs-lisp
+(defun eshell-here ()
+  "Opens up a new shell in the directory associated with the
+current buffer's file. The eshell is renamed to match that
+directory to make multiple eshell windows easier."
+  (interactive)
+  (let* ((parent (if (buffer-file-name)
+                     (file-name-directory (buffer-file-name))
+                   default-directory))
+         (height (/ (window-total-height) 3))
+         (name   (car (last (split-string parent "/" t)))))
+    (split-window-vertically (- height))
+    (other-window 1)
+    (eshell "new")
+    (rename-buffer (concat "*eshell: " name "*"))
+
+    (insert (concat "ls"))
+    (eshell-send-input)))
+#+END_SRC
+
+Keybindings:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal global-map "`\\" 'eshell-here)
 (evil-declare-key 'normal eshell-mode-map (kbd "M-j") 'eshell-previous-prompt)
 (evil-declare-key 'normal eshell-mode-map (kbd "M-k") 'eshell-next-prompt)
 #+END_SRC
@@ -1095,7 +1144,7 @@ Jump between changes:
 
 This plugin is required to keep current directory when moving through project files.
 
-*** Plugin initialization
+*** Initialization
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
@@ -1126,6 +1175,13 @@ This plugin is required to keep current directory when moving through project fi
 )
 #+END_SRC
 
+*** =persp-projectile=
+#+BEGIN_SRC emacs-lisp
+(use-package persp-projectile
+  :ensure t
+  :after (projectile perspective))
+#+END_SRC
+
 *** org-projectile
 
 [[https://github.com/IvanMalison/org-projectile][org-projectile]] provides functions for the creation of org-mode TODOs that are associated with projectile projects.
@@ -1154,14 +1210,14 @@ This plugin is required to keep current directory when moving through project fi
 (define-key evil-leader-map "pC"  'projectile-configure-project)
 (define-key evil-leader-map "pv"  'projectile-vc)
 (define-key evil-leader-map "pO"  'org-projectile-project-todo-completing-read)
+(evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
+(define-key evil-leader-map "ft"  'projectile-find-tag)
 #+END_SRC
 
 ** ctags
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
   :ensure t)
-
-(define-key evil-leader-map "ft" 'counsel-etags-list-tag)
 #+END_SRC
 
 ** LSP
@@ -1201,7 +1257,7 @@ Company backend:
   (setq company-lsp-enable-snippet t))
 #+END_SRC
 
-** Autocompletion with company-mode
+** Autocompletion with =company-mode=
 
 Company is a text completion framework for Emacs that very similar with vim's deoplete.
 #+begin_SRC emacs-lisp
