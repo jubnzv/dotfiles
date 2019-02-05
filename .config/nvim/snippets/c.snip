@@ -10,18 +10,21 @@ abbr #ifndef ... #define ... #endif
     #endif /* !$1 */
 # }}}
 
-# {{{ Various printing routines
+# {{{ Printing
+snippet pr
+abbr    printf("...\n", ...);
+    printf("${1}\n"${2});
 
 # Debug prints
 # :g/\/\/\ prdbg$/d to clean them all
 snippet     prdbg
 options     head
 alias       debug-print
-    printf("%s:%d ${0:MSG}\n", __func__, __LINE__); // prdbg
+    printf("%s:%d ${1}\n", __func__, __LINE__${2}); // prdbg
 snippet     prdbgk
 options     head
 alias       debug-print
-    printk("%s:%d ${0:MSG}\n", __func__, __LINE__); // prdbg
+    printk("%s:%d ${1}\n", __func__, __LINE__${2}); // prdbg
 
 # Print bits of integer
 snippet prb
@@ -36,7 +39,7 @@ alias   print-bits
 
 # }}}
 
-# {{{ Common bitwise opearations
+# {{{ Bitwise
 # Set a bit
 snippet     bws
 # abbr |=
@@ -64,7 +67,6 @@ snippet cmret
 snippet cmrete
     0 if success, -1 and sets errno otherwise
 
-# clang-format {{{
 snippet     cmft
 options     head
     /* clang-format off */
@@ -72,7 +74,41 @@ options     head
     /* clang-format on */
 # }}}
 
-
+# {{{ fork
+snippet     frk
+options     head
+abbr        fork ()
+    switch (child_pid = fork()) {
+    case -1:
+        perror("fork");
+        exit(EXIT_FAILURE);
+    case 0: {
+        ${0:TARGET}
+        exit(EXIT_SUCCESS);
+    }
+    default:
+        break;
+    }
 # }}}
 
-# vim:fdm=marker:foldlevel=0:
+# {{{ waitpid
+snippet     wpid
+options     head
+abbr        waitpid ()
+    int return_status;
+    if (waitpid(child_pid, &return_status, 0) == -1) {
+        perror("waitpid");
+        exit(EXIT_FAILURE);
+    }
+# }}}
+
+# {{{ Checking errors
+snippet     cherr
+options     head
+    if ((${1:FUNCALL}) == -1) {
+        perror(${2:ERR_MSG});
+        exit(EXIT_FAILURE);
+    }
+# }}}
+
+# vim:fdm=marker:foldlevel=0:foldenable:
