@@ -18,7 +18,7 @@ Check company backend.
 *** TODO Doxygen: snippets
 ** Workflow for embedded development
 *** TODO Remote gdb server integration
-*** TODO How to automate build-deploy-debug steps for remote targets?
+*** TODO How to automate =build-deploy-debug= steps for remote targets?
 ** Rust [0/1]
 *** TODO Configure toolchains to make all tools from rustup work
 * org-mode
@@ -31,10 +31,6 @@ Check company backend.
 *** TODO Notifications
 See: https://github.com/akhramov/org-wild-notifier.el
 
-** TODO [#C] Diagramming in org-mode
-See: https://github.com/arnm/ob-mermaid
-** TODO Bibliography references management available in both: org-mode and exported LaTeX
-See: https://github.com/jkitchin/org-ref
 ** Try Emacs PDF viewer with org-mode + https://github.com/weirdNox/org-noter
 * LaTeX
 ** TODO Initial configuration

@@ -61,7 +61,6 @@ The ~:chords~ keyword allows you to define key-chord bindings for use-package de
 #+END_SRC
 
 * UI
-
 #+BEGIN_SRC emacs-lisp
 (ignore-errors
   (menu-bar-mode -1)
@@ -329,7 +328,6 @@ Disable some default keybindings to safe my arms. I got used them years before w
 (global-set-key (kbd "C-x C-c") nil)
 (global-set-key (kbd "C-x C-s") nil)
 (global-set-key (kbd "C-x C-f") nil)
-(global-set-key (kbd "M-x") nil)
 
 ;; Window management is implemented by evil's <C-w>
 (global-set-key (kbd "C-x 1") nil)
@@ -383,11 +381,6 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 (define-key evil-leader-map "xk" 'kill-buffer)
 (define-key evil-leader-map "xc" 'save-buffers-kill-terminal)
 (define-key evil-leader-map " " 'counsel-M-x)
-#+END_SRC
-
-*** Reload configuration file
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "R"  (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
 #+END_SRC
 
 *** =:noh=
@@ -480,22 +473,7 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   (which-key-mode))
 #+END_SRC
 
-** Evil mode integration
-*** Evil mode inside =M-x package-list-packages=
-
-See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
-#+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'evil
-  ;; use evil mode in the buffer created from calling `list-packages'.
-  (add-to-list 'evil-buffer-regexps '("*Packages*" . normal))
-  (with-eval-after-load 'package
-  ;; movement keys j,k,l,h set up for free by defaulting to normal mode.
-  ;; mark, unmark, install
-  (evil-define-key 'normal package-menu-mode-map (kbd "m") #'package-menu-mark-install)
-  (evil-define-key 'normal package-menu-mode-map (kbd "u") #'package-menu-mark-unmark)
-  (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
-#+END_SRC
-
+** Evil plugins
 *** Evil surround
 
 #+BEGIN_SRC emacs-lisp
@@ -538,6 +516,32 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
             (lambda () (evil-org-set-key-theme))))
 #+END_SRC
 
+** Evil bindings for major modes
+*** =M-x package-list-packages=
+
+See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'evil
+  ;; use evil mode in the buffer created from calling `list-packages'.
+  (add-to-list 'evil-buffer-regexps '("*Packages*" . normal))
+  (with-eval-after-load 'package
+  ;; movement keys j,k,l,h set up for free by defaulting to normal mode.
+  ;; mark, unmark, install
+  (evil-define-key 'normal package-menu-mode-map (kbd "m") #'package-menu-mark-install)
+  (evil-define-key 'normal package-menu-mode-map (kbd "u") #'package-menu-mark-unmark)
+  (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
+#+END_SRC
+
+*** =image-mode=
+#+BEGIN_SRC emacs-lisp
+(evil-define-key 'normal image-mode-map "q" 'quit-window)
+#+END_SRC
+
+*** =help-mode=
+#+BEGIN_SRC emacs-lisp
+(evil-define-key 'normal help-mode-map "q" 'quit-window)
+#+END_SRC
+
 * =perspective-mode=: tmux-like workspaces
 
 I use =`= prefix to switch workspaces as well as in my =tmux= configuration. For this, I need to unbind default =evil-goto-mark= action.
@@ -550,13 +554,14 @@ I use =`= prefix to switch workspaces as well as in my =tmux= configuration. For
   (persp-mode)
   :config
   (define-key evil-motion-state-map "`" nil)
+  (evil-declare-key 'normal global-map (kbd "`-]") 'persp-next)
+  (evil-declare-key 'normal global-map (kbd "`-[") 'persp-prev)
   (evil-declare-key 'normal global-map "`k" 'persp-kill)
   (evil-declare-key 'normal global-map "`," 'persp-rename)
   (evil-declare-key 'normal global-map "`r" 'persp-switch-last)
-  (evil-declare-key 'normal global-map "`s" 'persp-switch))
-
-  (evil-declare-key 'normal global-map (kbd "M-]") 'persp-next)
-  (evil-declare-key 'normal global-map (kbd "M-[") 'persp-prev)
+  (evil-declare-key 'normal global-map "`s" 'persp-switch)
+  (evil-declare-key 'normal global-map "`=" 'persp-add-buffer)
+  (evil-declare-key 'normal global-map "`-" 'persp-remove-buffer))
 #+END_SRC
 
 I also use =persp-projectile= plugin which creates and deletes workspaces when I switch between =projectile= projects. See its configuration bellow.
@@ -1342,9 +1347,8 @@ Company is a text completion framework for Emacs that very similar with vim's de
 #+END_SRC
 
 ** Python
-
 *** Common
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (add-hook 'python-mode-hook
             (lambda ()
               (lsp-python-enable)))
@@ -1355,6 +1359,30 @@ Company is a text completion framework for Emacs that very similar with vim's de
 (use-package pyvenv
   :ensure t)
 #+END_SRC
+** Emacs Lisp
+
+#+BEGIN_SRC emacs-lisp
+(use-package lispy
+  :ensure t)
+#+END_SRC
+
+=lispyville-mode= is =lispy-mode= integrated with evil.
+#+BEGIN_SRC emacs-lisp
+(use-package lispyville
+  :ensure t
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
+#+END_SRC
+
+=rainbow-delimiters= mode is too distracting for languages other than lisp.
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :commands (rainbow-delimiters-mode rainbow-delimiters)
+  :init
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
+#+END_SRC
+
 * Exploring Emacs
 ** Profile startup with =ESUP=
 #+BEGIN_SRC emacs-lisp
@@ -1423,12 +1451,25 @@ Useful to find called commands names to bind them later.
 
 ** Keybindings
 
-~<leader>C~ prefix.
 #+BEGIN_SRC emacs-lisp
+(which-key-add-key-based-replacements "SPC C" "Configure Emacs")
+
 (define-key evil-leader-map "Cl"  'clm/toggle-command-log-buffer)
+
 (define-key evil-leader-map "CC"  (lambda() (interactive) (open-config-file "config.org")))
-(define-key evil-leader-map "Ct"  (lambda() (interactive) (open-config-file "TODO.org")))
-(define-key evil-leader-map "Cf"  (lambda() (interactive) (open-config-file "elfeed-feeds.org")))
+(which-key-add-key-based-replacements "SPC C C" " config.org")
+
+(define-key evil-leader-map "Ct"  (lambda()
+  (interactive) (open-config-file "TODO.org")))
+(which-key-add-key-based-replacements "SPC C t" " TODO.org")
+
+(define-key evil-leader-map "Cf"  (lambda()
+  (interactive) (open-config-file "elfeed-feeds.org")))
+(which-key-add-key-based-replacements "SPC C f" " elfeed-feeds.org")
+
+(define-key evil-leader-map "Cr"  (lambda()
+  (interactive)(load-file "~/.emacs.d/init.el")))
+(which-key-add-key-based-replacements "SPC C r" "reload config")
 #+END_SRC
 
 * Hooks to set everything up
