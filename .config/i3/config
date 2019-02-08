@@ -137,6 +137,9 @@ bindsym $mod+period focus right
 bindsym $mod+bracketleft focus left
 bindsym $mod+bracketright focus right
 
+# Goto last workspace
+bindsym $mod+r workspace back_and_forth
+
 # Switch between workspaces (all screens)
 bindsym $mod+Next workspace next
 bindsym $mod+Prior workspace prev
@@ -161,10 +164,9 @@ bindsym $mod+4 workspace number 12$tile_12_4
 bindsym $mod+0 workspace number 13$tile_13_msg
 bindsym $mod+m workspace number 14$tile_14_music
 
-# Moar workspace control
+# Control urgent workspaces
 bindsym $mod+u [urgent=latest] focus
-bindsym $mod+r workspace back_and_forth
-bindsym $mod+6 workspace back_and_forth
+bindsym $mod+Control+u exec --no-startup-id $SCRIPTS_PATH/unset-urgent.sh
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
@@ -183,15 +185,18 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-bindsym $mod+Control+q exec emacsclient -c
+# bindsym $mod+Control+q exec emacsclient -c
+# bindsym $mod+Control+q exec ~/Sources/remacs/src/remacs
+bindsym $mod+Control+q exec emacs
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
 bindsym $mod+Control+F5 workspace 2$tile_02_w; exec chromium --profile-directory=Dev
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
-bindsym $mod+Control+f workspace 4$tile_04_f; exec $TERMINAL -e ranger
+bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
-bindsym $mod+Control+x exec xterm
+# bindsym $mod+Control+x exec xterm
+bindsym $mod+Control+k exec keepassxc # focus keepassxc window
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
 
 # Brightness control
@@ -257,8 +262,8 @@ bindsym XF86Display mode $mode_exec_peripherial
 mode --pango_markup "$mode_exec_peripherial" {
      bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
      bindsym m exec arandr; mode "default"
-     bindsym e exec $SCRIPTS_PATH/xrandr-dual-on; mode "default"
-     bindsym d exec $SCRIPTS_PATH/xrandr-dual-off; mode "default"
+     bindsym e exec $SCRIPTS_PATH/xrandr-dual-on; mode "default"; exec i3-msg "restart"
+     bindsym d exec $SCRIPTS_PATH/xrandr-dual-off; mode "default"; exec i3-msg "restart"
      bindsym t exec $SCRIPTS_PATH/touchpad-toggle -v; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
@@ -337,6 +342,7 @@ bar {
     strip_workspace_numbers yes
     binding_mode_indicator yes
     status_command i3blocks
+    # status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
     colors {
         background		#282828
         statusline		#bdae93
