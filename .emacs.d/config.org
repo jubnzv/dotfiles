@@ -383,6 +383,13 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 (define-key evil-leader-map " " 'counsel-M-x)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(define-key evil-normal-state-map ",hf" 'describe-function)
+(define-key evil-normal-state-map ",ho" 'describe-symbol)
+(define-key evil-normal-state-map ",hk" 'describe-key)
+(define-key evil-normal-state-map ",hv" 'describe-variable)
+#+END_SRC
+
 *** =:noh=
 #+BEGIN_SRC emacs-lisp
 (define-key evil-leader-map "h"  'evil-ex-nohighlight)
@@ -397,7 +404,7 @@ Disabled for now. It's terrible habit, because it may causes ~Software Flow Cont
 
 *** Remove trailing whitespaces
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "es"  'delete-trailing-whitespace)
+(define-key evil-leader-map "Es"  'delete-trailing-whitespace)
 #+END_SRC
 
 *** Expand region
@@ -540,6 +547,11 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 *** =help-mode=
 #+BEGIN_SRC emacs-lisp
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
+#+END_SRC
+
+*** =calc-mode=
+#+BEGIN_SRC emacs-lisp
+(evil-set-initial-state 'calc-mode 'emacs)
 #+END_SRC
 
 * =perspective-mode=: tmux-like workspaces
@@ -719,10 +731,35 @@ Show inline images (~file://~ links):
 (setq org-startup-with-inline-images t)
 #+END_SRC
 
-Disable ~evil-auto-indent~ for org-mode. Using to prevent annoying ~O/o~ behaviour when insert after heading:
+Disable ~evil-auto-indent~ for org-mode. Using to prevent weird =O/o= behaviour when insert after heading:
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+END_SRC
+
+Easy templates:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-structure-template-alist '("se" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang=\"lisp\">\n?\n</src>"))
+(add-to-list 'org-structure-template-alist '("sb" "#+BEGIN_SRC bash\n?\n#+END_SRC" "<src lang=\"bash\">\n?\n</src>"))
+(add-to-list 'org-structure-template-alist '("spl" "#+BEGIN_SRC plant-uml :file img/ \n?\n#+END_SRC"))
+(add-to-list 'org-structure-template-alist '("ss" "#+BEGIN_SRC shell\n?\n#+END_SRC"))
+(add-to-list 'org-structure-template-alist '("sS" "#+BEGIN_SRC shell :dir \"/sudo::\"\n?\n#+END_SRC"))
+#+END_SRC
+
+*** Inline tasks
+
+/Inline tasks/ -- TODO entries embedded in text without treating it is an outline heading. See this [[https://orgmode.org/worg/org-faq.html#list-item-as-todo][article]] for more.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-inlinetask-show-first-star t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-inlinetask)
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map ",i" 'org-inlinetask-insert-task)
+#+end_src
 
 ** Calendar buffer settings
 
