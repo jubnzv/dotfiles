@@ -31,18 +31,19 @@ This is my Emacs configuration file written as Org document.
 #+END_SRC
 
 * Packages
-
-Initialize package manager:
+** Initialize package manager
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
 (add-to-list 'package-archives
-    '("melpa" . "https://melpa.org/packages/") t)
+  '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+  '("org" . "https://orgmode.org/elpa/") t)
 (package-initialize)
 (when (not package-archive-contents) (package-refresh-contents))
 #+END_SRC
 
-Bootstrap use-package:
+** Bootstrap =use-package=
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
@@ -51,7 +52,13 @@ Bootstrap use-package:
 (setq use-package-always-ensure t)
 #+END_SRC
 
-Load use-package extensions:
+** Load local packages
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path "~/.emacs.d/lisp/")
+#+END_SRC
+
+** Load use-package extensions
 
 The ~:chords~ keyword allows you to define key-chord bindings for use-package declarations in the same manner as the =:bind= keyword.
 #+BEGIN_SRC emacs-lisp
@@ -703,6 +710,23 @@ Free my =<leader>=:
 #+END_SRC
 
 * org-mode
+
+** Initialization
+
+[[https://orgmode.org/elpa.html][org-plus-contrib]] is an org-mode distribution that also includes additional "contrib" packages.
+#+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'org-plus-contrib)
+  (package-refresh-contents)
+(package-install 'org-plus-contrib))
+#+END_SRC
+
+Bootstap =org-mode= itself:
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :defer t
+  :ensure org-plus-contrib)
+#+END_SRC
+
 ** General options
 
 Where are my Org files typically located:
@@ -745,6 +769,17 @@ Easy templates:
 (add-to-list 'org-structure-template-alist '("sS" "#+BEGIN_SRC shell :dir \"/sudo::\"\n?\n#+END_SRC"))
 #+END_SRC
 
+** org modules
+
+Org-mode Contributed Packages which already included in default Emacs installation but requires additional loading. See complete list with descriptions [[https://orgmode.org/worg/org-contrib/][here]].
+
+*** =org-drill=
+
+Flashcards and spaced repetition for org-mode. See description with usage examples [[https://orgmode.org/worg/org-contrib/org-drill.html][here]].
+#+BEGIN_SRC emacs-lisp
+(require 'org-drill)
+#+END_SRC
+
 *** Inline tasks
 
 /Inline tasks/ -- TODO entries embedded in text without treating it is an outline heading. See this [[https://orgmode.org/worg/org-faq.html#list-item-as-todo][article]] for more.
@@ -753,6 +788,7 @@ Easy templates:
 (setq org-inlinetask-show-first-star t)
 #+END_SRC
 
+=org-inlinetask.elc= is already included in Emacs 26.1 package from Debian 10.
 #+BEGIN_SRC emacs-lisp
 (require 'org-inlinetask)
 #+end_src
