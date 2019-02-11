@@ -6,10 +6,19 @@
 
 function get_context {
     local ctx="$(task rc.gc=off _get rc.context)"
-    if [ -z $ctx ]; then
-        echo "<span color='#83a598'>?</span>"
+
+    # Set color indicator if there are active tasks
+    if [ "$(task rc.gc=off +ACTIVE count)" -ne "0" ]; then
+        ctx_clr="#fabd2f"
     else
-        echo "$ctx" | head -c 1 | tr a-z A-Z
+        ctx_clr="#8f3f71"
+    fi
+
+    if [ -z $ctx ]; then
+        echo "<span color='$ctx_clr'>?</span>"
+    else
+        ctx_fmt=$(echo "$ctx" | head -c 1 | tr a-z A-Z)
+        echo "<span color='$ctx_clr'>$ctx_fmt</span>"
     fi
 }
 

@@ -1,60 +1,66 @@
-" Misc
-let mapleader = "-"
+let mapleader = " "
 set nocompatible
 
-" GUI options
-set guioptions-=m  "remove menu bar
-set guioptions-=T  "remove toolbar
-set guioptions-=r  "remove right-hand scroll bar
-set guioptions-=L  "remove left-hand scroll bar
+" {{{ General
+set viminfo='1000,f1                        " Save global marks for up to 1000 files
+set scrolloff=7                             " 7 lines above/below cursor when scrolling
+set scroll=7                                " Number of lines scrolled by <C-u> and <C-d>
+set undofile
+set undodir=$HOME/.vim/undo
+set undolevels=1000
+set undoreload=10000
+set clipboard=unnamedplus,unnamed           " Use system clipboard
+set showmatch                               " Show matching brackets when text indicator is over them
+set mat=1                                   " How many tenths of a second to blink when matching brackets
+set wildmenu                                " wildmenu: command line completion
+set wildmode=longest,list
+set wildignore=*.o,*~,*.pyc,*.aux,*.out,*.toc
+set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
+set notimeout                               " Remove delay between complex keybindings.
+set noautochdir                             " Set working directory to the current file
+set autoindent                              " Autoindent when starting new line, or using o or O.
+set noautoread                              " Don't reload unchanged files automatically.
+set hidden
+set tabstop=4
+set shiftwidth=4
+set expandtab                               " On pressing tab insert 4 spaces
+
+" Cyrillic layout in normal mode
+set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
+set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
+" }}}
+
+" {{{ UI options
+set guioptions-=m                           " Remove menu bar
+set guioptions-=T                           " Remove toolbar
+set guioptions-=r                           " Remove right-hand scroll bar
+set guioptions-=L                           " Remove left-hand scroll bar
+set shortmess+=Ic                           " Don't display the intro message on starting vim
+set noshowmode
 set relativenumber
 set cursorline
-set laststatus=2 " always show status line
+set laststatus=2                            " Always show status line
+set title                                   " Show window title
+set signcolumn=yes
+set background=dark
+" set t_Co=256                                " 256-colors mode
+set guicursor+=c-ci-cr:block                " Cursor style
 
-" Relative or absolute number lines
-function! NumberToggle()
-    if(&nu == 1)
-        set nu!
-        set rnu
-    else
-        set nornu
-        set nu
-    endif
-endfunction
-"""
+" Italic symbols in terminal
+set t_ZH=^[[3m
+set t_ZR=^[[23m
+" }}}
 
-""" Keybindings
-nmap <F1> :echo <CR>
-imap <F1> <C-o>:echo <CR>
-nnoremap <F9> :call NumberToggle()<CR>
+" {{{ Keybindings
 imap jj <Esc>
-imap <C-f> <right>
-imap <C-b> <left>
-imap <C-p> <up>
-imap <C-n> <down>
-imap <A-f> <right>
-imap <A-b> <left>
-map <Leader>j <Esc>
-map <Leader>w :w<cr>
-map <Leader>x :x<cr>
-map <Leader>q :q<cr>
-map <Leader>` :qa!<cr>
-map <Leader>= :bn<cr>
-map <Leader>- :bp<cr>
-map <Leader>+ :bd<cr>
-map <C-X><C-C> :qa<cr>
-map <C-X><C-D> :bd<cr>
-inoremap <Leader>; <C-o>A;
-inoremap <Leader>j; <C-o>A;<CR>
+nnoremap <leader>b :ls<CR>:b<space>
+" }}}
 
 """ Appearance
 set wildmenu
 set wildmode=longest,list
 
-" Coding style
-set tabstop=4
-set shiftwidth=4
-set expandtab  " on pressing tab insert 4 spaces
 " 80+ characters line highlight
 highlight ColorColumn ctermbg=magenta
 call matchadd('ColorColumn', '\%81v', 100)

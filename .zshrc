@@ -5,8 +5,9 @@ source ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
 source ~/.config/zsh/shrink-path.plugin.zsh
 source ~/.config/zsh/zsh-autopair/autopair.plugin.zsh
 source ~/.config/zsh/z/z.sh
-# source /usr/share/autojump/autojump.sh
 # }}}
+
+fpath=( ~/.zfunc "${fpath[@]}" )
 
 # {{{ Environment variables
 # PATH
@@ -22,6 +23,7 @@ export DOCKER_ID_USER="jubnzv1"
 
 # Misc
 export EDITOR="nvim"
+export ALTERNATE_EDITOR="nvim"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
 export TERMCMD="kitty"
 export TERMINAL="kitty -e"
@@ -46,13 +48,17 @@ zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats '  %b'
 setopt prompt_subst
 
-# Set another cursor color when running inside tmux
-zle-line-init () {
-if [[ -z "$TMUX" ]]; then
-    echo -ne "\033]12;Grey\007"
-fi
+function precmd() {
+    vcs_info
 }
-zle -N zle-line-init
+
+# Set another cursor color when running inside tmux
+# zle-line-init () {
+# if [[ -z "$TMUX" ]]; then
+#     echo -ne "\033]12;Grey\007"
+# fi
+# }
+# zle -N zle-line-init
 
 PS1='%{$fg[yellow]%}$(shrink_path -f)%{$reset_color%}%{$fg[cyan]%}${vcs_info_msg_0_}%{$reset_color%} '
 # }}}
@@ -72,12 +78,17 @@ setopt auto_pushd
 setopt pushd_ignore_dups
 
 # Disable mail checking: use mail client instead
-MAILCHECK=0
+export MAILCHECK=0
+
+# Disable flow control
+stty -ixon
 
 # {{{ History configuration
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
 export SAVEHIST=100000
+setopt incappendhistory
+setopt sharehistory
 # Write to the history file immediately, not when the shell exits.
 setopt INC_APPEND_HISTORY
 # Don't record an entry that was just recorded again.
@@ -106,6 +117,8 @@ alias r='ranger'
 alias zt='zathura'
 alias mrg='mirage'
 alias j='z'
+alias g='git'
+alias tm='tmux'
 
 # vim
 alias :e='nvim'
@@ -115,6 +128,7 @@ alias vim='nvim'
 alias vc='nvim -u NONE'
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
+alias vi3s='nvim ~/.config/i3/i3status-rust.toml; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
 function vn() {
@@ -196,6 +210,8 @@ alias tdd="t due:today"                                    # Due today (hard dea
 alias tsw="t due.before:eow+1d or scheduled.before:eow+1d" # Due this week (hard and soft deadlines)
 alias tsd="t due:today or scheduled:today"                 # Due today (hard and soft deadlines)
 
+alias bwp="bugwarrior-pull"
+
 # {{{ M-t: Select id one of taskwarrior tasks with fzf
 fzf_show_task() {
     task_id=$(t minimal 2> /dev/null                      \
@@ -215,6 +231,10 @@ if [[ "$(command -v task)" ]]; then
 else
     alias cal="cal -3"
 fi
+# }}}
+
+# {{{ Rust
+alias rusti='rustup run nightly-2016-08-01 ~/.cargo/bin/rusti'
 # }}}
 
 # }}}
@@ -318,6 +338,11 @@ export _Z_EXCLUDE_DIRS=(
 )
 # }}}
 
+# {{{ zce
+zstyle ':zce:*' fg 'fg=124,bold'
+zstyle ':zce:*' bg 'fg=7'
+# }}}
+
 # }}}
 
 # {{{ nnn configuration
@@ -328,6 +353,15 @@ export NNN_BMS='d:~/Documents;D:~/Downloads/;u:~/Uni/;m:/mnt/;M:/media/jubnzv/;w
 # {{{ Git
 alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 # }}}
+
+# {{{ Completion
+compdef sshrc=ssh
+compdef git_cfg=git
+compdef t=task
+# }}}
+
+# Load temporary private settings
+source ~/Work/env.sh
 
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
