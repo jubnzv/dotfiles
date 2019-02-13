@@ -35,10 +35,14 @@ This is my Emacs configuration file written as Org document.
 #+BEGIN_SRC emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-  '("melpa" . "https://melpa.org/packages/") t)
-(add-to-list 'package-archives
-  '("org" . "https://orgmode.org/elpa/") t)
+(setq package-archives
+      '(("gnu"     . "https://elpa.gnu.org/packages/")
+        ("org" . "https://orgmode.org/elpa/")
+        ("melpa"        . "https://melpa.org/packages/"))
+      package-archive-priorities
+      '(("org" . 10)
+        ("gnu"     . 5)
+        ("melpa"        . 0)))
 (package-initialize)
 (when (not package-archive-contents) (package-refresh-contents))
 #+END_SRC
@@ -697,6 +701,15 @@ Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .e
 (evil-ex-define-cmd "Delele" 'delete-file-and-buffer)
 (evil-ex-define-cmd "Rename" 'rename-file-and-buffer)
 #+END_SRC
+** Open files with external applications
+#+BEGIN_SRC emacs-lisp
+(use-package openwith
+  :ensure t
+  :config
+  (openwith-mode t)
+  (setq openwith-associations '(("\\.pdf\\'" "zathura" (file)))))
+#+END_SRC
+
 ** dired-mode
 
 Human readable units:
@@ -710,29 +723,44 @@ Free my =<leader>=:
 #+END_SRC
 
 * org-mode
-
 ** Initialization
 
 [[https://orgmode.org/elpa.html][org-plus-contrib]] is an org-mode distribution that also includes additional "contrib" packages.
 #+BEGIN_SRC emacs-lisp
 (unless (package-installed-p 'org-plus-contrib)
   (package-refresh-contents)
-(package-install 'org-plus-contrib))
+  (package-install 'org-plus-contrib))
 #+END_SRC
 
-Bootstap =org-mode= itself:
+Ensure that ELPA version gets picked up, not the shipped version.
 #+BEGIN_SRC emacs-lisp
 (use-package org
-  :defer t
-  :ensure org-plus-contrib)
+  :ensure org-plus-contrib
+  :pin org)
 #+END_SRC
+
+*** org modules
+
+Some of org-mode Contributed Packages are already included in default Emacs installation but requires additional loading. See complete list with descriptions [[https://orgmode.org/worg/org-contrib/][here]].
+
+**** Inline tasks
+
+/Inline tasks/ -- TODO entries embedded in text without treating it is an outline heading. See this [[https://orgmode.org/worg/org-faq.html#list-item-as-todo][article]] for more.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-inlinetask-show-first-star t)
+#+END_SRC
+
+/Note/: =org-inlinetask.elc= is already included in Emacs 26.1 package from Debian 10.
+#+BEGIN_SRC emacs-lisp
+(require 'org-inlinetask)
+#+end_src
 
 ** General options
 
 Where are my Org files typically located:
 #+BEGIN_SRC emacs-lisp
 (setq org-directory "~/Org/")
-(setq org-agenda-files "~/Org/Agenda/")
 #+END_SRC
 
 Enable org-indent-mode:
@@ -760,42 +788,50 @@ Disable ~evil-auto-indent~ for org-mode. Using to prevent weird =O/o= behaviour 
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
 #+END_SRC
 
-Easy templates:
+Set external applications to open exported files:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-structure-template-alist '("se" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC" "<src lang=\"lisp\">\n?\n</src>"))
-(add-to-list 'org-structure-template-alist '("sb" "#+BEGIN_SRC bash\n?\n#+END_SRC" "<src lang=\"bash\">\n?\n</src>"))
-(add-to-list 'org-structure-template-alist '("spl" "#+BEGIN_SRC plant-uml :file img/ \n?\n#+END_SRC"))
-(add-to-list 'org-structure-template-alist '("ss" "#+BEGIN_SRC shell\n?\n#+END_SRC"))
-(add-to-list 'org-structure-template-alist '("sS" "#+BEGIN_SRC shell :dir \"/sudo::\"\n?\n#+END_SRC"))
+(if (assoc "\\.x?html?\\'" org-file-apps)
+  (setcdr (assoc "\\.x?html?\\'" org-file-apps) "firefox %s"))
 #+END_SRC
 
-** org modules
-
-Org-mode Contributed Packages which already included in default Emacs installation but requires additional loading. See complete list with descriptions [[https://orgmode.org/worg/org-contrib/][here]].
-
-*** =org-drill=
-
-Flashcards and spaced repetition for org-mode. See description with usage examples [[https://orgmode.org/worg/org-contrib/org-drill.html][here]].
+** org-agenda
 #+BEGIN_SRC emacs-lisp
-(require 'org-drill)
+(setq org-agenda-files (append
+                        (list "~/Org/Agenda.org")
+                        (file-expand-wildcards "~/Uni/*/Notes.org")))
 #+END_SRC
 
-*** Inline tasks
+** Alerts
 
-/Inline tasks/ -- TODO entries embedded in text without treating it is an outline heading. See this [[https://orgmode.org/worg/org-faq.html#list-item-as-todo][article]] for more.
-
-#+BEGIN_SRC emacs-lisp
-(setq org-inlinetask-show-first-star t)
-#+END_SRC
-
-=org-inlinetask.elc= is already included in Emacs 26.1 package from Debian 10.
-#+BEGIN_SRC emacs-lisp
-(require 'org-inlinetask)
+=org-wild-notifier= adds notification support for org-agenda views.
+#+begin_src emacs-lisp
+(use-package org-wild-notifier
+  :ensure t
+  :config
+  (org-wild-notifier-mode)
+  (setq org-wild-notifier-notification-title "org-mode")
+  (add-to-list 'org-default-properties "WILD_NOTIFIER_NOTIFY_BEFORE"))
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",i" 'org-inlinetask-insert-task)
+Show system-wide notifications with =libnotify=:
+#+begin_src emacs-lisp
+(setq alert-default-style 'libnotify)
 #+end_src
+
+** Easy templates
+
+Get easy-templates back in org-mode 9.2:
+#+BEGIN_SRC emacs-lisp
+(require 'org-tempo)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
+(add-to-list 'org-structure-template-alist '("spl" . "src plantuml :file img/tmp.png"))
+(add-to-list 'org-structure-template-alist '("ss" . "src shell"))
+(add-to-list 'org-structure-template-alist '("sS" . "src shell :dir \"/sudo::\""))
+(add-to-list 'org-structure-template-alist '("sC" . "src C"))
+#+END_SRC
 
 ** Calendar buffer settings
 
@@ -867,9 +903,12 @@ Narrow headings like codeblocks:
 
 Commands:
 #+BEGIN_SRC emacs-lisp
-(evil-ex-define-cmd "Cal[endar]" 'calendar)
-(evil-ex-define-cmd "Agenda" 'org-agenda)
+(evil-ex-define-cmd "cal" 'calendar)
 #+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal org-mode-map ",i" 'org-inlinetask-insert-task)
+#+end_src
 
 ** ox-hugo: exporter backend for Hugo
 #+BEGIN_SRC emacs-lisp
@@ -933,6 +972,11 @@ Instantly show generated image:
 Don't confirm codeblock evaluation:
 #+BEGIN_SRC emacs-lisp
 (setq org-confirm-babel-evaluate nil)
+#+END_SRC
+
+Collapse source code blocks when open an org file.
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook 'org-hide-block-all)
 #+END_SRC
 
 ** Cross-references with =org-ref=
@@ -1433,6 +1477,11 @@ Company is a text completion framework for Emacs that very similar with vim's de
   :ensure t)
 #+END_SRC
 ** Emacs Lisp
+
+Treat dash as part of word:
+#+BEGIN_SRC emacs-lisp
+(modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package lispy

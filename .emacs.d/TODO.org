@@ -2,35 +2,41 @@
 
 * General
 ** TODO Highlight current word (=vim-illuminate=)
-** Show bookmark markers in gutter (=vim signature=)
-** TODO Undo-tree history saving works occasionally
+** TODO Show bookmark markers in gutter (=vim signature=)
 ** TODO Initialize nerdtree: https://github.com/jaypei/emacs-neotree
 * dired-mode
 ** TODO Initial configuration, keybindings
 * Programming
-** General [0/4]
+** General [0/6]
 *** TODO 80 column ruler
 *** TODO Folding seems weird
-*** TODO Snippets
+*** TODO Yasnippet snippets
 Check company backend.
 *** TODO tagtreebar alternative
+*** TODO Previews in =counsel-rg=
+
+I need something like [[https://vimawesome.com/plugin/fzf#preview-window][FZF preview window]] from my neovim+tmux environment.
+
+*** TODO etags extremely slow in large codebases
 ** C/C++ [0/1]
 *** TODO Doxygen: snippets
 ** Workflow for embedded development
 *** TODO Remote gdb server integration
 *** TODO How to automate =build-deploy-debug= steps for remote targets?
+
+Some workflow examples:
++ [[https://github.com/cjohansson/emacs-ssh-deploy][cjohansson/emacs-ssh-deploy]]
++ [[https://github.com/emacs-php/emacs-auto-deployment][emacs-php/emacs-auto-deployment]]
+
 ** Rust [0/1]
 *** TODO Configure toolchains to make all tools from rustup work
 * org-mode
-** TODO [#C] agenda
-*** TODO Initial setup and configuration
+** TODO agenda
 *** TODO Auto-import tasks from external issue trackers (see =bugwarrior=) [0/3]
 **** TODO GitLab
 **** TODO Redmine
 **** TODO Github
-*** TODO Notifications
-See: https://github.com/akhramov/org-wild-notifier.el
 
-** Try Emacs PDF viewer with org-mode + https://github.com/weirdNox/org-noter
+** TODO Try Emacs PDF viewer with org-mode + https://github.com/weirdNox/org-noter
 * LaTeX
 ** TODO Initial configuration
