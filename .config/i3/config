@@ -186,8 +186,7 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
 # bindsym $mod+Control+q exec emacsclient -c
-# bindsym $mod+Control+q exec ~/Sources/remacs/src/remacs
-bindsym $mod+Control+q exec emacs
+bindsym $mod+Control+q exec remacs
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox

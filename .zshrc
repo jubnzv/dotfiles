@@ -136,9 +136,10 @@ function vn() {
 }
 
 # emacs
-alias em='emacs -nw'
+alias em='remacs -nw'
+alias emr='remacs -nw README.org'
 function emn() {
-    emacs -nw ~/Org/Notes/
+    remacs -nw ~/Org/Notes/
 }
 
 # ctags
