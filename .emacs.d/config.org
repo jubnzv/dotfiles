@@ -341,19 +341,33 @@ Disable some default keybindings to safe my arms. I got used them years before w
 (global-set-key (kbd "C-x C-f") nil)
 
 ;; Window management is implemented by evil's <C-w>
-(global-set-key (kbd "C-x 1") nil)
-(global-set-key (kbd "C-x 2") nil)
-(global-set-key (kbd "C-x 3") nil)
-(global-set-key (kbd "C-x 4") nil)
-(global-set-key (kbd "C-x 5") nil)
+; (global-set-key (kbd "C-x 1") nil)
+; (global-set-key (kbd "C-x 2") nil)
+; (global-set-key (kbd "C-x 3") nil)
+; (global-set-key (kbd "C-x 4") nil)
+; (global-set-key (kbd "C-x 5") nil)
 #+END_SRC
 
-*** ~<Space>~ is my leader
+*** =<Space>= is my leader
 #+BEGIN_SRC emacs-lisp
 (defvar evil-leader-map (make-sparse-keymap)
     "Keymap for \"leader key\" shortcuts.")
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
 #+END_SRC
+
+#+begin_src emacs-lisp
+(use-package evil-leader
+  :commands (evil-leader-mode)
+  :ensure t
+  :init
+  (global-evil-leader-mode)
+  :config
+    (progn
+      (evil-leader/set-leader "SPC")
+      (evil-leader/set-key
+        "Xf" 'elfeed
+        "Xp" 'proced)))
+#+end_src
 
 *** Fix ~C-i~ behaviour
 #+BEGIN_SRC emacs-lisp
@@ -385,13 +399,13 @@ Disable some default keybindings to safe my arms. I got used them years before w
 
 Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "xf" 'counsel-find-file)
-(define-key evil-leader-map "xr" 'counsel-recentf)
-(define-key evil-leader-map "xs" 'save-buffer)
-(define-key evil-leader-map "s" 'save-buffer)
-(define-key evil-leader-map "xk" 'kill-buffer)
-(define-key evil-leader-map "xc" 'save-buffers-kill-terminal)
-(define-key evil-leader-map " " 'counsel-M-x)
+(evil-leader/set-key "xf" 'counsel-find-file)
+(evil-leader/set-key "xr" 'counsel-recentf)
+(evil-leader/set-key "xs" 'save-buffer)
+(evil-leader/set-key "s" 'save-buffer)
+(evil-leader/set-key "xk" 'kill-buffer)
+(evil-leader/set-key "xc" 'save-buffers-kill-terminal)
+(evil-leader/set-key "SPC" 'counsel-M-x)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -403,19 +417,12 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 
 *** =:noh=
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "h"  'evil-ex-nohighlight)
-#+END_SRC
-
-*** Use ~C-s~ to save current buffer
-
-Disabled for now. It's terrible habit, because it may causes ~Software Flow Control~ mode activation in some terminals.
-#+BEGIN_SRC emacs-lisp :tangle no
-(global-set-key (kbd "C-s") 'save-buffer)
+(evil-leader/set-key "h"  'evil-ex-nohighlight)
 #+END_SRC
 
 *** Remove trailing whitespaces
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "Es"  'delete-trailing-whitespace)
+(evil-leader/set-key "Es"  'delete-trailing-whitespace)
 #+END_SRC
 
 *** Expand region
@@ -443,7 +450,7 @@ Kill all buffers, expect the current one:
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
-(define-key evil-leader-map "Ko"  'kill-other-buffers)
+(evil-leader/set-key "Ko"  'kill-other-buffers)
 #+END_SRC
 
 Kill all dired buffers:
@@ -459,13 +466,6 @@ Kill all dired buffers:
           (setq count (1+ count))
           (kill-buffer buffer)))
       (message "Killed %i dired buffer(s)." count))))
-
-(define-key evil-leader-map "KD"  'kill-all-dired-buffers)
-#+END_SRC
-
-*** Launching applications
-#+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "Xf"  'elfeed)
 #+END_SRC
 
 ** Avy
@@ -511,16 +511,16 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   (evilnc-default-hotkeys nil t))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp :tangle no
-(define-key evil-leader-map "ci" 'evilnc-comment-or-uncomment-lines)
-(define-key evil-leader-map "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
-(define-key evil-leader-map "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
-(define-key evil-leader-map "cc" 'evilnc-copy-and-comment-lines)
-(define-key evil-leader-map "cp" 'evilnc-comment-or-uncomment-paragraphs)
-(define-key evil-leader-map "cr" 'comment-or-uncomment-region)
-(define-key evil-leader-map "cr" 'comment-or-uncomment-region)
-(define-key evil-leader-map "cv" 'evilnc-toggle-invert-comment-line-by-line)
-(define-key evil-leader-map "."  'evilnc-copy-and-comment-operator)
+#+BEGIN_SRC emacs-lisp
+(evil-leader/set-key "ci" 'evilnc-comment-or-uncomment-lines)
+(evil-leader/set-key "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(evil-leader/set-key "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
+(evil-leader/set-key "cc" 'evilnc-copy-and-comment-lines)
+(evil-leader/set-key "cp" 'evilnc-comment-or-uncomment-paragraphs)
+(evil-leader/set-key "cr" 'comment-or-uncomment-region)
+(evil-leader/set-key "cr" 'comment-or-uncomment-region)
+(evil-leader/set-key "cv" 'evilnc-toggle-invert-comment-line-by-line)
+(evil-leader/set-key "."  'evilnc-copy-and-comment-operator)
 #+END_SRC
 
 *** Evil-org
@@ -531,7 +531,9 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
-            (lambda () (evil-org-set-key-theme))))
+            (lambda () (evil-org-set-key-theme)))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 #+END_SRC
 
 ** Evil bindings for major modes
@@ -650,8 +652,8 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "b"  'ivy-switch-buffer)
-(define-key evil-leader-map "fs" 'counsel-rg)
+(evil-leader/set-key "b"  'ivy-switch-buffer)
+(evil-leader/set-key "fs" 'counsel-rg)
 #+END_SRC
 * Working with files
 ** Helpers for UNIX
@@ -715,11 +717,6 @@ Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .e
 Human readable units:
 #+BEGIN_SRC emacs-lisp
 (setq-default dired-listing-switches "-alh")
-#+END_SRC
-
-Free my =<leader>=:
-#+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "SPC") nil)
 #+END_SRC
 
 * org-mode
@@ -795,11 +792,18 @@ Set external applications to open exported files:
 #+END_SRC
 
 ** org-agenda
+
+Agenda files:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-files (append
                         (list "~/Org/Agenda.org")
                         (file-expand-wildcards "~/Uni/*/Notes.org")))
 #+END_SRC
+
+Open Agenda buffer in full window:
+#+begin_src emacs-lisp
+(setq org-agenda-window-setup 'only-window)
+#+end_src
 
 ** Alerts
 
@@ -1239,21 +1243,21 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
 
 Magit commands:
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "vs"  'magit-status)
-(define-key evil-leader-map "vR"  'magit-reset-popup)
-(define-key evil-leader-map "vd"  'magit-diff-popup)
-(define-key evil-leader-map "vb"  'magit-branch-popup)
-(define-key evil-leader-map "vh"  'magit-stash-popup)
-(define-key evil-leader-map "vl"  'magit-log-popup)
-(define-key evil-leader-map "vp"  'magit-push-popup)
-(define-key evil-leader-map "vr"  'magit-remote-popup)
+(evil-leader/set-key "vs"  'magit-status)
+(evil-leader/set-key "vR"  'magit-reset-popup)
+(evil-leader/set-key "vd"  'magit-diff-popup)
+(evil-leader/set-key "vb"  'magit-branch-popup)
+(evil-leader/set-key "vh"  'magit-stash-popup)
+(evil-leader/set-key "vl"  'magit-log-popup)
+(evil-leader/set-key "vp"  'magit-push-popup)
+(evil-leader/set-key "vr"  'magit-remote-popup)
 #+END_SRC
 
 Staging with =git-gutter=:
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "v-"  'git-gutter:revert-hunk)
-(define-key evil-leader-map "v="  'git-gutter:stage-hunk)
-(define-key evil-leader-map "vv"  'git-gutter:popup-diff)
+(evil-leader/set-key "v-"  'git-gutter:revert-hunk)
+(evil-leader/set-key "v="  'git-gutter:stage-hunk)
+(evil-leader/set-key "vv"  'git-gutter:popup-diff)
 #+END_SRC
 
 Jump between changes:
@@ -1304,36 +1308,24 @@ This plugin is required to keep current directory when moving through project fi
   :after (projectile perspective))
 #+END_SRC
 
-*** org-projectile
-
-[[https://github.com/IvanMalison/org-projectile][org-projectile]] provides functions for the creation of org-mode TODOs that are associated with projectile projects.
-#+BEGIN_SRC emacs-lisp
-(use-package org-projectile
-  :ensure t
-  :config
-  (org-projectile-per-project)
-  (setq org-projectile-per-project-filepath "TODO.org")
-  (setq org-agenda-files (append org-agenda-files (org-projectile-todo-files))))
-#+END_SRC
-
 *** Keybindings
 #+BEGIN_SRC emacs-lisp
-(define-key evil-leader-map "pp"  'counsel-projectile-switch-project)
-(define-key evil-leader-map "pf"  'counsel-projectile-find-file)
-(define-key evil-leader-map "pF"  'projectile-find-file-in-known-projects)
-(define-key evil-leader-map "pd"  'counsel-projectile-find-dir)
-(define-key evil-leader-map "pb"  'counsel-projectile-switch-to-buffer)
-(define-key evil-leader-map "pD"  'projectile-dired)
-(define-key evil-leader-map "pR"  'projectile-toggle-project-read-only)
-(define-key evil-leader-map "pK"  'projectile-kill-buffers)
-(define-key evil-leader-map "pT"  'projectile-regenerate-tags)
-(define-key evil-leader-map "pS"  'projectile-run-eshell)
-(define-key evil-leader-map "pM"  'projectile-compile-project)
-(define-key evil-leader-map "pC"  'projectile-configure-project)
-(define-key evil-leader-map "pv"  'projectile-vc)
-(define-key evil-leader-map "pO"  'org-projectile-project-todo-completing-read)
+(evil-leader/set-key "pp"  'counsel-projectile-switch-project)
+(evil-leader/set-key "ff"  'counsel-projectile-find-file)
+(evil-leader/set-key "pF"  'projectile-find-file-in-known-projects)
+(evil-leader/set-key "pd"  'counsel-projectile-find-dir)
+(evil-leader/set-key "pb"  'counsel-projectile-switch-to-buffer)
+(evil-leader/set-key "pD"  'projectile-dired)
+(evil-leader/set-key "pR"  'projectile-toggle-project-read-only)
+(evil-leader/set-key "pK"  'projectile-kill-buffers)
+(evil-leader/set-key "pT"  'projectile-regenerate-tags)
+(evil-leader/set-key "pS"  'projectile-run-eshell)
+(evil-leader/set-key "pM"  'projectile-compile-project)
+(evil-leader/set-key "pC"  'projectile-configure-project)
+(evil-leader/set-key "pv"  'projectile-vc)
+(evil-leader/set-key "pO"  'org-projectile-project-todo-completing-read)
 (evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
-(define-key evil-leader-map "ft"  'projectile-find-tag)
+(evil-leader/set-key "ft"  'projectile-find-tag)
 #+END_SRC
 
 ** ctags
@@ -1480,7 +1472,7 @@ Company is a text completion framework for Emacs that very similar with vim's de
 
 Treat dash as part of word:
 #+BEGIN_SRC emacs-lisp
-(modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
+(modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1576,20 +1568,20 @@ Useful to find called commands names to bind them later.
 #+BEGIN_SRC emacs-lisp
 (which-key-add-key-based-replacements "SPC C" "Configure Emacs")
 
-(define-key evil-leader-map "Cl"  'clm/toggle-command-log-buffer)
+(evil-leader/set-key "Cl"  'clm/toggle-command-log-buffer)
 
-(define-key evil-leader-map "CC"  (lambda() (interactive) (open-config-file "config.org")))
+(evil-leader/set-key "CC"  (lambda() (interactive) (open-config-file "config.org")))
 (which-key-add-key-based-replacements "SPC C C" " config.org")
 
-(define-key evil-leader-map "Ct"  (lambda()
+(evil-leader/set-key "Ct"  (lambda()
   (interactive) (open-config-file "TODO.org")))
 (which-key-add-key-based-replacements "SPC C t" " TODO.org")
 
-(define-key evil-leader-map "Cf"  (lambda()
+(evil-leader/set-key "Cf"  (lambda()
   (interactive) (open-config-file "elfeed-feeds.org")))
 (which-key-add-key-based-replacements "SPC C f" " elfeed-feeds.org")
 
-(define-key evil-leader-map "Cr"  (lambda()
+(evil-leader/set-key "Cr"  (lambda()
   (interactive)(load-file "~/.emacs.d/init.el")))
 (which-key-add-key-based-replacements "SPC C r" "reload config")
 #+END_SRC
@@ -1601,14 +1593,14 @@ When using ~emacsclient~, some settings do not get set in the newly created fram
 I have now removed any customization options that requires this hooks. But it may be very useful later.
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(defvar jubnzv:appearance-setup-done nil)
+(defvar jbz:appearance-setup-done nil)
 
-(defun jubnzv:appearance-setup-hook (&rest args)
-  (unless jubnzv:appearance-setup-done
-    (apply 'jubnzv:appearance args)
-    (setq jubnzv:appearance-setup-done t)))
+(defun jbz:appearance-setup-hook (&rest args)
+  (unless jbz:appearance-setup-done
+    (apply 'jbz:appearance args)
+    (setq jbz:appearance-setup-done t)))
 
 (if (daemonp)
-  (add-hook 'after-make-frame-functions 'jubnzv:appearance-setup-hook)
-  (add-hook 'after-init-hook 'jubnzv:appearance-setup-hook))
+  (add-hook 'after-make-frame-functions 'jbz:appearance-setup-hook)
+  (add-hook 'after-init-hook 'jbz:appearance-setup-hook))
 #+END_SRC
