@@ -632,9 +632,40 @@ These three tools are available in a single github [[https://github.com/abo-abo/
       (t . ivy--regex-plus))))
 #+END_SRC
 
+*** Custom wrappers
+
+Search with =rg= in specified filetypes:
+#+begin_src emacs-lisp
+  (defmacro def-counsel-rg--ft (filetype)
+    (let ((funsymbol (intern (concat "counsel-rg--ft-" filetype))))
+      `(defun ,funsymbol ()
+         (interactive)
+         (counsel-rg
+          nil
+          nil
+          (format "--type %s" ,filetype)
+          (format "rg %s: " (capitalize ,filetype))))))
+
+(def-counsel-rg--ft "c")
+(def-counsel-rg--ft "cpp")
+(def-counsel-rg--ft "elisp")
+(def-counsel-rg--ft "rust")
+(def-counsel-rg--ft "py")
+(def-counsel-rg--ft "sh")
+#+end_src
+
+Keybindings:
+#+begin_src emacs-lisp
+(evil-leader/set-key "fac" 'counsel-rg--ft-c)
+(evil-leader/set-key "faC" 'counsel-rg--ft-cpp)
+(evil-leader/set-key "far" 'counsel-rg--ft-rust)
+(evil-leader/set-key "fap" 'counsel-rg--ft-py)
+(evil-leader/set-key "fas" 'counsel-rg--ft-sh)
+#+end_src
+
 ** Swiper
 
-*Swiper* - isearch with an overview. It looks like :Ag command in fzf.vim, but it works without any external tools.
+*Swiper* - isearch with an overview. It looks like =:Ag= command in fzf.vim, but it works without any external tools.
 #+BEGIN_SRC emacs-lisp
 (use-package swiper
   :ensure t)
