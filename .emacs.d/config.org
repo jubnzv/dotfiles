@@ -831,12 +831,31 @@ Agenda files:
                         (file-expand-wildcards "~/Uni/*/Notes.org")))
 #+END_SRC
 
+Pick agenda file with =ivy=:
+#+begin_src emacs-lisp
+(defun jbz-find-org-agenda-file ()
+  "Open file from `org-agenda-files'."
+  (interactive)
+  (ivy-read "org-agenda-files:" (org-agenda-files)
+            :require-match t
+            :action (lambda (f)
+                      (find-file-other-window f))))
+#+end_src
+
 Open Agenda buffer in full window:
 #+begin_src emacs-lisp
 (setq org-agenda-window-setup 'only-window)
 #+end_src
 
 ** Alerts
+
+[[https://github.com/jwiegley/alert][alert]] package configuration:
+#+begin_src emacs-lisp
+(use-package alert
+  :ensure t
+  :config
+  (setq alert-fade-time 10))
+#+end_src
 
 =org-wild-notifier= adds notification support for org-agenda views.
 #+begin_src emacs-lisp
@@ -906,44 +925,45 @@ Recipe from [[https://orgmode.org/worg/org-hacks.html#org98f0887][org-hacks]]:
 
 ** Keybindings and evil-mode commands
 
-Structure movement and editing:
 #+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map "gp" 'org-back-to-top-level-heading)
-(evil-declare-key 'normal org-mode-map "gh" 'counsel-org-goto)
-(evil-declare-key 'normal org-mode-map "gt" 'counsel-org-tag)
+(evil-define-key 'normal org-mode-map
+  ;; narrow headings
+  "<" '(lambda () (interactive) (org-demote-or-promote 1))
+  ">" 'org-demote-or-promote
+  ;; structure movement and editing
+  "gp" 'org-show-current-heading-tidily
+  "gP" 'org-back-to-top-level-heading
+  "gh" 'counsel-org-goto
+  "gt" 'counsel-org-tag)
 #+END_SRC
 
-Narrow headings like codeblocks:
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map
-  "<" (lambda () (interactive) (org-demote-or-promote 1)) ; out-dent
-  ">" 'org-demote-or-promote) ; indent
-#+END_SRC
+Use =o= prefix for =org-mode= commands in global scope:
+#+begin_src emacs-lisp
+(evil-leader/set-key "of" 'jbz-find-org-agenda-file)
+(evil-leader/set-key "oa" 'org-agenda)
+#+end_src
 
-=,= prefix as local leader for other org-mode commands:
-#+BEGIN_SRC emacs-lisp
-;; C-c:
-(evil-declare-key 'normal org-mode-map ",cl" 'org-insert-link)
-(evil-declare-key 'normal org-mode-map ",ct" 'org-todo)
-(evil-declare-key 'normal org-mode-map ",cq" 'org-set-tags)
-(evil-declare-key 'normal org-mode-map ",cc" 'org-babel-execute)
-;; C-x:
-(evil-declare-key 'normal org-mode-map ",nb" 'org-narrow-to-block)
-(evil-declare-key 'normal org-mode-map ",ne" 'org-narrow-to-element)
-(evil-declare-key 'normal org-mode-map ",nt" 'org-narrow-to-tree)
-(evil-declare-key 'normal org-mode-map ",nw" 'widen)
-;; etc.:
-(evil-declare-key 'normal org-mode-map ",so" 'org-show-current-heading-tidily)
-#+END_SRC
+Local mode mappings:
+#+begin_src emacs-lisp
+(evil-leader/set-key-for-mode 'org-mode
+  ;; <leader>l: links:
+  "li" 'org-insert-link
+  "l]" 'org-next-link
+  "l]" 'org-previous-link
+  ;; <leader>t: TODO and tasks:
+  "tt" 'org-todo
+  "ti" 'org-inlinetask-insert-task
+  ;; <leader>q: tags:
+  "q" 'org-set-tags
+  ;; <leader>c: babel source blocks:
+  "ce" 'org-babel-execute-src-block
+)
+#+end_src
 
-Commands:
+Evil commands:
 #+BEGIN_SRC emacs-lisp
 (evil-ex-define-cmd "cal" 'calendar)
 #+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",i" 'org-inlinetask-insert-task)
-#+end_src
 
 ** ox-hugo: exporter backend for Hugo
 #+BEGIN_SRC emacs-lisp
