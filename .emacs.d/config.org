@@ -140,27 +140,30 @@ Fancy [[https://www.emacswiki.org/emacs/PageBreaks][page breaks]]:
 #+BEGIN_SRC emacs-lisp
 (use-package page-break-lines
   :ensure t
+  :diminish page-break-lines-mode
   :config
-  (page-break-lines-mode))
+  (global-page-break-lines-mode))
 #+END_SRC
 
-** ~redisplay-dont-pause~
-The variable ~redisplay-dont-pause~, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
+** =redisplay-dont-pause=
+The variable =redisplay-dont-pause=, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
 Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
 #+BEGIN_SRC emacs-lisp
 (setq redisplay-dont-pause t)
 #+END_SRC
 
 ** Modeline configuration
-#+BEGIN_SRC emacs-lisp
-(use-package doom-modeline
-  :ensure t
-  :defer t
-  :config
-  (setq doom-modeline-height 15)
-  (setq doom-modeline-icon nil)
-  :hook (after-init . doom-modeline-init))
-#+END_SRC
+
+[[https://github.com/emacsmirror/diminish][diminish]] - plugin to hide minor modes in modeline:
+#+begin_src emacs-lisp
+(use-package diminish
+  :ensure t)
+#+end_src
+
+#+begin_src emacs-lisp
+(diminish 'abbrev-mode)
+(diminish 'auto-revert-mode)
+#+end_src
 
 ** Color scheme
 #+BEGIN_SRC emacs-lisp
@@ -170,11 +173,12 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   (load-theme 'gruvbox-dark-medium t))
 #+END_SRC
 
+Gruvbox colors for line numbers column:
 #+BEGIN_SRC emacs-lisp
 (set-face-attribute 'line-number nil
-                    :background "gruvbox-dark0")
+                    :background "#282828")
 (set-face-attribute 'line-number-current-line nil
-                    :background "#gruvbox-dark0"
+                    :background "#282828"
                     :foreground "#fabd2f")
 #+END_SRC
 
@@ -224,6 +228,7 @@ There are no standard way to implement persistent undo in Emacs. I use modified 
 #+BEGIN_SRC emacs-lisp
 (use-package undo-tree
   :ensure t
+  :diminish undo-tree-mode
   :config
   (setq undo-tree-auto-save-history t
         undo-tree-history-directory-alist
@@ -288,6 +293,13 @@ Indentation cannot insert tabs:
 #+BEGIN_SRC emacs-lisp
 (setq x-select-enable-clipboard t)
 #+END_SRC
+
+** Supress `defadvice' warnings
+
+See [[https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/][this]] post.
+#+begin_src emacs-lisp
+(setq ad-redefinition-action 'accept)
+#+end_src
 
 ** Choose default external apps
 
@@ -485,6 +497,7 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 #+BEGIN_SRC emacs-lisp
 (use-package which-key
   :ensure t
+  :diminish which-key-mode
   :after evil
   :config
   (setq which-key-allow-evil-operators t)
@@ -528,6 +541,7 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 (use-package evil-org
   :ensure t
   :after (evil org)
+  :diminish evil-org-mode
   :config
   (add-hook 'org-mode-hook 'evil-org-mode)
   (add-hook 'evil-org-mode-hook
@@ -601,8 +615,16 @@ These three tools are available in a single github [[https://github.com/abo-abo/
 #+BEGIN_SRC emacs-lisp
 (use-package ivy
   :ensure t
+  :diminish ivy-mode
   :config
   (ivy-mode 1))
+#+END_SRC
+
+Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][Xref]] references with =ivy=:
+#+BEGIN_SRC emacs-lisp
+(use-package ivy-xref
+  :ensure t
+  :after ivy)
 #+END_SRC
 
 ** Counsel
@@ -854,22 +876,19 @@ Open Agenda buffer in full window:
 (use-package alert
   :ensure t
   :config
-  (setq alert-fade-time 10))
+  (setq alert-fade-time 10)
+  (setq alert-default-style 'libnotify))
 #+end_src
 
 =org-wild-notifier= adds notification support for org-agenda views.
 #+begin_src emacs-lisp
 (use-package org-wild-notifier
   :ensure t
+  :after alert
   :config
   (org-wild-notifier-mode)
   (setq org-wild-notifier-notification-title "org-mode")
   (add-to-list 'org-default-properties "WILD_NOTIFIER_NOTIFY_BEFORE"))
-#+end_src
-
-Show system-wide notifications with =libnotify=:
-#+begin_src emacs-lisp
-(setq alert-default-style 'libnotify)
 #+end_src
 
 ** Easy templates
@@ -957,6 +976,8 @@ Local mode mappings:
   "q" 'org-set-tags
   ;; <leader>c: babel source blocks:
   "ce" 'org-babel-execute-src-block
+  ;; <leader>P: properties
+  "P" 'org-set-property
 )
 #+end_src
 
@@ -1115,6 +1136,7 @@ Images are separated inside that image folder by additional folders one per org 
   :ensure t
   :defer t
   :config
+  (setq elfeed-log-level 'warn)
   (setq elfeed-set-max-connections 5)
   (setf url-queue-timeout 10))
 #+END_SRC
@@ -1279,29 +1301,23 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (setq evil-magit-state 'normal))
 #+END_SRC
 
-*** git-gutter
+** git-gutter
 #+BEGIN_SRC emacs-lisp
 (use-package git-gutter
   :ensure t
+  :diminish git-gutter-mode
   :config
   (global-git-gutter-mode +1)
   (setq git-gutter:window-width 1))
 #+END_SRC
 
-*** Keybindings
+** Keybindings
 
 ~<leader>v~ prefix.
 
 Magit commands:
 #+BEGIN_SRC emacs-lisp
 (evil-leader/set-key "vs"  'magit-status)
-(evil-leader/set-key "vR"  'magit-reset-popup)
-(evil-leader/set-key "vd"  'magit-diff-popup)
-(evil-leader/set-key "vb"  'magit-branch-popup)
-(evil-leader/set-key "vh"  'magit-stash-popup)
-(evil-leader/set-key "vl"  'magit-log-popup)
-(evil-leader/set-key "vp"  'magit-push-popup)
-(evil-leader/set-key "vr"  'magit-remote-popup)
 #+END_SRC
 
 Staging with =git-gutter=:
@@ -1317,11 +1333,9 @@ Jump between changes:
 (evil-declare-key 'normal prog-mode-map "[v" 'git-gutter:prev-hunk)
 #+END_SRC
 
-** Projectile
+* Projectile
 
-This plugin is required to keep current directory when moving through project files.
-
-*** Initialization
+** Initialization
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
@@ -1336,7 +1350,7 @@ This plugin is required to keep current directory when moving through project fi
   (setq projectile-project-compilation-cmd ""))
 #+END_SRC
 
-*** Counsel backend
+** Counsel backend
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-projectile
   :ensure t
@@ -1352,14 +1366,14 @@ This plugin is required to keep current directory when moving through project fi
 )
 #+END_SRC
 
-*** =persp-projectile=
-#+BEGIN_SRC emacs-lisp
+** =persp-projectile=
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package persp-projectile
   :ensure t
   :after (projectile perspective))
 #+END_SRC
 
-*** Keybindings
+** Keybindings
 #+BEGIN_SRC emacs-lisp
 (evil-leader/set-key "pp"  'counsel-projectile-switch-project)
 (evil-leader/set-key "ff"  'counsel-projectile-find-file)
@@ -1370,66 +1384,92 @@ This plugin is required to keep current directory when moving through project fi
 (evil-leader/set-key "pR"  'projectile-toggle-project-read-only)
 (evil-leader/set-key "pK"  'projectile-kill-buffers)
 (evil-leader/set-key "pT"  'projectile-regenerate-tags)
-(evil-leader/set-key "pS"  'projectile-run-eshell)
+(evil-leader/set-key "ps"  'projectile-run-eshell)
 (evil-leader/set-key "pM"  'projectile-compile-project)
 (evil-leader/set-key "pC"  'projectile-configure-project)
 (evil-leader/set-key "pv"  'projectile-vc)
 (evil-leader/set-key "pO"  'org-projectile-project-todo-completing-read)
-(evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
+; (evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
 (evil-leader/set-key "ft"  'projectile-find-tag)
+#+END_SRC
+
+* Programming facilities
+
+** Flycheck: display errors
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck
+  :ensure t)
+#+END_SRC
+
+Jump to errors:
+#+BEGIN_SRC emacs-lisp
+(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
+(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
+#+END_SRC
+
+** Code folding
+
++ ~zc~: Fold
++ ~za~: Unfold
++ ~zR~: Unfold everything
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook #'hs-minor-mode)
+#+END_SRC
+
+** Indentation
+
+*** Display the indention levels with thin vertical lines
+
+Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-indent-guides
+  :ensure t
+  :config
+  (setq highlight-indent-guides-method 'character)
+  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
 ** ctags
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
-  :ensure t)
+  :ensure t
+  :config
+  (add-to-list 'counsel-etags-ignore-filenames "m4"))
 #+END_SRC
 
 ** LSP
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lsp-mode
-  :commands lsp
+  :ensure t
   :config
-  (setq lsp-highlight-symbol-at-point nil)
-  (setq lsp-prefer-flymake nil)
-  (setq lsp-auto-guess-root t))
-#+END_SRC
+  (setq lsp-highlight-symbol-at-point nil))
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lsp-ui
   :ensure t
-  :init (add-hook 'lsp-mode-hook 'lsp-ui-mode)
   :config
-  ;; FIXME: It may produces messy output for long strings
-  (setq lsp-ui-sideline-enable nil))
-#+END_SRC
+(setq lsp-ui-sideline-update-mode 'point))
+#+end_src
 
-Jump to references with ivy:
-#+BEGIN_SRC emacs-lisp
-(use-package ivy-xref
-  :ensure t
-  :after ivy)
-#+END_SRC
-
-Company backend:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package company-lsp
+  :after  company
   :ensure t
-  :after company
   :config
-  (push 'company-lsp company-backends)
-  (setq company-lsp-enable-snippet t))
-#+END_SRC
+  (setq company-lsp-cache-candidates t
+        company-lsp-async t))
+#+end_src
 
 ** Autocompletion with =company-mode=
 
-Company is a text completion framework for Emacs that very similar with vim's deoplete.
-#+begin_SRC emacs-lisp
+Company is a text completion framework for Emacs that very similar with vim's =deoplete=.
+#+begin_src emacs-lisp
 (use-package company
   :ensure t
   :after company-lsp
-  :diminish company-mode
   :config
   (setq company-tooltip-limit 20)
   (setq company-idle-delay 0)
@@ -1573,12 +1613,16 @@ See generated report with ~keyfreq-html~.
         previous-line
         next-line
 	save-buffer
+  ; See: http://emacshorrors.com/posts/self-insert-command.html
 	; self-insert-command
-        ; See: http://emacshorrors.com/posts/self-insert-command.html
-	self-insert-command
+  self-insert-command
 	org-self-insert-command
+  ; ivy
+  ivy-next-line
 	; Evil
 	evil-delete-backward-char-and-join
+  evil-previous-visual-line
+  evil-next-visual-line
 	evil-normal-state
 	evil-jump-backward
 	evil-forward-char
@@ -1596,16 +1640,6 @@ See generated report with ~keyfreq-html~.
   (keyfreq-autosave-mode 1))
 #+END_SRC
 
-** Log called commands in a buffer
-
-Useful to find called commands names to bind them later.
-#+BEGIN_SRC emacs-lisp
-(use-package command-log-mode
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook 'command-log-mode))
-#+END_SRC
-
 ** Instant access to Emacs configuration files
 #+BEGIN_SRC emacs-lisp
 (defun open-config-file (file-path)
@@ -1616,11 +1650,11 @@ Useful to find called commands names to bind them later.
 
 ** Keybindings
 
+Configuration:
 #+BEGIN_SRC emacs-lisp
 (which-key-add-key-based-replacements "SPC C" "Configure Emacs")
 
-(evil-leader/set-key "Cl"  'clm/toggle-command-log-buffer)
-
+;; TODO: Why not define macro for it?
 (evil-leader/set-key "CC"  (lambda() (interactive) (open-config-file "config.org")))
 (which-key-add-key-based-replacements "SPC C C" " config.org")
 
@@ -1636,6 +1670,11 @@ Useful to find called commands names to bind them later.
   (interactive)(load-file "~/.emacs.d/init.el")))
 (which-key-add-key-based-replacements "SPC C r" "reload config")
 #+END_SRC
+
+Debugging:
+#+begin_src emacs-lisp
+(evil-leader/set-key "Cd" 'toggle-debug-on-error)
+#+end_src
 
 * Hooks to set everything up
 
