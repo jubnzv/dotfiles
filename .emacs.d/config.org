@@ -550,7 +550,19 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   (evil-org-agenda-set-keys))
 #+END_SRC
 
+*** Evil-treemacs
+#+begin_src emacs-lisp
+(use-package treemacs-evil
+  :ensure t
+  :after treemacs)
+#+end_src
 ** Evil bindings for major modes
+*** Initial states
+#+BEGIN_SRC emacs-lisp
+(evil-set-initial-state 'calc-mode 'emacs)
+(evil-set-initial-state 'messages-buffer-mode 'motion)
+#+END_SRC
+
 *** =M-x package-list-packages=
 
 See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
@@ -574,11 +586,6 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 *** =help-mode=
 #+BEGIN_SRC emacs-lisp
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
-#+END_SRC
-
-*** =calc-mode=
-#+BEGIN_SRC emacs-lisp
-(evil-set-initial-state 'calc-mode 'emacs)
 #+END_SRC
 
 * =perspective-mode=: tmux-like workspaces
@@ -708,7 +715,17 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (evil-leader/set-key "b"  'ivy-switch-buffer)
 (evil-leader/set-key "fs" 'counsel-rg)
 #+END_SRC
+
 * Working with files
+** =treemacs=
+A tree layout file explorer for Emacs similar to =NerdTree=.
+#+begin_src emacs-lisp
+(use-package treemacs
+  :ensure t
+  :config
+  (global-set-key (kbd "M-1") 'treemacs))
+#+end_src
+
 ** Helpers for UNIX
 
 Those functions works like tpope's [[https://github.com/tpope/vim-eunuch][vim-eunuch]] to provide access to common shell commands.
@@ -904,6 +921,7 @@ Get easy-templates back in org-mode 9.2:
 (add-to-list 'org-structure-template-alist '("ss" . "src shell"))
 (add-to-list 'org-structure-template-alist '("sS" . "src shell :dir \"/sudo::\""))
 (add-to-list 'org-structure-template-alist '("sC" . "src C"))
+(add-to-list 'org-structure-template-alist '("sr" . "src rustic"))
 #+END_SRC
 
 ** Calendar buffer settings
@@ -1144,7 +1162,7 @@ Images are separated inside that image folder by additional folders one per org 
 [[https://github.com/remyhonig/elfeed-org][elfeed-org]] plugin provides elfeed RSS configuration with org-mode files.
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed-org
-  :ensure t
+  :defer t
   :init
   (elfeed-org)
   :config
@@ -1170,7 +1188,6 @@ Keybindings:
 #+END_SRC
 
 * Eshell
-
 
 #+BEGIN_SRC emacs-lisp
 (defun eshell-other-window ()
@@ -1246,53 +1263,16 @@ ispell can be configured to skip over regions that match regexes.
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
 #+END_SRC
 
-* Programming facilities
+* Magit
 
-** Flycheck: display errors
-
-#+BEGIN_SRC emacs-lisp
-(use-package flycheck
-  :ensure t)
-#+END_SRC
-
-Jump to errors:
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
-(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
-#+END_SRC
-
-** Code folding
-
-+ ~zc~: Fold
-+ ~za~: Unfold
-+ ~zR~: Unfold everything
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'prog-mode-hook #'hs-minor-mode)
-#+END_SRC
-
-** Indentation
-
-*** Display the indention levels with thin vertical lines
-
-Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
-#+BEGIN_SRC emacs-lisp
-(use-package highlight-indent-guides
-  :ensure t
-  :config
-  (setq highlight-indent-guides-method 'character)
-  (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-#+END_SRC
-
-** Magit
-
-*** Initialization
+** Initialization
 #+BEGIN_SRC emacs-lisp
 (use-package magit
   :ensure t)
 #+END_SRC
 
-*** Integration with evil-mode
+** Integration with evil-mode
+
 #+BEGIN_SRC emacs-lisp
 (use-package evil-magit
   :after (evil magit)
@@ -1367,7 +1347,7 @@ Jump between changes:
 #+END_SRC
 
 ** =persp-projectile=
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 (use-package persp-projectile
   :ensure t
   :after (projectile perspective))
@@ -1389,7 +1369,7 @@ Jump between changes:
 (evil-leader/set-key "pC"  'projectile-configure-project)
 (evil-leader/set-key "pv"  'projectile-vc)
 (evil-leader/set-key "pO"  'org-projectile-project-todo-completing-read)
-; (evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
+(evil-declare-key 'normal global-map "`S" 'projectile-persp-switch-project)
 (evil-leader/set-key "ft"  'projectile-find-tag)
 #+END_SRC
 
@@ -1483,25 +1463,24 @@ Company is a text completion framework for Emacs that very similar with vim's =d
   (define-key company-search-map (kbd "M-k") 'company-select-previous)
   (define-key company-search-map (kbd "M-l") 'company-complete-common)
   (global-company-mode 1))
-#+END_SRC
+#+end_src
 
 ** Rust
-*** Common
-#+BEGIN_SRC emacs-lisp
-(use-package rust-mode
-  :ensure t
-  :init
-  (setq rust-rustfmt-bin "~/.rustup/toolchains/nightly-x86_64-unknown-linux-gnu/bin/rustfmt"))
-#+END_SRC
+
+[[https://github.com/brotzeit/rustic][rustic]] - Rust development environment for Emacs.
+#+begin_src emacs-lisp
+(use-package rustic
+  :ensure t)
+#+end_src
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'rust-mode-hook '(lambda()
+  (which-function-mode 1)
   (flycheck-mode)
   (yas-reload-all)
   (yas-minor-mode)))
 #+END_SRC
 
-*** Keybindings
 #+BEGIN_SRC emacs-lisp
 (evil-declare-key 'normal rust-mode-map ",ef" 'rust-format-buffer)
 #+END_SRC
@@ -1518,52 +1497,54 @@ Company is a text completion framework for Emacs that very similar with vim's =d
   (local-set-key  (kbd "M-a") 'ff-find-other-file)
   (which-function-mode 1) ;; show function name in modeline
   (flycheck-mode)
-  (lsp-cquery-enable)
-  (lsp-ui-mode)
   (yas-reload-all)
   (yas-minor-mode)))
 #+END_SRC
 
-*** cquery
+*** Explore C/C++ code
 
-[[https://github.com/cquery-project/emacs-cquery][emacs-cquery]] mode provides some nice extensions for lsp. See [[https://github.com/cquery-project/cquery/wiki/Emacs][their wiki]] for more.
-#+BEGIN_SRC emacs-lisp
-(use-package cquery
-  :ensure t
-  :after lsp-mode
-  :custom
-  (cquery-executable "/usr/local/bin/cquery")
-  (cquery-extra-args '("--log-file=/tmp/cq.log"))
-  :config
-  (setq cquery-cache-dir "~/.cquery_cached_index")
-  (setq cquery-sem-highlight-method 'font-lock))
-#+END_SRC
-
-*** =disaster= – Disassemble C/C++ code under cursor
-
+=distater=: disassemble C/C++ code under cursor:
 #+BEGIN_SRC emacs-lisp
 (use-package disaster
   :ensure t)
 #+END_SRC
 
-** Python
-*** Common
-#+BEGIN_SRC emacs-lisp :tangle no
-(add-hook 'python-mode-hook
-            (lambda ()
-              (lsp-python-enable)))
+#+BEGIN_SRC emacs-lisp
+(defun jbz-objdump-file ()
+  (interactive)
+  (setq file (expand-file-name (read-file-name "File: ")))
+  (shell-command (concat "objdump -D -M intel " file) "*objdump*"))
 #+END_SRC
 
-*** virtualenv
+#+BEGIN_SRC emacs-lisp
+(defun jbz-readelf-so ()
+  (interactive)
+  (setq file (expand-file-name (read-file-name ".so: ")))
+  (shell-command (concat "readelf -S " file) "*readelf*"))
+#+END_SRC
+
+** Python
+
 #+BEGIN_SRC emacs-lisp
 (use-package pyvenv
   :ensure t)
 #+END_SRC
+
+#+begin_src emacs-lisp
+  (add-hook 'python-mode-hook
+            '(lambda()
+               (which-function-mode 1)
+               (flycheck-mode t)
+               (yas-reload-all)
+               (yas-minor-mode)
+               (flycheck-select-checker 'python-pylint)))
+#+end_src
+
 ** Emacs Lisp
 
 Treat dash as part of word:
 #+BEGIN_SRC emacs-lisp
-(modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
+(modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
