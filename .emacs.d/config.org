@@ -127,12 +127,19 @@ Activate this to make it available in all other modes:
 #+END_SRC
 
 ** Show line numbers
+
 #+BEGIN_SRC emacs-lisp
 (setq-default display-line-numbers-current-absolute nil
               display-line-numbers 'visual
               display-line-numbers-widen nil
               display-line-numbers-width 2)
 #+END_SRC
+
+Disable in some modes:
+#+begin_src emacs-lisp
+(add-hook 'org-agenda-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'artist-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+end_src
 
 ** Page breaks
 
@@ -718,11 +725,14 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 
 * Working with files
 ** =treemacs=
+
 A tree layout file explorer for Emacs similar to =NerdTree=.
 #+begin_src emacs-lisp
 (use-package treemacs
   :ensure t
   :config
+  (setq treemacs-no-png-images 't) ;; disable icons
+  ;; Keybindings
   (global-set-key (kbd "M-1") 'treemacs))
 #+end_src
 
@@ -886,6 +896,44 @@ Open Agenda buffer in full window:
 (setq org-agenda-window-setup 'only-window)
 #+end_src
 
+** org-capture
+
+Notekeeping with =org-capture= described in [[http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Sacha Chua's blog]]. There is also related [[https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/][post]] on reddit.
+
+Default file for =org-capture=:
+#+BEGIN_SRC emacs-lisp
+(setq org-default-notes-file "~/Org/scratch.org")
+#+END_SRC
+
+Capture templates:
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates
+      '(("t" "Task"
+         entry (file+headline "~/Org/Agenda.org" "Outline")
+         "* TODO %?\n  %i\n  %a")
+        ("T" "Task (urgent)"
+         entry (file "~/Org/Agenda.org")
+         "* TODO %?
+DEADLINE: %T
+:PROPERTIES:
+:WILD_NOTIFIER_NOTIFY_BEFORE: 240,180,120,60
+:END:\n"
+        :empty-lines 1
+        :order 1)
+        ("n" "Note"
+         entry (file "~/Org/scratch.org")
+         "* %?\n")))
+#+END_SRC
+There is also useful snippet: =%(org-insert-time-stamp (org-read-date nil t \"+1d\"))=.
+
+** org-refile
+
+See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][blogpost]] about refiling.
+#+begin_src emacs-lisp
+(setq org-refile-targets '((("~/Org/Agenda.org"
+                             "~/Org/Notes/Work.org") :maxlevel . 2)))
+#+end_src
+
 ** Alerts
 
 [[https://github.com/jwiegley/alert][alert]] package configuration:
@@ -978,6 +1026,7 @@ Use =o= prefix for =org-mode= commands in global scope:
 #+begin_src emacs-lisp
 (evil-leader/set-key "of" 'jbz-find-org-agenda-file)
 (evil-leader/set-key "oa" 'org-agenda)
+(evil-leader/set-key "oc" 'org-capture)
 #+end_src
 
 Local mode mappings:
@@ -996,6 +1045,9 @@ Local mode mappings:
   "ce" 'org-babel-execute-src-block
   ;; <leader>P: properties
   "P" 'org-set-property
+  ;; <leader>m: structure editing
+  "mr" 'org-refile
+  "mc" 'org-copy
 )
 #+end_src
 
@@ -1011,26 +1063,7 @@ Evil commands:
   :after ox)
 #+END_SRC
 
-** Notekeeping with =org-capture=
-
-Notekeeping with =org-capture= described in [[http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Sacha Chua's blog]]. There is also related [[https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/][post]] on reddit.
-
-Default file for org-capture:
-#+BEGIN_SRC emacs-lisp
-(setq org-default-notes-file "~/Org/scratch.org")
-#+END_SRC
-
-Capture templates:
-#+BEGIN_SRC emacs-lisp
-(setq org-capture-templates nil)
-(add-to-list 'org-capture-templates '("n" "Note"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal org-mode-map ",CC" 'org-capture)
-#+END_SRC
-
-** Embedded code blocks
+** org-babel
 
 Allow code evaluation with ~org-babel-execute~:
 #+BEGIN_SRC emacs-lisp
