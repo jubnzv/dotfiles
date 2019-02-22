@@ -1284,6 +1284,7 @@ Initialize ~yasnippet~ plugin itself:
 #+begin_SRC emacs-lisp
 (use-package smartparens
   :ensure t
+  :diminish
   :config
   (smartparens-global-mode))
 #+END_SRC
@@ -1406,13 +1407,23 @@ Jump between changes:
 (evil-leader/set-key "ft"  'projectile-find-tag)
 #+END_SRC
 
-* Programming facilities
+* Writing code
+** General
 
-** Flycheck: display errors
+Here is some common settings and minor mode configurations available in all programming modes.
+
+*** Highlight errors
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck
-  :ensure t)
+  :ensure t
+  :diminish "fc")
 #+END_SRC
+
+Disable flymake. =flycheck= is my choice.
+#+begin_src emacs-lisp :tangle no
+(add-hook 'prog-mode-hook '(lambda ()
+  (flymake-mode)))
+#+end_src
 
 Jump to errors:
 #+BEGIN_SRC emacs-lisp
@@ -1420,7 +1431,7 @@ Jump to errors:
 (evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
 #+END_SRC
 
-** Code folding
+*** =hs-mode=: folding
 
 + ~zc~: Fold
 + ~za~: Unfold
@@ -1430,9 +1441,7 @@ Jump to errors:
 (add-hook 'prog-mode-hook #'hs-minor-mode)
 #+END_SRC
 
-** Indentation
-
-*** Display the indention levels with thin vertical lines
+*** Display identation levels
 
 Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
 #+BEGIN_SRC emacs-lisp
@@ -1443,7 +1452,7 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+END_SRC
 
-** ctags
+*** ctags
 #+BEGIN_SRC emacs-lisp
 (use-package counsel-etags
   :ensure t
@@ -1451,38 +1460,23 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (add-to-list 'counsel-etags-ignore-filenames "m4"))
 #+END_SRC
 
-** LSP
+*** =which-func-mode=: display function name in modline
 
+Customize =???= in which-func-mode:
 #+begin_src emacs-lisp
-(use-package lsp-mode
-  :ensure t
-  :config
-  (setq lsp-highlight-symbol-at-point nil))
+(setq which-func-unknown "∅")
 #+end_src
 
 #+begin_src emacs-lisp
-(use-package lsp-ui
-  :ensure t
-  :config
-(setq lsp-ui-sideline-update-mode 'point))
+(add-hook 'prog-mode-hook (lambda () (which-function-mode 1)))
 #+end_src
 
-#+begin_src emacs-lisp
-(use-package company-lsp
-  :after  company
-  :ensure t
-  :config
-  (setq company-lsp-cache-candidates t
-        company-lsp-async t))
-#+end_src
+*** =company-mode=: autocompletion
 
-** Autocompletion with =company-mode=
-
-Company is a text completion framework for Emacs that very similar with vim's =deoplete=.
+Company is a text completion framework for Emacs similar with vim's =deoplete=.
 #+begin_src emacs-lisp
 (use-package company
   :ensure t
-  :after company-lsp
   :config
   (setq company-tooltip-limit 20)
   (setq company-idle-delay 0)
@@ -1495,34 +1489,79 @@ Company is a text completion framework for Emacs that very similar with vim's =d
   (define-key company-search-map (kbd "M-j") 'company-select-next)
   (define-key company-search-map (kbd "M-k") 'company-select-previous)
   (define-key company-search-map (kbd "M-l") 'company-complete-common)
-  (global-company-mode 1))
+  ;; Enable only in prog-mod
+  (global-company-mode -1)
+  (add-hook 'prog-mode-hook 'company-mode))
 #+end_src
 
-** Rust
+** Lisp family
 
-[[https://github.com/brotzeit/rustic][rustic]] - Rust development environment for Emacs.
+*************** TODO Macro to set hook for all lisps modes
+*************** END
+#+begin_src emacs-lisp :tangle no
+(defmacro def-set-lisps-hook())
+#+end_src
+
+*** Racket-specific
 #+begin_src emacs-lisp
-(use-package rustic
+(use-package racket-mode
   :ensure t)
 #+end_src
 
+*** Treat dash as part of word
 #+BEGIN_SRC emacs-lisp
-(add-hook 'rust-mode-hook '(lambda()
-  (which-function-mode 1)
-  (flycheck-mode)
-  (yas-reload-all)
-  (yas-minor-mode)))
+(modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
+(modify-syntax-entry ?- "w" racket-mode-syntax-table)
 #+END_SRC
 
+*** Pretty λ
+Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][this]] article):
+#+begin_src emacs-lisp
+(defun my-add-pretty-lambda ()
+  "Make some word or string show as pretty Unicode symbols"
+  (setq prettify-symbols-alist
+        '(("lambda" . 955)
+          ("->" . 8594)
+          ("=>" . 8658)
+          ("map" . 8614)))
+          (prettify-symbols-mode))
+
+(add-hook 'racket-mode-hook 'my-add-pretty-lambda)
+(add-hook 'emacs-lisp-mode-hook 'my-add-pretty-lambda)
+#+end_src
+
+*** Lispy & lispyville
 #+BEGIN_SRC emacs-lisp
-(evil-declare-key 'normal rust-mode-map ",ef" 'rust-format-buffer)
+(use-package lispy
+  :ensure t)
+#+END_SRC
+
+=lispyville-mode= is =lispy-mode= integrated with evil.
+#+BEGIN_SRC emacs-lisp
+(use-package lispyville
+  :ensure t
+  :init
+  (add-hook 'racket-mode-hook 'lispyville-mode)
+  (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
+#+END_SRC
+
+*** Rainbow delimiters
+
+=rainbow-delimiters= mode is too distracting to use for languages other than Lisp.
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :commands (rainbow-delimiters-mode rainbow-delimiters)
+  :init
+  (add-hook 'racket-mode-hook 'rainbow-delimiters-mode)
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
 #+END_SRC
 
 ** C/C++
 
 *** Common
 #+BEGIN_SRC emacs-lisp
-(add-hook 'c-mode-common-hook '(lambda()
+(add-hook 'c-mode-common-hook '(lambda ()
   (setq indent-tabs-mode t
      c-basic-offset 4
      tab-width 4)
@@ -1556,50 +1595,24 @@ Company is a text completion framework for Emacs that very similar with vim's =d
   (shell-command (concat "readelf -S " file) "*readelf*"))
 #+END_SRC
 
-** Python
+** Rust
 
-#+BEGIN_SRC emacs-lisp
-(use-package pyvenv
-  :ensure t)
-#+END_SRC
-
+[[https://github.com/brotzeit/rustic][rustic]] - Rust development environment for Emacs.
 #+begin_src emacs-lisp
-  (add-hook 'python-mode-hook
-            '(lambda()
-               (which-function-mode 1)
-               (flycheck-mode t)
-               (yas-reload-all)
-               (yas-minor-mode)
-               (flycheck-select-checker 'python-pylint)))
+(use-package rustic
+  :ensure t)
 #+end_src
 
-** Emacs Lisp
-
-Treat dash as part of word:
 #+BEGIN_SRC emacs-lisp
-(modify-syntax-entry ?_ "w" emacs-lisp-mode-syntax-table)
+(add-hook 'rust-mode-hook '(lambda()
+  (which-function-mode 1)
+  (flycheck-mode)
+  (yas-reload-all)
+  (yas-minor-mode)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package lispy
-  :ensure t)
-#+END_SRC
-
-=lispyville-mode= is =lispy-mode= integrated with evil.
-#+BEGIN_SRC emacs-lisp
-(use-package lispyville
-  :ensure t
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
-#+END_SRC
-
-=rainbow-delimiters= mode is too distracting for languages other than lisp.
-#+BEGIN_SRC emacs-lisp
-(use-package rainbow-delimiters
-  :ensure t
-  :commands (rainbow-delimiters-mode rainbow-delimiters)
-  :init
-  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
+(evil-declare-key 'normal rust-mode-map ",ef" 'rust-format-buffer)
 #+END_SRC
 
 * Exploring Emacs
