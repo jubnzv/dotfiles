@@ -12,6 +12,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'https://github.com/scrooloose/nerdtree'       " A tree explorer plugin for vim
 Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
+Plug 'https://github.com/liuchengxu/vim-which-key'  " Display keybindings suggestions in popup
 Plug 'https://github.com/rhysd/clever-f.vim'        " Convenient `f` and `F`
 Plug 'https://github.com/tpope/vim-eunuch'          " Helpers for Shell
 Plug 'https://github.com/tpope/vim-speeddating'     " <C-a>/<C-x> for dates and timestamps
@@ -22,6 +23,7 @@ Plug 'https://github.com/godlygeek/tabular'         " Vim script for text filter
 Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets, parens, quotes in pair
 Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
+Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
 " }}}
 
 " {{{ tmux integration
@@ -35,7 +37,6 @@ Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and co
 Plug 'https://github.com/junegunn/vim-peekaboo'    " Shows vim registers content into vertical split
 Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
-Plug 'https://github.com/liuchengxu/vim-which-key' " Display available keybindings in popup
 Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
 " }}}
 
@@ -58,10 +59,10 @@ Plug 'https://github.com/junegunn/fzf', {
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
-Plug 'https://github.com/lervag/vimtex'
 Plug 'https://github.com/plasticboy/vim-markdown'
-" Plug 'https://github.com/gu-fan/riv.vim'
 Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
+" Plug 'https://github.com/gu-fan/riv.vim'
+" Plug 'https://github.com/lervag/vimtex'
 " }}}
 
 " {{{ Writing code
@@ -170,6 +171,14 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " {{{ Keybindings
 
+" {{{ which-key initialization
+" `liuchengxu/vim-which-key` provides mnemonic keybindinds in popup.
+let g:which_key_map =  {}
+call which_key#register('<Space>', "g:which_key_map")
+nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
+" }}}
+
 " {{{ Common
 "
 " Binds that changes default vim behavior, separated from plugins
@@ -206,8 +215,8 @@ vnoremap // y/<C-R>"<CR>
 vnoremap <M-/> <Esc>/\%V
 
 " Replace with `F` / `f` / `t` / `T`
-noremap ;; :%s///g<Left><Left><Left>
-noremap ;' :%s///cg<Left><Left><Left><Left>
+noremap ;; :s///g<Left><Left><Left>
+noremap ;' :s///cg<Left><Left><Left><Left>
 
 " Keep selected text selected when fixing indentation
 vnoremap < <gv
@@ -355,7 +364,6 @@ endif
 " }}}
 
 " {{{ Parens settings
-" Suppress auto-pairs bind
 let g:AutoPairsShortcutToggle = ''
 
 " Free statusline from Matchup
@@ -410,6 +418,12 @@ let NERDTreeIgnore=[
   \ "depcomp$",
   \ "install-sh$",
   \ ]
+" }}}
+
+" {{{ DirDiff
+let g:DirDiffWindowSize = 6
+let g:DirDiffEnableMappings = 0
+let g:DirDiffExcludes = "CVS,*.class,*.exe,.*.swp,*.pyc,tags"
 " }}}
 
 " {{{ Datetime
@@ -476,6 +490,7 @@ omap <A-z> <plug>(fzf-maps-o)
 autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
+nnoremap <leader>ff :Files<CR>
 nnoremap <leader>xf :Files<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-7> :BTags<CR>
@@ -494,9 +509,11 @@ command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'
 command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
 command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
 command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40%'})
+command! -bang -nargs=* AgElisp call fzf#vim#ag(<q-args>, '--elisp', {'down': '~40%'})
 nnoremap <leader>fac :AgCC<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
+nnoremap <leader>fae :AgElisp<CR>
 " }}}
 
 " {{{ Nerdcommenter settings
@@ -596,6 +613,9 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 
 " If your snippets trigger are same with builtin snippets, your snippets overwrite them.
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
+
+" Reload snippets
+nnoremap <leader>rs :call neosnippet#variables#set_snippets({})<cr>
 " }}}
 
 " {{{ LanguageClient settings
@@ -626,14 +646,18 @@ set formatexpr=""
 " definition / goto implementation in large C projects when LSP is slow.
 function! LCKeymap()
   if has_key(g:LanguageClient_serverCommands, &filetype)
-    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
+    " General
     nnoremap gD :only<bar>vsplit<cr>gd
+    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
+    nnoremap <silent> <F5> :call LanguageClient_contextMenu()<CR>
+    nnoremap <silent> <leader>K :call LanguageClient#textDocument_hover()<cr>
+    " Movement
+    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
     nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
-    nnoremap <silent> gK :call LanguageClient#textDocument_hover()<cr>
-    nnoremap <silent> gm :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
     nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
-    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
+    " Editing
+    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<cr>
   endif
 endfunction
 " }}}
@@ -738,6 +762,28 @@ let g:gitgutter_map_keys = 0
 
 nmap [v <Plug>GitGutterPrevHunk
 nmap ]v <Plug>GitGutterNextHunk
+
+" {{{ Keybindings
+let g:which_key_map.v = {
+  \ 'name' : '+Git',
+  \ 'c' : ['Gcommit', 'commit'],
+  \ 's' : ['Gstatus', 'status'],
+  \ 'b' : ['Gblame', 'blame'],
+  \ 'd' : ['Gdiff', 'diff'],
+  \ 'f' : ['Gfetch', 'fetch'] ,
+  \ 'p' : ['Gpull', 'pull'] ,
+  \ 'P' : ['Gpush', 'pull'] ,
+  \ 'r' : ['Grebase', 'rebase'] ,
+  \ 'm' : ['Gmerge', 'merge'] ,
+  \ 'D' : ['Gdelete', 'delete'],
+  \ 'e' : ['Gedit', 'edit'] ,
+  \ 'M' : ['Gmove', 'move'] ,
+  \ 'B' : ['Twiggy', 'branches'],
+  \ 'v' : ['GitGutterPreviewHunk'     , 'preview'],
+  \ '-' : ['GitGutterUndoHunk'     , 'undo'],
+  \ '=' : ['GitGutterStageHunk'     , 'stage'],
+  \ }
+" }}}
 " }}}
 
 " {{{ C/C++
@@ -756,6 +802,9 @@ nmap <A-a> :A<CR>
 let g:clang_include_fixer_path = "clang-include-fixer-7"
 au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
+" Align statements relative to case label
+au FileType c,cpp setlocal cinoptions+=l1
+
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
 
@@ -764,6 +813,7 @@ au FileType c call CmdC()
 function! CmdC()
     " Clean debug prints from `prdbg` snippet
     command! CleanDebugPrints :g/\/\/\ prdbg$/d
+    nnoremap <leader>Ec :CleanDebugPrints<CR>
 endfunction
 " }}}
 
@@ -771,6 +821,7 @@ endfunction
 "
 " {{{ Rust
 au FileType rust call LCKeymap()
+let g:rustfmt_autosave = 1
 " }}}
 
 " {{{ Python
@@ -803,6 +854,86 @@ let g:riv_fold_auto_update=0
 
 " The position of fold info
 let g:riv_fold_info_pos='left'
+
+" {{{ Riv keybindings
+let g:which_key_map.R = {
+  \ 'name' : '+Riv',
+  \ 'i' : ['RivProjectIndex', 'index'],
+  \ 'r' : ['RivReload', 'reload'],
+  \ 't' : {
+  \ 'name': '+title',
+  \ '0' : ['RivTitle0', '0'],
+  \ '1' : ['RivTitle1', '1'],
+  \ '2' : ['RivTitle2', '2'],
+  \ '3' : ['RivTitle3', '3'],
+  \ '4' : ['RivTitle4', '4'],
+  \ '5' : ['RivTitle5', '5'],
+  \ '6' : ['RivTitle6', '6'],
+  \ },
+  \ 'o' : {
+  \ 'name': '+todo',
+  \ 'a' : ['RivTodoAsk', 'ask'],
+  \ 'd' : ['RivTodoDate', 'date'],
+  \ 'D' : ['RivTodoDel', 'delete'],
+  \ 'p' : ['RivTodoPrior', 'priority'],
+  \ 't' : ['RivTodoToggle', 'toggle'],
+  \ 'u' : ['RivTodoUpdateCache', 'update'],
+  \ '1' : ['RivTodoType1', 'type: [  ] '],
+  \ '2' : ['RivTodoType2', 'type: TODO '],
+  \ '3' : ['RivTodoType2', 'type: FIXME'],
+  \ '4' : ['RivTodoType4', 'type: START'],
+  \ },
+  \ 'a' : {
+  \ 'name': '+table',
+  \ 'c' : ['RivTableCreate', 'create'],
+  \ 'f' : ['RivTableFormat', 'format'],
+  \ 'n' : ['RivTableNextCell', 'next cell'],
+  \ 'p' : ['RivTablePrevCell', 'prev cell'],
+  \ },
+  \ 'l' : {
+  \ 'name': '+list',
+  \ 't' : ['RivListToggle', 'toggle'],
+  \ 'd' : ['RivListDelete', 'delete'],
+  \ 'n' : ['RivListNew', 'new'],
+  \ 'b' : ['RivListSub', 'sub'],
+  \ 'p' : ['RivListSup', 'sup'],
+  \ '0' : ['RivListType0', 'type: * '],
+  \ '1' : ['RivListType1', 'type: 1.'],
+  \ '2' : ['RivListType2', 'type: a.'],
+  \ '3' : ['RivListType3', 'type: A)'],
+  \ '4' : ['RivListType4', 'type: i)'],
+  \ },
+  \ 'c' : {
+  \ 'name': '+create',
+  \ 'c' : ['RivCreateContent', 'content'],
+  \ 'd' : ['RivCreateDate', 'date'],
+  \ 'e' : ['RivCreateEmphasis', 'emphasis'],
+  \ 'm' : ['RivCreateExplicitMark', 'mark'],
+  \ 'f' : ['RivCreateFoot', 'foot'],
+  \ 'g' : ['RivCreateGitLink', 'git link'],
+  \ 'h' : ['RivCreateHyperLink', 'hyperlink'],
+  \ 'i' : ['RivCreateInterpreted', 'interpreted'],
+  \ 'l' : ['RivCreateLink', 'link'],
+  \ 'B' : ['RivCreateLiteralBlock', 'code block'],
+  \ 'I' : ['RivCreateLiteralInline', 'code inline'],
+  \ 's' : ['RivCreateStrong', 'strong'],
+  \ 't' : ['RivCreateTime', 'time'],
+  \ 'T' : ['RivCreateTransition', 'transition'],
+  \ },
+  \ 'h' : {
+  \ 'name': '+help',
+  \ 'd' : ['RivDirectives', 'directives'],
+  \ 'q' : ['RivQuickStart', 'quick start'],
+  \ 'f' : ['RivHelpFile', 'file?'],
+  \ 's' : ['RivHelpSection', 'section?'],
+  \ 't' : ['RivHelpTodo', 'todo?'],
+  \ 'p' : ['RivPrimer', 'primer'],
+  \ 'S' : ['RivSpecification', 'specification'],
+  \ 'i' : ['RivInstruction', 'instruction'],
+  \ 'I' : ['RivIntro', 'intro'],
+  \ },
+  \ }
+" }}}
 " }}}
 
 " {{{ Markdown
@@ -842,7 +973,7 @@ au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 au BufNewFile,BufRead .clang-format set ft=config
 " }}}
 
-" {{{ Toggling features
+" {{{ Toggle features
 function! ToggleConceal()
   if (&conceallevel == 0)
     set conceallevel=2
@@ -904,13 +1035,10 @@ endfunction
 nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
-nnoremap <leader>tL :call ToggleLSP()<CR>
+nnoremap <leader>tl :call ToggleLSP()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 " }}}
-
-" Load redundant which-key bindings
-source ~/.config/nvim/which-key.vim
 
 " vim:foldmethod=marker:foldenable:sw=2:tw=120
