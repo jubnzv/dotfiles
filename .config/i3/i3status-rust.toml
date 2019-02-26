@@ -1,4 +1,5 @@
-icons = "awesome"
+[icons]
+name = "awesome"
 
 [theme]
 name = "gruvbox-dark"
@@ -27,7 +28,8 @@ block = "disk_space"
 path = "/"
 alias = "/"
 info_type = "available"
-unit = "GB"
+show_percentage = true
+# unit = "Percent"
 interval = 30
 warning = 20.0
 alert = 10.0
@@ -48,9 +50,9 @@ block = "load"
 interval = 3
 format = "{1m}"
 
-[[block]]
-block = "taskwarrior"
-interval = 30
+# [[block]]
+# block = "taskwarrior"
+# interval = 30
 
 [[block]]
 block = "battery"

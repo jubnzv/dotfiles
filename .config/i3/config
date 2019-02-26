@@ -187,6 +187,7 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 # Application startup hotkeys
 # bindsym $mod+Control+q exec emacsclient -c
 bindsym $mod+Control+q exec remacs
+bindsym $mod+Control+F1 exec /usr/local/bin/emacs
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
@@ -340,8 +341,8 @@ bar {
     workspace_buttons yes
     strip_workspace_numbers yes
     binding_mode_indicator yes
-    status_command i3blocks
-    # status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
+    # status_command i3blocks
+    status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
     colors {
         background		#282828
         statusline		#bdae93

@@ -6,6 +6,8 @@
 
 [[https://raw.githubusercontent.com/jubnzv/dotfiles/master/screenshot.png]]
 
+Disclaimer: /This repository contains my personal system configuration files. There are no fancy icons, powerline fonts, transparent terminal screens and similar stuff, but only robust tools that I use every day to do my work. Maybe you will find something useful here./
+
 * Hardware
 
 + ThinkPad X200 (Core 2 Duo P8600 / 2 GiB DDR3-1066 RAM / 160 GB SSD); [[https://libreboot.org/docs/hardware/x200.html][libreboot]] installed.
@@ -13,7 +15,7 @@
 
 * Desktop environment
 
-** GUI options   
+** GUI options
 
 + Fonts
   - *Iosevka Term* with [[https://github.com/ryanoasis/nerd-fonts][NerdFont]] patch in terminal
@@ -22,21 +24,21 @@
 + *numix* GTK theme
 + *Breeze* icons and cursors
 + *gruvbox dark medium* colorscheme everywhere
-    
+
 ** Software
-    
+
 + *i3* - tiling window manager
-  - *i3blocks* - scheduler for your status bar scripts 
+  - *[[https://github.com/greshake/i3status-rust/commits/master][i3status-rust]]* - very resourcefriendly and feature-rich replacement for i3status
   - *i3lock* - screen locker
-+ *rofi* - a window switcher, application launcher and dmenu replacement
-+ *dunst* - lightweight and customizable notification daemon
-+ *fbxkb* - keymap tray icon
-+ *udiskie* - automount daemon and tray icon
+  - *rofi* - a window switcher, application launcher and dmenu replacement
+  - *dunst* - lightweight and customizable notification daemon
+  - *fbxkb* - keymap tray icon
+  - *udiskie* - automount daemon and tray icon
 
 * Tools
-   
+
 ** CLI
-   
+
 + *zsh* - shell
   - [[https://github.com/hchbaw/zce.zsh][zce.zsh]] - EasyMotion/ace-jump-mode
   - [[https://github.com/zsh-users/zsh-autosuggestions][zsh-autosuggestions]] - fish-like autosuggestions for zsh
@@ -44,11 +46,20 @@
   - [[https://github.com/hlissner/zsh-autopair][zsh-autopair]] - auto-close and delete matching delimiters in zsh
   - [[https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/z][z.zsh]] - jump-around plugin
 + *tmux* - terminal multiplexer
-+ *neovim* - text edtitor
-+ *emacs* - secondary editor that I use for note taking (org-mode)
+  - [[https://github.com/tmux-plugins/tmux-resurrect][tmux-resurrect]] - persists tmux environment across system restarts
++ *neovim* - text edtitor which I use to write my C/C++/Rust/Python code. Combined with tmux and number of tools (like [[https://github.com/junegunn/fzf][fzf]] and [[https://langserver.org/][language servers]]) it significantly improves my performance. See [[https://github.com/jubnzv/dotfiles/tree/master/.config/nvim][complete config]] for more.
++ *emacs* - complex tool which I use for number tasks:
+  - writing any kind of notes with =org-mode=
+  - writing static blog pages with =org-mode= and =ox-hugo=
+  - diagramming and system modeling with =org-babel= and PlantUML
+  - writing LaTeX using: =TeX-mode=, =org-mode= and =org-ref= for bibliography management
+  - create presentations using =org-mode= and =latex-beamer=
+  - quick emacs lisp and racket tooling for various cases
+  - ... there are too many of them. See my complete [[https://github.com/jubnzv/dotfiles/tree/master/.emacs.d][literate config]] for more.
 + *ranger* - a VIM-inspired filemanager for the console
 + *wicd-curses* - curses-based network controller
 + *taskwarrior* - open-source, cross platform time and task management tool
++ [[https://github.com/ralphbean/bugwarrior][bugwarrior]] - Python script to pull github, bitbucket, and trac issues into taskwarrior
 + *cmus* - small, fast and powerful console music player
 + *bat* - a cat clone with additional features like git integration and syntax highlighting
 + *nmap* - network security scanner and mapper for exploration and security auditing
@@ -64,17 +75,15 @@
 + *exa* - a "modern" version of 'ls'
 + *python*
   - *ipython* - a powerful interactive Python shell
-    
+
 ** GUI
-   
-+ *kitty* - cross-platform, fast, feature full, GPU based terminal emulator 
+
++ *kitty* - cross-platform, fast, feature full, GPU based terminal emulator
 + *firefox* - web-browser
   - [[https://github.com/brookhong/Surfingkeys][Surfingkeys]] - extension that provides keyboard-based navigation and control of the web in the spirit of the VIM editor
   - [[https://github.com/dhowe/AdNauseam][AdNauseam]] - lightweight adblocker
 + *thunderbird* - feature-rich (bloated) mail and RSS client
 + *zathura* - document viewer with VIM-like keybindings
-+ *draw.io* - electron-based desktop client for diagramming
-+ *XMind Zen* - proprietary brainstorming and mind mapping tool
 + *mpv* - minimalistic fork of mplayer2 and MPlayer
 + *mirage* - simple GTK+ image viewer
 + *keepassxc* - cross-platform community-driven port of the Windows application “Keepass Password Safe”
@@ -87,12 +96,13 @@
 + *remmina* - RDP client
 
 ** Organizer
-    
-+ emacs *org-mode* for notekeeping
+
 + *taskwarrior* workflow
-  - libnotify notifications for tasks tagged with +notify tag implemented with systemd timer
+  - libnotify notifications for tasks tagged with =+notify= tag implemented with systemd timer
   - taskwarrior widget in i3blocks
   - rofi script to quick list tasks in current context
-  - Daemon that sends customized task reports inside local mailbox for every morning
-  - bugwarrior script to fetch and save locally issues from external bugtrackers: redmine, gitlab, github
-  - Convenient aliases in zsh and .taskrc
+  - Daemon script that sends customized task reports inside local mailbox for every morning
+  - [[https://github.com/ralphbean/bugwarrior][bugwarrior]] to fetch and save locally issues from external bugtrackers: redmine, gitlab, github
+  - Convenient aliases in zsh and =.taskrc=
++ Bunch of scripts to automate routine system administration tasks. Not represented here.
++ Emacs *org-mode* for... anything else :)
