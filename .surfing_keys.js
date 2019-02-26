@@ -8,9 +8,25 @@ map('[t', 'E');
 map('<Ctrl-j>', 'E');
 map('<Ctrl-k>', 'R');
 
+// Pin tab
+map('gp', '<Alt-p>')
+
 // Navigate in pop-down menus
 cmap('<Alt-j>', '<Tab>');
 cmap('<Alt-k>', '<Shift-Tab>');
+
+mapkey('ote', 'Translate clipboard text with google (auto => en)', function() {
+    searchSelectedWith('https://translate.google.com/?hl=en#auto/en/', false, false, '');
+});
+mapkey('otr', 'Translate clipboard text with google (en => ru)', function() {
+    searchSelectedWith('https://translate.google.com/#view=home&op=translate&sl=en&tl=ru&text=', false, false, '');
+});
+
+// Search sources on Debian Code Search
+addSearchAlias('sd', 'DebianCodeSearch', 'https://codesearch.debian.net/search?q=');
+mapkey('osd', 'DebianCodeSearch', function() {
+    searchSelectedWith("https://codesearch.debian.net/search?q=");
+});
 
 // Search sources on GitHub
 // Generic
@@ -28,6 +44,14 @@ mapkey('ose', 'GitHub: elisp', function() {
 });
 vmapkey('ose', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
+});
+// Racket
+addSearchAlias('sR', 'GitHub: racket', 'https://github.com/search?q=language%3A%22Racket%22+');
+mapkey('osR', 'GitHub: racket', function() {
+    searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
+});
+vmapkey('osR', 'GitHub: racket', function() {
+    searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
 });
 // C
 addSearchAlias('sc', 'GitHub: C', 'https://github.com/search?q=language%3AC+');
