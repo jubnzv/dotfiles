@@ -141,17 +141,6 @@ Disable in some modes:
 (add-hook 'artist-mode-hook (lambda () (display-line-numbers-mode -1)))
 #+end_src
 
-** Page breaks
-
-Fancy [[https://www.emacswiki.org/emacs/PageBreaks][page breaks]]:
-#+BEGIN_SRC emacs-lisp
-(use-package page-break-lines
-  :ensure t
-  :diminish page-break-lines-mode
-  :config
-  (global-page-break-lines-mode))
-#+END_SRC
-
 ** =redisplay-dont-pause=
 The variable =redisplay-dont-pause=, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
 Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
@@ -659,6 +648,8 @@ Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][X
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
   ;; Global ignore patterns
   (setq counsel-find-file-ignore-regexp "^.cquery")
+  ;; Replace default `find-file-at-point'
+  (setq counsel-find-file-at-point t)
   ;; Set matching style
   (setq ivy-re-builders-alist
     '((swiper . ivy--regex-plus)
@@ -1471,6 +1462,15 @@ Customize =???= in which-func-mode:
 (add-hook 'prog-mode-hook (lambda () (which-function-mode 1)))
 #+end_src
 
+***  face
+#+BEGIN_SRC emacs-lisp
+(use-package form-feed
+  :ensure t
+  :diminish form-feed-mode
+  :config
+  (add-hook 'prog-mode-hook 'form-feed-mode))
+#+END_SRC
+
 *** =company-mode=: autocompletion
 
 Company is a text completion framework for Emacs similar with vim's =deoplete=.
@@ -1705,7 +1705,7 @@ Debugging:
 
 * Hooks to set everything up
 
-When using ~emacsclient~, some settings do not get set in the newly created frame.
+When using =emacsclient=, some settings do not get set in the newly created frame.
 
 I have now removed any customization options that requires this hooks. But it may be very useful later.
 
