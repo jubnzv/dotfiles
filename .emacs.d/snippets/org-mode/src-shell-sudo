@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: src-shell-sudo
+# key: <sS
+# --
+#+BEGIN_SRC shell :dir \"/sudo::\"
+$0
+#+END_SRC

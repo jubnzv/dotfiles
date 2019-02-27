@@ -584,7 +584,7 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
 #+END_SRC
 
-* =perspective-mode=: tmux-like workspaces
+* =perspective-mode=
 
 I use =`= prefix to switch workspaces as well as in my =tmux= configuration. For this, I need to unbind default =evil-goto-mark= action.
 
@@ -900,7 +900,7 @@ Capture templates:
 #+BEGIN_SRC emacs-lisp
 (setq org-capture-templates
       '(("t" "Task"
-         entry (file+headline "~/Org/Agenda.org" "Outline")
+         entry (file "~/Org/Agenda.org")
          "* TODO %?\n  %i\n  %a")
         ("T" "Task (urgent)"
          entry (file "~/Org/Agenda.org")
@@ -946,22 +946,6 @@ See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.
   (setq org-wild-notifier-notification-title "org-mode")
   (add-to-list 'org-default-properties "WILD_NOTIFIER_NOTIFY_BEFORE"))
 #+end_src
-
-** Easy templates
-
-Get easy-templates back in org-mode 9.2:
-#+BEGIN_SRC emacs-lisp
-(require 'org-tempo)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-structure-template-alist '("se" . "src emacs-lisp"))
-(add-to-list 'org-structure-template-alist '("spl" . "src plantuml :file img/tmp.png"))
-(add-to-list 'org-structure-template-alist '("ss" . "src shell"))
-(add-to-list 'org-structure-template-alist '("sS" . "src shell :dir \"/sudo::\""))
-(add-to-list 'org-structure-template-alist '("sC" . "src C"))
-(add-to-list 'org-structure-template-alist '("sr" . "src rustic"))
-#+END_SRC
 
 ** Calendar buffer settings
 
@@ -1036,6 +1020,8 @@ Local mode mappings:
   "ce" 'org-babel-execute-src-block
   ;; <leader>P: properties
   "P" 'org-set-property
+  ;; <leader>A: archiving
+  "A" 'org-archive-to-archive-sibling
   ;; <leader>m: structure editing
   "mr" 'org-refile
   "mc" 'org-copy
@@ -1056,7 +1042,7 @@ Evil commands:
 
 ** org-babel
 
-Allow code evaluation with ~org-babel-execute~:
+Setup available languages for =org-babel-execute=:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (plantuml . t)
@@ -1265,7 +1251,10 @@ Initialize ~yasnippet~ plugin itself:
   :after yasnippet-snippets
   :defer t
   :commands (yas-reload-all yas-minor-mode)
+  :init
+  (yas-global-mode 1)
   :config
+  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map (kbd "M-l") yas-maybe-expand))
