@@ -1,3 +1,12 @@
+# {{{ Abbrevations for common calls
+snippet     exf
+    exit(EXIT_FAILURE);
+snippet     exs
+    exit(EXIT_SUCCESS);
+snippet     pe
+    perror("$0");
+# }}}
+
 # {{{ Include-Guard
 snippet     once
 options     head
@@ -14,8 +23,14 @@ abbr #ifndef ... #define ... #endif
 snippet pr
 abbr    printf("...\n", ...);
     printf("${1}\n"${2});
+snippet prp
+    printf("%ld: ${1}\n", (long)getpid()${2});
+snippet prpp
+    printf("%ld:%ld: ${1}\n", (long)getppid(), (long)getpid()${2});
+snippet prt
+    printf("%ld: ${1}\n", (long)pthread_self()${2});
 
-# Debug prints
+# {{{ Debug prints
 # :g/\/\/\ prdbg$/d to clean them all
 snippet     prd
 alias       prdbg
@@ -31,6 +46,7 @@ options     head
 snippet     prdk
 options     head
     printk("%s:%d ${1}\n", __func__, __LINE__${2}); // prdbg
+# }}}
 
 # Print bits of integer
 snippet prb
@@ -81,6 +97,7 @@ options     head
 # }}}
 
 # {{{ fork
+# Common
 snippet     frk
 options     head
 abbr        fork ()
@@ -93,6 +110,35 @@ abbr        fork ()
         exit(EXIT_SUCCESS);
     }
     default:
+        break;
+    }
+
+# Avoid race condition after fork with signals (see TLPI 24.4).
+# Parent first.
+snippet     frksigp
+options     head
+    switch (child_pid = fork()) {
+    case -1:
+        perror("fork");
+        exit(EXIT_FAILURE);
+    case 0:
+        /* Waits for parent signal */
+        sigemptyset(&empty_mask);
+        if (sigsuspend(&empty_mask) == -1 && errno != EINTR) {
+            perror("sigsuspend");
+            exit(EXIT_FAILURE);
+        }
+
+        ${0:CHILD_ACTIONS}
+        exit(EXIT_SUCCESS);
+    default:
+        ${0:PARENT_ACTIONS}
+
+        /* Awake child */
+        if (kill(child_pid, SYNC_SIG) == -1) {
+            perror("kill");
+            exit(EXIT_FAILURE);
+        }
         break;
     }
 # }}}
@@ -117,11 +163,33 @@ abbr        waitpid()
     }
 # }}}
 
-# {{{ Checking errors
-snippet     cherr
+# {{{ Check errors
+# Standard function call
+snippet     cef
 options     head
-    if ((${1:FUNCALL}) == -1) {
-        perror(${2:ERR_MSG});
+    if ((${1:FUNC}) == -1) {
+        perror("${1:FUNC}");
+        exit(EXIT_FAILURE);
+    }
+# Check value
+snippet     cev
+options     head
+    if (${1:ARG} == ${2:VALUE}) {
+        perror("${3:FUNC}");
+        exit(EXIT_FAILURE);
+    }
+# Check NULL
+snippet     cevn
+options     head
+    if (${1:ARG} == NULL) {
+        perror("${2:FUNC}");
+        exit(EXIT_FAILURE);
+    }
+# Check -1
+snippet     cevm
+options     head
+    if (${1:ARG} == -1) {
+        perror("${2:FUNC}");
         exit(EXIT_FAILURE);
     }
 # }}}
