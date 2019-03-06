@@ -12,7 +12,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'https://github.com/scrooloose/nerdtree'       " A tree explorer plugin for vim
 Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/liuchengxu/vim-which-key'  " Display keybindings suggestions in popup
 Plug 'https://github.com/rhysd/clever-f.vim'        " Convenient `f` and `F`
 Plug 'https://github.com/tpope/vim-eunuch'          " Helpers for Shell
 Plug 'https://github.com/tpope/vim-speeddating'     " <C-a>/<C-x> for dates and timestamps
@@ -170,14 +169,6 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " }}}
 
 " {{{ Keybindings
-
-" {{{ which-key initialization
-" `liuchengxu/vim-which-key` provides mnemonic keybindinds in popup.
-let g:which_key_map =  {}
-call which_key#register('<Space>', "g:which_key_map")
-nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
-vnoremap <silent> <leader> :<c-u>WhichKeyVisual '<Space>'<CR>
-" }}}
 
 " {{{ Common
 "
@@ -762,28 +753,13 @@ let g:gitgutter_map_keys = 0
 
 nmap [v <Plug>GitGutterPrevHunk
 nmap ]v <Plug>GitGutterNextHunk
-
-" {{{ Keybindings
-let g:which_key_map.v = {
-  \ 'name' : '+Git',
-  \ 'c' : ['Gcommit', 'commit'],
-  \ 's' : ['Gstatus', 'status'],
-  \ 'b' : ['Gblame', 'blame'],
-  \ 'd' : ['Gdiff', 'diff'],
-  \ 'f' : ['Gfetch', 'fetch'] ,
-  \ 'p' : ['Gpull', 'pull'] ,
-  \ 'P' : ['Gpush', 'pull'] ,
-  \ 'r' : ['Grebase', 'rebase'] ,
-  \ 'm' : ['Gmerge', 'merge'] ,
-  \ 'D' : ['Gdelete', 'delete'],
-  \ 'e' : ['Gedit', 'edit'] ,
-  \ 'M' : ['Gmove', 'move'] ,
-  \ 'B' : ['Twiggy', 'branches'],
-  \ 'v' : ['GitGutterPreviewHunk'     , 'preview'],
-  \ '-' : ['GitGutterUndoHunk'     , 'undo'],
-  \ '=' : ['GitGutterStageHunk'     , 'stage'],
-  \ }
-" }}}
+nmap <leader>vv <Plug>GitGutterPreviewHunk
+nmap <leader>v- <Plug>GitGutterUndoHunk
+nmap <leader>v= <Plug>GitGutterStageHunk
+nmap <leader>vs :Gstatus<cr>
+nmap <leader>ve :Gedit 
+nmap <leader>vb :Gblame<cr>
+nmap <leader>vB :Twiggy<cr>
 " }}}
 
 " {{{ C/C++
@@ -854,86 +830,6 @@ let g:riv_fold_auto_update=0
 
 " The position of fold info
 let g:riv_fold_info_pos='left'
-
-" {{{ Riv keybindings
-let g:which_key_map.R = {
-  \ 'name' : '+Riv',
-  \ 'i' : ['RivProjectIndex', 'index'],
-  \ 'r' : ['RivReload', 'reload'],
-  \ 't' : {
-  \ 'name': '+title',
-  \ '0' : ['RivTitle0', '0'],
-  \ '1' : ['RivTitle1', '1'],
-  \ '2' : ['RivTitle2', '2'],
-  \ '3' : ['RivTitle3', '3'],
-  \ '4' : ['RivTitle4', '4'],
-  \ '5' : ['RivTitle5', '5'],
-  \ '6' : ['RivTitle6', '6'],
-  \ },
-  \ 'o' : {
-  \ 'name': '+todo',
-  \ 'a' : ['RivTodoAsk', 'ask'],
-  \ 'd' : ['RivTodoDate', 'date'],
-  \ 'D' : ['RivTodoDel', 'delete'],
-  \ 'p' : ['RivTodoPrior', 'priority'],
-  \ 't' : ['RivTodoToggle', 'toggle'],
-  \ 'u' : ['RivTodoUpdateCache', 'update'],
-  \ '1' : ['RivTodoType1', 'type: [  ] '],
-  \ '2' : ['RivTodoType2', 'type: TODO '],
-  \ '3' : ['RivTodoType2', 'type: FIXME'],
-  \ '4' : ['RivTodoType4', 'type: START'],
-  \ },
-  \ 'a' : {
-  \ 'name': '+table',
-  \ 'c' : ['RivTableCreate', 'create'],
-  \ 'f' : ['RivTableFormat', 'format'],
-  \ 'n' : ['RivTableNextCell', 'next cell'],
-  \ 'p' : ['RivTablePrevCell', 'prev cell'],
-  \ },
-  \ 'l' : {
-  \ 'name': '+list',
-  \ 't' : ['RivListToggle', 'toggle'],
-  \ 'd' : ['RivListDelete', 'delete'],
-  \ 'n' : ['RivListNew', 'new'],
-  \ 'b' : ['RivListSub', 'sub'],
-  \ 'p' : ['RivListSup', 'sup'],
-  \ '0' : ['RivListType0', 'type: * '],
-  \ '1' : ['RivListType1', 'type: 1.'],
-  \ '2' : ['RivListType2', 'type: a.'],
-  \ '3' : ['RivListType3', 'type: A)'],
-  \ '4' : ['RivListType4', 'type: i)'],
-  \ },
-  \ 'c' : {
-  \ 'name': '+create',
-  \ 'c' : ['RivCreateContent', 'content'],
-  \ 'd' : ['RivCreateDate', 'date'],
-  \ 'e' : ['RivCreateEmphasis', 'emphasis'],
-  \ 'm' : ['RivCreateExplicitMark', 'mark'],
-  \ 'f' : ['RivCreateFoot', 'foot'],
-  \ 'g' : ['RivCreateGitLink', 'git link'],
-  \ 'h' : ['RivCreateHyperLink', 'hyperlink'],
-  \ 'i' : ['RivCreateInterpreted', 'interpreted'],
-  \ 'l' : ['RivCreateLink', 'link'],
-  \ 'B' : ['RivCreateLiteralBlock', 'code block'],
-  \ 'I' : ['RivCreateLiteralInline', 'code inline'],
-  \ 's' : ['RivCreateStrong', 'strong'],
-  \ 't' : ['RivCreateTime', 'time'],
-  \ 'T' : ['RivCreateTransition', 'transition'],
-  \ },
-  \ 'h' : {
-  \ 'name': '+help',
-  \ 'd' : ['RivDirectives', 'directives'],
-  \ 'q' : ['RivQuickStart', 'quick start'],
-  \ 'f' : ['RivHelpFile', 'file?'],
-  \ 's' : ['RivHelpSection', 'section?'],
-  \ 't' : ['RivHelpTodo', 'todo?'],
-  \ 'p' : ['RivPrimer', 'primer'],
-  \ 'S' : ['RivSpecification', 'specification'],
-  \ 'i' : ['RivInstruction', 'instruction'],
-  \ 'I' : ['RivIntro', 'intro'],
-  \ },
-  \ }
-" }}}
 " }}}
 
 " {{{ Markdown
