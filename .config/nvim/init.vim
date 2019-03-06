@@ -199,6 +199,22 @@ nnoremap Q @@
 nnoremap ]e :cnext <CR>
 nnoremap [e :cprevious<CR>
 
+" {{{ Toggling quickfix window
+function! QuickFix_toggle()
+    for i in range(1, winnr('$'))
+        let bnum = winbufnr(i)
+        if getbufvar(bnum, '&buftype') == 'quickfix'
+            cclose
+            return
+        endif
+    endfor
+
+    copen
+endfunction
+
+nnoremap <silent> <leader>qt :call QuickFix_toggle()<cr>
+" }}}
+
 " Search visually selected text
 vnoremap // y/<C-R>"<CR>
 
@@ -591,7 +607,7 @@ call deoplete#custom#source('LanguageClient',
   \ 'min_pattern_length',
   \ 2)
 
-set completeopt+=preview
+set completeopt-=preview
 " }}}
 
 " {{{ neosnippet
@@ -615,6 +631,7 @@ let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_autoStart = 0
 let g:LanguageClient_hasSnippetSupport = 1
 let g:LanguageClient_waitOutputTimeout = 5
+let g:LanguageClient_useVirtualText = 0
 let g:LanguageClient_hoverPreview = "Never"
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
@@ -715,7 +732,7 @@ function! LSPUpdateStatus(status) abort
   call lightline#update()
 endfunction
 function! LightlineLSPStatus() abort
-  return g:lsp_status == 1 ? 'Λ' : ''
+  return g:lsp_status == 1 ? 'LSP' : ''
 endfunction
 " }}}
 
@@ -777,6 +794,9 @@ nmap <A-a> :A<CR>
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
 au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+
+" Mans quick access
+au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>
 
 " Align statements relative to case label
 au FileType c,cpp setlocal cinoptions+=l1
