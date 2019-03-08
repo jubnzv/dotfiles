@@ -59,9 +59,9 @@ workspace "14$tile_14_music" output $display1
 # {{{ Autostart
 exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
-exec --no-startup-id $SCRIPTS_PATH/setup-keys
-exec --no-startup-id $SCRIPTS_PATH/xrandr-dual-on
-exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle
+exec --no-startup-id $SCRIPTS_PATH/i3/setup-keys
+exec --no-startup-id $SCRIPTS_PATH/i3/xrandr-dual-on
+exec --no-startup-id $SCRIPTS_PATH/i3/touchpad-toggle
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
@@ -150,7 +150,7 @@ bindsym $mod+Prior workspace prev
 
 # Switch to workspace
 bindsym $mod+q workspace number 1$tile_01_q
-bindsym $mod+w workspace number 2$tile_02_w
+bindsym $mod+w workspace number 2$tile_02_w; layout splith
 bindsym $mod+e workspace number 3$tile_03_e
 bindsym $mod+f workspace number 4$tile_04_f
 bindsym $mod+j workspace number 5$tile_05_j
@@ -166,7 +166,7 @@ bindsym $mod+m workspace number 14$tile_14_music
 
 # Control urgent workspaces
 bindsym $mod+u [urgent=latest] focus
-bindsym $mod+Control+u exec --no-startup-id $SCRIPTS_PATH/unset-urgent.sh
+bindsym $mod+Control+u exec --no-startup-id $SCRIPTS_PATH/i3/unset-urgent
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
@@ -186,8 +186,8 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
 # bindsym $mod+Control+q exec emacsclient -c
-bindsym $mod+Control+q exec remacs
-bindsym $mod+Control+F1 exec /usr/local/bin/emacs
+# bindsym $mod+Control+q exec remacs
+bindsym $mod+Control+q exec /usr/local/bin/emacs
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
@@ -195,7 +195,6 @@ bindsym $mod+Control+F5 workspace 2$tile_02_w; exec chromium --profile-directory
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
-# bindsym $mod+Control+x exec xterm
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
 
@@ -207,9 +206,8 @@ bindsym $mod+F7 exec sleep 1 && xset dpms force off
 # Rofi
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
 bindsym $mod+BackSpace exec rofi -show-icons -show window
-bindsym $mod+F1 exec rofi-buku
-bindsym $mod+F2 exec rofi-google
-bindsym $mod+t exec $SCRIPTS_PATH/rofi-taskwarrior
+bindsym $mod+F2 exec $SCRIPTS_PATH/rofi/google
+bindsym $mod+t exec $SCRIPTS_PATH/rofi/taskwarrior
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
@@ -262,9 +260,9 @@ bindsym XF86Display mode $mode_exec_peripherial
 mode --pango_markup "$mode_exec_peripherial" {
      bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
      bindsym m exec arandr; mode "default"
-     bindsym e exec $SCRIPTS_PATH/xrandr-dual-on; mode "default"; exec i3-msg "restart"
-     bindsym d exec $SCRIPTS_PATH/xrandr-dual-off; mode "default"; exec i3-msg "restart"
-     bindsym t exec $SCRIPTS_PATH/touchpad-toggle -v; mode "default"
+     bindsym e exec $SCRIPTS_PATH/i3/xrandr-dual-on; mode "default"; exec i3-msg "restart"
+     bindsym d exec $SCRIPTS_PATH/i3/xrandr-dual-off; mode "default"; exec i3-msg "restart"
+     bindsym t exec $SCRIPTS_PATH/i3/touchpad-toggle -v; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [[ $1 -eq 1 ]]; then
+    notify-send "DUNST_COMMAND_PAUSE"
+else
+    notify-send "DUNST_COMMAND_RESUME"
+fi

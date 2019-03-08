@@ -11,7 +11,7 @@ fpath=( ~/.zfunc "${fpath[@]}" )
 
 # {{{ Environment variables
 # PATH
-export SCRIPTS_PATH=$HOME/.local/scripts
+export SCRIPTS_PATH=$HOME/.local/bin/scripts/
 export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$GOROOT/bin:$HOME/.cargo/bin
 
 # Golang
@@ -119,48 +119,60 @@ alias mrg='mirage'
 alias j='z'
 alias g='git'
 alias tm='tmux'
-
-# vim
 alias :e='nvim'
 alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
 alias vc='nvim -u NONE'
+# }}}
+
+# {{{ Edit configs
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
 alias vi3s='nvim ~/.config/i3/i3status-rust.toml; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
+alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
-function vn() {
-    nvim ~/Org/Notes/$*
-}
+# }}}
 
-# emacs
-alias em='remacs -nw'
-alias emr='remacs -nw README.org'
+# {{{ Emacs
+export EMACS_BIN=/usr/local/bin/emacs
+alias em="$EMACS_BIN -nw"
+alias emr="$EMACS_BIN -nw README.org"
 function emn() {
-    remacs -nw ~/Org/Notes/
+    $EMACS_BIN -nw ~/Org/Notes/
 }
+# }}}
 
-# ctags
-alias cR='ctags -R'
-alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
-
-# git / packaging
+# {{{ git
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
+alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+# }}}
 
 # zsh
 alias _up source ~/.zshrc
 
+# {{{ python
+alias vs='source venv/bin/activate'
 alias ipy='ipython3'
 alias ipy2='ipython'
 alias ipy3='ipython3'
 # }}}
 
+# {{{ ctags
+alias cR='ctags -R'
+alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
+alias ctags='/usr/bin/ctags-universal'
+# }}}
+
 # {{{ Replacements and wrappers for *nix utils
-# ls
+
+# grep / ripgrep / silversearcher. Ag is my choice.
+alias ag='ag --path-to-ignore ~/.ignore'
+
+# {{{ ls
 alias ls='ls --color=auto'
 if [ -x "$(command -v exa)" ]; then
     alias l='exa'
@@ -183,21 +195,7 @@ else
         alias lT='ls -lR'
     fi
 fi
-
-# grep / ripgrep / silversearcher. Ag is my choice.
-alias ag='ag --path-to-ignore ~/.ignore'
-if [[ -x "$(command -v rg)" ]]; then
-    alias rg='ag --path-to-ignore ~/.ignore'
-    alias rgn='ag -n'
-else
-    alias rg='grep'
-    alias rgn='grep -n'
-fi
-
-# buku: boomarks manager
-if [[ -x "$(command -v buku)" ]]; then
-    alias b='buku --suggest'
-fi
+# }}}
 # }}}
 
 # {{{ taskwarrior
@@ -234,31 +232,35 @@ else
 fi
 # }}}
 
-# {{{ Rust
-alias rusti='rustup run nightly-2016-08-01 ~/.cargo/bin/rusti'
+# {{{ systemctl
+alias sc='systemctl --user'
+alias scs='systemctl --user start'
+alias scr='systemctl --user reload'
+alias scls='systemctl --user list-unit-files'
+alias sclt='systemctl --user list-timers'
+sce() {
+    systemctl --user enable ${1}.timer ${1}.service
+}
+scd() {
+    systemctl --user disable ${1}.timer ${1}.service
+}
 # }}}
 
-# }}}
+# }}} !Aliases
 
 # {{{ Functions
+
+# {{{ Find snippets
+touch_each_dir() {
+    # Create file in each directory
+    find . -maxdepth 1 -type d -exec touch {}/$1 \;
+}
+# }}}
 
 # Try to establish ssh connection for every second
 sssh() {
   while true; do command ssh "$@"; [ $? -ne 255 ] && break || sleep 1; done
 }
-
-# Automatically activate virtualenv on `cd`
-# function cd {
-#     if [[ -d ./venv ]] ; then
-#         deactivate
-#     fi
-#
-#     builtin cd "$@"
-#
-#     if [ -d "venv" ] ; then
-#         source venv/bin/activate
-#     fi
-# }
 # }}}
 
 # {{{ Keybinds
@@ -346,22 +348,26 @@ zstyle ':zce:*' bg 'fg=7'
 
 # }}}
 
-# {{{ nnn configuration
-export DISABLE_FILE_OPEN_ON_NAV=0
-export NNN_BMS='d:~/Documents;D:~/Downloads/;u:~/Uni/;m:/mnt/;M:/media/jubnzv/;w:~/Work/;e:~/Dev/'
-# }}}
-
-# {{{ Git
-alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
-# }}}
-
 # {{{ Completion
 compdef sshrc=ssh
 compdef git_cfg=git
 compdef t=task
 # }}}
 
-# Load temporary private settings
+# {{{ tmux
+# Use FZF to switch Tmux sessions:
+fzf_tmux() {
+	local -r fmt='#{session_id}:|#S|(#{session_attached} attached)'
+	{ tmux display-message -p -F "$fmt" && tmux list-sessions -F "$fmt"; } \
+		| awk '!seen[$1]++' \
+		| column -t -s'|' \
+		| fzf -q '$' --reverse --prompt 'switch session: ' -1 \
+		| cut -d':' -f1 \
+		| xargs tmux switch-client -t
+}
+# }}}
+
+# Load private settings
 source ~/Work/env.sh
 
 # Auto start X

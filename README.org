@@ -49,15 +49,15 @@
   - [[https://github.com/robbyrussell/oh-my-zsh/tree/master/plugins/z][z.zsh]] - jump-around plugin
 + *tmux* - terminal multiplexer
   - [[https://github.com/tmux-plugins/tmux-resurrect][tmux-resurrect]] - persists tmux environment across system restarts
-+ *neovim* - text edtitor which I use to write my C/C++/Rust/Python code. Combined with tmux and number of tools (like [[https://github.com/junegunn/fzf][fzf]] and [[https://langserver.org/][language servers]]) it significantly improves my performance. See [[https://github.com/jubnzv/dotfiles/tree/master/.config/nvim][complete config]] for more.
-+ *emacs* - complex tool which I use for number tasks:
++ *neovim* - my main text editor that I use to work with code. Combined with =tmux= and number of tools like [[https://github.com/junegunn/fzf][fzf]] and [[https://langserver.org/][language servers]] it becomes ever more powerful. See [[https://github.com/jubnzv/dotfiles/tree/master/.config/nvim][complete config]] for more.
++ *emacs* - tool which I use for number tasks:
   - writing any kind of notes with =org-mode=
   - writing static blog pages with =org-mode= and =ox-hugo=
   - diagramming and system modeling with =org-babel= and PlantUML
   - writing LaTeX using: =TeX-mode=, =org-mode= and =org-ref= for bibliography management
   - create presentations using =org-mode= and =latex-beamer=
   - quick emacs lisp and racket tooling for various cases
-  - ... there are too many of them. See my complete [[https://github.com/jubnzv/dotfiles/tree/master/.emacs.d][literate config]] for more.
+  - ... there are too many of them. See complete [[https://github.com/jubnzv/dotfiles/tree/master/.emacs.d][literate config]] for more.
 + *ranger* - a VIM-inspired filemanager for the console
 + *wicd-curses* - curses-based network controller
 + *taskwarrior* - open-source, cross platform time and task management tool
@@ -100,8 +100,7 @@
 *** Organizer
 
 + *taskwarrior* workflow
-  - libnotify notifications for tasks tagged with =+notify= tag implemented with systemd timer
-  - taskwarrior widget in i3blocks
+  - libnotify and email notifications for tagged tasks tagged provided by local systemd services
   - rofi script to quick list tasks in current context
   - Daemon script that sends customized task reports inside local mailbox for every morning
   - [[https://github.com/ralphbean/bugwarrior][bugwarrior]] to fetch and save locally issues from external bugtrackers: redmine, gitlab, github

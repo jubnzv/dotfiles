@@ -33,9 +33,6 @@ set -gx TERMINAL    "urxvt -e"
 # It's required to suppress `undefined function` errors.
 set -gx PYFLAKES_BUILTINS   "'_'"
 
-# Color theme
-theme_gruvbox dark medium
-
 # Colorized gcc output
 set -gx GCC_COLORS 1
 
@@ -52,7 +49,7 @@ alias pdd='popd'
 alias pl='dirs -v'
 alias pc='dirs -c'
 alias svim='sudoedit'
-abbr 's=sudo'
+abbr -a s 'sudo'
 alias s='sudo'  # To keep history compability
 
 # vim
@@ -75,20 +72,14 @@ alias ls='ls --color=auto'
 if which exa > /dev/null
     alias l='exa'
     alias ll='exa -l'
-    alias l1='exa -1'
-    alias lla='exa -l -a'
     alias lt='exa --sort=created -l --reverse'
     alias lta='exa --sort=created -l --reverse -a'
-    abbr 'lth=lt | head'
     alias lT='exa -T'
 else
     alias l='ls'
     alias ll='ls -l'
-    alias l1='ls -1'
-    alias lla='ls -la'
     alias lt='ls -lt'
     alias lta='ls -lat'
-    abbr 'lth=lt | head'
     if which tree > /dev/null
         alias lT='tree'
     else
@@ -97,45 +88,10 @@ else
 end
 
 # grep
-abbr 'ag=rg'
-abbr 'agn=rgn'
-abbr 'grep=rg'
-if which rg > /dev/null
-    alias ag='rg'
-    alias rgn='rg --max-depth=1'
-else if which ag > /dev/null
-    alias rg='ag --path-to-ignore ~/.agignore'
-    alias rgn='ag -n'
+if which ag > /dev/null
+    alias ag='ag --path-to-ignore ~/.agignore'
 else
-    alias rg='grep'
-    alias rgn='grep -n'
-end
-
-# find
-if not which fd > /dev/null
-    abbr 'fd=find'
-end
-
-# cat -> bat
-if which bat > /dev/null
-    abbr 'ct=bat'
-    abbr 'bt=bat'
-else
-    abbr 'ct=cat'
-    abbr 'bt=bat'
-end
-
-# buku: boomarks manager
-if which buku > /dev/null
-    alias b='buku --suggest'
-    abbr 'bw=b -w'
-    abbr 'bp=b -p'
-    abbr 'ba=b -a'
-end
-
-# ping
-if which prettyping > /dev/null
-    abbr 'ping=prettyping'
+    alias ag='grep'
 end
 # }}}2
 
@@ -147,9 +103,9 @@ alias tdd="task due:today"
 alias tsw="task due.before:eow+1d or scheduled.before:eow+1d"
 alias tsd="task due:today or scheduled:today"
 alias tc="task context"
-abbr 'tp=t proj:'
-abbr 'ta=t a'
-abbr 'tcn=t c none'
+abbr -a tp 't proj:'
+abbr -a ta 't a'
+abbr -a tcn 't c none'
 
 function __fzf_select_task -d 'select id one of taskwarrior tasks with fzf'
     set -l res (task minimal 2> /dev/null | sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' | fzf)
@@ -173,23 +129,14 @@ end
 alias cs_f='cscope -R -L -2 ".*" | awk -F \' \' \'{print $2 "\t" $1}\' | sort | uniq'
 
 # git
-abbr 'git_cfg=git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
-
-# Some debugging stuff
-abbr 'uls=ulimit -c unlimited'
-# abbr 'gdc=gdb a.out core'
+abbr -a git_cfg 'git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 
 # Datetime
-abbr '_dtd=(date +%Y-%m-%d)'
-abbr '_dtt=(date +%Y-%m-%d-%H:%M:%S)'
+abbr -a dtd '(date +%Y-%m-%d)'
+abbr -a dtt '(date +%Y-%m-%d-%H:%M:%S)'
 
 # fish shell configuration
-abbr '_up=source ~/.config/fish/config.fish'
-abbr '_et=echo $TERM'
-
-# Custom scripts
-abbr 'gi_up=update-gitignore'
-
+abbr -a _up 'source ~/.config/fish/config.fish'
 # }}}
 
 # {{{ git prompt
@@ -249,5 +196,8 @@ if which fd > /dev/null
     set -x FZF_CTRL_T_COMMAND 'fd --type file --follow'
 end
 # }}}
+
+# Color theme
+theme_gruvbox dark medium
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=100
