@@ -502,7 +502,6 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 
 ** Evil plugins
 *** Evil surround
-
 #+BEGIN_SRC emacs-lisp
 (use-package evil-surround
   :ensure t
@@ -925,10 +924,41 @@ See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.
                              "~/Org/Notes/Work.org") :maxlevel . 2)))
 #+end_src
 
-** Alerts
+** Links
+
+Links to man pages:
+#+BEGIN_SRC emacs-lisp
+(load-file "~/.emacs.d/lisp/org-man.el")
+#+END_SRC
+
+*** =org-insert-link=
+Use HTML title as default description (recipe from [[https://orgmode.org/worg/org-hacks.html][org-hacks]]):
+#+BEGIN_SRC emacs-lisp
+(require 'mm-url) ; to include mm-url-decode-entities-string
+
+(defun my-org-insert-link ()
+  "Insert org link where default description is set to html title."
+  (interactive)
+  (let* ((url (read-string "URL: "))
+         (title (get-html-title-from-url url)))
+    (org-insert-link nil url title)))
+
+(defun get-html-title-from-url (url)
+  "Return content in <title> tag."
+  (let (x1 x2 (download-buffer (url-retrieve-synchronously url)))
+    (save-excursion
+      (set-buffer download-buffer)
+      (beginning-of-buffer)
+      (setq x1 (search-forward "<title>"))
+      (search-forward "</title>")
+      (setq x2 (search-backward "<"))
+      (mm-url-decode-entities-string (buffer-substring-no-properties x1 x2)))))
+#+END_SRC
+
+** Alerts (*disabled*)
 
 [[https://github.com/jwiegley/alert][alert]] package configuration:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package alert
   :ensure t
   :config
@@ -937,7 +967,7 @@ See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.
 #+end_src
 
 =org-wild-notifier= adds notification support for org-agenda views.
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (use-package org-wild-notifier
   :ensure t
   :after alert
@@ -1009,8 +1039,10 @@ Local mode mappings:
 (evil-leader/set-key-for-mode 'org-mode
   ;; <leader>l: links:
   "li" 'org-insert-link
+  "ll" 'my-org-insert-link
   "l]" 'org-next-link
   "l]" 'org-previous-link
+  "lc" 'org-toggle-link-display ; conceal
   ;; <leader>t: TODO and tasks:
   "tt" 'org-todo
   "ti" 'org-inlinetask-insert-task
@@ -1042,17 +1074,6 @@ Evil commands:
 
 ** org-babel
 
-Setup available languages for =org-babel-execute=:
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '(
-  (plantuml . t)
-  (ditaa . t)
-  (emacs-lisp . t)
-  (shell . t)
-  (C . t)
-  (python . t)))
-#+END_SRC
-
 PlantUML configuration:
 #+BEGIN_SRC emacs-lisp
 (setq org-plantuml-jar-path
@@ -1083,6 +1104,24 @@ Collapse source code blocks when open an org file.
 (add-hook 'org-mode-hook 'org-hide-block-all)
 #+END_SRC
 
+Load additional babel languages:
+#+BEGIN_SRC emacs-lisp
+(load-file "~/.emacs.d/lisp/ob-racket.el")
+#+END_SRC
+
+Setup available languages for =org-babel-execute=:
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '(
+  (plantuml . t)
+  (ditaa . t)
+  (racket . t)
+  (scheme . t)
+  (emacs-lisp . t)
+  (shell . t)
+  (C . t)
+  (python . t)))
+#+END_SRC
+
 ** Cross-references with =org-ref=
 #+BEGIN_SRC emacs-lisp
 (use-package org-ref
@@ -1101,7 +1140,7 @@ How to use it:
 + Image from network:
   1. Copy image URI
   2. Call ~org-download-yank~.
-  Image will be saved in ~./images~ directory and embedded in org file.
+  Image will be saved in ~./img~ directory and embedded in org file.
 + Screenshot with =screengrab=:
   1. Call screengrab
   2. Save selected region in ~/tmp/screenshot.png~
@@ -1127,7 +1166,7 @@ Images are separated inside that image folder by additional folders one per org 
         (dir (concat
               (file-name-directory (buffer-file-name))
               (format "%s/%s/%s"
-                      "images"
+                      "img"
                       (file-name-base (buffer-file-name))
                       (org-download--dir-2)))))
     (progn
