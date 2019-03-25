@@ -1,5 +1,6 @@
 set nocompatible
 let mapleader = "\<Space>"
+let maplocalleader = ","
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
@@ -42,8 +43,8 @@ Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
 " {{{ Git
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/airblade/vim-gitgutter'
-Plug 'https://github.com/junegunn/gv.vim'
 Plug 'https://github.com/sodapopcan/vim-twiggy'         " Git branch management
+Plug 'https://github.com/rhysd/git-messenger.vim'       " Reveal the commit messages under the cursor
 " }}}
 
 " {{{ fzf
@@ -52,16 +53,6 @@ Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
-" }}}
-
-" {{{ Writing text/configuration/markdown
-Plug 'https://github.com/pearofducks/ansible-vim'
-Plug 'https://github.com/cespare/vim-toml'
-Plug 'https://github.com/dhruvasagar/vim-table-mode'
-Plug 'https://github.com/plasticboy/vim-markdown'
-Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
-" Plug 'https://github.com/gu-fan/riv.vim'
-" Plug 'https://github.com/lervag/vimtex'
 " }}}
 
 " {{{ Writing code
@@ -80,10 +71,18 @@ Plug 'autozimu/LanguageClient-neovim', {
 Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
 Plug 'https://github.com/vivien/vim-linux-coding-style'
 Plug 'https://github.com/nacitar/a.vim'
-Plug 'https://github.com/raimon49/requirements.txt.vim', { 'for': 'requirements' }
-Plug 'https://github.com/alfredodeza/pytest.vim', { 'for': 'python' }
-Plug 'https://github.com/tpope/vim-scriptease'
 Plug '~/Dev/IEC.vim'
+" }}}
+
+" {{{ Writing text/configuration/markdown
+Plug 'https://github.com/pearofducks/ansible-vim'
+Plug 'https://github.com/cespare/vim-toml'
+Plug 'https://github.com/dhruvasagar/vim-table-mode'
+Plug 'https://github.com/plasticboy/vim-markdown'
+Plug 'https://github.com/Scuilion/markdown-drawer' " Simplify navigation in large markdown files
+Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
+" Plug 'https://github.com/gu-fan/riv.vim', { 'for': [ 'rst' ] }
+Plug 'https://github.com/lervag/vimtex'
 " }}}
 
 call plug#end()
@@ -212,7 +211,7 @@ function! QuickFix_toggle()
     copen
 endfunction
 
-nnoremap <silent> <leader>qt :call QuickFix_toggle()<cr>
+nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
 " }}}
 
 " Search visually selected text
@@ -254,8 +253,12 @@ command! Mkw call WriteCreatingDirs()
 noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
 " Spellchecking
-map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
-imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
+map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
+imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
+" Fix previous error
+inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+" Add word to dictionary
+" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
 
 nnoremap <silent>gb :bn<CR>
@@ -435,9 +438,9 @@ let g:DirDiffExcludes = "CVS,*.class,*.exe,.*.swp,*.pyc,tags"
 
 " {{{ Datetime
 " language time C
-nnoremap <leader>c. "=strftime("%Y-%m-%d")<CR>P
-nnoremap <C-c>. "=strftime("%Y-%m-%d")<CR>P
-inoremap <C-c>. <C-R>=strftime("%Y-%m-%d")<CR>
+nnoremap <silent> <leader>c. "=strftime("%Y-%m-%d")<CR>P
+nnoremap <silent> <C-c>. "=strftime("%Y-%m-%d")<CR>P
+inoremap <silent> <C-c>. <C-R>=strftime("%Y-%m-%d")<CR>
 " If buffer modified, update any 'Last modified: ' in the first 20 lines.
 " 'Last modified: ' can have up to 10 characters before (they are retained).
 " Restores cursor and window position using save_cursor variable.
@@ -505,7 +508,6 @@ nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>w :Windows<CR>
 nnoremap <leader>xr :FZFMru <CR>
-nnoremap q: :History/<CR>
 
 nnoremap <leader>fs :Ag<CR>
 nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
@@ -738,13 +740,6 @@ endfunction
 
 " }}}
 
-" {{{ Notekeeping
-nnoremap <leader>oN :Files ~/Org/Notes/<CR>
-nnoremap <leader>oB :Files ~/Idie/content/<CR>
-nnoremap <leader>on :e ~/Org/Notes/
-nnoremap <leader>os :e ~/Org/scratch.md<CR>
-" }}}
-
 " {{{ echodoc
 let g:echodoc#enable_at_startup=1
 let g:echodoc#enable_force_overwrite=1
@@ -775,8 +770,10 @@ nmap <leader>v- <Plug>GitGutterUndoHunk
 nmap <leader>v= <Plug>GitGutterStageHunk
 nmap <leader>vs :Gstatus<cr>
 nmap <leader>ve :Gedit 
+nmap <leader>vd :Gdiff 
 nmap <leader>vb :Gblame<cr>
 nmap <leader>vB :Twiggy<cr>
+nmap <leader>m <Plug>(git-messenger)
 " }}}
 
 " {{{ C/C++
@@ -840,6 +837,23 @@ let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 " }}}
 
+" {{{ Notekeeping
+nnoremap <leader>on :Files ~/Org/Notes/<CR>
+nnoremap <leader>os :e ~/Org/scratch.md<CR>
+" }}}
+
+" {{{ LaTeX
+" See awesome LaTeX setup guide:
+" https://castel.dev/post/lecture-notes-1/
+let g:tex_flavor = 'latex'
+let g:vimtex_view_method = 'zathura'
+let g:vimtex_quickfix_mode=0
+let g:vimtex_complete_close_braces = 1
+let g:tex_conceal='abdmg'
+" Set level 1 by default. See also: ToggleConceal function.
+set conceallevel=1
+" }}}
+
 " {{{ reStructuredText
 au FileType rst setlocal sw=4 ts=4 expandtab
 au FileType rst setlocal textwidth=80
@@ -854,7 +868,7 @@ let g:riv_fold_info_pos='left'
 
 " {{{ Markdown
 let vim_markdown_preview_github=0
-let vim_markdown_preview_hotkey='<leader>mp'
+" let vim_markdown_preview_hotkey='<leader>mp'
 let vim_markdown_preview_browser='firefox'
 
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
@@ -866,7 +880,7 @@ let g:vim_markdown_conceal = 0
 let g:vim_markdown_math = 1
 let g:vim_markdown_new_list_item_indent = 0
 
-au BufNewFile,BufReadPost *.md set filetype=markdown foldenable
+au BufNewFile,BufReadPost *.md setl ft=markdown fen tw=120 sw=2 foldlevel=0
 " }}}
 
 " {{{ Other files
@@ -892,7 +906,7 @@ au BufNewFile,BufRead .clang-format set ft=config
 " {{{ Toggle features
 function! ToggleConceal()
   if (&conceallevel == 0)
-    set conceallevel=2
+    set conceallevel=1
     echo 'Enable conceal'
   else
     set conceallevel=0
@@ -957,4 +971,4 @@ nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 " }}}
 
-" vim:foldmethod=marker:foldenable:sw=2:tw=120
+" vim:fdm=marker:fen:sw=2:tw=120
