@@ -54,6 +54,11 @@ format = "{1m}"
 # block = "taskwarrior"
 # interval = 30
 
+# [[block]]
+# block = "custom"
+# command = "echo  `task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY count`"
+# interval = 60
+
 [[block]]
 block = "battery"
 interval = 15

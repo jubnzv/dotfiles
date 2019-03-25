@@ -5,7 +5,7 @@ set $HOME 		  /home/jubnzv/
 set $I3LOCKBG     /home/jubnzv/.i3/i3lock.png
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
-set $SCRIPTS_PATH /home/jubnzv/.local/scripts
+set $SCRIPTS_PATH /home/jubnzv/Scripts
 
 # Multi-monitor setup
 set $display1 LVDS1
@@ -185,9 +185,7 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-# bindsym $mod+Control+q exec emacsclient -c
-# bindsym $mod+Control+q exec remacs
-bindsym $mod+Control+q exec /usr/local/bin/emacs
+bindsym $mod+n exec $TERMINAL -e zsh -c "source /home/jubnzv/.zshrc && vnf"
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
@@ -196,6 +194,7 @@ bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
+bindsym $mod+Control+a exec anki # anki: start or restore from tray
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
 
 # Brightness control

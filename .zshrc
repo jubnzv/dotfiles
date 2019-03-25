@@ -22,6 +22,7 @@ export GOPATH=$HOME/Dev/go/
 export DOCKER_ID_USER="jubnzv1"
 
 # Misc
+alias nvim=/usr/local/bin/nvim
 export EDITOR="nvim"
 export ALTERNATE_EDITOR="nvim"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
@@ -83,6 +84,16 @@ export MAILCHECK=0
 # Disable flow control
 stty -ixon
 
+# {{{ Help command
+# Cred.: https://wiki.archlinux.org/index.php/Zsh_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%9A%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D0%B0_Help
+# autoload -U run-help
+# autoload run-help-git
+# autoload run-help-svn
+# autoload run-help-svk
+# unalias run-help
+# alias help=run-help
+# }}}
+
 # {{{ History configuration
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
@@ -135,20 +146,30 @@ alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
 # }}}
 
-# {{{ Emacs
-export EMACS_BIN=/usr/local/bin/emacs
-alias em="$EMACS_BIN -nw"
-alias emr="$EMACS_BIN -nw README.org"
-function emn() {
-    $EMACS_BIN -nw ~/Org/Notes/
-}
-# }}}
-
 # {{{ git
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
 alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+# }}}
+
+# {{{ Notekeeping in markdown with vim
+alias vns='nvim ~/Org/scratch.md'
+vnn() {
+    nvim ~/Org/Notes/$1
+}
+vnf() {
+    nvim $(find ~/Org/Notes/ -type f | fzf)
+}
+# }}}
+
+# {{{ Web archiving
+# See: https://github.com/pirate/ArchiveBox/wiki/Configuration
+alias arch='env OUTPUT_DIR=/home/jubnzv/Org/WebArchive/ FETCH_PDF=False FETCH_MEDIA=False ~/.local/bin/archive'
+# }}}
+
+# {{{ arbtt
+# alias arbtt-today="arbtt-stats --filter='$date>='`date +"%Y-%m-%d"`"
 # }}}
 
 # zsh
@@ -159,6 +180,8 @@ alias vs='source venv/bin/activate'
 alias ipy='ipython3'
 alias ipy2='ipython'
 alias ipy3='ipython3'
+alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
+alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
 # }}}
 
 # {{{ ctags
@@ -234,8 +257,7 @@ fi
 
 # {{{ systemctl
 alias sc='systemctl --user'
-alias scs='systemctl --user start'
-alias scr='systemctl --user reload'
+alias scR='systemctl --user daemon-reload'
 alias scls='systemctl --user list-unit-files'
 alias sclt='systemctl --user list-timers'
 sce() {
@@ -244,6 +266,13 @@ sce() {
 scd() {
     systemctl --user disable ${1}.timer ${1}.service
 }
+scn() {
+    $EDITOR ~/.config/systemd/user/${1}.{service,timer}
+}
+# }}}
+
+# {{{ exim
+alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
 # }}}
 
 # }}} !Aliases
@@ -261,6 +290,22 @@ touch_each_dir() {
 sssh() {
   while true; do command ssh "$@"; [ $? -ne 255 ] && break || sleep 1; done
 }
+
+# {{{ Dirty way to kill cquery instances
+pkill_cq() {
+    local pid
+    if [ "$UID" != "0" ]; then
+        pid=$(ps -f -u $UID | ps aux | grep cquery | grep -v grep | sed 1d | fzf -m | awk '{print $2}')
+    else
+        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
+    fi
+
+    if [ "x$pid" != "x" ]
+    then
+        echo $pid | xargs kill -${1:-9}
+    fi
+}
+# }}}
 # }}}
 
 # {{{ Keybinds
