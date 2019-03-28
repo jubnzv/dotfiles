@@ -24,6 +24,7 @@ Plug 'https://github.com/tpope/vim-surround'
 Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets, parens, quotes in pair
 Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
 Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
+Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
 " }}}
 
 " {{{ tmux integration
@@ -72,17 +73,23 @@ Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
 Plug 'https://github.com/vivien/vim-linux-coding-style'
 Plug 'https://github.com/nacitar/a.vim'
 Plug '~/Dev/IEC.vim'
+
+Plug 'https://github.com/jpalardy/vim-slime'        " Some slime in my vim.
+Plug 'https://github.com/wlangstroth/vim-racket'    " Racket mode
+Plug 'https://github.com/luochen1990/rainbow'       " Rainbow Parentheses improved
 " }}}
 
-" {{{ Writing text/configuration/markdown
+" {{{ Writing text
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
-Plug 'https://github.com/plasticboy/vim-markdown'
-Plug 'https://github.com/Scuilion/markdown-drawer' " Simplify navigation in large markdown files
+Plug 'https://github.com/tpope/vim-markdown'
+Plug 'https://github.com/masukomi/vim-markdown-folding' " Markdown folding by sections
+Plug 'https://github.com/Scuilion/markdown-drawer'      " Simplify navigation in large markdown files
+Plug 'https://github.com/lervag/vimtex'
+Plug 'https://github.com/aklt/plantuml-syntax'          " PlantUML syntax support
 Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 " Plug 'https://github.com/gu-fan/riv.vim', { 'for': [ 'rst' ] }
-Plug 'https://github.com/lervag/vimtex'
 " }}}
 
 call plug#end()
@@ -302,6 +309,9 @@ map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
+" Move selected lines with <C-j> / <C-k>
+let g:move_key_modifier = 'C'
+
 " Tabularize
 cnoreabbrev Tab Tabularize
 " }}}
@@ -336,6 +346,11 @@ let g:lightline = {
   \ }
 
 let g:buftabline_indicators=1 " show modified
+" }}}
+
+" {{{ netrw configuration
+" Allows to open files in external program with `gx`
+let g:netrw_browsex_viewer = "xdg-open"
 " }}}
 
 " {{{ neovim's terminal configuration
@@ -660,7 +675,7 @@ function! LCKeymap()
     nnoremap gD :only<bar>vsplit<cr>gd
     nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
     nnoremap <silent> <F5> :call LanguageClient_contextMenu()<CR>
-    nnoremap <silent> <leader>K :call LanguageClient#textDocument_hover()<cr>
+    nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<cr>
     " Movement
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
     nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
@@ -811,7 +826,16 @@ endfunction
 " }}}
 
 " }}}
-"
+
+" {{{ Lisp-family languages
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
+let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
+let g:slime_dont_ask_default = 1
+au FileType racket RainbowToggle
+au FileType racket RainbowToggle
+" }}}
+
 " {{{ Rust
 au FileType rust call LCKeymap()
 let g:rustfmt_autosave = 1
@@ -867,20 +891,9 @@ let g:riv_fold_info_pos='left'
 " }}}
 
 " {{{ Markdown
-let vim_markdown_preview_github=0
-" let vim_markdown_preview_hotkey='<leader>mp'
-let vim_markdown_preview_browser='firefox'
-
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
-
-let g:vim_markdown_folding_style_pythonic = 1
-let g:vim_markdown_folding_disabled = 0
-let g:vim_markdown_conceal = 0
-" Used as '$x^2$', '$$x^2$$', escapable as '\$x\$' and '\$\$x\$\$'
-let g:vim_markdown_math = 1
-let g:vim_markdown_new_list_item_indent = 0
-
-au BufNewFile,BufReadPost *.md setl ft=markdown fen tw=120 sw=2 foldlevel=0
+au FileType markdown set ft=markdown fen tw=120 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
+au FileType markdown nnoremap <F3> :MarkDrawer<CR>
 " }}}
 
 " {{{ Other files
