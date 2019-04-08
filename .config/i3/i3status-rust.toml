@@ -45,10 +45,10 @@ interval = 5
 block = "cpu"
 interval = 3
 
-[[block]]
-block = "load"
-interval = 3
-format = "{1m}"
+# [[block]]
+# block = "load"
+# interval = 3
+# format = "{1m}"
 
 # [[block]]
 # block = "taskwarrior"

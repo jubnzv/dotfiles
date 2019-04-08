@@ -15,6 +15,7 @@ map('gp', '<Alt-p>')
 cmap('<Alt-j>', '<Tab>');
 cmap('<Alt-k>', '<Shift-Tab>');
 
+// google.translate routines
 mapkey('ote', 'Translate clipboard text with google (auto => en)', function() {
     searchSelectedWith('https://translate.google.com/?hl=en#auto/en/', false, false, '');
 });
@@ -28,6 +29,12 @@ mapkey('osd', 'DebianCodeSearch', function() {
     searchSelectedWith("https://codesearch.debian.net/search?q=");
 });
 
+// Search by packages content for Debian
+addSearchAlias('sD', 'DebianCodeSearch', 'https://packages.debian.org/search?searchon=contents&keywords=');
+mapkey('osD', 'DebianCodeSearch', function() {
+    searchSelectedWith("https://packages.debian.org/search?searchon=contents&keywords=");
+});
+
 // Search sources on GitHub
 // Generic
 addSearchAlias('ss', 'GitHub', 'https://github.com/search?q=');
@@ -37,8 +44,14 @@ mapkey('oss', 'GitHub', function() {
 vmapkey('oss', 'GitHub', function() {
     searchSelectedWith("https://github.com/search?q=");
 });
-// Elisp
-addSearchAlias('se', 'GitHub: elisp', 'https://github.com/search?q=language%3A%22Emacs+Lisp%22+');
+// vimscript
+mapkey('osv', 'GitHub: elisp', function() {
+    searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
+});
+vmapkey('osv', 'GitHub: elisp', function() {
+    searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
+});
+// Emacs Lisp
 mapkey('ose', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
 });
@@ -54,7 +67,6 @@ vmapkey('osR', 'GitHub: racket', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
 });
 // C
-addSearchAlias('sc', 'GitHub: C', 'https://github.com/search?q=language%3AC+');
 mapkey('osc', 'GitHub: C', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC+");
 });
@@ -62,7 +74,6 @@ vmapkey('osc', 'GitHub: C', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC+");
 });
 // C++
-addSearchAlias('sC', 'GitHub: C++', 'https://github.com/search?q=language%3AC%2B%2B+');
 mapkey('osC', 'GitHub: C++', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
 });
@@ -70,7 +81,6 @@ vmapkey('osC', 'GitHub: C++', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
 });
 // Python
-addSearchAlias('sp', 'GitHub: Python', 'https://github.com/search?q=language%3APython+');
 mapkey('osp', 'GitHub: Python', function() {
     searchSelectedWith("https://github.com/search?q=language%3APython+");
 });
@@ -78,7 +88,6 @@ vmapkey('osp', 'GitHub: Python', function() {
     searchSelectedWith("https://github.com/search?q=language%3APython+");
 });
 // Rust
-addSearchAlias('sr', 'GitHub: Rust', 'https://github.com/search?q=language%3ARust+');
 mapkey('osr', 'GitHub: Rust', function() {
     searchSelectedWith("https://github.com/search?q=language%3ARust+");
 });

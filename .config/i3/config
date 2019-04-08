@@ -75,7 +75,7 @@ exec --no-startup-id /usr/bin/keepassxc
 # {{{ UI and appearance
 # Color theme
 # class                 border  backgr. text    indicator
-client.focused          #bdae93 #282828 #bdae93 #d65d0e
+client.focused          #a89984 #282828 #a89984 #d65d0e
 client.focused_inactive #282828 #282828 #93a1a1 #586e75
 client.unfocused        #282828 #282828 #93a1a1 #586e75
 client.urgent           #d65d0e #282828 #000000 #586e75
@@ -185,7 +185,8 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-bindsym $mod+n exec $TERMINAL -e zsh -c "source /home/jubnzv/.zshrc && vnf"
+bindsym $mod+n exec rofi -modi "Notes:~/Scripts/rofi/notes" -show Notes
+bindsym $mod+Control+n exec $TERMINAL -e nvim ~/Org/scratch.md
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
@@ -247,14 +248,14 @@ bindsym Shift+F4 --release [class=".*"] border none
 # {{{ Bind modes
 
 # {{{ Peripherial devices control
-set $mode_exec_peripherial <span fgcolor='#bdae93'>Peripherial</span>\t\t\t \
-<span fgcolor='#bdae93'></span>   \
-<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'>single</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[m]</span> <span fgcolor='#bdae93'>manual </span> \
+set $mode_exec_peripherial <span fgcolor='#a89984'>Peripherial</span>\t\t\t \
+<span fgcolor='#a89984'></span>   \
+<span bgcolor='#a89984' fgcolor='#282828'>[1]</span> <span fgcolor='#a89984'>single</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[m]</span> <span fgcolor='#a89984'>manual </span> \
 <span bgcolor='#8ec07c' fgcolor='#282828'>[e]</span> <span fgcolor='#8ec07c'>on</span>  \
 <span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>\t\t\t \
-<span fgcolor='#bdae93'></span>   \
-<span bgcolor='#bdae93' fgcolor='#282828'>[t]</span> <span fgcolor='#bdae93'>on</span>
+<span fgcolor='#a89984'></span>   \
+<span bgcolor='#a89984' fgcolor='#282828'>[t]</span> <span fgcolor='#a89984'>on</span>
 bindsym XF86Display mode $mode_exec_peripherial
 mode --pango_markup "$mode_exec_peripherial" {
      bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
@@ -268,9 +269,9 @@ mode --pango_markup "$mode_exec_peripherial" {
 # }}}
 # {{{ IM applications startup routines
 set $mode_exec_apps <span bgcolor='#d3869b' fgcolor='#282828'> IM</span>\t\t\
-<span bgcolor='#bdae93' fgcolor='#282828'>[1]</span> <span fgcolor='#bdae93'> Telegram</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span> <span fgcolor='#bdae93'> Mattermost</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span> <span fgcolor='#bdae93'> Thunderbird</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[1]</span> <span fgcolor='#a89984'> Telegram</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[2]</span> <span fgcolor='#a89984'> Mattermost</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[3]</span> <span fgcolor='#a89984'> Thunderbird</span>  \
 <span bgcolor='#d3869b' fgcolor='#282828'>[F9]</span> <span fgcolor='#d3869b'>All</span>
 bindsym $mod+Control+F9 mode $mode_exec_apps
 mode --pango_markup "$mode_exec_apps" {
@@ -284,9 +285,9 @@ mode --pango_markup "$mode_exec_apps" {
 # }}}
 # {{{ Power control
 set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'> Power management</span>\t\t\
-<span bgcolor='#bdae93' fgcolor='#282828'>[S]</span><span fgcolor='#bdae93'>  poweroff\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[R]</span><span fgcolor='#bdae93'>  reboot\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[s]</span><span fgcolor='#bdae93'>  sleep</span>
+<span bgcolor='#a89984' fgcolor='#282828'>[S]</span><span fgcolor='#a89984'>  poweroff\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[R]</span><span fgcolor='#a89984'>  reboot\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[s]</span><span fgcolor='#a89984'>  sleep</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
 	bindsym Shift+s     exec systemctl poweroff; mode "default"
@@ -298,9 +299,9 @@ mode --pango_markup "$mode_exec_power" {
 # }}}
 # {{{ i3wm control
 set $mode_exec_i3cmd <span bgcolor='#8ec07c' fgcolor='#282828'> i3 command</span>\t\t\
-<span bgcolor='#bdae93' fgcolor='#282828'>[l]</span><span fgcolor='#bdae93'>  lock\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[r]</span><span fgcolor='#bdae93'>  restart\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[e]</span><span fgcolor='#bdae93'>  log out</span>
+<span bgcolor='#a89984' fgcolor='#282828'>[l]</span><span fgcolor='#a89984'>  lock\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[r]</span><span fgcolor='#a89984'>  restart\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[e]</span><span fgcolor='#a89984'>  log out</span>
 bindsym $mod+Control+End mode "$mode_exec_i3cmd"
 mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym l           exec lock; mode "default"
@@ -312,10 +313,10 @@ mode --pango_markup "$mode_exec_i3cmd" {
 # }}}
 # {{{ Run selected Python REPL
 set $mode_run_python <span bgcolor='#d79921' fgcolor='#282828'> Python</span>\t\t\
-<span bgcolor='#bdae93' fgcolor='#282828'>[2]</span><span fgcolor='#bdae93'> ipython2\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[3]</span><span fgcolor='#bdae93'> ipython3\t</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[b]</span><span fgcolor='#bdae93'> bpython</span>  \
-<span bgcolor='#bdae93' fgcolor='#282828'>[j]</span><span fgcolor='#bdae93'> jupyter</span>
+<span bgcolor='#a89984' fgcolor='#282828'>[2]</span><span fgcolor='#a89984'> ipython2\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[3]</span><span fgcolor='#a89984'> ipython3\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[b]</span><span fgcolor='#a89984'> bpython</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[j]</span><span fgcolor='#a89984'> jupyter</span>
 bindsym $mod+Control+i mode "$mode_run_python"
 mode --pango_markup "$mode_run_python" {
     bindsym 2       exec $TERMINAL -e ipython; mode "default"
@@ -342,11 +343,11 @@ bar {
     status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
     colors {
         background		#282828
-        statusline		#bdae93
+        statusline		#a89984
         #				    border  bckgrnd text
-        focused_workspace	#bdae93 #bdae93 #282828
-        active_workspace	#bdae93 #282828 #bdae93
-        inactive_workspace	#282828 #282828 #bdae93
+        focused_workspace	#a89984 #a89984 #282828
+        active_workspace	#a89984 #282828 #a89984
+        inactive_workspace	#282828 #282828 #a89984
         urgent_workspace	#d65d0e #d65d0e #282828
     	binding_mode		#282828 #282828	#fffffv
     }
