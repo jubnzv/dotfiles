@@ -46,6 +46,7 @@ snippet incgrx
     \usepackage{graphicx}
     \graphicspath{ {./img/} }
     \DeclareGraphicsExtensions{.png}
+    \usepackage{float}
 # }}}
 
 # {{{ Expressions
@@ -56,8 +57,9 @@ snippet nl
 # {{{ Graphics
 snippet grx
 options head
-    \begin{figure}
-    \includegraphics[scale=0.5]{${1:PICTURE}}
+    \begin{figure}[H]
+    \label{fig:$1}
+    \includegraphics[scale=0.5]{${1:#:PICTURE}}
     \caption{${2:DESCRIPTION}}
     \end{figure}
 # }}}

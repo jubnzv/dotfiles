@@ -25,10 +25,7 @@ Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets,
 Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
 Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
 Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
-" }}}
-
-" {{{ tmux integration
-Plug 'https://github.com/christoomey/vim-tmux-navigator'
+Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
 " }}}
 
 " {{{ UI & appearance
@@ -73,6 +70,7 @@ Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
 Plug 'https://github.com/vivien/vim-linux-coding-style'
 Plug 'https://github.com/nacitar/a.vim'
 Plug '~/Dev/IEC.vim'
+Plug 'https://github.com/KabbAmine/zeavim.vim'      " Query Zeal docs from vim
 
 Plug 'https://github.com/jpalardy/vim-slime'        " Some slime in my vim.
 Plug 'https://github.com/wlangstroth/vim-racket'    " Racket mode
@@ -177,19 +175,18 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " {{{ Keybindings
 
 " {{{ Common
-"
-" Binds that changes default vim behavior, separated from plugins
-" configuration.
-"
 inoremap jj <Esc>
+inoremap <M-t> TODO 
 nnoremap <leader>h :noh<CR>
+nnoremap <leader>xc :q<CR>
+nnoremap <leader>s :w<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
 
 " Insert newline without entering insert mode
-nmap zj o<Esc>k
-nmap zk O<Esc>j
+" nmap zj o<Esc>k
+" nmap zk O<Esc>j
 
 " Reload vimrc
 nnoremap <leader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
@@ -205,22 +202,6 @@ nnoremap Q @@
 nnoremap ]e :cnext <CR>
 nnoremap [e :cprevious<CR>
 
-" {{{ Toggling quickfix window
-function! QuickFix_toggle()
-    for i in range(1, winnr('$'))
-        let bnum = winbufnr(i)
-        if getbufvar(bnum, '&buftype') == 'quickfix'
-            cclose
-            return
-        endif
-    endfor
-
-    copen
-endfunction
-
-nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
-" }}}
-
 " Search visually selected text
 vnoremap // y/<C-R>"<CR>
 
@@ -234,13 +215,6 @@ noremap ;' :s///cg<Left><Left><Left><Left>
 " Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
-
-nmap <leader>xc :q<CR>
-
-" Save buffer
-" nmap <C-s> :w<CR>
-" imap <C-s> <Esc>:w<CR>i
-nmap <leader>s :w<CR>
 
 " Fix common typos
 :command! W w
@@ -267,9 +241,21 @@ inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 " Add word to dictionary
 " inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
+"
 
-nnoremap <silent>gb :bn<CR>
-nnoremap <silent>gB :bp<CR>
+" {{{ Toggle quickfix window
+function! QuickFix_toggle()
+    for i in range(1, winnr('$'))
+        let bnum = winbufnr(i)
+        if getbufvar(bnum, '&buftype') == 'quickfix'
+            cclose
+            return
+        endif
+    endfor
+    copen
+endfunction
+nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
+" }}}
 
 " Editing neighbors
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
@@ -281,6 +267,12 @@ map <leader>et :tabe %%
 " Refresh current buffer content
 nnoremap <leader>B :checktime<CR>
 
+" Convert the ^M linebreak to 'normal' linebreaks
+nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
+
+" Remove all trailing whitespaces
+nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+
 function! BufferClose()
   if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
     exec ':q'
@@ -291,7 +283,7 @@ endfunction
 nnoremap <C-F4> :call BufferClose()<CR>
 nnoremap <leader>xk :call BufferClose()<CR>
 
-" Switch between current and last buffer
+" Switch to recent buffer
 nnoremap <A-r> <C-^>
 
 " {{{ Copy file path to system clipboard
@@ -353,35 +345,6 @@ let g:buftabline_indicators=1 " show modified
 let g:netrw_browsex_viewer = "xdg-open"
 " }}}
 
-" {{{ neovim's terminal configuration
-" Close terminal buffer after exit from shell process.
-" https://www.reddit.com/r/neovim/comments/7xonzm/how_to_close_a_terminal_buffer_automatically_if/dud0vxn
-function! OnTermClose()
-    try
-        $;?.
-    catch
-        return
-    endtry
-    if match(getline('.'), 'make: \*\*\* \[[^\]]\+] Error ') == -1
-        call feedkeys('\<CR>')
-    endif
-endfunction
-
-" Terminal-mode keybinds
-tnoremap <C-v><Esc> <C-\><C-n>
-tnoremap <Esc> <C-\><C-n>
-tnoremap <expr> <A-y> '<C-\><C-N>"'.nr2char(getchar()).'pi'
-
-" Highlight unfocused cursor
-highlight TermCursorNC ctermfg=15 guifg=#fdf6e3 ctermbg=96 guibg=#8f3f71 cterm=NONE gui=NONE
-
-augroup Term
-    autocmd!
-    au TermOpen * startinsert
-    au TermClose * silent call OnTermClose()
-augroup END
-" }}}
-
 " {{{ tmux integration
 if exists('$TMUX')
   map ` <Nop>
@@ -399,17 +362,14 @@ let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commen
 " }}}
 
 " {{{ Folding settings
-
-" {{{ Folding options
 set foldmethod=syntax
 set foldnestmax=6
 set nofoldenable       " Disable folding when open file
 set foldlevel=2
 set foldcolumn=0
 set fillchars=fold:\ 
-" }}}
 
-" {{{ Customized `CustomFoldText` function:
+" {{{ Custom fold function
 " http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
 function! CustomFoldText()
   let fs = v:foldstart
@@ -512,7 +472,7 @@ command! -bang -nargs=* Ag
 nmap <A-z> <plug>(fzf-maps-n)
 xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
-autocmd FileType fzf tnoremap <buffer> <Esc> <c-g>
+au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ff :Files<CR>
@@ -540,7 +500,7 @@ nnoremap <leader>far :AgRust<CR>
 nnoremap <leader>fae :AgElisp<CR>
 " }}}
 
-" {{{ Nerdcommenter settings
+" {{{ Nerdcommenter
 let g:NERDSpaceDelims = 1
 let g:NERDRemoveExtraSpaces = 1
 let g:NERDCompactSexyComs = 1
@@ -581,16 +541,10 @@ au BufWinEnter * match ExtraWhitespace /\s\+$/
 au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 au InsertLeave * match ExtraWhitespace /\s\+$/
 au BufWinLeave * call clearmatches()
-
-" Remove all trailing whitespaces
-nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 " }}}
 
-" Convert the ^M linebreak to 'normal' linebreaks
-nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
-
 " Avoid syntax highlighting for large files
-autocmd BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
+au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
 " {{{ ctags
 set tags=./tags;
@@ -649,7 +603,8 @@ let g:LanguageClient_autoStart = 0
 let g:LanguageClient_hasSnippetSupport = 1
 let g:LanguageClient_waitOutputTimeout = 5
 let g:LanguageClient_useVirtualText = 0
-let g:LanguageClient_hoverPreview = "Never"
+let g:LanguageClient_useFloatingHover = 1
+" let g:LanguageClient_hoverPreview = "Never"
 let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
@@ -791,6 +746,19 @@ nmap <leader>vB :Twiggy<cr>
 nmap <leader>m <Plug>(git-messenger)
 " }}}
 
+" {{{ Search in external data sources
+nmap <leader>z <Plug>Zeavim
+vmap <leader>z <Plug>ZVVisSelection
+nmap gz <Plug>ZVOperator
+nmap <leader><leader>z <Plug>ZVKeyDocset
+
+function! GoogleSearch()
+     let searchterm = getreg("g")
+     silent! exec "silent! !firefox \"http://google.com/search?q=" . searchterm . "\" &"
+endfunction
+vnoremap <leader>Z "gy<Esc>:call GoogleSearch()<CR>
+" }}}
+
 " {{{ C/C++
 " au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp setlocal tw=80
@@ -828,12 +796,16 @@ endfunction
 " }}}
 
 " {{{ Lisp-family languages
+function! LispKeymap()
+  inoremap <M-\> λ
+endfunction
+
 let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
 let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
 let g:slime_dont_ask_default = 1
 au FileType racket RainbowToggle
-au FileType racket RainbowToggle
+au FileType racket call LispKeymap()
 " }}}
 
 " {{{ Rust
@@ -846,6 +818,7 @@ au FileType python nnoremap <Leader>Ei :!isort %<CR><CR>
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
 au FileType python call LCKeymap()
+au Filetype python set cinoptions=:0,l1,t0,g0,(0
 " }}}
 
 " {{{ vimscript
@@ -876,6 +849,8 @@ let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
 " Set level 1 by default. See also: ToggleConceal function.
 set conceallevel=1
+au FileType tex set sw=2
+au FileType python call Togglegjgk()
 " }}}
 
 " {{{ reStructuredText
@@ -892,8 +867,10 @@ let g:riv_fold_info_pos='left'
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
-au FileType markdown set ft=markdown fen tw=120 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
+au FileType markdown set fen tw=120 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
 au FileType markdown nnoremap <F3> :MarkDrawer<CR>
+au FileType markdown nnoremap <Tab> za<CR>k
+au FileType markdown nnoremap <S-Tab> zA<CR>k
 " }}}
 
 " {{{ Other files
