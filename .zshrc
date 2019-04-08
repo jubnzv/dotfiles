@@ -21,6 +21,9 @@ export GOPATH=$HOME/Dev/go/
 # Credentials
 export DOCKER_ID_USER="jubnzv1"
 
+# Make java UI not so ugly
+export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+
 # Misc
 alias nvim=/usr/local/bin/nvim
 export EDITOR="nvim"
