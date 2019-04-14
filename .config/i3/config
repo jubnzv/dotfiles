@@ -70,6 +70,7 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id /usr/bin/xcompmgr
 exec --no-startup-id /usr/bin/keepassxc
+exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 # }}}
 
 # {{{ UI and appearance
