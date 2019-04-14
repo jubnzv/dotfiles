@@ -1,0 +1,7 @@
+#!/bin/bash
+context=`task rc.gc=off _get rc.context`
+task=`task notify +ACTIVE | sed '4q;d'`
+id=`echo $task | awk '{ print $1 }'`
+desc=`echo $task | awk '{ $1=""; print }'`
+
+notify-send "[${id}][${context}]" "${desc}" -i task-due
