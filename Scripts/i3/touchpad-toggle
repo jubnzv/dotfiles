@@ -1,26 +1,8 @@
 #!/bin/bash
-#
-# Toggle touchpad on X230.
-#
-
-# Old synaptics script
-# if synclient -l | grep "TouchpadOff .*=.*0" ; then
-#     synclient TouchpadOff=1 ;
-#     notify-send " touchpad status" "disabled"
-# else
-#     synclient TouchpadOff=0 ;
-#     notify-send " touchpad status" "enabled"
-# fi
-
-# libinput
- if xinput list-props 11 | grep "Device Enabled (148).*1" ; then
-	 xinput set-prop 11 148 0 ;
-     if [ "$1" == "-v" ]; then
-         notify-send " touchpad status" "disabled"
-     fi
- else
-	 xinput set-prop 11 148 1 ;
-     if [ "$1" == "-v" ]; then
-         notify-send " touchpad status" "enabled"
-     fi
+if xinput list-props "SynPS/2 Synaptics TouchPad" | grep "Device Enabled (148).*1" ; then
+    xinput disable "SynPS/2 Synaptics TouchPad"
+    notify-send " touchpad status" "disabled"
+else
+    xinput enable "SynPS/2 Synaptics TouchPad"
+    notify-send " touchpad status" "enabled"
 fi
