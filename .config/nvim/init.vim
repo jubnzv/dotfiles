@@ -177,6 +177,9 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 " {{{ Common
 inoremap jj <Esc>
 inoremap <M-t> TODO 
+nnoremap <M-t> iTODO <ESC>4h
+inoremap <M-x> xxx 
+nnoremap <M-x> ixxx <ESC>3h
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>xc :q<CR>
 nnoremap <leader>s :w<CR>
@@ -498,6 +501,14 @@ nnoremap <leader>fac :AgCC<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
 nnoremap <leader>fae :AgElisp<CR>
+
+" TODO entries in current directory
+command! -bang -nargs=* AgTODO call fzf#vim#ag("TODO", <q-args>, {'down': '~40%'})
+command! -bang -nargs=* Agxxx call fzf#vim#ag("xxx", <q-args>, {'down': '~40%'})
+command! -bang -nargs=* AgFIXME call fzf#vim#ag("FIXME", <q-args>, {'down': '~40%'})
+nnoremap <leader>fxt :AgTODO<CR>
+nnoremap <leader>fxx :Agxxx<CR>
+nnoremap <leader>fxf :AgFIXME<CR>
 " }}}
 
 " {{{ Nerdcommenter
