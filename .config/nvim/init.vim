@@ -234,7 +234,7 @@ endfunction
 command! Mkw call WriteCreatingDirs()
 
 " Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
+noremap <Leader>Em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
@@ -275,6 +275,9 @@ nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
 
 " Remove all trailing whitespaces
 nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+
+" ё -> е
+nnoremap <silent> <Leader>E` :%s/ё/е/g<cr>
 
 function! BufferClose()
   if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
@@ -861,13 +864,16 @@ let g:tex_conceal='abdmg'
 " Set level 1 by default. See also: ToggleConceal function.
 set conceallevel=1
 au FileType tex set sw=2
-au FileType python call Togglegjgk()
+au FileType tex call Togglegjgk()
+au FileType tex set spell! spelllang=en_us,ru_ru
 " }}}
 
 " {{{ reStructuredText
 au FileType rst setlocal sw=4 ts=4 expandtab
 au FileType rst setlocal textwidth=80
 au Filetype rst setlocal foldmethod=expr
+au FileType rst set spell! spelllang=en_us,ru_ru
+au FileType rst call Togglegjgk()
 
 " Disable auto-folding on `:w`
 let g:riv_fold_auto_update=0
@@ -878,10 +884,12 @@ let g:riv_fold_info_pos='left'
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
-au FileType markdown set fen tw=120 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
+au FileType markdown set fen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
 au FileType markdown nnoremap <F3> :MarkDrawer<CR>
 au FileType markdown nnoremap <Tab> za<CR>k
 au FileType markdown nnoremap <S-Tab> zA<CR>k
+au FileType markdown call Togglegjgk()
+au FileType markdown set spell! spelllang=en_us,ru_ru
 " }}}
 
 " {{{ Other files
