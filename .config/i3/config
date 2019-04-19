@@ -313,18 +313,20 @@ mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym Escape 	    mode "default"
 }
 # }}}
-# {{{ Run selected Python REPL
-set $mode_run_python <span bgcolor='#d79921' fgcolor='#282828'> Python</span>\t\t\
+# {{{ Run selected REPL
+set $mode_run_repl <span bgcolor='#d79921' fgcolor='#282828'> REPL</span>\t\t\
 <span bgcolor='#a89984' fgcolor='#282828'>[2]</span><span fgcolor='#a89984'> ipython2\t</span>  \
 <span bgcolor='#a89984' fgcolor='#282828'>[3]</span><span fgcolor='#a89984'> ipython3\t</span>  \
 <span bgcolor='#a89984' fgcolor='#282828'>[b]</span><span fgcolor='#a89984'> bpython</span>  \
-<span bgcolor='#a89984' fgcolor='#282828'>[j]</span><span fgcolor='#a89984'> jupyter</span>
-bindsym $mod+Control+i mode "$mode_run_python"
-mode --pango_markup "$mode_run_python" {
+<span bgcolor='#a89984' fgcolor='#282828'>[j]</span><span fgcolor='#a89984'> jupyter</span> \
+<span bgcolor='#076678' fgcolor='#282828'>[b]</span><span fgcolor='#076678'> racket</span>
+bindsym $mod+Control+i mode "$mode_run_repl"
+mode --pango_markup "$mode_run_repl" {
     bindsym 2       exec $TERMINAL -e ipython; mode "default"
     bindsym 3       exec $TERMINAL -e ipython3; mode "default"
     bindsym b       exec $TERMINAL -e bpython; mode "default"
     bindsym j       exec $TERMINAL -e jupyter notebook; mode "default"
+    bindsym r       exec $TERMINAL -e racket -i; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }
