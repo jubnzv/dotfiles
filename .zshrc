@@ -403,16 +403,23 @@ compdef t=task
 # }}}
 
 # {{{ tmux
-# Use FZF to switch Tmux sessions:
-fzf_tmux() {
-	local -r fmt='#{session_id}:|#S|(#{session_attached} attached)'
-	{ tmux display-message -p -F "$fmt" && tmux list-sessions -F "$fmt"; } \
-		| awk '!seen[$1]++' \
-		| column -t -s'|' \
-		| fzf -q '$' --reverse --prompt 'switch session: ' -1 \
-		| cut -d':' -f1 \
-		| xargs tmux switch-client -t
-}
+# Use FZF to switch Tmux sessions
+# For now I use following script instead: https://github.com/siadat/session-finder
+# fzf_tmux_session() {
+#     local -r fmt='#{session_id}:|#S|(#{session_attached} attached)'
+#     { tmux display-message -p -F "$fmt" && tmux list-sessions -F "$fmt"; } \
+#         | awk '!seen[$1]++' \
+#         | column -t -s'|' \
+#         | fzf -q '$' --reverse --prompt 'switch session: ' -1 \
+#         | cut -d':' -f1 \
+#         | xargs tmux switch-client -t
+# }
+
+# tmuxp configuration
+if [[ -n $(which tmuxp) ]]; then
+    eval "$(_TMUXP_COMPLETE=source_zsh tmuxp)"
+    tmpz() { find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y }
+fi
 # }}}
 
 # Load private settings
