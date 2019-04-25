@@ -20,7 +20,7 @@ session_status() {
 			echo -n "#[fg=colour246,bg=default,bold]${line}#[fg=colour241,bg=default,nobold]"
 		else
 			# Uncomment this string to show other session names as well
-			echo -n "|#[fg=${colors[$colori]}]${line}#[fg=colour246,bg=default]"
+            echo -n "|#[fg=colour241]${line}#[fg=colour241,bg=default]"
 		fi
 		local counter=$((counter + 1))
 	done
