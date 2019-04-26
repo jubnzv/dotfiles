@@ -523,11 +523,11 @@ let g:NERDAltDelims_c = 1
 
 " Commenting by <C-/> like Intellij
 if has('win32')
-  nmap <C-/> <leader>c<Space>
-  vmap <C-/> <leader>c<Space>
+  nmap <C-/> <leader>cl
+  vmap <C-/> <leader>cl
 else
-  nmap <C-_> <leader>c<Space>
-  vmap <C-_> <leader>c<Space>
+  nmap <C-_> <leader>cl
+  vmap <C-_> <leader>cl
 endif
 " }}}
 
