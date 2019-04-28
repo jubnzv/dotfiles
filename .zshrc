@@ -12,11 +12,9 @@ fpath=( ~/.zfunc "${fpath[@]}" )
 # {{{ Environment variables
 # PATH
 export SCRIPTS_PATH=$HOME/.local/bin/scripts/
-export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$GOROOT/bin:$HOME/.cargo/bin
-
-# Golang
-export GOROOT=~/.local/opt/go
+export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$HOME/.cargo/bin:/usr/local/go/bin
 export GOPATH=$HOME/Dev/go/
+export GOROOT=/usr/local/go/bin
 
 # Credentials
 export DOCKER_ID_USER="jubnzv1"
