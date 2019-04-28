@@ -26,6 +26,7 @@ Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindin
 Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
 Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
 Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
+Plug 'https://github.com/tyru/open-browser.vim'     " Open links in browser
 " }}}
 
 " {{{ UI & appearance
@@ -349,6 +350,36 @@ let g:buftabline_indicators=1 " show modified
 " {{{ netrw configuration
 " Allows to open files in external program with `gx`
 let g:netrw_browsex_viewer = "xdg-open"
+" }}}
+
+" {{{ Integration with web-browser
+let g:openbrowser_search_engines = extend(
+\   get(g:, 'openbrowser_search_engines', {}),
+\   {
+\       'github': 'http://github.com/search?q=fork%3Afalse+{query}',
+\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+{query}&type=Code',
+\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+{query}&type=Code',
+\       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+{query}&type=Code',
+\       'gnome': 'https://developer.gnome.org/search?q={query}',
+\       'google': 'http://google.com/search?q={query}',
+\       'google-code': 'http://code.google.com/intl/en/query/#q={query}',
+\       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
+\       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
+\       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
+\       'wikipedia': 'http://en.wikipedia.org/wiki/{query}',
+\       'wikipedia-ru': 'http://ru.wikipedia.org/wiki/{query}',
+\   },
+\   'keep'
+\)
+let g:openbrowser_default_search = 'google'
+
+" Search selected visually selected word with appropriate search engine.
+vnoremap <leader>os <Plug>(openbrowser-smart-search)
+vnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
+vnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
+vnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+vnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
+vnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
 " }}}
 
 " {{{ tmux integration
