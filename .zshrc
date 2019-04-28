@@ -14,7 +14,7 @@ fpath=( ~/.zfunc "${fpath[@]}" )
 export SCRIPTS_PATH=$HOME/.local/bin/scripts/
 export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$HOME/.cargo/bin:/usr/local/go/bin
 export GOPATH=$HOME/Dev/go/
-export GOROOT=/usr/local/go/bin
+unset GOROOT
 
 # Credentials
 export DOCKER_ID_USER="jubnzv1"
