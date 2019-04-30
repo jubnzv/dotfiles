@@ -55,6 +55,11 @@ Plug 'https://github.com/junegunn/fzf', {
   \ }
 " }}}
 
+" {{{ textobjects
+Plug 'https://github.com/kana/vim-textobj-user'    " Plugin for user-defined textobjs
+Plug 'https://github.com/glts/vim-textobj-comment' " textobj for comments
+" }}}
+
 " {{{ Writing code
 Plug 'https://github.com/majutsushi/tagbar'            " Vim plugin that displays tags in a window
 Plug 'https://github.com/ludovicchabant/vim-gutentags' " Auto (re)generate tag files
@@ -246,9 +251,8 @@ noremap <Leader>Em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 " Fix previous error
+noremap <C-l> [s1z=``
 inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
-" Add word to dictionary
-" inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
 "
 
@@ -272,6 +276,10 @@ map <leader>ew :e %%
 map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
+
+" Find and Replace
+map <leader>r :%s///g<left><left>
+map <leader>rl :s///g<left><left>
 
 " Refresh current buffer content
 nnoremap <leader>B :checktime<CR>
@@ -379,12 +387,12 @@ let g:openbrowser_search_engines = extend(
 let g:openbrowser_default_search = 'google'
 
 " Search selected visually selected word with appropriate search engine.
-vnoremap <leader>os <Plug>(openbrowser-smart-search)
-vnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
-vnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
-vnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
-vnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
-vnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
+nnoremap <leader>os <Plug>(openbrowser-smart-search)
+nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
+nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
+nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
+nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
 " }}}
 
 " {{{ tmux integration
@@ -559,11 +567,11 @@ let g:NERDAltDelims_c = 1
 
 " Commenting by <C-/> like Intellij
 if has('win32')
-  nmap <C-/> <leader>cl
-  vmap <C-/> <leader>cl
+  nmap <C-/> <leader>c<Space>
+  vmap <C-/> <leader>c<Space>
 else
-  nmap <C-_> <leader>cl
-  vmap <C-_> <leader>cl
+  nmap <C-_> <leader>c<Space>
+  vmap <C-_> <leader>c<Space>
 endif
 " }}}
 
@@ -850,6 +858,9 @@ function! LispKeymap()
   inoremap <M-\> λ
 endfunction
 
+let g:vim_parinfer_globs = ['*.scm', '*.rkt']
+let g:vim_parinfer_filetypes = ['scheme', 'racket']
+
 let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
 let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
@@ -860,6 +871,7 @@ au FileType racket call LispKeymap()
 
 " {{{ Rust
 au FileType rust call LCKeymap()
+au FileType rust nnoremap <buffer> <f9> :!cargo build<cr>
 let g:rustfmt_autosave = 1
 " }}}
 
