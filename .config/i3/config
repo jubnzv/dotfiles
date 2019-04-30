@@ -59,6 +59,7 @@ workspace "14$tile_14_music" output $display1
 # {{{ Autostart
 exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
+exec --no-startup-id /usr/local/bin/taskboard
 exec --no-startup-id $SCRIPTS_PATH/i3/setup-keys
 exec --no-startup-id $SCRIPTS_PATH/i3/xrandr-dual-on
 exec --no-startup-id $SCRIPTS_PATH/i3/touchpad-toggle
@@ -89,16 +90,16 @@ hide_edge_borders both
 
 # {{{ Workspace settings
 # Use `xprop` command for WM_CLASS and WM_NAME.
-# for_window [class="VirtualBox"] floating enable
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [class="^Slack$"] move container to workspace 13$tile_13_msg
-for_window [class="^Telegram$"] move container to workspace 13$tile_13_msg
+for_window [class="TelegramDesktop"] move container to workspace 13$tile_13_msg
 for_window [class="^Thunderbird$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^xev$"] floating enable
+for_window [class="(?i)taskboard"] floating enable, move container to workspace current
 for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [title="^Run" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [class="jetbrains-toolbox"] floating enable
@@ -207,9 +208,7 @@ bindsym $mod+F7 exec sleep 1 && xset dpms force off
 
 # Rofi
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
-bindsym $mod+BackSpace exec rofi -show-icons -show window
 bindsym $mod+F2 exec $SCRIPTS_PATH/rofi/google
-bindsym $mod+t exec $SCRIPTS_PATH/i3/active-task
 
 # Additional scripts/utils
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
@@ -219,7 +218,7 @@ bindsym Control+XF86Launch1 exec screengrab -r
 bindsym Shift+XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
 bindsym $mod+XF86ScreenSaver exec xset s activate
-bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
+bindsym $mod+F12 exec pkill --signal USR1 taskboard
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
 
 # cmus control

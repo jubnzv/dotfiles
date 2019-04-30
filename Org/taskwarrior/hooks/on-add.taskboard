@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Input:
+# - Line of JSON for proposed new task.
+read new_task
+
+# Update tasks data on taskboard
+pkill --signal USR2 taskboard
+
+# Output:
+# - JSON, modified or unmodified.
+echo $new_task
+
