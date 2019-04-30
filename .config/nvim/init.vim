@@ -27,6 +27,7 @@ Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
 Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
 Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
 Plug 'https://github.com/tyru/open-browser.vim'     " Open links in browser
+Plug 'https://github.com/simnalamburt/vim-mundo'    " Undo tree graph representation
 " }}}
 
 " {{{ UI & appearance
@@ -122,6 +123,10 @@ set expandtab                               " On pressing tab insert 4 spaces
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
+" }}}
+
+" {{{ mundo: Undo tree
+ nnoremap <C-x>u :MundoToggle<CR>
 " }}}
 
 " {{{ UI options
