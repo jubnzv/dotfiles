@@ -15,84 +15,108 @@ map('gp', '<Alt-p>')
 cmap('<Alt-j>', '<Tab>');
 cmap('<Alt-k>', '<Shift-Tab>');
 
-// google.translate routines
-mapkey('ote', 'Translate clipboard text with google (auto => en)', function() {
-    searchSelectedWith('https://translate.google.com/?hl=en#auto/en/', false, false, '');
-});
-mapkey('otr', 'Translate clipboard text with google (en => ru)', function() {
+// Unmap some default mappings
+unmap('od');
+
+// google.translate
+//mapkey('ote', 'Translate clipboard text with google (auto => en)', function() {
+//    searchSelectedWith('https://translate.google.com/?hl=en#auto/en/', false, false, '');
+//});
+mapkey('otg', 'Translate clipboard text with google (en => ru)', function() {
     searchSelectedWith('https://translate.google.com/#view=home&op=translate&sl=en&tl=ru&text=', false, false, '');
 });
 
+// yandex.translate
+//mapkey('ote', 'Translate clipboard text with yandex (ru => en)', function() {
+//    searchSelectedWith('https://translate.yandex.ru/?lang=ru-en&text=', false, false, '');
+//});
+mapkey('otr', 'Translate clipboard text with yandex (en => ru)', function() {
+    searchSelectedWith('https://translate.yandex.ru/?lang=en-ru&text=', false, false, '');
+});
+
+// Oxford dictionary
+//mapkey('oo', 'Search word in Oxford dictionary', function() {
+//    searchSelectedWith('https://en.oxforddictionaries.com/definition/', false, false, '');
+//});
+
 // Search sources on Debian Code Search
-addSearchAlias('sd', 'DebianCodeSearch', 'https://codesearch.debian.net/search?q=');
-mapkey('osd', 'DebianCodeSearch', function() {
+addSearchAlias('oDc', 'DebianCodeSearch', 'https://codesearch.debian.net/search?q=');
+mapkey('oDc', 'DebianCodeSearch', function() {
     searchSelectedWith("https://codesearch.debian.net/search?q=");
 });
 
 // Search by packages content for Debian
-addSearchAlias('sD', 'DebianCodeSearch', 'https://packages.debian.org/search?searchon=contents&keywords=');
-mapkey('osD', 'DebianCodeSearch', function() {
+addSearchAlias('oDp', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=');
+mapkey('oDp', 'Debian packages content', function() {
     searchSelectedWith("https://packages.debian.org/search?searchon=contents&keywords=");
 });
 
 // Search sources on GitHub
 // Generic
-addSearchAlias('ss', 'GitHub', 'https://github.com/search?q=');
-mapkey('oss', 'GitHub', function() {
+addSearchAlias('ogg', 'GitHub', 'https://github.com/search?q=');
+mapkey('ogg', 'GitHub', function() {
     searchSelectedWith("https://github.com/search?q=");
 });
-vmapkey('oss', 'GitHub', function() {
+vmapkey('ogg', 'GitHub', function() {
     searchSelectedWith("https://github.com/search?q=");
 });
 // vimscript
-mapkey('osv', 'GitHub: elisp', function() {
+mapkey('ogv', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
 });
-vmapkey('osv', 'GitHub: elisp', function() {
+vmapkey('ogv', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
 });
 // Emacs Lisp
-mapkey('ose', 'GitHub: elisp', function() {
+mapkey('oge', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
 });
-vmapkey('ose', 'GitHub: elisp', function() {
+vmapkey('oge', 'GitHub: elisp', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
 });
 // Racket
-addSearchAlias('sR', 'GitHub: racket', 'https://github.com/search?q=language%3A%22Racket%22+');
-mapkey('osR', 'GitHub: racket', function() {
+addSearchAlias('ogR', 'GitHub: racket', 'https://github.com/search?q=language%3A%22Racket%22+');
+mapkey('ogR', 'GitHub: racket', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
 });
-vmapkey('osR', 'GitHub: racket', function() {
+vmapkey('ogR', 'GitHub: racket', function() {
     searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
 });
 // C
-mapkey('osc', 'GitHub: C', function() {
+mapkey('ogc', 'GitHub: C', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC+");
 });
-vmapkey('osc', 'GitHub: C', function() {
+vmapkey('ogc', 'GitHub: C', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC+");
 });
 // C++
-mapkey('osC', 'GitHub: C++', function() {
+mapkey('ogC', 'GitHub: C++', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
 });
-vmapkey('osC', 'GitHub: C++', function() {
+vmapkey('ogC', 'GitHub: C++', function() {
     searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
 });
 // Python
-mapkey('osp', 'GitHub: Python', function() {
+mapkey('ogp', 'GitHub: Python', function() {
     searchSelectedWith("https://github.com/search?q=language%3APython+");
 });
-vmapkey('osp', 'GitHub: Python', function() {
+vmapkey('ogp', 'GitHub: Python', function() {
     searchSelectedWith("https://github.com/search?q=language%3APython+");
 });
 // Rust
-mapkey('osr', 'GitHub: Rust', function() {
+mapkey('ogr', 'GitHub: Rust', function() {
     searchSelectedWith("https://github.com/search?q=language%3ARust+");
 });
-vmapkey('osr', 'GitHub: Rust', function() {
+vmapkey('ogr', 'GitHub: Rust', function() {
     searchSelectedWith("https://github.com/search?q=language%3ARust+");
+});
+
+// GNOME documentation
+mapkey('odg', 'GNOME documentation', function() {
+    searchSelectedWith("https://developer.gnome.org/search?q=");
+});
+vmapkey('odg', 'GNOME documentation', function() {
+    searchSelectedWith("https://developer.gnome.org/search?q=");
 });
 
 // Set theme
