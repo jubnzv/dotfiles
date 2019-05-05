@@ -1,13 +1,11 @@
-#!/bin/sh
+#!/usr/bin/env python
+# See: https://taskwarrior.org/docs/hooks.html
+import json
+import os
+import sys
 
-# Input:
-# - Line of JSON for proposed new task.
-read new_task
+# Make no changes to the task, simply observe.
+task = json.loads(sys.stdin.readline())
+print(json.dumps(task))
 
-# Update tasks data on taskboard
-pkill --signal USR2 taskboard
-
-# Output:
-# - JSON, modified or unmodified.
-echo $new_task
-
+os.system('pkill --signal USR2 taskboard')
