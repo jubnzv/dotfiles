@@ -103,6 +103,7 @@ for_window [class="(?i)taskboard"] floating enable, move container to workspace 
 for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [title="^Run" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [class="jetbrains-toolbox"] floating enable
+for_window [class="D-feet"] floating disable
 for_window [window_role="GtkFileChooserDialog"] floating enable, resize set 800 600, move center, focus
 # }}}
 
@@ -318,7 +319,7 @@ set $mode_run_repl <span bgcolor='#d79921' fgcolor='#282828'> REPL</span>\t\t
 <span bgcolor='#a89984' fgcolor='#282828'>[3]</span><span fgcolor='#a89984'> ipython3\t</span>  \
 <span bgcolor='#a89984' fgcolor='#282828'>[b]</span><span fgcolor='#a89984'> bpython</span>  \
 <span bgcolor='#a89984' fgcolor='#282828'>[j]</span><span fgcolor='#a89984'> jupyter</span> \
-<span bgcolor='#076678' fgcolor='#282828'>[b]</span><span fgcolor='#076678'> racket</span>
+<span bgcolor='#076678' fgcolor='#282828'>[r]</span><span fgcolor='#076678'> racket</span>
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode --pango_markup "$mode_run_repl" {
     bindsym 2       exec $TERMINAL -e ipython; mode "default"
