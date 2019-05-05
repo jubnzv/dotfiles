@@ -75,7 +75,8 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ }
 Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
 Plug 'https://github.com/vivien/vim-linux-coding-style'
-Plug 'https://github.com/nacitar/a.vim'
+Plug 'LucHermitte/lh-vim-lib'                        " Dependency for alternate-lite
+Plug 'https://github.com/LucHermitte/alternate-lite' " Switch between .c and .h
 Plug '~/Dev/IEC.vim'
 Plug 'https://github.com/KabbAmine/zeavim.vim'      " Query Zeal docs from vim
 
@@ -827,7 +828,9 @@ au FileType c,cpp call LCKeymap()
 au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
-nmap <A-a> :A<CR>
+nnoremap <A-a> :A<CR>
+nnoremap <leader>av :AV<CR>
+nnoremap <leader>as :AS<CR>
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
