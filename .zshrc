@@ -198,15 +198,15 @@ alias ag='ag --path-to-ignore ~/.ignore'
 
 # {{{ ls
 alias ls='ls --color=auto'
-alias ll='ls -l'
-alias lla='ls -la'
-alias lt='ls -lt'
-alias lta='ls -lta'
-alias lZ='ls -Z'
+alias ll='ls -oh'
+alias lla='ls -oha'
+alias lt='ls -ouht'
+alias lta='ls -lthua'
+alias lZ='ls -Zh'
 if [[ -x "$(command -v tree)" ]]; then
     alias lT='tree'
 else
-    alias lT='ls -lR'
+    alias lT='ls -lhR'
 fi
 # }}}
 # }}}
