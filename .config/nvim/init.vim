@@ -9,7 +9,6 @@ let g:python3_host_prog  = '/usr/bin/python3.6'
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-" {{{ Common: motion, navigation, extended commands
 Plug 'https://github.com/scrooloose/nerdtree'       " A tree explorer plugin for vim
 Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
@@ -28,9 +27,7 @@ Plug 'https://github.com/matze/vim-move'            " Move lines and selections 
 Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
 Plug 'https://github.com/tyru/open-browser.vim'     " Open links in browser
 Plug 'https://github.com/simnalamburt/vim-mundo'    " Undo tree graph representation
-" }}}
-
-" {{{ UI & appearance
+Plug 'https://github.com/wsdjeg/vim-fetch'          " Provides `vim path/to/file.ext:12:3` in the shell to open file.ext on line 12 at column 3
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
 Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
@@ -38,29 +35,17 @@ Plug 'https://github.com/junegunn/vim-peekaboo'    " Shows vim registers content
 Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
 Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
 Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
-" }}}
-
-" {{{ Git
 Plug 'https://github.com/tpope/vim-fugitive'
 Plug 'https://github.com/airblade/vim-gitgutter'
 Plug 'https://github.com/sodapopcan/vim-twiggy'         " Git branch management
 Plug 'https://github.com/rhysd/git-messenger.vim'       " Reveal the commit messages under the cursor
-" }}}
-
-" {{{ fzf
 Plug 'https://github.com/junegunn/fzf.vim'
 Plug 'https://github.com/junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
-" }}}
-
-" {{{ textobjects
 Plug 'https://github.com/kana/vim-textobj-user'    " Plugin for user-defined textobjs
 Plug 'https://github.com/glts/vim-textobj-comment' " textobj for comments
-" }}}
-
-" {{{ Writing code
 Plug 'https://github.com/majutsushi/tagbar'            " Vim plugin that displays tags in a window
 Plug 'https://github.com/ludovicchabant/vim-gutentags' " Auto (re)generate tag files
 Plug 'https://github.com/terryma/vim-expand-region'    " Visually select increasingly larger regions of text
@@ -79,13 +64,9 @@ Plug 'LucHermitte/lh-vim-lib'                        " Dependency for alternate-
 Plug 'https://github.com/LucHermitte/alternate-lite' " Switch between .c and .h
 Plug '~/Dev/IEC.vim'
 Plug 'https://github.com/KabbAmine/zeavim.vim'      " Query Zeal docs from vim
-
 Plug 'https://github.com/jpalardy/vim-slime'        " Some slime in my vim.
 Plug 'https://github.com/wlangstroth/vim-racket'    " Racket mode
 Plug 'https://github.com/luochen1990/rainbow'       " Rainbow Parentheses improved
-" }}}
-
-" {{{ Writing text
 Plug 'https://github.com/pearofducks/ansible-vim'
 Plug 'https://github.com/cespare/vim-toml'
 Plug 'https://github.com/dhruvasagar/vim-table-mode'
@@ -96,7 +77,6 @@ Plug 'https://github.com/lervag/vimtex'
 Plug 'https://github.com/aklt/plantuml-syntax'          " PlantUML syntax support
 Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 " Plug 'https://github.com/gu-fan/riv.vim', { 'for': [ 'rst' ] }
-" }}}
 
 call plug#end()
 " }}}
@@ -542,10 +522,13 @@ nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
 command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
 command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
+command! -bang -nargs=* AgCpp call fzf#vim#ag(<q-args>, '--cpp', {'down': '~40%'})
 command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
 command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40%'})
 command! -bang -nargs=* AgElisp call fzf#vim#ag(<q-args>, '--elisp', {'down': '~40%'})
+command! -bang -nargs=* AgCSS call fzf#vim#ag(<q-args>, '--css', {'down': '~40%'})
 nnoremap <leader>fac :AgCC<CR>
+nnoremap <leader>faC :AgCpp<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
 nnoremap <leader>fae :AgElisp<CR>
