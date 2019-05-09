@@ -377,8 +377,14 @@ nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-t
 " }}}
 
 " {{{ tmux integration
+" Free my prefix key
+map ` <Nop>
+
 if exists('$TMUX')
-  map ` <Nop>
+  " Execute previous command in right pane
+  nnoremap <silent> <leader>; :silent !tmux send-keys -t right Up Enter<cr>
+else
+  map <leader>; <Nop>
 endif
 " }}}
 
