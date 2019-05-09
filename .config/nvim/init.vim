@@ -259,7 +259,7 @@ map <leader>ev :vsp %%
 map <leader>et :tabe %%
 
 " Find and Replace
-map <leader>r :%s///g<left><left>
+map <leader>rs :%s///g<left><left>
 map <leader>rl :s///g<left><left>
 
 " Refresh current buffer content
@@ -641,7 +641,7 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 
 " Reload snippets
-nnoremap <leader>rs :call neosnippet#variables#set_snippets({})<cr>
+nnoremap <leader>rS :call neosnippet#variables#set_snippets({})<cr>
 " }}}
 
 " {{{ LanguageClient settings
