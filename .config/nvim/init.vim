@@ -14,6 +14,7 @@ Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
 Plug 'https://github.com/easymotion/vim-easymotion'
 Plug 'https://github.com/rhysd/clever-f.vim'        " Convenient `f` and `F`
 Plug 'https://github.com/tpope/vim-eunuch'          " Helpers for Shell
+Plug 'https://github.com/lambdalisue/suda.vim'      " Read or write files with sudo command
 Plug 'https://github.com/tpope/vim-speeddating'     " <C-a>/<C-x> for dates and timestamps
 Plug 'https://github.com/tpope/vim-repeat'          " Remap `.` in a way that plugins can tap into it
 Plug 'https://github.com/will133/vim-dirdiff'       " Diff two directories
@@ -217,7 +218,17 @@ vnoremap > >gv
 :command! E e
 
 " E45: 'readonly' option is set (add ! to override)
-cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+" Does not work on neovim because job-control differs.
+" See:
+" https://github.com/neovim/neovim/issues/8217
+" https://github.com/neovim/neovim/issues/1716#issuecomment-454519716
+" https://github.com/neovim/neovim/pull/8389
+" cnoremap w!! execute 'silent! write !sudo tee % >/dev/null' <bar> edit!
+
+" Use 'lambdalisue/suda.vim' as workaround
+let g:suda#prefix = 'sudo://'
+cnoremap e!! execute 'edit! sudo://%'
+cnoremap w!! execute 'write sudo://% <bar> edit! sudo://%'
 
 " Create directories before write
 function! WriteCreatingDirs()
