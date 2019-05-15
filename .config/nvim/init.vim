@@ -942,11 +942,16 @@ let g:riv_fold_info_pos='left'
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
 au FileType markdown set fen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
-au FileType markdown nnoremap <F3> :MarkDrawer<CR>
-au FileType markdown nnoremap <Tab> za<CR>k
-au FileType markdown nnoremap <S-Tab> zA<CR>k
 au FileType markdown call Togglegjgk()
+au FileType markdown nnoremap <buffer> <F3> :MarkDrawer<CR>
+au FileType markdown nnoremap <buffer> <Tab> za<CR>k
+au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
+au FileType markdown nnoremap <buffer> <leader>' i``
+au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
+au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
+au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown set spell! spelllang=en_us,ru_ru
+au FileType markdown inoremap <buffer> --<space> –<space>
 " }}}
 
 " {{{ Other files
