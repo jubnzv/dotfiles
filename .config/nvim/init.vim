@@ -106,6 +106,11 @@ set tabstop=4
 set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 
+" Default conceal settings.
+" concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
+set conceallevel=1
+set concealcursor=nc
+
 " Cyrillic layout in normal mode
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
@@ -246,7 +251,10 @@ imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
 noremap <C-l> [s1z=``
 inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
-"
+
+" {{{ indentLine configuration
+let g:indentLine_fileTypeExclude = ['tex', 'markdown']
+" }}}
 
 " {{{ Toggle quickfix window
 function! QuickFix_toggle()
@@ -912,8 +920,6 @@ let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
 let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
-" Set level 1 by default. See also: ToggleConceal function.
-set conceallevel=1
 au FileType tex set sw=2
 au FileType tex call Togglegjgk()
 au FileType tex set spell! spelllang=en_us,ru_ru
