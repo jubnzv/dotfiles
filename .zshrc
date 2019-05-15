@@ -408,10 +408,34 @@ if [[ -n $(which tmuxp) ]]; then
 fi
 # }}}
 
+# {{{ Misc.
+# Get syscall number by name
+syscall_num() {
+    if [ $# -eq 0 ]; then
+        echo "Usage: syscall_num <syscall name>"
+        return 1
+    fi
+
+    local re='^[0-9]+$'
+    res=`echo -n "#include <sys/syscall.h>\nSYS_$1" | gcc -E - | awk NF | awk -F\# '$1!="" { print $1 ;} '`
+    if [[ $res =~ $re ]]; then
+        echo $res
+        return 0
+    else
+        >&2 echo "$1: Not found"
+        return 1
+    fi
+}
+# }}}
+
 # Load private settings
 source ~/Work/env.sh
 
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
+
+# ~/.local/bin/cleanup-history ~/.history
+# fc -R # reload history
+# trap "~/.local/bin/cleanup-history ~/.history" EXIT
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
