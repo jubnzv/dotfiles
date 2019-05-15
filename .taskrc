@@ -2,8 +2,14 @@
 data.location=~/Org/taskwarrior
 confirmation = no
 weekstart=monday
-locale=ru-RU
 calendar.holidays=sparse
+
+# Required "brain power"" for a task
+# See: https://cs-syd.eu/posts/2015-07-12-gtd-with-taskwarrior-part-5-doing
+uda.brainpower.type=string
+uda.brainpower.label=Brainpower
+uda.brainpower.values=H,M,L
+uda.brainpower.default=M
 
 # Aliases
 alias.a=add
@@ -30,8 +36,9 @@ include ~/.config/taskwarrior/tasksh.rc
 # Personal contexts settings
 include ~/.config/taskwarrior/context.rc
 
-# {{{ Custom reports
-# Default
+# {{{ Reports
+report.next.columns=id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+
 report.list.columns=id,project,tags,scheduled,due.relative,urgency,description
 report.list.labels=ID,Project,Tags,Scheduled,Due,Score,Description
 
@@ -40,6 +47,9 @@ report.simple.columns=id,project,description.count
 report.simple.labels=ID,Proj,Desc
 report.simple.sort=project+/,entry+
 report.simple.filter=status:pending
+
+report.notify.columns=id,description
+report.notify.filter=status:pending
 #}}}
 
 # vim:ft=conf:foldlevel=0:tw=100:

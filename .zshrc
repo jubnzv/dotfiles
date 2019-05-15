@@ -209,19 +209,18 @@ else
     alias lT='ls -lhR'
 fi
 # }}}
+
+# {{{ diff
+alias diffdir='diff -ENwbur'
+# }}}
 # }}}
 
 # {{{ taskwarrior
-alias t="task"                                            # Default `task next` report
-alias tb="t -redmine -gitlab"                              # Filter bugwarrior-imported tasks
-alias tl="t minimal"                                       # Report: one line per task with short description
-alias tc="t context"                                       # Select context
-alias tcn="t c none"                                       # Unset context
-alias tdw="t due.before:eow+1d"                            # Due this week (hard deadline)
-alias tdd="t due:today"                                    # Due today (hard deadline)
-alias tsw="t due.before:eow+1d or scheduled.before:eow+1d" # Due this week (hard and soft deadlines)
-alias tsd="t due:today or scheduled:today"                 # Due today (hard and soft deadlines)
-
+alias t="task"                              # Default `task next` report
+alias tb="t -redmine -gitlab"               # Filter bugwarrior-imported tasks
+alias tc="t context"                        # Select context
+alias tcn="t c none"                        # Unset context
+alias tbu="pkill --signal USR2 taskboard"   # Update all taskboard tasks
 alias bwp="bugwarrior-pull"
 
 # {{{ M-t: Select id one of taskwarrior tasks with fzf
