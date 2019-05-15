@@ -10,3 +10,22 @@ snippet bzch
 snippet bzc
 alias code
     code.append("${1}")
+
+# "Execute once" decorator
+snippet fexec_once
+alias exec_once
+    def execute_once(f):
+        def wrapper(*args, **kwargs):
+            if not wrapper.has_run:
+                wrapper.has_run = True
+                wrapper.value = f(*args, **kwargs)
+            return wrapper.value
+        wrapper.has_run = False
+        return functools.update_wrapper(wrapper, f)
+
+# Detect exception type
+    try:
+        ${1}
+    except Exception as e:
+        _m = f"An exception {e.__class__.__name__} occurred. Arguments: {e.args}"
+        print(_m)

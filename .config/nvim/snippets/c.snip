@@ -232,4 +232,17 @@ snippet int_from_bytes
     }
 # }}}
 
+# {{{ Helpers
+snippet fonce
+    static short _once = 0;
+    if (_once == 1) return;
+    _once = 1;
+# }}}
+
+# {{{ GLib
+snippet glfree
+    g_free(${1});
+    ${1} = NULL;
+# }}}
+
 # vim:fdm=marker:foldlevel=0:foldenable:tw=120
