@@ -230,6 +230,12 @@ snippet int_from_bytes
              acc += tmp[i] << (8 * i);
          return acc;
     }
+
+snippet print_usage
+    void print_usage(const char *argv0)
+    {
+        printf("Usage: %s ${1}\n", argv0);
+    }
 # }}}
 
 # {{{ Helpers
