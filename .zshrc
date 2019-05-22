@@ -136,6 +136,7 @@ alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
 alias vc='nvim -u NONE'
+alias vs='vimfzf'
 # }}}
 
 # {{{ Edit configs

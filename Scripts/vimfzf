@@ -1,0 +1,4 @@
+#!/bin/bash
+# tty required, see GNU xargs man page
+# Note that BSD args does not allow the delimiter to be \n so \0 must be used with the -0 option.
+fzf --cycle --multi | tr '\n' '\0' | xargs -0 sh -c '$0 "$@" </dev/tty' $EDITOR
