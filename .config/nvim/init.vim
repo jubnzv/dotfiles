@@ -77,6 +77,7 @@ Plug 'https://github.com/Scuilion/markdown-drawer'      " Simplify navigation in
 Plug 'https://github.com/lervag/vimtex'
 Plug 'https://github.com/aklt/plantuml-syntax'          " PlantUML syntax support
 Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
+Plug 'https://github.com/elzr/vim-json', {'for': ['json'] }
 " Plug 'https://github.com/gu-fan/riv.vim', { 'for': [ 'rst' ] }
 
 call plug#end()
@@ -276,10 +277,11 @@ map <leader>ew :e %%
 map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
+map <leader>ec :cd %%<cr>
 
 " Find and Replace
-map <leader>rs :%s///g<left><left>
-map <leader>rl :s///g<left><left>
+map <leader>rs :%s///g<left><left><left>
+map <leader>rl :s///g<left><left><left>
 
 " Refresh current buffer content
 nnoremap <leader>B :checktime<CR>
@@ -374,6 +376,7 @@ let g:openbrowser_search_engines = extend(
 \       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+{query}&type=Code',
 \       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+{query}&type=Code',
 \       'gnome': 'https://developer.gnome.org/search?q={query}',
+\       'buildbot': 'https://docs.buildbot.net/current/search.html?q={query}',
 \       'google': 'http://google.com/search?q={query}',
 \       'google-code': 'http://code.google.com/intl/en/query/#q={query}',
 \       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
@@ -392,6 +395,7 @@ nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")
 nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
 nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
 nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
+nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
 nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
 " }}}
 
@@ -809,6 +813,7 @@ nmap <leader>vs :Gstatus<cr>
 nmap <leader>ve :Gedit 
 nmap <leader>vd :Gdiff 
 nmap <leader>vb :Gblame<cr>
+nmap <leader>vl :Glog<cr>:copen<cr>
 nmap <leader>vB :Twiggy<cr>
 nmap <leader>m <Plug>(git-messenger)
 " }}}
@@ -912,6 +917,10 @@ nnoremap <leader>on :Files ~/Org/Notes/<CR>
 nnoremap <leader>os :e ~/Org/scratch.md<CR>
 " }}}
 
+" gitcommit buffers
+au FileType gitcommit inoremap <buffer> --<space> –<space>
+au FileType gitcommit inoremap <buffer> -><space> →<space>
+
 " {{{ LaTeX
 " See awesome LaTeX setup guide:
 " https://castel.dev/post/lecture-notes-1/
@@ -941,7 +950,8 @@ let g:riv_fold_info_pos='left'
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
-au FileType markdown set fen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds()
+au FileType markdown set fen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+au FileType markdown set spell! spelllang=en_us,ru_ru
 au FileType markdown call Togglegjgk()
 au FileType markdown nnoremap <buffer> <F3> :MarkDrawer<CR>
 au FileType markdown nnoremap <buffer> <Tab> za<CR>k
@@ -950,8 +960,17 @@ au FileType markdown nnoremap <buffer> <leader>' i``
 au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
 au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
 au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
-au FileType markdown set spell! spelllang=en_us,ru_ru
 au FileType markdown inoremap <buffer> --<space> –<space>
+au FileType markdown inoremap <buffer> -><space> →<space>
+" }}}
+
+" {{{ JSON
+let g:vim_json_syntax_conceal = 0
+" }}}
+
+" {{{ YAML
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2
 " }}}
 
 " {{{ Other files
