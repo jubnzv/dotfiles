@@ -1,5 +1,18 @@
-snippet     exerr
+snippet check_args
+options head
+    if [ $# -eq 0 ]; then
+        echo "Usage: ${1}"
+        exit 1
+    fi
+
+snippet check_command
+options head
+    if [[ -x "$(command -v ${1})" ]]; then
+
+snippet exit_err
+options head
     ext=$?
     if [[ $ext -ne 0 ]]; then
         exit $ext
     fi
+

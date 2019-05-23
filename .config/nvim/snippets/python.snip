@@ -1,19 +1,16 @@
 snippet pr
 abbr    print("")
+options head
     print("${1}")
 
-snippet bzch
-    code = []
-    code.append("${1}")
-    return "\n".join(code)
-
-snippet bzc
-alias code
-    code.append("${1}")
+snippet raise_ni
+alias rni
+options head
+    raise NotImplementedError
 
 # "Execute once" decorator
-snippet fexec_once
-alias exec_once
+snippet execute_once
+options head
     def execute_once(f):
         def wrapper(*args, **kwargs):
             if not wrapper.has_run:
@@ -24,8 +21,21 @@ alias exec_once
         return functools.update_wrapper(wrapper, f)
 
 # Detect exception type
+snippet detect_exception
+options head
     try:
         ${1}
     except Exception as e:
         _m = f"An exception {e.__class__.__name__} occurred. Arguments: {e.args}"
         print(_m)
+
+# {{{ Beremiz
+snippet bzch
+options head
+    code = []
+    code.append("${1}")
+    return "\n".join(code)
+snippet bzc
+options head
+    code.append("${1}")
+# }}}

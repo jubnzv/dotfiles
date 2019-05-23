@@ -9,8 +9,8 @@ snippet     pe
 
 # {{{ Include-Guard
 snippet     once
-options     head
 alias       include-guard
+options     head
 abbr #ifndef ... #define ... #endif
     #ifndef ${1:#:SYMBOL}
         #define $1
@@ -92,7 +92,7 @@ snippet cmrete
 snippet     cmft
 options     head
     /* clang-format off */
-        ${0}
+    ${0}
     /* clang-format on */
 # }}}
 
@@ -185,6 +185,7 @@ alias       chrc
 
 # {{{ Commonly used functions
 snippet kbhit
+options head
     static int kbhit(void)
     {
       struct termios oldt, newt;
