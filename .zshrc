@@ -22,7 +22,6 @@ export DOCKER_ID_USER="jubnzv1"
 # Make java UI not so ugly
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 
-# Misc
 alias nvim=/usr/local/bin/nvim
 export EDITOR="nvim"
 export ALTERNATE_EDITOR="nvim"
@@ -32,6 +31,7 @@ export TERMINAL="kitty -e"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_'
+export PYTHONSTARTUP=~/.pythonrc
 # }}}
 
 # {{{ Prompt & colors
