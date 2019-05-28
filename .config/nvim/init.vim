@@ -27,7 +27,6 @@ Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
 Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
 Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
 Plug 'https://github.com/tyru/open-browser.vim'     " Open links in browser
-Plug 'https://github.com/simnalamburt/vim-mundo'    " Undo tree graph representation
 Plug 'https://github.com/wsdjeg/vim-fetch'          " Provides `vim path/to/file.ext:12:3` in the shell to open file.ext on line 12 at column 3
 Plug 'https://github.com/itchyny/lightline.vim'
 Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
@@ -116,10 +115,6 @@ set concealcursor=nc
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
-" }}}
-
-" {{{ mundo: Undo tree
- nnoremap <C-x>u :MundoToggle<CR>
 " }}}
 
 " {{{ UI options
@@ -912,15 +907,6 @@ let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 " }}}
 
-" {{{ Notekeeping
-nnoremap <leader>on :Files ~/Org/Notes/<CR>
-nnoremap <leader>os :e ~/Org/scratch.md<CR>
-" }}}
-
-" gitcommit buffers
-au FileType gitcommit inoremap <buffer> --<space> –<space>
-au FileType gitcommit inoremap <buffer> -><space> →<space>
-
 " {{{ LaTeX
 " See awesome LaTeX setup guide:
 " https://castel.dev/post/lecture-notes-1/
@@ -931,7 +917,7 @@ let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
 au FileType tex set sw=2
 au FileType tex call Togglegjgk()
-au FileType tex set spell! spelllang=en_us,ru_ru
+au FileType tex set spell! spelllang=en_us,ru_yo
 " }}}
 
 " {{{ reStructuredText
@@ -947,6 +933,9 @@ let g:riv_fold_auto_update=0
 " The position of fold info
 let g:riv_fold_info_pos='left'
 " }}}
+
+" JSON
+let g:vim_json_syntax_conceal = 0
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
@@ -964,33 +953,31 @@ au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 " }}}
 
-" {{{ JSON
-let g:vim_json_syntax_conceal = 0
-" }}}
-
-" {{{ YAML
+" {{{ Other ft-specific autocommands
 au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
 autocmd FileType yaml setlocal ts=2 sts=2 sw=2
-" }}}
 
-" {{{ Other files
 au FileType conf set foldmethod=marker foldenable
 au Filetype css setlocal ts=4
 au Filetype html setlocal ts=4
+
+au BufNewFile,BufRead .clang-format set ft=config
+au BufNewFile,BufRead   .pdbrc set ft=python
+
+" ansible playbooks
+au BufRead,BufNewFile */playbooks/*.yml set filetype=yaml.ansible
+au BufRead,BufNewFile */ops/ansible/*.yml set filetype=yaml.ansible
 
 " buildbot configuration files
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
 
-au BufNewFile,BufRead   .pdbrc set ft=python
-
 " Taskwarrior tasks (`task [id] edit`)
 au BufRead *.task /Description:
 
-" Always start on first line of git commit message
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
-
-au BufNewFile,BufRead .clang-format set ft=config
+au FileType gitcommit inoremap <buffer> --<space> –<space>
+au FileType gitcommit inoremap <buffer> -><space> →<space>
 " }}}
 
 " {{{ Toggle features
