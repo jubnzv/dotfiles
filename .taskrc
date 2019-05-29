@@ -9,7 +9,6 @@ calendar.holidays=sparse
 uda.brainpower.type=string
 uda.brainpower.label=Brainpower
 uda.brainpower.values=H,M,L
-uda.brainpower.default=M
 
 # Aliases
 alias.a=add
@@ -37,7 +36,15 @@ include ~/.config/taskwarrior/tasksh.rc
 include ~/.config/taskwarrior/context.rc
 
 # {{{ Reports
-report.next.columns=id,start.age,entry.age,depends,priority,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.next.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.next.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Recur,S,Due,Until,Description,Urg
+
+# Like "next" report, but show by creation date
+report.recent.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.recent.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Recur,S,Due,Until,Description,Urg
+report.recent.description=Recently added tasks
+report.recent.filter=status:pending limit:page
+report.recent.sort=entry-,urgency-
 
 report.list.columns=id,project,tags,scheduled,due.relative,urgency,description
 report.list.labels=ID,Project,Tags,Scheduled,Due,Score,Description

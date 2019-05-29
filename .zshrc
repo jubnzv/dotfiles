@@ -207,6 +207,7 @@ alias cpd='cpdiff'
 # {{{ taskwarrior
 alias t="task"                              # Default `task next` report
 alias tb="t -redmine -gitlab"               # Filter bugwarrior-imported tasks
+alias tr="t recent"                         # Recently added tasks
 alias tc="t context"                        # Select context
 alias tcn="t c none"                        # Unset context
 alias tbu="pkill --signal USR2 taskboard"   # Update all taskboard tasks
