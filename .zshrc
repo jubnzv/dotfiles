@@ -114,9 +114,8 @@ setopt HIST_IGNORE_SPACE
 # }}}
 
 # {{{ Aliases
-
-# {{{ Common
 alias q='exit'
+alias :bd='exit'
 alias :q='exit'
 alias pd='pushd'
 alias pdd='popd'
@@ -135,27 +134,24 @@ alias :e='nvim'
 alias v='nvim'
 alias vi='nvim'
 alias vim='nvim'
+alias vO='nvim -O' # Open in vertical splits
+alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
 alias vs='vimfzf'
-# }}}
+alias rp='realpath'
+alias mkb='mkdir -p ./build; cd build'
 
-# {{{ Edit configs
+alias ag='ag --path-to-ignore ~/.ignore'
+
+# Edit configs
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
 alias vi3s='nvim ~/.config/i3/i3status-rust.toml; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
 alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
-# }}}
 
-# {{{ git
-alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
-alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
-alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
-# }}}
-
-# {{{ Notekeeping in markdown with vim
+# Notekeeping in markdown with vim
 alias vns='nvim ~/Org/scratch.md'
 vnn() {
     nvim ~/Org/Notes/$1
@@ -163,41 +159,35 @@ vnn() {
 vnf() {
     nvim $(find ~/Org/Notes/ -type f | fzf)
 }
-# }}}
 
-# {{{ Web archiving
+# git
+alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
+alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
+alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
+alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+
+# Web archiving
 # See: https://github.com/pirate/ArchiveBox/wiki/Configuration
 alias arch='env OUTPUT_DIR=/home/jubnzv/Org/WebArchive/ FETCH_PDF=False FETCH_MEDIA=False ~/.local/bin/archive'
-# }}}
-
-# {{{ arbtt
-# alias arbtt-today="arbtt-stats --filter='$date>='`date +"%Y-%m-%d"`"
-# }}}
 
 # zsh
 alias _up source ~/.zshrc
 
-# {{{ python
+# python
 alias vs='source venv/bin/activate'
+alias py2='python2'
+alias py3='python3'
 alias ipy='ipython3'
 alias ipy2='ipython'
 alias ipy3='ipython3'
 alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
 alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
-# }}}
 
-# {{{ ctags
+# ctags
 alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ctags='/usr/bin/ctags-universal'
-# }}}
 
-# {{{ Replacements and wrappers for *nix utils
-
-# grep / ripgrep / silversearcher. Ag is my choice.
-alias ag='ag --path-to-ignore ~/.ignore'
-
-# {{{ ls
 alias ls='ls --color=auto'
 alias ll='ls -oh'
 alias lla='ls -oha'
@@ -209,12 +199,10 @@ if [[ -x "$(command -v tree)" ]]; then
 else
     alias lT='ls -lhR'
 fi
-# }}}
 
-# {{{ diff
+# diffs
 alias diffdir='diff -ENwbur'
-# }}}
-# }}}
+alias cpd='cpdiff'
 
 # {{{ taskwarrior
 alias t="task"                              # Default `task next` report
@@ -261,10 +249,7 @@ scn() {
 }
 # }}}
 
-# {{{ exim
 alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
-# }}}
-
 # }}} !Aliases
 
 # {{{ Functions
