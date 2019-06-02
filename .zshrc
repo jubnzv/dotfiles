@@ -109,6 +109,7 @@ setopt HIST_IGNORE_DUPS
 setopt HIST_REDUCE_BLANKS
 # Don't store lines beginning with a space
 setopt HIST_IGNORE_SPACE
+alias history='history -i'
 # }}}
 
 # }}}
@@ -132,6 +133,7 @@ alias g='git'
 alias tm='tmux'
 alias :e='nvim'
 alias v='nvim'
+alias v.='nvim .'
 alias vi='nvim'
 alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
@@ -164,7 +166,7 @@ vnf() {
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-alias git_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
+alias g_cfg='git --git-dir=$HOME/Sources/dotfiles --work-tree=$HOME'
 
 # Web archiving
 # See: https://github.com/pirate/ArchiveBox/wiki/Configuration
@@ -206,8 +208,8 @@ alias cpd='cpdiff'
 
 # {{{ taskwarrior
 alias t="task"                              # Default `task next` report
+alias tt="t recent"                         # Recently added tasks
 alias tb="t -redmine -gitlab"               # Filter bugwarrior-imported tasks
-alias tr="t recent"                         # Recently added tasks
 alias tc="t context"                        # Select context
 alias tcn="t c none"                        # Unset context
 alias tbu="pkill --signal USR2 taskboard"   # Update all taskboard tasks
@@ -371,7 +373,7 @@ zstyle ':zce:*' bg 'fg=7'
 
 # {{{ Completion
 compdef sshrc=ssh
-compdef git_cfg=git
+compdef g_cfg=git
 compdef t=task
 # }}}
 
