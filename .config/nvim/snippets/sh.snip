@@ -1,13 +1,33 @@
 snippet check_args
 options head
-    if [ $# -eq 0 ]; then
-        echo "Usage: ${1}"
+    if [ $# -ne ${1:2} ]; then
+        echo "Usage: \$0 ${1}"
         exit 1
     fi
 
 snippet check_command
 options head
     if [[ -x "$(command -v ${1})" ]]; then
+        $0
+    fi
+
+snippet check_dir
+options head
+    if [ ! -d ${1:/} ]; then
+        echo "${1} is inaccessible"
+        exit 127
+    fi
+
+snippet check_file
+options head
+    if [ ! -f ${1:/} ]; then
+        echo "${1} is inaccessible"
+        exit 127
+    fi
+
+snippet strict_mode
+options head
+    set -euo pipefail
 
 snippet exit_err
 options head

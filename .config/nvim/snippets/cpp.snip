@@ -1,0 +1,11 @@
+# {{{ Include-Guard
+snippet     once
+alias       include-guard
+options     head
+abbr #ifndef ... #define ... #endif
+    #ifndef ${1:#:SYMBOL}
+        #define $1
+
+        ${0:TARGET}
+    #endif // $1
+# }}}

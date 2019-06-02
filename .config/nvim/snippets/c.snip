@@ -16,7 +16,7 @@ abbr #ifndef ... #define ... #endif
         #define $1
 
         ${0:TARGET}
-    #endif /* !$1 */
+    #endif /* $1 */
 # }}}
 
 # {{{ Printing
@@ -96,11 +96,26 @@ options     head
     /* clang-format on */
 # }}}
 
+# {{{ File operations
+snippet     check_dir
+options     head
+    DIR *dir = opendir(${1});
+    if (dir)
+        closedir(dir);
+    else if (errno = ENOENT) {
+        ${2}
+    } else {
+        ${3}
+    }
+
+    $0
+# }}}
+
 # {{{ fork
 # Common
-snippet     frk
+snippet     fork
 options     head
-abbr        fork ()
+abbr        fork()
     switch (child_pid = fork()) {
     case -1:
         perror("fork");
@@ -115,7 +130,7 @@ abbr        fork ()
 
 # Avoid race condition after fork with signals (see TLPI 24.4).
 # Parent first.
-snippet     frksigp
+snippet     fork_signal
 options     head
     switch (child_pid = fork()) {
     case -1:
@@ -144,12 +159,24 @@ options     head
 # }}}
 
 # {{{ signals
-snippet     sig
+snippet     sigaction_set
 options     head
     struct sigaction sa;
-    sa.sa_flags = ${1:flags};
+    sa.sa_flags = ${1:0};
     sa.sa_handler = ${2:handler};
-    sigaction(SIG${3:signal}, &sa, NULL);
+    sigaction(SIG${3:SEGV}, &sa, NULL);
+    ${0:TARGET}
+snippet signal_handler_basic
+options head
+	static void ${1:handler}(int signum)
+	{
+		${0:TARGET}
+	}
+snippet signal_handler_siginfo
+	static void ${1:handler}(int signum, siginfo_t *si, void *data)
+	{
+		${0:TARGET}
+	}
 # }}}
 
 # {{{ waitpid
@@ -240,10 +267,18 @@ snippet print_usage
 # }}}
 
 # {{{ Helpers
-snippet fonce
+snippet function_once
+options head
     static short _once = 0;
     if (_once == 1) return;
     _once = 1;
+
+snippet def_err_print
+    #define err(fmt, args...) fprintf(stderr, "[${1:ERR}]: " fmt "\n", ##args)
+    $0
+snippet def_dbg_print
+    #define dbg(fmt, args...) do { if (${2:DEBUG_ENABLED}) fprintf(stderr, "[${1:DBG}]: " fmt "\n", ##args); } while (0)
+    $0
 # }}}
 
 # {{{ GLib
