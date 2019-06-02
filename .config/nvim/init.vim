@@ -370,6 +370,8 @@ let g:openbrowser_search_engines = extend(
 \       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+{query}&type=Code',
 \       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+{query}&type=Code',
 \       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+{query}&type=Code',
+\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+{query}&type=Code',
+\       'cplusplus': 'http://www.cplusplus.com/search.do?q={query}',
 \       'gnome': 'https://developer.gnome.org/search?q={query}',
 \       'buildbot': 'https://docs.buildbot.net/current/search.html?q={query}',
 \       'google': 'http://google.com/search?q={query}',
@@ -386,8 +388,11 @@ let g:openbrowser_default_search = 'google'
 
 " Search selected visually selected word with appropriate search engine.
 nnoremap <leader>os <Plug>(openbrowser-smart-search)
+nnoremap <leader>ogs :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
 nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
 nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
+nnoremap <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
+nnoremap <leader>ogl :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
 nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
 nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
 nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
@@ -813,17 +818,11 @@ nmap <leader>vB :Twiggy<cr>
 nmap <leader>m <Plug>(git-messenger)
 " }}}
 
-" {{{ Search in external data sources
+" {{{ Search in Zeal docsets
 nmap <leader>z <Plug>Zeavim
 vmap <leader>z <Plug>ZVVisSelection
 nmap gz <Plug>ZVOperator
 nmap <leader><leader>z <Plug>ZVKeyDocset
-
-function! GoogleSearch()
-     let searchterm = getreg("g")
-     silent! exec "silent! !firefox \"http://google.com/search?q=" . searchterm . "\" &"
-endfunction
-vnoremap <leader>Z "gy<Esc>:call GoogleSearch()<CR>
 " }}}
 
 " {{{ C/C++
@@ -849,6 +848,10 @@ au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>
 
 " Align statements relative to case label
 au FileType c,cpp setlocal cinoptions+=l1
+
+" Autoformat on save
+au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
+au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
 
 " Apply Linux Kernel settings
 let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
@@ -939,7 +942,7 @@ let g:vim_json_syntax_conceal = 0
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
-au FileType markdown set fen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
 au FileType markdown set spell! spelllang=en_us,ru_ru
 au FileType markdown call Togglegjgk()
 au FileType markdown nnoremap <buffer> <F3> :MarkDrawer<CR>
