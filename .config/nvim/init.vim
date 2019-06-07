@@ -454,7 +454,20 @@ set foldtext=CustomFoldText()
 " }}}
 
 " {{{ NerdTREE
-map <A-1> :NERDTreeToggle<CR>
+"" Check if NERDTree is open or active
+function! IsNERDTreeOpen()
+  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
+endfunction
+
+function! NERDTreeOpen()
+  if IsNERDTreeOpen()
+    :NERDTreeToggle
+  else
+    :NERDTreeFind
+  endif
+endfunction
+
+map <A-1> :call NERDTreeOpen()<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore=[
   \ ".*\\.class$",
