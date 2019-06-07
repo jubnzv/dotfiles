@@ -139,7 +139,6 @@ alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
-alias vs='vimfzf'
 alias rp='realpath'
 alias mkb='mkdir -p ./build; cd build'
 
@@ -304,6 +303,11 @@ backward-kill-dir () {
 }
 zle -N backward-kill-dir
 bindkey '^[^?' backward-kill-dir
+
+# Open vimfzf
+vimfzf_widget() vimfzf .
+zle -N vimfzf_widget
+bindkey '\ei' vimfzf_widget
 # }}}
 
 # {{{ Plugins
