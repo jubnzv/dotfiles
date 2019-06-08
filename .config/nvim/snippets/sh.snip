@@ -36,3 +36,14 @@ options head
         exit $ext
     fi
 
+snippet fdisk_partitioning
+options head
+    (
+    echo o   # Create a new empty DOS partition table
+    echo n   # Add a new partition
+    echo p   # Primary partition
+    echo 1   # Partition number
+    echo     # First sector
+    echo     # Last sector
+    echo w   # Write changes
+    ) | fdisk ${0}

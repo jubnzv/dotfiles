@@ -9,75 +9,77 @@ let g:python3_host_prog  = '/usr/bin/python3.6'
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'https://github.com/scrooloose/nerdtree'       " A tree explorer plugin for vim
-Plug 'https://github.com/kshenoy/vim-signature'     " Extended marks support
-Plug 'https://github.com/easymotion/vim-easymotion'
-Plug 'https://github.com/rhysd/clever-f.vim'        " Convenient `f` and `F`
-Plug 'https://github.com/tpope/vim-eunuch'          " Helpers for Shell
-Plug 'https://github.com/lambdalisue/suda.vim'      " Read or write files with sudo command
-Plug 'https://github.com/tpope/vim-speeddating'     " <C-a>/<C-x> for dates and timestamps
-Plug 'https://github.com/tpope/vim-repeat'          " Remap `.` in a way that plugins can tap into it
-Plug 'https://github.com/will133/vim-dirdiff'       " Diff two directories
-Plug 'https://github.com/andymass/vim-matchup'      " Better `%` for some modes
-Plug 'https://github.com/godlygeek/tabular'         " Vim script for text filtering and alignment
-Plug 'https://github.com/tpope/vim-surround'
-Plug 'https://github.com/jiangmiao/auto-pairs'      " Insert or delete brackets, parens, quotes in pair
-Plug 'https://github.com/tpope/vim-rsi'             " Readline (emacs) keybindings in command and insert modes
-Plug 'https://github.com/osyo-manga/vim-over'       " :substitute preview
-Plug 'https://github.com/matze/vim-move'            " Move lines and selections up and down
-Plug 'https://github.com/christoomey/vim-tmux-navigator' " tmux integration
-Plug 'https://github.com/tyru/open-browser.vim'     " Open links in browser
-Plug 'https://github.com/wsdjeg/vim-fetch'          " Provides `vim path/to/file.ext:12:3` in the shell to open file.ext on line 12 at column 3
-Plug 'https://github.com/itchyny/lightline.vim'
-Plug 'https://github.com/jubnzv/gruvbox'           " Color scheme
-Plug 'https://github.com/chrisbra/Colorizer'       " Colorize color names and codes
-Plug 'https://github.com/junegunn/vim-peekaboo'    " Shows vim registers content into vertical split
-Plug 'https://github.com/Yggdroot/indentLine'      " Show indentation as vertical lines
-Plug 'https://github.com/haya14busa/incsearch.vim' " Incrementally highlight search results
-Plug 'https://github.com/jubnzv/vim-cursorword'    " Highlight word under cursor
-Plug 'https://github.com/tpope/vim-fugitive'
-Plug 'https://github.com/airblade/vim-gitgutter'
-Plug 'https://github.com/sodapopcan/vim-twiggy'         " Git branch management
-Plug 'https://github.com/rhysd/git-messenger.vim'       " Reveal the commit messages under the cursor
-Plug 'https://github.com/junegunn/fzf.vim'
-Plug 'https://github.com/junegunn/fzf', {
+Plug 'scrooloose/nerdtree'            " A tree explorer plugin for vim
+Plug 'kshenoy/vim-signature'          " Extended marks support
+Plug 'easymotion/vim-easymotion'
+Plug 'rhysd/clever-f.vim'             " Convenient `f` and `F`
+Plug 'tpope/vim-eunuch'               " Helpers for Shell
+Plug 'lambdalisue/suda.vim'           " Read or write files with sudo command
+Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
+Plug 'tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
+Plug 'will133/vim-dirdiff'            " Diff two directories
+Plug 'andymass/vim-matchup'           " Better `%` for some modes
+Plug 'godlygeek/tabular'              " Vim script for text filtering and alignment
+Plug 'tpope/vim-surround'
+Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
+Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
+Plug 'osyo-manga/vim-over'            " :substitute preview
+Plug 'matze/vim-move'                 " Move lines and selections up and down
+Plug 'christoomey/vim-tmux-navigator' " tmux integration
+Plug 'tyru/open-browser.vim'          " Open links in browser
+Plug 'itchyny/lightline.vim'
+Plug 'jubnzv/gruvbox'                 " Color scheme
+Plug 'chrisbra/Colorizer'             " Colorize color names and codes
+Plug 'junegunn/vim-peekaboo'          " Shows vim registers content into vertical split
+Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
+Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
+Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+Plug 'sodapopcan/vim-twiggy'          " Git branch management
+Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
+Plug 'mhinz/vim-sayonara'             " Sane buffer/window deletion
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
-Plug 'https://github.com/kana/vim-textobj-user'    " Plugin for user-defined textobjs
-Plug 'https://github.com/glts/vim-textobj-comment' " textobj for comments
-Plug 'https://github.com/majutsushi/tagbar'            " Vim plugin that displays tags in a window
-Plug 'https://github.com/ludovicchabant/vim-gutentags' " Auto (re)generate tag files
-Plug 'https://github.com/terryma/vim-expand-region'    " Visually select increasingly larger regions of text
-Plug 'https://github.com/Shougo/echodoc.vim'           " Displays function signatures from completions in the command line
-Plug 'https://github.com/scrooloose/nerdcommenter'
-Plug 'https://github.com/Shougo/neosnippet.vim'
-Plug 'https://github.com/Shougo/neosnippet-snippets'
-Plug 'https://github.com/Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+Plug 'kana/vim-textobj-user'          " Plugin for user-defined textobjs
+Plug 'glts/vim-textobj-comment'       " textobj for comments
+Plug 'majutsushi/tagbar'              " Vim plugin that displays tags in a window
+Plug 'liuchengxu/vista.vim'           " View and search LSP symbols
+Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
+Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
+Plug 'Shougo/echodoc.vim'             " Displays function signatures from completions in the command line
+Plug 'scrooloose/nerdcommenter'
+Plug 'Shougo/neosnippet.vim'
+Plug 'Shougo/neosnippet-snippets'
+Plug 'Shougo/deoplete.nvim', {
+  \ 'do': ':UpdateRemotePlugins'
+  \ }
 Plug 'autozimu/LanguageClient-neovim', {
   \ 'branch': 'next',
   \ 'do': 'bash install.sh',
   \ }
-Plug 'https://github.com/jubnzv/DoxygenToolkit.vim'
-Plug 'https://github.com/vivien/vim-linux-coding-style'
-Plug 'LucHermitte/lh-vim-lib'                        " Dependency for alternate-lite
-Plug 'https://github.com/vim-scripts/a.vim'          " Switch between .c and .h
+Plug 'jubnzv/DoxygenToolkit.vim'
+Plug 'vivien/vim-linux-coding-style'
+Plug 'LucHermitte/lh-vim-lib'         " Dependency for alternate-lite
+Plug 'LucHermitte/alternate-lite'     " Switch between source and header
 Plug '~/Dev/IEC.vim'
-Plug 'https://github.com/KabbAmine/zeavim.vim'      " Query Zeal docs from vim
-Plug 'https://github.com/jpalardy/vim-slime'        " Some slime in my vim.
-Plug 'https://github.com/wlangstroth/vim-racket'    " Racket mode
-Plug 'https://github.com/luochen1990/rainbow'       " Rainbow Parentheses improved
-Plug 'https://github.com/pearofducks/ansible-vim'
-Plug 'https://github.com/cespare/vim-toml'
-Plug 'https://github.com/dhruvasagar/vim-table-mode'
-Plug 'https://github.com/tpope/vim-markdown'
-Plug 'https://github.com/masukomi/vim-markdown-folding' " Markdown folding by sections
-Plug 'https://github.com/Scuilion/markdown-drawer'      " Simplify navigation in large markdown files
-Plug 'https://github.com/lervag/vimtex'
-Plug 'https://github.com/aklt/plantuml-syntax'          " PlantUML syntax support
-Plug 'https://github.com/othree/xml.vim', { 'for': [ 'xml', 'html' ] }
-Plug 'https://github.com/elzr/vim-json', {'for': ['json'] }
-" Plug 'https://github.com/gu-fan/riv.vim', { 'for': [ 'rst' ] }
+Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
+Plug 'jpalardy/vim-slime'             " Some slime in my vim.
+Plug 'wlangstroth/vim-racket'         " Racket mode
+Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
+Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
+Plug 'pearofducks/ansible-vim'
+Plug 'dhruvasagar/vim-table-mode'
+Plug 'tpope/vim-markdown'
+Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
+Plug 'lervag/vimtex'
+Plug 'cespare/vim-toml'
+Plug 'aklt/plantuml-syntax'
+Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
+Plug 'elzr/vim-json', {'for': ['json'] }
 
 call plug#end()
 " }}}
@@ -115,6 +117,9 @@ set concealcursor=nc
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
+
+" Allows to open files in external program with `gx` inside netrw
+let g:netrw_browsex_viewer = "xdg-open"
 " }}}
 
 " {{{ UI options
@@ -161,7 +166,7 @@ function! ParseModeline()
 endfunction
 au! BufReadPost,BufNewFile * call ParseModeline()
 
-" Jump to the last position when reopening a file (see `/etc/vim/vimrc`)
+" Jump to the last position when reopening a file (see `/etc/vim/vimrc` on Debian)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
 " }}}
@@ -205,6 +210,9 @@ vnoremap // y/<C-R>"<CR>
 " Search in visal selected area
 vnoremap <M-/> <Esc>/\%V
 
+" Unmap annoying ;
+nnoremap ; <Nop>
+
 " Replace with `F` / `f` / `t` / `T`
 noremap ;; :s///g<Left><Left><Left>
 noremap ;' :s///cg<Left><Left><Left><Left>
@@ -241,11 +249,11 @@ command! Mkw call WriteCreatingDirs()
 noremap <Leader>Em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
 " Spellchecking
-map <F10> :setlocal spell! spelllang=en_us,ru_ru<CR>
-imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_ru<CR>
+map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
+imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 " Fix previous error
-noremap <C-l> [s1z=``
-inoremap <C-l> <c-g>u<Esc>[s1z=`]a<c-g>u
+noremap <A-u> [s1z=``
+inoremap <A-u> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
 
 " {{{ indentLine configuration
@@ -269,6 +277,7 @@ nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
 " Editing neighbors
 cnoremap %% <C-R>=fnameescape(expand('%:h')).'/'<cr>
 map <leader>ew :e %%
+map <leader>ee :e 
 map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
@@ -290,15 +299,8 @@ nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar
 " ё -> е
 nnoremap <silent> <Leader>E` :%s/ё/е/g<cr>
 
-function! BufferClose()
-  if (tabpagenr('$') == 1 && winnr() == 1 && len(expand('%'))==0 && len(getbufinfo({'buflisted':1})) == 1)
-    exec ':q'
-  else
-    exec ':bd'
-  endif
-endfunction
-nnoremap <C-F4> :call BufferClose()<CR>
-nnoremap <leader>xk :call BufferClose()<CR>
+" Close buffer
+nnoremap <C-F4> :Sayonara<CR>
 
 " Switch to recent buffer
 nnoremap <A-r> <C-^>
@@ -317,9 +319,6 @@ endif
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
-
-" Move selected lines with <C-j> / <C-k>
-let g:move_key_modifier = 'C'
 
 " Tabularize
 cnoreabbrev Tab Tabularize
@@ -357,11 +356,6 @@ let g:lightline = {
 let g:buftabline_indicators=1 " show modified
 " }}}
 
-" {{{ netrw configuration
-" Allows to open files in external program with `gx`
-let g:netrw_browsex_viewer = "xdg-open"
-" }}}
-
 " {{{ Integration with web-browser
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
@@ -392,7 +386,8 @@ nnoremap <leader>ogs :call openbrowser#smart_search(expand('<cword>'), "google")
 nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
 nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
 nnoremap <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
-nnoremap <leader>ogl :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
+nnoremap <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
+nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
 nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
 nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
 nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
@@ -564,13 +559,13 @@ nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
 command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
 command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
 command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
-command! -bang -nargs=* AgCpp call fzf#vim#ag(<q-args>, '--cpp', {'down': '~40%'})
+command! -bang -nargs=* AgCxx call fzf#vim#ag(<q-args>, '--cpp', {'down': '~40%'})
 command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
 command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40%'})
 command! -bang -nargs=* AgElisp call fzf#vim#ag(<q-args>, '--elisp', {'down': '~40%'})
 command! -bang -nargs=* AgCSS call fzf#vim#ag(<q-args>, '--css', {'down': '~40%'})
 nnoremap <leader>fac :AgCC<CR>
-nnoremap <leader>faC :AgCpp<CR>
+nnoremap <leader>fax :AgCxx<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
 nnoremap <leader>fae :AgElisp<CR>
@@ -845,10 +840,10 @@ au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs
 au FileType c,cpp call LCKeymap()
 
 " Use C filetype for headers by default
-au BufReadPre,BufRead,BufNewFile *.h set filetype=c
+" au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
-nnoremap <silent> <A-a> :silent A<CR>
+nnoremap <A-a> :A<CR>
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
@@ -940,10 +935,8 @@ au FileType rst setlocal textwidth=80
 au Filetype rst setlocal foldmethod=expr
 au FileType rst set spell! spelllang=en_us,ru_ru
 au FileType rst call Togglegjgk()
-
 " Disable auto-folding on `:w`
 let g:riv_fold_auto_update=0
-
 " The position of fold info
 let g:riv_fold_info_pos='left'
 " }}}
@@ -954,9 +947,8 @@ let g:vim_json_syntax_conceal = 0
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
 au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
-au FileType markdown set spell! spelllang=en_us,ru_ru
+au FileType markdown set spell! spelllang=en_us,ru_yo
 au FileType markdown call Togglegjgk()
-au FileType markdown nnoremap <buffer> <F3> :MarkDrawer<CR>
 au FileType markdown nnoremap <buffer> <Tab> za<CR>k
 au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
 au FileType markdown nnoremap <buffer> <leader>' i``

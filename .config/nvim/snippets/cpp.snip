@@ -9,3 +9,14 @@ abbr #ifndef ... #define ... #endif
         ${0:TARGET}
     #endif // $1
 # }}}
+
+# {{{ Comments
+snippet     clang-format-multi
+options     head
+    // clang-format off
+    ${0}
+    // clang-format on
+snippet     clang-format
+options     head
+    // clang-format ${0}
+# }}}
