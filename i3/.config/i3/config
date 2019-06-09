@@ -1,0 +1,362 @@
+# {{{ General
+# Global variables
+set $TERMINAL     kitty
+set $HOME 		  /home/jubnzv/
+set $I3LOCKBG     /home/jubnzv/.i3/i3lock.png
+set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
+set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
+set $SCRIPTS_PATH /home/jubnzv/Scripts
+
+# Multi-monitor setup
+set $display1 LVDS1
+set $display2 HDMI3
+set $display3 VGA1
+
+# Applications from ~/.local/
+set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
+set $APP_TELEGRAM $HOME/.local/bin/Telegram
+set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
+set $APP_THUNDERBIRD /usr/bin/thunderbird
+set $APP_VNOTE $HOME/.local/bin/VNote
+
+# Windows behavior
+floating_modifier $mod
+workspace_layout tabbed
+focus_follows_mouse no
+# }}}
+
+# {{{ Workspace names
+set $tile_01_q <b></b>
+set $tile_02_w 
+set $tile_03_e <b></b>
+set $tile_04_f 
+set $tile_05_j <b>α</b>
+set $tile_06_i <b>β</b>
+set $tile_07_o <b>γ</b>
+set $tile_08_p <b>δ</b>
+set $tile_09_1 <b>◰</b>
+set $tile_10_2 <b>◳</b>
+set $tile_11_3 <b>◲</b>
+set $tile_12_4 <b>◱</b>
+set $tile_13_msg <b></b>
+set $tile_14_music <b></b>
+
+workspace "1$tile_01_q" output $display1
+workspace "2$tile_02_w" output $display1
+workspace "3$tile_03_e" output $display1
+workspace "4$tile_04_f" output $display1
+workspace "5$tile_05_j" output $display2
+workspace "6$tile_06_i" output $display2
+workspace "7$tile_07_o" output $display2
+workspace "8$tile_08_p" output $display2
+workspace "9$tile_09_1" output $display3
+workspace "10$tile_10_2" output $display3
+workspace "11$tile_11_3" output $display3
+workspace "12$tile_12_4" output $display3
+workspace "13$tile_13_msg" output $display1
+workspace "14$tile_14_music" output $display1
+# }}}
+
+# {{{ Autostart
+exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
+exec --no-startup-id /usr/bin/fbxkb
+exec --no-startup-id $SCRIPTS_PATH/i3/setup-keys
+exec --no-startup-id $SCRIPTS_PATH/i3/xrandr-dual-on
+exec --no-startup-id $SCRIPTS_PATH/i3/touchpad-toggle
+exec --no-startup-id amixer -c 0 -q set Master mute
+exec --no-startup-id amixer -c 0 -q set Capture nocap
+exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
+exec --no-startup-id dunst
+exec --no-startup-id udiskie -t
+exec --no-startup-id bsetroot -solid "#282828"
+exec --no-startup-id /usr/bin/xcompmgr
+exec --no-startup-id /usr/bin/keepassxc
+exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
+# }}}
+
+# {{{ UI and appearance
+# Color theme
+# class                 border  backgr. text    indicator
+client.focused          #a89984 #282828 #a89984 #d65d0e
+client.focused_inactive #282828 #282828 #93a1a1 #586e75
+client.unfocused        #282828 #282828 #93a1a1 #586e75
+client.urgent           #d65d0e #282828 #000000 #586e75
+
+# Window appearance
+new_window 1pixel
+font xft:Proto Sans, FontAwesome 9
+hide_edge_borders both
+# }}}
+
+# {{{ Workspace settings
+# Use `xprop` command for WM_CLASS and WM_NAME.
+for_window [window_type="dialog"] floating enable
+for_window [window_type="menu"] floating enable
+for_window [instance="^Emacs_Scratchpad$"] move scratchpad
+for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
+for_window [class="^Slack$"] move container to workspace 13$tile_13_msg
+for_window [class="TelegramDesktop"] move container to workspace 13$tile_13_msg
+for_window [class="^Thunderbird$"] move container to workspace 13$tile_13_msg
+for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
+for_window [title="^xev$"] floating enable
+for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
+for_window [title="^Run" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
+for_window [class="jetbrains-toolbox"] floating enable
+for_window [class="D-feet"] floating disable
+for_window [window_role="GtkFileChooserDialog"] floating enable, resize set 800 600, move center, focus
+# }}}
+
+# {{{ Keybindings
+set $mod Mod4
+
+# Windows control
+bindsym $mod+Shift+C kill
+bindsym $mod+Shift+less kill
+bindsym $mod+F11 fullscreen
+bindsym $mod+Escape layout toggle tabbed splith
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+Shift+B border toggle
+
+# Change split orientation
+bindsym $mod+Shift+ampersand layout toggle split
+
+# Workspaces
+#bindsym $mod+bracketleft workspace prev
+#bindsym $mod+bracketright workspace next
+#bindsym $mod+Shift+R move workspace prev
+#bindsym $mod+Shift+U move workspace next
+
+# Move workspaces through monitors
+bindsym $mod+Shift+underscore move workspace to output left
+bindsym $mod+Shift+plus move workspace to output right
+
+# Switch between screens
+bindsym $mod+Tab focus output right
+
+# Switch between windows on workspace
+bindsym $mod+comma focus left
+bindsym $mod+period focus right
+bindsym $mod+bracketleft focus left
+bindsym $mod+bracketright focus right
+
+# Goto last workspace
+bindsym $mod+r workspace back_and_forth
+
+# Switch between workspaces (all screens)
+bindsym $mod+Next workspace next
+bindsym $mod+Prior workspace prev
+
+# Switch between workspaces (current screen only)
+# bindsym $mod+Shift+greater workspace next_on_output
+# bindsym $mod+Shift+less workspace prev_on_output
+
+# Switch to workspace
+bindsym $mod+q workspace number 1$tile_01_q
+bindsym $mod+w workspace number 2$tile_02_w; layout splith
+bindsym $mod+e workspace number 3$tile_03_e
+bindsym $mod+f workspace number 4$tile_04_f
+bindsym $mod+j workspace number 5$tile_05_j
+bindsym $mod+i workspace number 6$tile_06_i
+bindsym $mod+o workspace number 7$tile_07_o
+bindsym $mod+p workspace number 8$tile_08_p
+bindsym $mod+1 workspace number 9$tile_09_1
+bindsym $mod+2 workspace number 10$tile_10_2
+bindsym $mod+3 workspace number 11$tile_11_3
+bindsym $mod+4 workspace number 12$tile_12_4
+bindsym $mod+0 workspace number 13$tile_13_msg
+bindsym $mod+m workspace number 14$tile_14_music
+
+# Control urgent workspaces
+bindsym $mod+u [urgent=latest] focus
+bindsym $mod+Control+u exec --no-startup-id $SCRIPTS_PATH/i3/unset-urgent
+
+# Move focused container to workspace
+bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
+bindsym $mod+Shift+W move container to workspace 2$tile_02_w
+bindsym $mod+Shift+E move container to workspace 3$tile_03_e
+bindsym $mod+Shift+F move container to workspace 4$tile_04_f
+bindsym $mod+Shift+J move container to workspace 5$tile_05_j
+bindsym $mod+Shift+I move container to workspace 6$tile_06_i
+bindsym $mod+Shift+O move container to workspace 7$tile_07_o
+bindsym $mod+Shift+P move container to workspace 8$tile_08_p
+bindsym $mod+Shift+1 move container to workspace 9$tile_09_1
+bindsym $mod+Shift+2 move container to workspace 10$tile_10_2
+bindsym $mod+Shift+3 move container to workspace 11$tile_11_3
+bindsym $mod+Shift+4 move container to workspace 12$tile_12_4
+bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
+bindsym $mod+Shift+m move container to workspace 14$tile_14_music
+
+# Application startup hotkeys
+bindsym $mod+n exec rofi -modi "Notes:~/Scripts/rofi/notes" -show Notes
+bindsym $mod+Control+n exec $TERMINAL -e nvim ~/Org/scratch.md
+bindsym $mod+Return exec $TERMINAL
+bindsym $mod+Control+Return exec $TERMINAL -e tmux
+bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
+bindsym $mod+Control+F5 workspace 2$tile_02_w; exec chromium --profile-directory=Dev
+bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
+bindsym $mod+Control+r exec $TERMINAL -e ranger
+bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
+bindsym $mod+Control+k exec keepassxc # focus keepassxc window
+bindsym $mod+Control+v exec $APP_VNOTE
+bindsym $mod+Control+a exec anki # start or focus
+bindsym $mod+Control+z exec zeal # start or focus
+bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
+
+# Brightness control
+bindsym XF86MonBrightnessUp exec xbacklight -inc 7 && pkill -RTMIN+2 i3blocks # increase screen brightness
+bindsym XF86MonBrightnessDown exec xbacklight -dec 7 &&  pkill -RTMIN+2 i3blocks # decrease screen brightness
+bindsym $mod+F7 exec sleep 1 && xset dpms force off
+
+# Rofi
+bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
+bindsym $mod+F2 exec $SCRIPTS_PATH/rofi/google
+
+# Additional scripts/utils
+bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
+bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
+bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
+bindsym Control+XF86Launch1 exec screengrab -r
+bindsym Shift+XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
+bindsym $mod+XF86ScreenSaver exec xset s activate
+bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
+bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
+
+# cmus control
+bindsym XF86AudioNext exec cmus-remote --next && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioPrev exec cmus-remote --prev && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioPause exec cmus-remote --pause && pkill -RTMIN+3 i3blocks
+bindsym XF86AudioStop exec cmus-remote --stop && pkill -RTMIN+3 i3blocks
+
+# Volume control
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +4% && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -4% && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle && pkill -RTMIN+1 i3blocks
+bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
+
+# i3bar control
+bindsym $mod+F8 bar mode toggle bar-main
+
+# Scratchpad
+bindsym $mod+Shift+S move scratchpad
+bindsym $mod+s scratchpad show
+
+# Highlight focused window
+bindsym Shift+F4 [class=".*"] border pixel 5
+bindsym Shift+F4 --release [class=".*"] border none
+
+# }}}
+
+# {{{ Bind modes
+
+# {{{ Peripherial devices control
+set $mode_exec_peripherial <span fgcolor='#a89984'>Peripherial</span>\t\t\t \
+<span fgcolor='#a89984'></span>   \
+<span bgcolor='#a89984' fgcolor='#282828'>[1]</span> <span fgcolor='#a89984'>single</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[m]</span> <span fgcolor='#a89984'>manual </span> \
+<span bgcolor='#8ec07c' fgcolor='#282828'>[e]</span> <span fgcolor='#8ec07c'>on</span>  \
+<span bgcolor='#cc241d' fgcolor='#282828'>[d]</span> <span fgcolor='#cc241d'>off</span>\t\t\t \
+<span fgcolor='#a89984'></span>   \
+<span bgcolor='#a89984' fgcolor='#282828'>[t]</span> <span fgcolor='#a89984'>on</span>
+bindsym XF86Display mode $mode_exec_peripherial
+mode --pango_markup "$mode_exec_peripherial" {
+     bindsym 1 exec xrandr --output LVDS-1 --auto; mode "default"
+     bindsym m exec arandr; mode "default"
+     bindsym e exec $SCRIPTS_PATH/i3/xrandr-dual-on; mode "default"; exec i3-msg "restart"
+     bindsym d exec $SCRIPTS_PATH/i3/xrandr-dual-off; mode "default"; exec i3-msg "restart"
+     bindsym t exec $SCRIPTS_PATH/i3/touchpad-toggle -v; mode "default"
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+# }}}
+# {{{ IM applications startup routines
+set $mode_exec_apps <span bgcolor='#d3869b' fgcolor='#282828'> IM</span>\t\t\
+<span bgcolor='#a89984' fgcolor='#282828'>[1]</span> <span fgcolor='#a89984'> Telegram</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[2]</span> <span fgcolor='#a89984'> Mattermost</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[3]</span> <span fgcolor='#a89984'> Thunderbird</span>  \
+<span bgcolor='#d3869b' fgcolor='#282828'>[F9]</span> <span fgcolor='#d3869b'>All</span>
+bindsym $mod+Control+F9 mode $mode_exec_apps
+mode --pango_markup "$mode_exec_apps" {
+     bindsym 1 exec $APP_TELEGRAM; mode "default"
+     bindsym 2 exec $APP_MATTERMOST; mode "default"
+     bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
+	 bindsym F9 workspace 13$tile_13_msg; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; mode "default"
+     bindsym Return mode "default"
+     bindsym Escape mode "default"
+}
+# }}}
+# {{{ Power control
+set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'> Power management</span>\t\t\
+<span bgcolor='#a89984' fgcolor='#282828'>[S]</span><span fgcolor='#a89984'>  poweroff\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[R]</span><span fgcolor='#a89984'>  reboot\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[s]</span><span fgcolor='#a89984'>  sleep</span>
+bindsym $mod+Control+Delete mode "$mode_exec_power"
+mode --pango_markup "$mode_exec_power" {
+	bindsym Shift+s     exec systemctl poweroff; mode "default"
+	bindsym R           exec systemctl reboot; mode "default"
+	bindsym s           exec systemctl suspend; mode "default"
+	bindsym Return 	    mode "default"
+	bindsym Escape 	    mode "default"
+}
+# }}}
+# {{{ i3wm control
+set $mode_exec_i3cmd <span bgcolor='#8ec07c' fgcolor='#282828'> i3 command</span>\t\t\
+<span bgcolor='#a89984' fgcolor='#282828'>[l]</span><span fgcolor='#a89984'>  lock\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[r]</span><span fgcolor='#a89984'>  restart\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[e]</span><span fgcolor='#a89984'>  log out</span>
+bindsym $mod+Control+End mode "$mode_exec_i3cmd"
+mode --pango_markup "$mode_exec_i3cmd" {
+	bindsym l           exec lock; mode "default"
+	bindsym r           exec i3-msg "restart"; mode "default"
+	bindsym e           exec i3-msg "exit"; mode "default"
+	bindsym Return 	    mode "default"
+	bindsym Escape 	    mode "default"
+}
+# }}}
+# {{{ Run selected REPL
+set $mode_run_repl <span bgcolor='#d79921' fgcolor='#282828'> REPL</span>\t\t\
+<span bgcolor='#a89984' fgcolor='#282828'>[2]</span><span fgcolor='#a89984'> ipython2\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[3]</span><span fgcolor='#a89984'> ipython3\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[b]</span><span fgcolor='#a89984'> bpython</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[j]</span><span fgcolor='#a89984'> jupyter</span> \
+<span bgcolor='#076678' fgcolor='#282828'>[r]</span><span fgcolor='#076678'> racket</span>
+bindsym $mod+Control+i mode "$mode_run_repl"
+mode --pango_markup "$mode_run_repl" {
+    bindsym 2       exec $TERMINAL -e ipython; mode "default"
+    bindsym 3       exec $TERMINAL -e ipython3; mode "default"
+    bindsym b       exec $TERMINAL -e bpython; mode "default"
+    bindsym j       exec $TERMINAL -e jupyter notebook; mode "default"
+    bindsym r       exec $TERMINAL -e racket -i; mode "default"
+	bindsym Return  mode "default"
+	bindsym Escape  mode "default"
+}
+# }}}
+
+# }}}
+
+# {{{ Main bar
+bar {
+    id bar-main
+    tray_output $display1
+	position top
+    mode hide
+    workspace_buttons yes
+    strip_workspace_numbers yes
+    binding_mode_indicator yes
+    # status_command i3blocks
+    status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
+    # status_command /usr/local/bin/i3status
+    colors {
+        background		#282828
+        statusline		#a89984
+        #				    border  bckgrnd text
+        focused_workspace	#a89984 #a89984 #282828
+        active_workspace	#a89984 #282828 #a89984
+        inactive_workspace	#282828 #282828 #a89984
+        urgent_workspace	#d65d0e #d65d0e #282828
+    	binding_mode		#282828 #282828	#fffffv
+    }
+}
+# }}}
+
+# vim:foldmethod=marker:foldlevel=0:tw=120:

@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: header-uni
+# key: Hu
+# --
+# -*- mode: org; -*-
+#+TITLE: $0
+#+CATEGORY: Uni
+#+FILETAGS: 
+
+* org
+
+* Tasks
+
+* `(org-time-stamp)`

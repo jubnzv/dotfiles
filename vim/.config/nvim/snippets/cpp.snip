@@ -1,0 +1,28 @@
+# {{{ Include-Guard
+snippet     once
+alias       include-guard
+options     head
+abbr #ifndef ... #define ... #endif
+    #ifndef ${1:#:SYMBOL}
+        #define $1
+
+        ${0:TARGET}
+    #endif // $1
+# }}}
+
+# {{{ Comments
+snippet     clang-format-multi
+options     head
+    // clang-format off
+    ${0}
+    // clang-format on
+snippet     clang-format
+options     head
+    // clang-format ${0}
+# }}}
+
+snippet     fora
+options     head
+    for (${1:auto const& }${2:var} : ${3:container}) {
+        ${0:TARGET}
+    }

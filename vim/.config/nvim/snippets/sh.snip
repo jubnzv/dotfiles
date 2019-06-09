@@ -1,0 +1,67 @@
+snippet check_args
+options head
+    if [ $# -ne ${1:2} ]; then
+        echo "Usage: \$0 ${1}"
+        exit 1
+    fi
+
+snippet check_command
+options head
+    if [[ -x "$(command -v ${1})" ]]; then
+        $0
+    fi
+
+snippet check_dir
+options head
+    if [ ! -d ${1:/} ]; then
+        echo "${1} is inaccessible"
+        exit 127
+    fi
+    $0
+
+snippet check_file
+options head
+    if [ ! -f ${1:/} ]; then
+        echo "${1} is inaccessible"
+        exit 127
+    fi
+    $0
+
+snippet check_root
+options head
+    if [[ $EUID -ne 0 ]]; then
+            echo "Please run this script as root."
+            exit 1
+    fi
+    $0
+
+snippet check_connection
+options head
+    wget -q --spider http://google.com
+    if [ ! $? -eq 0 ]; then
+        echo "Please connect to the internet before continuing."
+    fi
+    $0
+
+snippet strict_mode
+options head
+    set -euo pipefail
+
+snippet exit_err
+options head
+    ext=$?
+    if [[ $ext -ne 0 ]]; then
+        exit $ext
+    fi
+
+snippet fdisk_partitioning
+options head
+    (
+    echo o   # Create a new empty DOS partition table
+    echo n   # Add a new partition
+    echo p   # Primary partition
+    echo 1   # Partition number
+    echo     # First sector
+    echo     # Last sector
+    echo w   # Write changes
+    ) | fdisk ${0}

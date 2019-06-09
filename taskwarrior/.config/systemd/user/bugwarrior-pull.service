@@ -1,0 +1,10 @@
+[Unit]
+Description=bugwarrior-pull
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=/home/jubnzv/.local/bin/bugwarrior-pull
+Type=oneshot
+
+[Install]
+WantedBy=default.target
