@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <filename to keep>"
+    exit 1
+fi
+
+find . ! -name $1 -type f -exec rm -f {} +

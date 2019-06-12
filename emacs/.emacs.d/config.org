@@ -1197,12 +1197,6 @@ Images are separated inside that image folder by additional folders one per org 
 (evil-declare-key 'normal org-mode-map ",Ds" 'org-download-screenshot)
 #+END_SRC
 
-* Hyperbole
-#+BEGIN_SRC emacs-lisp
-(use-package hyperbole
-  :ensure t)
-#+END_SRC
-
 * LaTeX
 #+BEGIN_SRC emacs-lisp
   ;; (use-package auctex

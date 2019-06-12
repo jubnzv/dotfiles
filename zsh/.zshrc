@@ -131,6 +131,8 @@ alias mrg='mirage'
 alias j='z'
 alias g='git'
 alias tm='tmux'
+alias tmkill='tmux kill-session -t'
+alias tma='tmux attach -t'
 alias :e='nvim'
 alias v='nvim'
 alias v.='nvim .'
@@ -141,7 +143,6 @@ alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
 alias rp='realpath'
 alias mkb='mkdir -p ./build; cd build'
-
 alias ag='ag --path-to-ignore ~/.ignore'
 
 # Edit configs
@@ -151,6 +152,7 @@ alias vi3s='nvim ~/.config/i3/i3status-rust.toml; i3-msg restart'
 alias vv='nvim ~/.config/nvim/init.vim'
 alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
+alias vsh='nvim ~/dotfiles/scripts/'
 
 # Notekeeping in markdown with vim
 alias vns='nvim ~/Org/scratch.md'

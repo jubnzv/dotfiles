@@ -65,3 +65,9 @@ options head
     echo     # Last sector
     echo w   # Write changes
     ) | fdisk ${0}
+
+snippet pushd_popd
+options head
+    pushd ${1:./} >/dev/null
+    ${0}
+    popd >/dev/null

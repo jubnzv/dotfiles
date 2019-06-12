@@ -1,0 +1,8 @@
+.emacs.d/.cache/
+.emacs.d/config.el
+.emacs.d/custom.el
+.emacs.d/elpa/
+.emacs.d/keyfreq
+.emacs.d/places
+.emacs.d/recentf
+.emacs.d/undo/
