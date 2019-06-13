@@ -43,6 +43,14 @@ options head
     fi
     $0
 
+snippet for_dirs
+options head
+    for [ d in * ]; do
+        if [[ -d $d ]]; then
+            ${0}
+        fi
+    done
+
 snippet strict_mode
 options head
     set -euo pipefail

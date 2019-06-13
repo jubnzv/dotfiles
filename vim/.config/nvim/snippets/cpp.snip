@@ -21,6 +21,34 @@ options     head
     // clang-format ${0}
 # }}}
 
+# {{{ gtest
+snippet     gtest-timeout-fail
+options     head
+    std::promise<bool> promisedFinished;
+    auto futureResult = promisedFinished.get_future();
+    std::thread(
+        [](std::promise<bool> &finished) {
+            ${0}
+            finished.set_value(true);
+        },
+        std::ref(promisedFinished))
+        .detach();
+    EXPECT_TRUE(futureResult.wait_for(std::chrono::milliseconds(3000)) != std::future_status::timeout);
+
+snippet     gtest-timeout-success
+options     head
+    std::promise<bool> promisedFinished;
+    auto futureResult = promisedFinished.get_future();
+    std::thread(
+        [](std::promise<bool> &finished) {
+            ${0}
+            finished.set_value(true);
+        },
+        std::ref(promisedFinished))
+        .detach();
+    EXPECT_FALSE(futureResult.wait_for(std::chrono::milliseconds(3000)) != std::future_status::timeout);
+# }}}
+
 snippet     fora
 options     head
     for (${1:auto const& }${2:var} : ${3:container}) {

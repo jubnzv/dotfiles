@@ -3,6 +3,19 @@ abbr    print("")
 options head
     print("${1}")
 
+# {{{ https://github.com/cool-RR/PySnooper
+snippet snoop
+options head
+    import pysnooper
+    @pysnooper.snoop()$0
+
+snippet snoop_with
+options head
+    import pysnooper
+    with pysnooper.snoop():
+        $0
+# }}}
+
 snippet raise_ni
 alias rni
 options head
