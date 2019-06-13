@@ -212,6 +212,7 @@ bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-mo
 bindsym $mod+F2 exec $SCRIPTS_PATH/rofi/google
 
 # Additional scripts/utils
+bindsym $mod+F10 exec $SCRIPTS_PATH/i3/toggle-notifications
 bindsym $mod+t exec $SCRIPTS_PATH/i3/active-task
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"

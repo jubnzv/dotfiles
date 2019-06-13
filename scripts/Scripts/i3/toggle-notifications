@@ -1,7 +1,15 @@
 #!/bin/bash
+set -euo pipefail
 
-if [[ $1 -eq 1 ]]; then
-    notify-send "DUNST_COMMAND_PAUSE"
-else
+TMP_FILE=/tmp/dunst-notifications-enabled
+
+if [ ! -f $TMP_FILE ] ; then
     notify-send "DUNST_COMMAND_RESUME"
+    notify-send "Notifications enabled" -t 600 -i player-volume
+    touch $TMP_FILE
+else
+    notify-send "Notifications muted" -t 600 -i player-volume-muted
+    sleep 0.7
+    notify-send "DUNST_COMMAND_PAUSE"
+    rm $TMP_FILE
 fi
