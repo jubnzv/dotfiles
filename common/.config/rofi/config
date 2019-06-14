@@ -1,10 +1,10 @@
 ! General settings
-rofi.terminal:  urxvt
+rofi.terminal:  kitty
 
 ! Appearance
-rofi.font: Iosevka 13
+rofi.font:          Iosevka 13
 rofi.color-enabled: true
-rofi.theme:         gruvbox-dark
+rofi.theme:         ~/.config/rofi/gruvbox-jubnzv.rasi
 
 ! SSH settings
 rofi.ssh-client:    ssh
