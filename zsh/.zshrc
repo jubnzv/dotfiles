@@ -145,6 +145,12 @@ alias rp='realpath'
 alias mkb='mkdir -p ./build; cd build'
 alias ag='ag --path-to-ignore ~/.ignore'
 
+# mkdir + cd
+mkcd() {
+    [[ $# -gt 1 ]] && return 1
+    mkdir -p "$1" && cd "$1" || return 1
+}
+
 # Edit configs
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
@@ -174,6 +180,11 @@ alias arch='env OUTPUT_DIR=/home/jubnzv/Org/WebArchive/ FETCH_PDF=False FETCH_ME
 
 # zsh
 alias _up source ~/.zshrc
+
+# Suffix aliases
+alias -g KE="2>&1"
+alias -g NE="2>/dev/null"
+alias -g NUL=">/dev/null 2>&1"
 
 # python
 alias vs='source venv/bin/activate'
