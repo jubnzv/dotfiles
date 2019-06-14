@@ -15,6 +15,8 @@ map b navigate previous
 map e follow
 map f navigate next
 map p goto top
+map [normal]     <C-l> reload
+map [fullscreen] <C-l> reload
 map <C-+> zoom in
 map <C--> zoom out
 map <C-=> zoom in
@@ -28,6 +30,10 @@ map <C-g> abort
 map <C-n> scroll down
 map <C-p> scroll up
 map <C-v> scroll full-down
+map [normal]     <C-e> scroll down
+map [fullscreen] <C-e> scroll down
+map [normal]     <C-y> scroll up
+map [fullscreen] <C-y> scroll up
 map <A-\<> goto top
 map <A-\>> goto bottom
 map <A-v> scroll full-up
@@ -63,7 +69,3 @@ set index-bg \#282828
 set index-fg \#98971a
 set index-active-bg \#3c3836
 set index-active-fg \#98971a
-#set tabbar-bg \#282828
-#set tabbar-fg \#7c6f64
-#set tabbar-focus-bg \#7c6f64
-#set tabbar-focus-fg \#282828
