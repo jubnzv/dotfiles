@@ -288,6 +288,18 @@ snippet def_err_print
 snippet def_dbg_print
     #define dbg(fmt, args...) do { if (${2:DEBUG_ENABLED}) fprintf(stderr, "[${1:DBG}]: " fmt "\n", ##args); } while (0)
     $0
+
+snippet strerror_function
+options head
+    const char *strerror_${1:name}(int errno_)
+    {
+        switch(errno_) {
+            case ${0:E}:
+                return "$0";
+            default:
+                return strerror(errno_);
+        }
+    }
 # }}}
 
 # {{{ GLib

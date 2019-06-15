@@ -1,20 +1,23 @@
 snippet check_args
 options head
-    if [ $# -ne ${1:2} ]; then
-        echo "Usage: \$0 ${1}"
+    if [ $# -ne ${1:1} ]; then
+        echo "Usage: \$0 $1"
         exit 1
     fi
+    $0
 
 snippet check_command
 options head
-    if [[ -x "$(command -v ${1})" ]]; then
-        $0
+    if [[ ! -x "$(command -v ${1})" ]]; then
+        echo "$1: command not found"
+        exit 1
     fi
+    $0
 
 snippet check_dir
 options head
     if [ ! -d ${1:/} ]; then
-        echo "${1} is inaccessible"
+        echo "$1 is inaccessible"
         exit 127
     fi
     $0
@@ -22,7 +25,7 @@ options head
 snippet check_file
 options head
     if [ ! -f ${1:/} ]; then
-        echo "${1} is inaccessible"
+        echo "$1 is inaccessible"
         exit 127
     fi
     $0
@@ -42,6 +45,14 @@ options head
         echo "Please connect to the internet before continuing."
     fi
     $0
+
+snippet file_filename
+options head
+    filename="\${${1:varname}%.*}"
+
+snippet file_extension
+options head
+    fileext="\${${1:varname}##.*}"
 
 snippet for_dirs
 options head
@@ -79,3 +90,20 @@ options head
     pushd ${1:./} >/dev/null
     ${0}
     popd >/dev/null
+
+snippet getopts_verbose
+options head
+    vison=0
+
+    while getopts "iv" option; do
+        case "$option" in
+            v)
+                echo "verbose mode"
+                vison=1 ;;
+            *)
+                exit 1 ;;
+        esac
+    done
+    shift $(( OPTIND - 1 ))
+
+    (( vison )) && echo 'Verbose mode'
