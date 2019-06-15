@@ -1,0 +1,25 @@
+#!/bin/bash
+# Convert markdown to pdf using xelatex with custom template
+
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 file.md"
+    exit 1
+fi
+
+if [[ ! -x "$(command -v pandoc)" ]]; then
+    echo "Install pandoc to run this script"
+    exit 1
+fi
+
+if [[ ! -x "$(command -v xelatex)" ]]; then
+    echo "Install xelatex to run this script"
+    exit 1
+fi
+
+TEMPLATE=$HOME/.latex/template-cyrillic.tex
+if [ ! -f $TEMPLATE ]; then
+    echo "File $TEMPLATE is inaccessible"
+    exit 127
+fi
+
+pandoc $1 -o "${1%.*}".pdf --pdf-engine=xelatex --toc --toc-depth=2 --template=$TEMPLATE
