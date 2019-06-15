@@ -45,6 +45,7 @@ Plug 'junegunn/fzf', {
   \ }
 Plug 'kana/vim-textobj-user'          " Plugin for user-defined textobjs
 Plug 'glts/vim-textobj-comment'       " textobj for comments
+Plug 'bps/vim-textobj-python'         " Text objects for Python.
 Plug 'majutsushi/tagbar'              " Vim plugin that displays tags in a window
 Plug 'liuchengxu/vista.vim'           " View and search LSP symbols
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
@@ -825,12 +826,19 @@ nmap gz <Plug>ZVOperator
 nmap <leader><leader>z <Plug>ZVKeyDocset
 " }}}
 
+" {{{ textobj (https://github.com/glts/vim-textobj-comment) configuration
+let g:textobj_comment_no_default_key_mappings = 1
+xmap a/ <Plug>(textobj-comment-a)
+omap a/ <Plug>(textobj-comment-a)
+xmap i/ <Plug>(textobj-comment-i)
+omap i/ <Plug>(textobj-comment-i)
+" }}}
+
 " {{{ C/C++
 " au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp setlocal tw=80
 au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
 au FileType c,cpp call LCKeymap()
-
 " Use C filetype for headers by default
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
