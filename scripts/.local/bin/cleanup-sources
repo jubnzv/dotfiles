@@ -1,0 +1,20 @@
+#!/bin/bash
+set -euo pipefail
+
+if [ ! -d $HOME/Sources ]; then
+    echo "$HOME/Sources is inaccessible"
+    exit 127
+fi
+
+pushd $HOME/Sources >/dev/null
+
+# Remove `apt-get source` artefacts
+rm -f *.dsc *.asc      \
+      *.orig*.gz       \
+      *.orig*.bz2      \
+      *.orig*.xz       \
+      *.debian.*gz     \
+      *.debian.*bz2    \
+      *.debian.*xz
+
+popd >/dev/null
