@@ -79,6 +79,7 @@ Plug 'cespare/vim-toml'
 Plug 'aklt/plantuml-syntax'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
+Plug 'rhysd/vim-grammarous' " A powerful grammar checker using LanguageTool
 
 call plug#end()
 " }}}
@@ -253,6 +254,23 @@ imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 " Fix previous error
 noremap <A-u> [s1z=``
 inoremap <A-u> <c-g>u<Esc>[s1z=`]a<c-g>u
+
+" LanguageTool (https://www.languagetool.org/) integration
+" Use above <Plug> mappings only after checking.
+let g:grammarous#hooks = {}
+function! g:grammarous#hooks.on_check(errs) abort
+    nmap <buffer><C-n> <Plug>(grammarous-move-to-next-error)
+    nmap <buffer><C-p> <Plug>(grammarous-move-to-previous-error)
+endfunction
+function! g:grammarous#hooks.on_reset(errs) abort
+    nunmap <buffer><C-n>
+    nunmap <buffer><C-p>
+endfunction
+nnoremap <leader>Ge :GrammarousCheck<cr>
+vnoremap <leader>Ge :GrammarousCheck<cr>
+nnoremap <leader>Gr :GrammarousCheck --lang=ru<cr>
+vnoremap <leader>Gr :GrammarousCheck --lang=ru<cr>
+nnoremap <leader>Gs :GrammarousReset<cr>
 " }}}
 
 " {{{ indentLine configuration
