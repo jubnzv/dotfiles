@@ -50,6 +50,7 @@ Plug 'majutsushi/tagbar'              " Vim plugin that displays tags in a windo
 Plug 'liuchengxu/vista.vim'           " View and search LSP symbols
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
+Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
 Plug 'scrooloose/nerdcommenter'
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
@@ -107,6 +108,7 @@ set hidden
 set tabstop=4
 set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
+set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
 
 " Default conceal settings.
 " concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
@@ -191,7 +193,7 @@ nnoremap Y y$
 " nmap zk O<Esc>j
 
 " Reload vimrc
-nnoremap <leader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <leader>rc :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Free <F1>
 nmap <F1> :echo <CR>
@@ -682,14 +684,11 @@ imap <A-l> <Plug>(neosnippet_expand_or_jump)
 smap <A-l> <Plug>(neosnippet_expand_or_jump)
 xmap <A-l> <Plug>(neosnippet_expand_target)
 
-" let g:neosnippet#enable_completed_snippet = 1
-" let g:neosnippet#enable_complete_done = 0
-
 " If your snippets trigger are same with builtin snippets, your snippets overwrite them.
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 
 " Reload snippets
-nnoremap <leader>rS :call neosnippet#variables#set_snippets({})<cr>
+nnoremap <leader>rs :call neosnippet#variables#set_snippets({})<cr>
 " }}}
 
 " {{{ LanguageClient settings
@@ -975,6 +974,7 @@ au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
 au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
+au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
 " }}}
 
 " {{{ Other ft-specific autocommands
