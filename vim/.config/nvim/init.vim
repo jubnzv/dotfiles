@@ -1063,12 +1063,24 @@ function! ToggleLSP()
   endif
 endfunction
 
+let g:hex_mode = 0
+function! ToggleHex()
+  if (g:hex_mode == 0)
+    execute ":%!xxd"
+    let g:hex_mode = 1
+  else
+    execute ":%!xxd -r"
+    let g:hex_mode = 0
+  endif
+endfunction
+
 nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
 nnoremap <leader>tl :call ToggleLSP()<CR>
-nnoremap <leader>tp :setlocal paste!<CR>
+nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
+nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 " }}}
 
