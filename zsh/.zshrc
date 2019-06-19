@@ -115,6 +115,7 @@ alias history='history -i'
 # }}}
 
 # {{{ Aliases
+# Common
 alias q='exit'
 alias :bd='exit'
 alias :q='exit'
@@ -125,14 +126,16 @@ alias pc='dirs -c'
 alias svim='sudoedit'
 alias s='sudo'
 alias less='less -Q' # Turn off beeps
+alias rp='realpath'
+alias mkb='mkdir -p ./build; cd build'
+alias ag='ag --path-to-ignore ~/.ignore'
+alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias r='ranger'
 alias zt='zathura'
 alias mrg='mirage'
 alias j='z'
-alias g='git'
-alias tm='tmux'
-alias tmkill='tmux kill-session -t'
-alias tma='tmux attach -t'
+
+# vim
 alias :e='nvim'
 alias v='nvim'
 alias v.='nvim .'
@@ -141,9 +144,12 @@ alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
-alias rp='realpath'
-alias mkb='mkdir -p ./build; cd build'
-alias ag='ag --path-to-ignore ~/.ignore'
+
+# tmux
+alias tm='tmux'
+alias tmp='find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y; tmux attach'
+alias tmkill='tmux kill-session -t'
+alias tma='tmux attach -t'
 
 # mkdir + cd
 mkcd() {
@@ -170,13 +176,10 @@ vnf() {
 }
 
 # git
+alias g='git'
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-
-# Web archiving
-# See: https://github.com/pirate/ArchiveBox/wiki/Configuration
-alias arch='env OUTPUT_DIR=/home/jubnzv/Org/WebArchive/ FETCH_PDF=False FETCH_MEDIA=False ~/.local/bin/archive'
 
 # zsh
 alias _up source ~/.zshrc
@@ -316,10 +319,9 @@ backward-kill-dir () {
 zle -N backward-kill-dir
 bindkey '^[^?' backward-kill-dir
 
-# Open vimfzf
-vimfzf_widget() vimfzf .
-zle -N vimfzf_widget
-bindkey '\ei' vimfzf_widget
+bindkey -s "\ei" "^Qvimfzf .^J" # Select file with fzf and open in vim
+bindkey -s "\et" "^Qtmp^J"      # Select tmuxp session and attach
+bindkey -s "\el" "^Qls^J"       # ls
 # }}}
 
 # {{{ Plugins
@@ -387,9 +389,10 @@ zstyle ':zce:*' bg 'fg=7'
 
 # }}}
 
-# {{{ Completion
+# {{{ Autocompletion
 compdef sshrc=ssh
 compdef t=task
+compdef g=git
 # }}}
 
 # {{{ tmux
