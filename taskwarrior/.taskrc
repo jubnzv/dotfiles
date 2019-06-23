@@ -4,12 +4,6 @@ confirmation = no
 weekstart=monday
 calendar.holidays=sparse
 
-# Required "brain power"" for a task
-# See: https://cs-syd.eu/posts/2015-07-12-gtd-with-taskwarrior-part-5-doing
-uda.brainpower.type=string
-uda.brainpower.label=Brainpower
-uda.brainpower.values=H,M,L
-
 # Aliases
 alias.a=add
 alias.an=annotate
@@ -35,13 +29,26 @@ include ~/.config/taskwarrior/tasksh.rc
 # Personal contexts settings
 include ~/.config/taskwarrior/context.rc
 
+# {{{ User Defined Attributes (UDA)
+# Estimated time in hours
+# [1]: https://taskwarrior.org/docs/udas.html
+uda.estimate.type=duration
+uda.estimate.label=Est
+
+# Required "brain power" for a task
+# [1]: https://cs-syd.eu/posts/2015-07-12-gtd-with-taskwarrior-part-5-doing
+uda.brainpower.type=string
+uda.brainpower.label=BP
+uda.brainpower.values=H,M,L
+# }}}
+
 # {{{ Reports
-report.next.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
-report.next.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Recur,S,Due,Until,Description,Urg
+report.next.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.next.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Est,S,Due,Until,Description,Urg
 
 # Like "next" report, but show by creation date
-report.recent.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,recur,scheduled.countdown,due.relative,until.remaining,description.count,urgency
-report.recent.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Recur,S,Due,Until,Description,Urg
+report.recent.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.recent.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Est,S,Due,Until,Description,Urg
 report.recent.description=Recently added tasks
 report.recent.filter=status:pending limit:page
 report.recent.sort=entry-,urgency-
