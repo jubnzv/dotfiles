@@ -39,7 +39,7 @@ if [[ ! -x "$(command -v apt-get)" ]]; then
     exit 1
 fi
 
-wget -q --spider http://google.com
+wget -q --spider http://yandex.ru
 if [ ! $? -eq 0 ]; then
     echo "Please connect to the internet before continuing."
     exit 1
@@ -52,7 +52,7 @@ tmsu_args=${@:3}
 # Directory to save sources
 target_path=""
 
-pushd ~/Sources >/dev/null | /bin/true
+cd $HOME/Sources/
 
 if [ $method == "apt" ]; then
     target_path=$package
@@ -65,7 +65,8 @@ if [ $method == "apt" ]; then
     mv $package-* $target_path
 
 elif [ $method == "git" ]; then
-    target_path=$(echo $2 | awk -F'/' '{ print $NF }')
+    [[ $package == /*/ ]] && package=${package:1:(-1)}
+    target_path=$(echo $package | awk -F'/' '{ print $NF }')
     if [ -d $target_path ]; then
         echo "Directory $target_path exists! Bailing out."
         exit 1
@@ -86,4 +87,4 @@ fi
 # Apply the tags
 tmsu tag $target_path $tmsu_args
 
-popd >/dev/null | /bin/true
+cd $HOME/Sources/$target_path/
