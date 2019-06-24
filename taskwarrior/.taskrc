@@ -62,8 +62,12 @@ report.simple.labels=ID,Proj,Desc
 report.simple.sort=project+/,entry+
 report.simple.filter=status:pending
 
-report.notify.columns=id,description
-report.notify.filter=status:pending
+# Report reccurring tasks
+report.recurring_full.description=All Recurring Tasks
+report.recurring_full.labels=ID,Created,Mod,A,Status,Recur,Wait,Sched,Due,Until,Deps,P,Project,Tags,Description,Mask Index,Mask
+report.recurring_full.columns=id,entry,modified,start.active,status,recur,wait.remaining,scheduled,due,until,depends,priority,project,tags,description.count,imask,mask
+report.recurring_full.filter=+PARENT or +CHILD
+report.recurring_full.sort=parent,due
 #}}}
 
 # vim:ft=conf:foldlevel=0:tw=100:

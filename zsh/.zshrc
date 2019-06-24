@@ -221,12 +221,16 @@ alias diffdir='diff -ENwbur'
 alias cpd='cpdiff'
 
 # {{{ taskwarrior
-alias t="task"                              # Default `task next` report
-alias tt="t recent"                         # Recently added tasks
-alias tb="t -redmine -gitlab"               # Filter bugwarrior-imported tasks
-alias tc="t context"                        # Select context
-alias tcn="t c none"                        # Unset context
-alias tbu="pkill --signal USR2 taskboard"   # Update all taskboard tasks
+alias t="task"                 # Default `task next` report
+alias tt="t recent"            # Recently added tasks
+alias tb="t -redmine -gitlab"  # Filter bugwarrior-imported tasks
+alias tc="t context"           # Select context
+alias tcn="t c none"           # Unset context
+# Stop all active tasks
+alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no stop"
+alias tdoned='t end:today status:completed all'
+alias tdonew='t end.after:today-7d status:completed all'
+alias tdonem='t end.after:today-30d status:completed all'
 alias bwp="bugwarrior-pull"
 
 # {{{ M-t: Select id one of taskwarrior tasks with fzf
@@ -270,6 +274,13 @@ alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
 # }}} !Aliases
 
 # {{{ Functions
+
+# Modprobe modules used by VirtualBox
+modbrobe_vb() {
+    sudo modprobe vboxguest
+    sudo modprobe vboxnetadp
+    sudo modprobe vboxnetflt
+}
 
 # {{{ Find snippets
 touch_each_dir() {
