@@ -11,10 +11,9 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'scrooloose/nerdtree'            " A tree explorer plugin for vim
 Plug 'kshenoy/vim-signature'          " Extended marks support
-Plug 'easymotion/vim-easymotion'
-Plug 'rhysd/clever-f.vim'             " Convenient `f` and `F`
+Plug 'justinmk/vim-sneak'             " Jump to any location specified by two characters.
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
-Plug 'lambdalisue/suda.vim'           " Read or write files with sudo command
+Plug 'lambdalisue/suda.vim'           " Read or write files with sudo command. Required for neovim.
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
 Plug 'will133/vim-dirdiff'            " Diff two directories
@@ -81,6 +80,7 @@ Plug 'aklt/plantuml-syntax'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'rhysd/vim-grammarous' " A powerful grammar checker using LanguageTool
+Plug 'Matt-Deacalion/vim-systemd-syntax'
 
 call plug#end()
 " }}}
@@ -212,13 +212,6 @@ vnoremap // y/<C-R>"<CR>
 " Search in visal selected area
 vnoremap <M-/> <Esc>/\%V
 
-" Unmap annoying ;
-nnoremap ; <Nop>
-
-" Replace with `F` / `f` / `t` / `T`
-noremap ;; :s///g<Left><Left><Left>
-noremap ;' :s///cg<Left><Left><Left><Left>
-
 " Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
@@ -338,6 +331,17 @@ endif
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
+
+" {{{ vim-sneak
+" Use vim-sneak mappings instead default f/t
+map f <Plug>Sneak_f
+map F <Plug>Sneak_F
+map t <Plug>Sneak_t
+map T <Plug>Sneak_T
+" Poor man easymotion
+let g:sneak#label = 1
+map <A-;> <Plug>SneakLabel_s
+" }}}
 
 " Tabularize
 cnoreabbrev Tab Tabularize
@@ -519,14 +523,6 @@ endfun
 au BufWritePre * call LastModified()
 " }}}
 
-" {{{ Easymotion
-" Note: Use <C-o><cmd> in insert mode.
-let g:EasyMotion_do_mapping = 0                     " Disable default mappings
-let g:EasyMotion_smartcase = 1                      " Turn on case insensitive feature
-let g:EasyMotion_use_smartsign_us = 1               " Smartsign (type `3` and match `3` & `#`)
-map <A-;> <Plug>(easymotion-overwin-f)
-" }}}
-
 " {{{ FZF
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
@@ -588,6 +584,16 @@ nnoremap <leader>fax :AgCxx<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
 nnoremap <leader>fae :AgElisp<CR>
+
+" rga: ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc.
+" https://github.com/phiresky/ripgrep-all
+command! -bang -nargs=* Rga
+  \ call fzf#vim#grep(
+  \   'rga '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview({'options': '--delimiter : --nth 4..', 'enter': '!tmux new -d xdg-open'}, 'up:60%')
+  \           : fzf#vim#with_preview({'options': '--delimiter : --nth 4..', 'enter': '!tmux new -d xdg-open'}, 'right:50%:hidden', '?'),
+  \ <bang>0)
+nnoremap <leader>fS :Rga<cr>
 
 " TODO entries in current directory
 command! -bang -nargs=* AgTODO call fzf#vim#ag("TODO", <q-args>, {'down': '~40%'})
@@ -974,6 +980,7 @@ au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
 au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
+au FileType markdown inoremap <buffer> =><space> ⇒<space>
 au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
 " }}}
 
@@ -1002,6 +1009,7 @@ au BufRead *.task /Description:
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 au FileType gitcommit inoremap <buffer> --<space> –<space>
 au FileType gitcommit inoremap <buffer> -><space> →<space>
+au FileType gitcommit inoremap <buffer> =><space> ⇒<space>
 " }}}
 
 " {{{ Toggle features
