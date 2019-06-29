@@ -37,6 +37,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'mhinz/vim-sayonara'             " Sane buffer/window deletion
+Plug 'vim-syntastic/syntastic'        " Syntax checking hacks for vim
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -61,7 +62,6 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ 'do': 'bash install.sh',
   \ }
 Plug 'jubnzv/DoxygenToolkit.vim'
-Plug 'vivien/vim-linux-coding-style'
 Plug 'LucHermitte/lh-vim-lib'         " Dependency for alternate-lite
 Plug 'LucHermitte/alternate-lite'     " Switch between source and header
 Plug '~/Dev/IEC.vim'
@@ -74,6 +74,7 @@ Plug 'pearofducks/ansible-vim'
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'tpope/vim-markdown'
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
+Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'
 Plug 'cespare/vim-toml'
 Plug 'aklt/plantuml-syntax'
@@ -241,7 +242,7 @@ endfunction
 command! Mkw call WriteCreatingDirs()
 
 " Remove the Windows ^M - when the encodings gets messed up
-noremap <Leader>Em mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
+noremap <leader>rm mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
 " Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
@@ -282,7 +283,8 @@ function! QuickFix_toggle()
         endif
     endfor
     copen
-endfunction
+    " lopen
+  endfunction
 nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
 " }}}
 
@@ -303,13 +305,13 @@ map <leader>rl :s///g<left><left><left>
 nnoremap <leader>B :checktime<CR>
 
 " Convert the ^M linebreak to 'normal' linebreaks
-nnoremap <silent> <Leader>El :set ff=unix<CR> :e ++ff=dos<CR>
+nnoremap <silent> <leader>rl :set ff=unix<CR> :e ++ff=dos<CR>
 
 " Remove all trailing whitespaces
-nnoremap <silent> <Leader>Es :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
+nnoremap <silent> <leader>rs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 
 " ё -> е
-nnoremap <silent> <Leader>E` :%s/ё/е/g<cr>
+nnoremap <silent> <leader>r` :%s/ё/е/g<cr>
 
 " Close buffer
 nnoremap <C-F4> :Sayonara<CR>
@@ -353,12 +355,11 @@ let g:lightline = {
   \ 'active': {
   \   'left':  [ [ 'mode', 'paste' ],
   \              [ 'readonly', 'filename', 'modified' ],
-  \              [ 'tagbar' ] ],
+  \              [ 'lsp_status' ] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
-  \              [ 'lsp_status' ],
   \              [ 'fileformat', 'fileencoding', 'filetype' ],
-  \              [ 'gitbranch' ] ],
+  \              [ 'gitbranch' ], [ 'tagbar' ] ],
   \ },
   \ 'component_function': {
   \   'gitbranch': 'fugitive#head'
@@ -568,7 +569,7 @@ nnoremap <leader>w :Windows<CR>
 nnoremap <leader>xr :FZFMru <CR>
 
 nnoremap <leader>fs :Ag<CR>
-nnoremap <Leader>fw :Ag<Space><C-r><C-w><CR>
+nnoremap <leader>fw :Ag<Space><C-r><C-w><CR>
 
 " Search in specific file types
 command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
@@ -667,6 +668,22 @@ let g:tagbar_type_rust = {
   \]
   \}
 nnoremap <F7> :TagbarToggle<CR>
+" }}}
+
+" {{{ syntastic
+let g:syntastic_always_populate_loc_list = 1
+let g:syntastic_auto_loc_list = 0
+cabbrev <silent> bd <C-r>=(getcmdtype()==#':' && getcmdpos()==1 ? 'lclose\|bdelete' : 'bd')<CR>
+let g:syntastic_check_on_open = 0
+let g:syntastic_check_on_wq = 0
+let g:syntastic_error_symbol = 'ee'
+let g:syntastic_style_error_symbol = 'se'
+let g:syntastic_warning_symbol = 'ww'
+let g:syntastic_style_warning_symbol = 'sw'
+cnoreabbrev SC SyntasticCheck
+
+let g:syntastic_c_checkers = ['cppcheck']
+let g:syntastic_cpp_checkers = ['cppcheck']
 " }}}
 
 " {{{ deoplete
@@ -866,14 +883,14 @@ au FileType c,cpp call LCKeymap()
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
-nnoremap <A-a> :A<CR>
+nnoremap <F4> :A<CR>
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
-au FileType c,cpp noremap <leader>Ei :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+au FileType c,cpp noremap <leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
-" Mans quick access
-au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>
+" Quick access to man pages
+au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>:noh<cr>3j
 
 " Align statements relative to case label
 au FileType c,cpp setlocal cinoptions+=l1
@@ -882,15 +899,12 @@ au FileType c,cpp setlocal cinoptions+=l1
 au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
 au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
 
-" Apply Linux Kernel settings
-let g:linuxsty_patterns = [ "/usr/src/", "/linux" ]
-
 " {{{ Commands and binds
 au FileType c call CmdC()
 function! CmdC()
     " Clean debug prints from `prdbg` snippet
     command! CleanDebugPrints :g/\/\/\ prdbg$/d
-    nnoremap <leader>Ec :CleanDebugPrints<CR>
+    nnoremap <leader>rd :CleanDebugPrints<CR>
 endfunction
 " }}}
 
@@ -919,7 +933,7 @@ let g:rustfmt_autosave = 1
 " }}}
 
 " {{{ Python
-au FileType python nnoremap <Leader>Ei :!isort %<CR><CR>
+au FileType python nnoremap <leader>ri :!isort %<CR><CR>
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
 au FileType python call LCKeymap()
@@ -964,8 +978,10 @@ let g:riv_fold_auto_update=0
 let g:riv_fold_info_pos='left'
 " }}}
 
-" JSON
+" {{{ JSON
 let g:vim_json_syntax_conceal = 0
+autocmd FileType json syntax match Comment +\/\/.\+$+
+" }}}
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
@@ -982,6 +998,12 @@ au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
 au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
+
+" Markdown preview in web-browser
+let g:mkdp_auto_start = 0
+let g:mkdp_auto_close = 0
+cnoreabbrev MP MarkdownPreview
+" au FileType markdown nmap <silent> <leader>m :MarkdownPreview<CR>
 " }}}
 
 " {{{ Other ft-specific autocommands

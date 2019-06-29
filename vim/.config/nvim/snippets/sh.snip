@@ -14,6 +14,10 @@ snippet print
 alias   pr
     echo "$0"
 
+snippet log
+alias logger
+    logger "$0"
+
 snippet check_args
 options head
     if [ $# -ne ${1:1} ]; then
