@@ -361,10 +361,10 @@ let g:lightline = {
   \              [ 'gitbranch' ] ],
   \ },
   \ 'component': {
-  \   'lsp_status': '%#LSPColor#%{LightlineLSPStatus()}'
+  \   'lsp_status': '%#LSPColor#%{LightlineLSPStatus()}',
+  \   'gitbranch': ' %{fugitive#head()}'
   \ },
   \ 'component_function': {
-  \   'gitbranch': 'fugitive#head',
   \   'method': 'NearestMethodOrFunction'
   \ },
   \ 'component_type': {
