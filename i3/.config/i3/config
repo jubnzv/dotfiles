@@ -187,7 +187,7 @@ bindsym $mod+Shift+0 move container to workspace 13$tile_13_msg
 bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
-bindsym $mod+n exec rofi -modi "Notes:~/Scripts/rofi/notes" -show Notes
+bindsym $mod+n exec $SCRIPTS_PATH/rofi/notes
 bindsym $mod+Control+n exec $TERMINAL -e nvim ~/Org/scratch.md
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux
