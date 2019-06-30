@@ -46,8 +46,7 @@ Plug 'junegunn/fzf', {
 Plug 'kana/vim-textobj-user'          " Plugin for user-defined textobjs
 Plug 'glts/vim-textobj-comment'       " textobj for comments
 Plug 'bps/vim-textobj-python'         " Text objects for Python.
-Plug 'majutsushi/tagbar'              " Vim plugin that displays tags in a window
-Plug 'liuchengxu/vista.vim'           " View and search LSP symbols
+Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
@@ -355,25 +354,23 @@ let g:lightline = {
   \ 'active': {
   \   'left':  [ [ 'mode', 'paste' ],
   \              [ 'readonly', 'filename', 'modified' ],
-  \              [ 'lsp_status' ] ],
+  \              [ 'lsp_status'], ['method'] ],
   \   'right': [ [ 'lineinfo' ],
   \              [ 'percent' ],
   \              [ 'fileformat', 'fileencoding', 'filetype' ],
-  \              [ 'gitbranch' ], [ 'tagbar' ] ],
-  \ },
-  \ 'component_function': {
-  \   'gitbranch': 'fugitive#head'
+  \              [ 'gitbranch' ] ],
   \ },
   \ 'component': {
-  \   'tagbar': '%{tagbar#currenttag("[%s]", "", "f")}',
+  \   'lsp_status': '%#LSPColor#%{LightlineLSPStatus()}'
   \ },
-  \ 'component_expand': {
-  \   'lsp_status': 'LightlineLSPStatus'
+  \ 'component_function': {
+  \   'gitbranch': 'fugitive#head',
+  \   'method': 'NearestMethodOrFunction'
   \ },
   \ 'component_type': {
   \   'lsp_warnings': 'warning',
   \   'lsp_errors': 'error',
-  \   'readonly': 'error'
+  \   'readonly': 'error',
   \ },
   \ }
 
@@ -651,23 +648,20 @@ au BufWinLeave * call clearmatches()
 " Avoid syntax highlighting for large files
 au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
-" {{{ ctags
+" {{{ ctags and vista.vim configuration
 set tags=./tags;
-let g:ctags_statusline=1
-let g:tagbar_type_rust = {
-  \ 'ctagstype' : 'rust',
-  \ 'kinds' : [
-  \'T:types,type definitions',
-  \'f:functions,function definitions',
-  \'g:enum,enumeration names',
-  \'s:structure names',
-  \'m:modules,module names',
-  \'c:consts,static constants',
-  \'t:traits',
-  \'i:impls,trait implementations',
-  \]
-  \}
-nnoremap <F7> :TagbarToggle<CR>
+
+function! NearestMethodOrFunction() abort
+  let l:method = get(b:, 'vista_nearest_method_or_function', '')
+  if l:method != ''
+    let l:method = '[' . l:method . ']'
+  endif
+  return l:method
+endfunction
+autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+
+let g:vista_default_executive = 'ctags'
+nnoremap <F7> :Vista!!<CR>
 " }}}
 
 " {{{ syntastic
@@ -822,7 +816,12 @@ function! LSPUpdateStatus(status) abort
   call lightline#update()
 endfunction
 function! LightlineLSPStatus() abort
-  return g:lsp_status == 1 ? 'LSP' : ''
+  if g:lsp_status == 1
+    exe printf('hi LSPColor ctermbg=237 ctermfg=66 guifg=#427b58 term=bold cterm=bold')
+  else
+    exe printf('hi LSPColor ctermbg=237 ctermfg=241 guifg=#665c54')
+  endif
+  return 'λ'
 endfunction
 " }}}
 
