@@ -1,15 +1,45 @@
-# {{{ Plugins initialization
-source /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source ~/.config/zsh/zce.zsh/zce.zsh
-source ~/.config/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
-source ~/.config/zsh/shrink-path.plugin.zsh
-source ~/.config/zsh/zsh-autopair/autopair.plugin.zsh
-source ~/.config/zsh/z/z.sh
+# {{{ Plugins
+if [[ ! -f ~/.zplug/init.zsh ]]; then
+	git clone https://github.com/b4b4r07/zplug ~/.zplug
+fi
+
+if [[ -f ~/.zplug/init.zsh ]] ; then
+    source ~/.zplug/init.zsh
+
+    # Easymotion alternative for zsh
+    source ~/.config/zsh/zce.zsh/zce.zsh
+    zplug 'hchbaw/zce.zsh'
+
+    # Autosuggestions
+    zplug "tarruda/zsh-autosuggestions", use:"zsh-autosuggestions.zsh"
+
+    # Syntax highlighting
+    zplug "zdharma/fast-syntax-highlighting", defer:3
+    # Color parens and highlight matching paren
+    export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
+
+    # A plugin to shrink directory paths for brevity and pretty-printing
+    zplug "plugins/shrink-path", from:oh-my-zsh
+
+    # Auto-close and delete matching delimiters
+	zplug "hlissner/zsh-autopair", defer:2
+
+    # Autojump
+    zplug "rupa/z", use:z.sh
+
+    # Install plugins if not all are installed
+    if ! zplug check; then
+        zplug install
+    fi
+
+    # source plugins and add commands to $PATH
+    zplug load
+fi
 # }}}
 
 fpath=( ~/.zfunc "${fpath[@]}" )
 
-# {{{ Environment variables
+# {{{ Options
 # PATH
 export SCRIPTS_PATH=$HOME/.local/bin/scripts/
 export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$HOME/.cargo/bin:/usr/local/go/bin
@@ -66,9 +96,15 @@ PS1='%{$fg[yellow]%}$(shrink_path -f)%{$reset_color%}%{$fg[cyan]%}${vcs_info_msg
 # }}}
 
 # {{{ zsh options
+# Spell check commands and offer correction (pdw > pwd)
+setopt correct
+
 # Turn off all beeps
 unsetopt BEEP
 setopt no_beep
+
+# http://zsh.sourceforge.net/Intro/intro_6.html
+DIRSTACKSIZE=8
 
 # Perform cd if command is directory.
 setopt auto_cd
@@ -78,6 +114,9 @@ setopt auto_pushd
 
 # Do not push multiple copies of the same directory onto the directory stack.
 setopt pushd_ignore_dups
+
+# No pushd messages
+setopt pushd_silent
 
 # Disable mail checking: use mail client instead
 export MAILCHECK=0
@@ -134,6 +173,9 @@ alias r='ranger'
 alias zt='zathura'
 alias mrg='mirage'
 alias j='z'
+alias du1="du --max-depth=1"
+alias du2="du --max-depth=2"
+alias tree='tree -C'
 
 # vim
 alias :e='nvim'
@@ -150,6 +192,9 @@ alias tm='tmux'
 alias tmp='find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y; tmux attach'
 alias tmkill='tmux kill-session -t'
 alias tma='tmux attach -t'
+
+# copy working directory to clipboard
+alias cpwd='pwd | tr -d "\n" | xsel -ib'
 
 # mkdir + cd
 mkcd() {
@@ -184,10 +229,11 @@ alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
 # zsh
 alias _up source ~/.zshrc
 
-# Suffix aliases
+# Global aliases
 alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
+alias -g G='|& ag -i'
 
 # python
 alias vs='source venv/bin/activate'
@@ -226,7 +272,8 @@ alias tt="t recent"            # Recently added tasks
 alias tb="t -redmine -gitlab"  # Filter bugwarrior-imported tasks
 alias tc="t context"           # Select context
 alias tcn="t c none"           # Unset context
-# Stop all active tasks
+alias tactive="date; t active"
+alias tstart="date; t start"
 alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no stop"
 alias tdoned='t end:today status:completed all'
 alias tdonew='t end.after:today-7d status:completed all'
@@ -254,7 +301,7 @@ else
 fi
 # }}}
 
-# {{{ systemctl
+# {{{ systemd
 alias sc='systemctl --user'
 alias scR='systemctl --user daemon-reload'
 alias scls='systemctl --user list-unit-files'
@@ -268,10 +315,13 @@ scd() {
 scn() {
     $EDITOR ~/.config/systemd/user/${1}.{service,timer}
 }
+
+alias jc='journalctl'
+alias ju='journalctl -u'
 # }}}
 
 alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
-# }}} !Aliases
+# }}}
 
 # {{{ Functions
 
@@ -427,22 +477,11 @@ fi
 # }}}
 
 # {{{ Misc.
-# Get syscall number by name
-syscall_num() {
-    if [ $# -eq 0 ]; then
-        echo "Usage: syscall_num <syscall name>"
-        return 1
-    fi
-
-    local re='^[0-9]+$'
-    res=`echo -n "#include <sys/syscall.h>\nSYS_$1" | gcc -E - | awk NF | awk -F\# '$1!="" { print $1 ;} '`
-    if [[ $res =~ $re ]]; then
-        echo $res
-        return 0
-    else
-        >&2 echo "$1: Not found"
-        return 1
-    fi
+# Command usage statistics
+function zsh_stats() {
+	fc -l 1 | \
+		awk '{CMD[$2]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | \
+		grep -v "./" | column -c3 -s " " -t | sort -nr | nl | head -n20
 }
 # }}}
 
