@@ -4,7 +4,7 @@
 
 This is my Emacs configuration file written as Org document.
 
-/Note/: source code blocks marked with =:tangle no= (e.g.: =#+BEGIN_SRC emacs-lisp :tangle no=) will be disabled.
+/Note/: source code blocks marked with =:tangle no= (e.g.: =#+begin_src emacs-lisp :tangle no=) will be disabled.
 
 ** Resources
 
@@ -21,18 +21,18 @@ This is my Emacs configuration file written as Org document.
 
 * User info
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq user-full-name
   (replace-regexp-in-string "\n$" ""
   (shell-command-to-string "git config --get user.name")))
 (setq user-mail-address
   (replace-regexp-in-string "\n$" ""
   (shell-command-to-string "git config --get user.email")))
-#+END_SRC
+#+end_src
 
-* Packages
-** Initialize package manager
-#+BEGIN_SRC emacs-lisp
+* Packages, Utilities and Basic Setup
+** =package.el=
+#+begin_src emacs-lisp
 (require 'package)
 (setq package-enable-at-startup nil)
 (setq package-archives
@@ -45,308 +45,138 @@ This is my Emacs configuration file written as Org document.
         ("melpa"        . 0)))
 (package-initialize)
 (when (not package-archive-contents) (package-refresh-contents))
-#+END_SRC
+#+end_src
 
-** Bootstrap =use-package=
-#+BEGIN_SRC emacs-lisp
+** =use-package.el=
+#+begin_src emacs-lisp
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
 (require 'use-package)
 (setq use-package-always-ensure t)
-#+END_SRC
+#+end_src
 
-** Load local packages
-
-#+BEGIN_SRC emacs-lisp
+** Load local modules
+#+begin_src emacs-lisp
 (add-to-list 'load-path "~/.emacs.d/lisp/")
-#+END_SRC
+#+end_src
 
 ** Load use-package extensions
-
 The ~:chords~ keyword allows you to define key-chord bindings for use-package declarations in the same manner as the =:bind= keyword.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package use-package-chords
   :ensure t
   :config (key-chord-mode 1))
-#+END_SRC
-
-* UI
-#+BEGIN_SRC emacs-lisp
-(ignore-errors
-  (menu-bar-mode -1)
-  (scroll-bar-mode -1)
-  (tool-bar-mode -1)
-  (tooltip-mode -1)
-  (fset 'menu-bar-open nil))
-#+END_SRC
-
-** Use ~y/n~ instead ~yes/no~
-#+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
-#+END_SRC
-
-** Disable cursor blinking
-#+BEGIN_SRC emacs-lisp
-(blink-cursor-mode 0)
-#+END_SRC
-
-** Window title
-
-Show file name and mode in window title:
-#+BEGIN_SRC emacs-lisp
-(setq-default frame-title-format '("%b (%m) — Emacs"))
-#+END_SRC
-
-** Highlight matching parens
-#+BEGIN_SRC emacs-lisp
-(show-paren-mode t)
-#+END_SRC
-
-** Show trailing whitespaces in essential modes
-
-#+BEGIN_SRC emacs-lisp
-(setq-default whitespace-style '(face trailing spaces space-mark))
-(add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t)))
-(add-hook 'org-mode-hook (lambda () (setq show-trailing-whitespace t)))
-#+END_SRC
-
-Activate this to make it available in all other modes:
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq-default show-trailing-whitespace t)
-#+END_SRC
-
-** Highlight current line
-#+BEGIN_SRC emacs-lisp
-(global-hl-line-mode t)
-#+END_SRC
-
-** Show columns numbers
-#+BEGIN_SRC emacs-lisp
-(column-number-mode)
-#+END_SRC
-
-** Show line numbers
-
-#+BEGIN_SRC emacs-lisp
-(setq-default display-line-numbers-current-absolute nil
-              display-line-numbers 'visual
-              display-line-numbers-widen nil
-              display-line-numbers-width 2)
-#+END_SRC
-
-Disable in some modes:
-#+begin_src emacs-lisp
-(add-hook 'org-agenda-mode-hook (lambda () (display-line-numbers-mode -1)))
-(add-hook 'artist-mode-hook (lambda () (display-line-numbers-mode -1)))
 #+end_src
 
-** =redisplay-dont-pause=
-The variable =redisplay-dont-pause=, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
-Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
-#+BEGIN_SRC emacs-lisp
-(setq redisplay-dont-pause t)
-#+END_SRC
-
-** Modeline configuration
-
-[[https://github.com/emacsmirror/diminish][diminish]] - plugin to hide minor modes in modeline:
+** No Littering
+Consistently sets the paths for various configuration, history, temporary, etc. files created by Emacs packages (e.g. =savehist-file=).
 #+begin_src emacs-lisp
-(use-package diminish
-  :ensure t)
+(use-package no-littering
+  :demand t)
 #+end_src
 
-#+begin_src emacs-lisp
-(diminish 'abbrev-mode)
-(diminish 'auto-revert-mode)
-#+end_src
+* Essential keybindings: =general.el= and evil-mode
+** =general.el=
+=general.el= provides a more convenient method for binding keys in emacs.
 
-** Color scheme
-#+BEGIN_SRC emacs-lisp
-(use-package gruvbox-theme
+#+begin_src emacs-lisp
+(use-package general
   :ensure t
-  :init
-  (load-theme 'gruvbox-dark-medium t))
-#+END_SRC
+  :demand t)
 
-Gruvbox colors for line numbers column:
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'line-number nil
-                    :background "#282828")
-(set-face-attribute 'line-number-current-line nil
-                    :background "#282828"
-                    :foreground "#fabd2f")
-#+END_SRC
+(general-auto-unbind-keys)
 
-** Font
-#+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil :font "Iosevka-12")
-#+END_SRC
-
-* Emacs default options
-
-** Initial buffer
-Instead default startup screen open ~*scratch*~ with org-mode:
-#+BEGIN_SRC emacs-lisp
-(setq inhibit-startup-screen t)
-(setq initial-scratch-message nil)
-(setq initial-major-mode 'org-mode)
-#+END_SRC
-
-** scrolloff
-#+BEGIN_SRC emacs-lisp
-(setq scroll-step 1) ;; Don't center frame
-(setq scroll-margin 7)
-#+END_SRC
-
-** Work with recent files
-#+BEGIN_SRC emacs-lisp
-(use-package recentf
-  :ensure t
-  :init
-  (add-hook 'after-init-hook #'recentf-mode)
-  (setq recentf-max-saved-items 300)
-  :config
-  (add-to-list 'recentf-exclude (expand-file-name package-user-dir))
-  (add-to-list 'recentf-exclude ".cache")
-  (add-to-list 'recentf-exclude ".mypy_cache")
-  (add-to-list 'recentf-exclude ".elfeed")
-  (add-to-list 'recentf-exclude "bookmarks")
-  (add-to-list 'recentf-exclude "recentf")
-  (add-to-list 'recentf-exclude "url")
-  (add-to-list 'recentf-exclude "TAGS")
-  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'"))
-#+END_SRC
-
-** Undo-tree
-
-There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
-#+BEGIN_SRC emacs-lisp
-(use-package undo-tree
-  :ensure t
-  :diminish undo-tree-mode
-  :config
-  (setq undo-tree-auto-save-history t
-        undo-tree-history-directory-alist
-        `(("." . ,(concat user-emacs-directory "undo"))))
-  (unless (file-exists-p (concat user-emacs-directory "undo"))
-  (make-directory (concat user-emacs-directory "undo")))
-  (global-undo-tree-mode 1))
-#+END_SRC
-
-** Save buffer position after exit
-#+BEGIN_SRC emacs-lisp
-(save-place-mode 1)
-#+END_SRC
-
-** Disable bell
-#+BEGIN_SRC emacs-lisp
-(setq ring-bell-function 'ignore)
-#+END_SRC
-
-** Custom file
-#+BEGIN_SRC emacs-lisp
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file :noerror)
-#+END_SRC
-
-** Tabs
-
-Set default tab width to 2 for all buffers:
-#+BEGIN_SRC emacs-lisp
-(setq-default tab-width 2)
-#+END_SRC
-
-Use 2 spaces instead of a tab:
-#+BEGIN_SRC emacs-lisp
-(setq-default tab-width 2 indent-tabs-mode nil)
-#+END_SRC
-
-Indentation cannot insert tabs:
-#+BEGIN_SRC emacs-lisp
-(setq-default indent-tabs-mode nil)
-#+END_SRC
-
-** Keep backup files in separate directory
-#+BEGIN_SRC emacs-lisp
-    (setq backup-by-copying t
-        create-lockfiles nil
-        backup-directory-alist '(("." . "~/.cache/emacs-backups"))
-        auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
-#+END_SRC
-
-** Confirm before closing Emacs
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq confirm-kill-emacs 'y-or-n-p)
-#+END_SRC
-
-** Disable auto save
-#+BEGIN_SRC emacs-lisp
-(setq auto-save-default nil)
-#+END_SRC
-
-** Use system clipboard
-#+BEGIN_SRC emacs-lisp
-(setq x-select-enable-clipboard t)
-#+END_SRC
-
-** Supress `defadvice' warnings
-
-See [[https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/][this]] post.
-#+begin_src emacs-lisp
-(setq ad-redefinition-action 'accept)
+(eval-and-compile
+  (defalias 'gsetq #'general-setq)
+  (defalias 'gsetq-local #'general-setq-local)
+  (defalias 'gsetq-default #'general-setq-default))
 #+end_src
 
-** Choose default external apps
+Some aliases from [[https://github.com/noctuid/dotfiles][noctuid dotfiles]]:
+#+begin_src emacs-lisp
+(general-create-definer general-spc
+  :states 'normal
+  :keymaps 'override
+  :prefix "SPC")
 
-Web-browser:
-#+BEGIN_SRC emacs-lisp
-(setq browse-url-browser-function 'browse-url-generic
-      browse-url-generic-program "firefox")
-#+END_SRC
+(general-create-definer general-m
+  :states 'normal
+  :prefix "m")
+#+end_src
 
-* Evil mode and common keybindings
+**** General options
 
-** Evil: bootstrap and initial configuraiton
+#+begin_src emacs-lisp
+;; quickly display current incomplete keystrokes in echo area
+(gsetq echo-keystrokes 0.1)
 
-#+BEGIN_SRC emacs-lisp
+;; a lot of unix tools expect this; it's required for the crontab, for example
+(gsetq require-final-newline t)
+
+;; new in emacs 26; kill running processes without confirmation on Emacs exit
+(gsetq confirm-kill-processes nil)
+#+end_src
+
+** evil-mode and common keybindings
+
+*** evil-mode
+#+begin_src emacs-lisp
 (use-package evil
   :ensure t
   :init
-  (setq evil-search-module 'evil-search)
-  ;; Vim keybinds behaviour
-  (setq evil-want-C-i-jump t)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-Y-yank-to-eol t)
-  ;; Case-sensitive search
-  (setq evil-ex-search-case 'sensitive)
-  ;; Emacs commands (M-x) in Evil command mode
-  (setq evil-ex-complete-emacs-commands t)
-  ;; Windows behaviour
-  (setq evil-vsplit-window-right t)
-  (setq evil-split-window-below t)
-  (setq evil-shift-round nil)
-  :config
+  (gsetq evil-search-module 'evil-search
+         ;; Vim keybinds behaviour
+         evil-want-C-i-jump t
+         evil-want-C-u-scroll t
+         evil-want-Y-yank-to-eol t
+         ;; Case-sensitive search
+         evil-ex-search-case 'sensitive
+         ;; Emacs commands (M-x) in Evil command mode
+         evil-ex-complete-emacs-commands t
+         ;; Must be set before loading evil no matter what
+         evil-want-keybinding nil
+         ;; Windows behaviour
+         evil-vsplit-window-right t
+         evil-split-window-below t
+         evil-shift-round nil)
   (evil-mode))
+#+end_src
+
+*** evil-collection
+#+BEGIN_SRC emacs-lisp
+(use-package evil-collection
+  :ensure t)
 #+END_SRC
 
 Evil-numbers:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package evil-numbers
   :ensure t
   :after evil)
-#+END_SRC
+#+end_src
 
-** Essential key bindings
+*** Set normal state everywhere
+#+begin_src emacs-lisp
+(gsetq evil-emacs-state-modes nil
+       evil-motion-state-modes nil)
+#+end_src
+
+*** Cursors customization
+#+begin_src emacs-lisp
+(gsetq evil-insert-state-cursor '(bar "Gray"))
+#+end_src
+
+*** Essential keybindings
 Here is most essential keybindings that available in every major mode.
 
-*** Prevent [[https://web.eecs.umich.edu/~cscott/rsi.html##whatis][RSI]]
+**** Prevent [[https://web.eecs.umich.edu/~cscott/rsi.html##whatis][RSI]]
 
 Disable some default keybindings to safe my arms. I got used them years before when first started with plain Emacs.
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x C-c") nil)
-(global-set-key (kbd "C-x C-s") nil)
-(global-set-key (kbd "C-x C-f") nil)
+#+begin_src emacs-lisp
+; (global-set-key (kbd "C-x C-c") nil)
+; (global-set-key (kbd "C-x C-s") nil)
+; (global-set-key (kbd "C-x C-f") nil)
 
 ;; Window management is implemented by evil's <C-w>
 ; (global-set-key (kbd "C-x 1") nil)
@@ -354,14 +184,14 @@ Disable some default keybindings to safe my arms. I got used them years before w
 ; (global-set-key (kbd "C-x 3") nil)
 ; (global-set-key (kbd "C-x 4") nil)
 ; (global-set-key (kbd "C-x 5") nil)
-#+END_SRC
+#+end_src
 
-*** =<Space>= is my leader
-#+BEGIN_SRC emacs-lisp
+**** =<Space>= is my leader
+#+begin_src emacs-lisp
 (defvar evil-leader-map (make-sparse-keymap)
     "Keymap for \"leader key\" shortcuts.")
 (define-key evil-normal-state-map (kbd "SPC") evil-leader-map)
-#+END_SRC
+#+end_src
 
 #+begin_src emacs-lisp
 (use-package evil-leader
@@ -377,36 +207,36 @@ Disable some default keybindings to safe my arms. I got used them years before w
         "Xp" 'proced)))
 #+end_src
 
-*** Fix ~C-i~ behaviour
-#+BEGIN_SRC emacs-lisp
+**** Fix ~C-i~ behaviour
+#+begin_src emacs-lisp
 (define-key evil-normal-state-map (kbd "<C-i>") 'evil-jump-forward)
-#+END_SRC
+#+end_src
 
-*** Increment / Decrement numbers
-#+BEGIN_SRC emacs-lisp
+**** Increment / Decrement numbers
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-=") 'evil-numbers/inc-at-pt)
 (global-set-key (kbd "C--") 'evil-numbers/dec-at-pt)
 (define-key evil-normal-state-map (kbd "C-=") 'evil-numbers/inc-at-pt)
 (define-key evil-normal-state-map (kbd "C--") 'evil-numbers/dec-at-pt)
-#+END_SRC
+#+end_src
 
-*** Use ~j/k~ for browsing wrapped lines
-#+BEGIN_SRC emacs-lisp
+**** Use ~j/k~ for browsing wrapped lines
+#+begin_src emacs-lisp
 (define-key evil-normal-state-map (kbd "j") 'evil-next-visual-line)
 (define-key evil-normal-state-map (kbd "k") 'evil-previous-visual-line)
-#+END_SRC
+#+end_src
 
-*** ~jj~ to leave insert mode:
-#+BEGIN_SRC emacs-lisp
+**** ~jj~ to leave insert mode:
+#+begin_src emacs-lisp
 (use-package key-chord
   :config
   (key-chord-define evil-insert-state-map "jj" 'evil-normal-state))
-#+END_SRC
+#+end_src
 
-*** Common Emacs commands
+**** Common Emacs commands
 
 Similar approach is used in excellent Chen Bin's [[https://github.com/redguardtoo/emacs.d/][dotfiles]].
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-leader/set-key "xf" 'counsel-find-file)
 (evil-leader/set-key "xr" 'counsel-recentf)
 (evil-leader/set-key "xs" 'save-buffer)
@@ -414,29 +244,29 @@ Similar approach is used in excellent Chen Bin's [[https://github.com/redguardto
 (evil-leader/set-key "xk" 'kill-buffer)
 (evil-leader/set-key "xc" 'save-buffers-kill-terminal)
 (evil-leader/set-key "SPC" 'counsel-M-x)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-key evil-normal-state-map ",hf" 'describe-function)
 (define-key evil-normal-state-map ",ho" 'describe-symbol)
 (define-key evil-normal-state-map ",hk" 'describe-key)
 (define-key evil-normal-state-map ",hv" 'describe-variable)
-#+END_SRC
+#+end_src
 
-*** =:noh=
-#+BEGIN_SRC emacs-lisp
+**** =:noh=
+#+begin_src emacs-lisp
 (evil-leader/set-key "h"  'evil-ex-nohighlight)
-#+END_SRC
+#+end_src
 
-*** Remove trailing whitespaces
-#+BEGIN_SRC emacs-lisp
+**** Remove trailing whitespaces
+#+begin_src emacs-lisp
 (evil-leader/set-key "Es"  'delete-trailing-whitespace)
-#+END_SRC
+#+end_src
 
-*** Expand region
+**** Expand region
 
 Increase selected region by semantic units (similar to [[https://github.com/terryma/vim-expand-region][vim-expand-region]]).
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package expand-region
   :ensure t
   :config)
@@ -445,24 +275,24 @@ Increase selected region by semantic units (similar to [[https://github.com/terr
 (evil-declare-key 'visual global-map "+" 'er/expand-region)
 (evil-declare-key 'normal global-map "_" 'er/contract-region)
 (evil-declare-key 'visual global-map "_" 'er/contract-region)
-#+END_SRC
+#+end_src
 
-*** Killing buffers
+**** Killing buffers
 
 See related [[https://www.emacswiki.org/emacs/KillingBuffers][EmacsWiki page]].
 
 Kill all buffers, expect the current one:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun kill-other-buffers ()
   "Kill all other buffers."
   (interactive)
   (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 (evil-leader/set-key "Ko"  'kill-other-buffers)
-#+END_SRC
+#+end_src
 
 Kill all dired buffers:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun kill-all-dired-buffers ()
   "Kill all dired buffers."
   (interactive)
@@ -474,12 +304,12 @@ Kill all dired buffers:
           (setq count (1+ count))
           (kill-buffer buffer)))
       (message "Killed %i dired buffer(s)." count))))
-#+END_SRC
+#+end_src
 
-** Avy
+*** Avy
 
 It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package avy
   :ensure t
   :config
@@ -487,10 +317,10 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   (global-set-key (kbd "M-C-;") 'avy-resume))
 #+end_SRC
 
-** Which-key mode
+*** Which-key mode
 
 [[https://github.com/justbur/emacs-which-key][which-key]] is a package that displays available keybindings in popup.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package which-key
   :ensure t
   :diminish which-key-mode
@@ -498,28 +328,28 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   :config
   (setq which-key-allow-evil-operators t)
   (which-key-mode))
-#+END_SRC
+#+end_src
 
-** Evil plugins
-*** Evil surround
-#+BEGIN_SRC emacs-lisp
+*** Evil plugins
+**** Evil surround
+#+begin_src emacs-lisp
 (use-package evil-surround
   :ensure t
   :config
   (global-evil-surround-mode 1))
-#+END_SRC
+#+end_src
 
-*** Evil nerdcommenter
+**** Evil nerdcommenter
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package evil-nerd-commenter
   :ensure t
   :after evil
   :config
   (evilnc-default-hotkeys nil t))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-leader/set-key "ci" 'evilnc-comment-or-uncomment-lines)
 (evil-leader/set-key "cl" 'evilnc-quick-comment-or-uncomment-to-the-line)
 (evil-leader/set-key "ll" 'evilnc-quick-comment-or-uncomment-to-the-line)
@@ -529,10 +359,10 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 (evil-leader/set-key "cr" 'comment-or-uncomment-region)
 (evil-leader/set-key "cv" 'evilnc-toggle-invert-comment-line-by-line)
 (evil-leader/set-key "."  'evilnc-copy-and-comment-operator)
-#+END_SRC
+#+end_src
 
-*** Evil-org
-#+BEGIN_SRC emacs-lisp
+**** Evil-org
+#+begin_src emacs-lisp
 (use-package evil-org
   :ensure t
   :after (evil org)
@@ -543,16 +373,22 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
             (lambda () (evil-org-set-key-theme)))
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
-#+END_SRC
+#+end_src
 
-*** Evil-treemacs
+**** Evil-treemacs
 #+begin_src emacs-lisp
 (use-package treemacs-evil
   :ensure t
   :after treemacs)
 #+end_src
-** Vim-like folding with =origami=
-#+BEGIN_SRC emacs-lisp :tangle no
+**** Evil-snipe
+
+#+begin_src emacs-lisp
+(use-package evil-snipe :ensure t)
+#+end_src
+
+*** Vim-like folding with =origami=
+#+begin_src emacs-lisp :tangle no
 (defun nin-origami-toggle-node ()
    (interactive)
    (save-excursion ;; leave point where it is
@@ -566,19 +402,19 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
         (setq-local origami-fold-style 'triple-braces)
         (origami-mode)
         (origami-close-all-nodes (current-buffer)))))
-#+END_SRC
+#+end_src
 
-** evil bindings for major modes
-*** Initial states
-#+BEGIN_SRC emacs-lisp
+*** evil bindings for major modes
+**** Initial states
+#+begin_src emacs-lisp
 (evil-set-initial-state 'calc-mode 'emacs)
 (evil-set-initial-state 'messages-buffer-mode 'motion)
-#+END_SRC
+#+end_src
 
-*** =M-x package-list-packages=
+**** =M-x package-list-packages=
 
 See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmode_hjkl_to_work_inside_mx/][reddit post]] for more.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (with-eval-after-load 'evil
   ;; use evil mode in the buffer created from calling `list-packages'.
   (add-to-list 'evil-buffer-regexps '("*Packages*" . normal))
@@ -588,17 +424,269 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
   (evil-define-key 'normal package-menu-mode-map (kbd "m") #'package-menu-mark-install)
   (evil-define-key 'normal package-menu-mode-map (kbd "u") #'package-menu-mark-unmark)
   (evil-define-key 'normal package-menu-mode-map (kbd "x") #'package-menu-execute)))
-#+END_SRC
+#+end_src
 
-*** =image-mode=
-#+BEGIN_SRC emacs-lisp
+**** =image-mode=
+#+begin_src emacs-lisp
 (evil-define-key 'normal image-mode-map "q" 'quit-window)
-#+END_SRC
+#+end_src
 
-*** =help-mode=
-#+BEGIN_SRC emacs-lisp
+**** =help-mode=
+#+begin_src emacs-lisp
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
-#+END_SRC
+#+end_src
+
+* UI
+#+begin_src emacs-lisp
+(ignore-errors
+  (menu-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (fset 'menu-bar-open nil))
+#+end_src
+
+** Use ~y/n~ instead ~yes/no~
+#+begin_src emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+#+end_src
+
+** Disable cursor blinking
+#+begin_src emacs-lisp
+(blink-cursor-mode 0)
+#+end_src
+
+** Window title
+
+Show file name and mode in window title:
+#+begin_src emacs-lisp
+(setq-default frame-title-format '("%b (%m) — Emacs"))
+#+end_src
+
+** Highlight matching parens
+#+begin_src emacs-lisp
+(show-paren-mode t)
+#+end_src
+
+** Show trailing whitespaces in essential modes
+
+#+begin_src emacs-lisp
+(setq-default whitespace-style '(face trailing spaces space-mark))
+(add-hook 'prog-mode-hook (lambda () (setq show-trailing-whitespace t)))
+(add-hook 'org-mode-hook (lambda () (setq show-trailing-whitespace t)))
+#+end_src
+
+Activate this to make it available in all other modes:
+#+begin_src emacs-lisp :tangle no
+(setq-default show-trailing-whitespace t)
+#+end_src
+
+** Highlight current line
+#+begin_src emacs-lisp
+(global-hl-line-mode t)
+#+end_src
+
+** Show columns numbers
+#+begin_src emacs-lisp
+(column-number-mode)
+#+end_src
+
+** Show line numbers
+
+#+begin_src emacs-lisp
+(setq-default display-line-numbers-current-absolute nil
+              display-line-numbers 'visual
+              display-line-numbers-widen nil
+              display-line-numbers-width 2)
+#+end_src
+
+Disable in some modes:
+#+begin_src emacs-lisp
+(add-hook 'org-agenda-mode-hook (lambda () (display-line-numbers-mode -1)))
+(add-hook 'artist-mode-hook (lambda () (display-line-numbers-mode -1)))
+#+end_src
+
+** =redisplay-dont-pause=
+The variable =redisplay-dont-pause=, when set to t, will cause Emacs to fully redraw the display before it processes queued input events.
+Futher explantation: https://www.masteringemacs.org/article/improving-performance-emacs-display-engine
+#+begin_src emacs-lisp
+(setq redisplay-dont-pause t)
+#+end_src
+
+** Modeline configuration
+
+[[https://github.com/emacsmirror/diminish][diminish]] - plugin to hide minor modes in modeline:
+#+begin_src emacs-lisp
+(use-package diminish
+  :ensure t)
+#+end_src
+
+#+begin_src emacs-lisp
+(diminish 'abbrev-mode)
+(diminish 'auto-revert-mode)
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+      :ensure t
+      :hook (after-init . doom-modeline-mode))
+#+end_src
+
+#+begin_src emacs-lisp
+(setq doom-modeline-height 18)
+(setq doom-modeline-bar-width 1)
+#+end_src
+
+** Color scheme
+#+begin_src emacs-lisp
+(use-package gruvbox-theme
+  :ensure t
+  :init
+  (load-theme 'gruvbox-dark-medium t))
+#+end_src
+
+Gruvbox colors for line numbers column:
+#+begin_src emacs-lisp
+(set-face-attribute 'line-number nil
+                    :background "#282828")
+(set-face-attribute 'line-number-current-line nil
+                    :background "#282828"
+                    :foreground "#fabd2f")
+#+end_src
+
+** Font
+#+begin_src emacs-lisp
+(set-face-attribute 'default nil :font "Iosevka-12")
+#+end_src
+
+** Setup all-the-icons
+
+Just don’t forget to use =M-x all-the-icons-install-fonts RET= after install.
+#+begin_src emacs-lisp
+(use-package all-the-icons :ensure t)
+#+end_src
+
+* Emacs default options
+
+** Initial buffer
+Instead default startup screen open ~*scratch*~ with org-mode:
+#+begin_src emacs-lisp
+(setq inhibit-startup-screen t)
+(setq initial-scratch-message nil)
+(setq initial-major-mode 'org-mode)
+#+end_src
+
+** scrolloff
+#+begin_src emacs-lisp
+(setq scroll-step 1) ;; Don't center frame
+(setq scroll-margin 7)
+#+end_src
+
+** Work with recent files
+#+begin_src emacs-lisp
+(use-package recentf
+  :ensure t
+  :init
+  (add-hook 'after-init-hook #'recentf-mode)
+  (setq recentf-max-saved-items 300)
+  :config
+  (add-to-list 'recentf-exclude (expand-file-name package-user-dir))
+  (add-to-list 'recentf-exclude ".cache")
+  (add-to-list 'recentf-exclude ".mypy_cache")
+  (add-to-list 'recentf-exclude ".elfeed")
+  (add-to-list 'recentf-exclude "bookmarks")
+  (add-to-list 'recentf-exclude "recentf")
+  (add-to-list 'recentf-exclude "url")
+  (add-to-list 'recentf-exclude "TAGS")
+  (add-to-list 'recentf-exclude "COMMIT_EDITMSG\\'"))
+#+end_src
+
+** Undo-tree
+
+There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :diminish undo-tree-mode
+  :config
+  (setq undo-tree-auto-save-history t
+        undo-tree-history-directory-alist
+        `(("." . ,(concat user-emacs-directory "undo"))))
+  (unless (file-exists-p (concat user-emacs-directory "undo"))
+  (make-directory (concat user-emacs-directory "undo")))
+  (global-undo-tree-mode 1))
+#+end_src
+
+** Save buffer position after exit
+#+begin_src emacs-lisp
+(save-place-mode 1)
+#+end_src
+
+** Disable bell
+#+begin_src emacs-lisp
+(setq ring-bell-function 'ignore)
+#+end_src
+
+** Custom file
+#+begin_src emacs-lisp
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(load custom-file :noerror)
+#+end_src
+
+** Tabs
+
+Set default tab width to 2 for all buffers:
+#+begin_src emacs-lisp
+(setq-default tab-width 2)
+#+end_src
+
+Use 2 spaces instead of a tab:
+#+begin_src emacs-lisp
+(setq-default tab-width 2 indent-tabs-mode nil)
+#+end_src
+
+Indentation cannot insert tabs:
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+
+** Keep backup files in separate directory
+#+begin_src emacs-lisp
+    (setq backup-by-copying t
+        create-lockfiles nil
+        backup-directory-alist '(("." . "~/.cache/emacs-backups"))
+        auto-save-file-name-transforms '((".*" "~/.cache/emacs-backups" t)))
+#+end_src
+
+** Confirm before closing Emacs
+#+begin_src emacs-lisp :tangle no
+(setq confirm-kill-emacs 'y-or-n-p)
+#+end_src
+
+** Disable auto save
+#+begin_src emacs-lisp
+(setq auto-save-default nil)
+#+end_src
+
+** Use system clipboard
+#+begin_src emacs-lisp
+(setq x-select-enable-clipboard t)
+#+end_src
+
+** Supress `defadvice' warnings
+
+See [[https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/][this]] post.
+#+begin_src emacs-lisp
+(setq ad-redefinition-action 'accept)
+#+end_src
+
+** Choose default external apps
+
+Web-browser:
+#+begin_src emacs-lisp
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "firefox")
+#+end_src
 
 * Fuzzy completion with ivy & co
 
@@ -607,35 +695,38 @@ These three tools are available in a single github [[https://github.com/abo-abo/
 ** Ivy
 
 *Ivy* - a generic completion frontend for Emacs.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ivy
   :ensure t
+  :pin melpa
   :diminish ivy-mode
   :config
   (ivy-mode 1))
-#+END_SRC
+#+end_src
 
 Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][Xref]] references with =ivy=:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ivy-xref
   :ensure t
   :after ivy)
-#+END_SRC
+#+end_src
 
 ** Counsel
 
 *Smex* is a package that required to show most recent commands with ~counsel-M-x~.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package smex
   :ensure t
+  :pin melpa
   :config
   (setq smex-save-file (concat user-emacs-directory "smex-items")))
-#+END_SRC
+#+end_src
 
 *Counsel* - a collection of Ivy-enhanced versions of common Emacs commands.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package counsel
   :ensure t
+  :pin melpa
   :config
   (setcdr (assoc 'counsel-M-x ivy-initial-inputs-alist) "") ;; Remove initial "^"
   ;; Global ignore patterns
@@ -649,7 +740,7 @@ Jump to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][X
       (counsel-projectile-switch-project . ivy--regex-plus)
       (counsel-projectile-rg . ivy--regex-plus)
       (t . ivy--regex-plus))))
-#+END_SRC
+#+end_src
 
 *** Custom wrappers
 
@@ -685,26 +776,35 @@ Keybindings:
 ** Swiper
 
 *Swiper* - isearch with an overview. It looks like =:Ag= command in fzf.vim, but it works without any external tools.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package swiper
+  :pin melpa
   :ensure t)
-#+END_SRC
+#+end_src
+
+** Ivy All the Icons
+#+begin_src emacs-lisp
+(use-package all-the-icons-ivy
+  :demand t
+  :config
+  (all-the-icons-ivy-setup))
+#+end_src
 
 ** Keybindings
 
 Following keybindings are very similar to FZF section in my vim/zsh configuration.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (define-key ivy-minibuffer-map (kbd "<escape>") 'minibuffer-keyboard-quit)
 (define-key ivy-minibuffer-map (kbd "M-q") 'minibuffer-keyboard-quit)
 (define-key ivy-minibuffer-map (kbd "M-j") 'ivy-next-line)
 (define-key ivy-minibuffer-map (kbd "M-k") 'ivy-previous-line)
 (define-key ivy-minibuffer-map (kbd "M-l") 'ivy-alt-done)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-leader/set-key "b"  'ivy-switch-buffer)
 (evil-leader/set-key "fs" 'counsel-rg)
-#+END_SRC
+#+end_src
 
 * Working with files
 ** =treemacs=
@@ -714,7 +814,7 @@ A tree layout file explorer for Emacs similar to =NerdTree=.
 (use-package treemacs
   :ensure t
   :config
-  (setq treemacs-no-png-images 't) ;; disable icons
+  ; (setq treemacs-no-png-images 't) ;; disable icons
   ;; Keybindings
   (global-set-key (kbd "M-1") 'treemacs))
 #+end_src
@@ -726,7 +826,7 @@ Those functions works like tpope's [[https://github.com/tpope/vim-eunuch][vim-eu
 *** Delete current file and buffer
 
 See [[https://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/][this post]].
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun delete-file-and-buffer ()
   "Kill the current buffer and deletes the file it is visiting."
   (interactive)
@@ -738,12 +838,12 @@ See [[https://emacsredux.com/blog/2013/04/03/delete-file-and-buffer/][this post]
           (delete-file filename)
           (message "Deleted file %s" filename)
           (kill-buffer))))))
-#+END_SRC
+#+end_src
 
 *** Rename current file and buffer
 
 Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .emacs]].
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun rename-file-and-buffer (new-name)
   "Renames both current buffer and file it's visiting to NEW-NAME."
   (interactive "sNew name: ")
@@ -758,29 +858,34 @@ Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .e
           (rename-buffer new-name)
           (set-visited-file-name new-name)
           (set-buffer-modified-p nil))))))
-#+END_SRC
+#+end_src
 
 *** Define evil commands
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-ex-define-cmd "Delele" 'delete-file-and-buffer)
 (evil-ex-define-cmd "Rename" 'rename-file-and-buffer)
-#+END_SRC
+#+end_src
 ** Open files with external applications
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package openwith
   :ensure t
   :config
   (openwith-mode t)
   (setq openwith-associations '(("\\.pdf\\'" "zathura" (file)))))
-#+END_SRC
+#+end_src
 
 ** dired-mode
 
 Human readable units:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default dired-listing-switches "-alh")
-#+END_SRC
+#+end_src
 
+* Integration with ripgrep
+#+begin_src emacs-lisp
+(use-package deadgrep
+  :ensure t)
+#+end_src
 * org-mode
 #+BEGIN_QUOTE
 Friends don't let friends use heroin or org-mode.
@@ -789,18 +894,18 @@ Friends don't let friends use heroin or org-mode.
 ** Initialization
 
 [[https://orgmode.org/elpa.html][org-plus-contrib]] is an org-mode distribution that also includes additional "contrib" packages.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (unless (package-installed-p 'org-plus-contrib)
   (package-refresh-contents)
   (package-install 'org-plus-contrib))
-#+END_SRC
+#+end_src
 
 Ensure that ELPA version gets picked up, not the shipped version.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org
   :ensure org-plus-contrib
   :pin org)
-#+END_SRC
+#+end_src
 
 *** org modules
 
@@ -810,61 +915,61 @@ Some of org-mode Contributed Packages are already included in default Emacs inst
 
 /Inline tasks/ -- TODO entries embedded in text without treating it is an outline heading. See this [[https://orgmode.org/worg/org-faq.html#list-item-as-todo][article]] for more.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-inlinetask-show-first-star t)
-#+END_SRC
+#+end_src
 
 /Note/: =org-inlinetask.elc= is already included in Emacs 26.1 package from Debian 10.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'org-inlinetask)
 #+end_src
 
 ** General options
 
 Where are my Org files typically located:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-directory "~/Org/")
-#+END_SRC
+#+end_src
 
 Enable org-indent-mode:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-indent-mode)
-#+END_SRC
+#+end_src
 
 Keep track of when a certain TODO item was finished:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-log-done 'time)
-#+END_SRC
+#+end_src
 
 Enable soft-wrap:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-startup-truncated nil)
-#+END_SRC
+#+end_src
 
 Show inline images (~file://~ links):
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-startup-with-inline-images t)
-#+END_SRC
+#+end_src
 
 Disable ~evil-auto-indent~ for org-mode. Using to prevent weird =O/o= behaviour when insert after heading:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook (lambda () (setq evil-auto-indent nil)))
-#+END_SRC
+#+end_src
 
 Set external applications to open exported files:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (if (assoc "\\.x?html?\\'" org-file-apps)
   (setcdr (assoc "\\.x?html?\\'" org-file-apps) "firefox %s"))
-#+END_SRC
+#+end_src
 
 ** org-agenda
 
 Agenda files:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-agenda-files (append
                         (list "~/Org/Agenda.org")
                         (file-expand-wildcards "~/Uni/*/Notes.org")))
-#+END_SRC
+#+end_src
 
 Pick agenda file with =ivy=:
 #+begin_src emacs-lisp
@@ -887,12 +992,12 @@ Open Agenda buffer in full window:
 Notekeeping with =org-capture= described in [[http://sachachua.com/blog/2015/02/learn-take-notes-efficiently-org-mode/][Sacha Chua's blog]]. There is also related [[https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/][post]] on reddit.
 
 Default file for =org-capture=:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-default-notes-file "~/Org/scratch.org")
-#+END_SRC
+#+end_src
 
 Capture templates:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-capture-templates
       '(("t" "Task"
          entry (file "~/Org/Agenda.org")
@@ -909,7 +1014,7 @@ DEADLINE: %T
         ("n" "Note"
          entry (file "~/Org/scratch.org")
          "* %?\n")))
-#+END_SRC
+#+end_src
 There is also useful snippet: =%(org-insert-time-stamp (org-read-date nil t \"+1d\"))=.
 
 ** org-refile
@@ -922,7 +1027,7 @@ See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.
 
 ** org-export
 *** Beamer
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (eval-after-load "ox-latex"
 
   ;; update the list of LaTeX classes and associated header (encoding, etc.)
@@ -936,18 +1041,13 @@ See this [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.
                   ("\\section{%s}" . "\\section*{%s}")
                   ("\\subsection{%s}" . "\\subsection*{%s}")
                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}"))))
-#+END_SRC
+#+end_src
 
 ** Links
 
-Links to man pages:
-#+BEGIN_SRC emacs-lisp
-(load-file "~/.emacs.d/lisp/org-man.el")
-#+END_SRC
-
 *** =org-insert-link=
 Use HTML title as default description (recipe from [[https://orgmode.org/worg/org-hacks.html][org-hacks]]):
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (require 'mm-url) ; to include mm-url-decode-entities-string
 
 (defun my-org-insert-link ()
@@ -967,19 +1067,19 @@ Use HTML title as default description (recipe from [[https://orgmode.org/worg/or
       (search-forward "</title>")
       (setq x2 (search-backward "<"))
       (mm-url-decode-entities-string (buffer-substring-no-properties x1 x2)))))
-#+END_SRC
+#+end_src
 
 ** Calendar buffer settings
 
 Set start week on monday:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq calendar-week-start-day 1)
-#+END_SRC
+#+end_src
 
 ** Functions
 
 Fold everything but the current headline. See this [[https://stackoverflow.com/questions/25161792/emacs-org-mode-how-can-i-fold-everything-but-the-current-headline][stackoverflow question]].
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun org-show-current-heading-tidily ()
   (interactive)  ;Inteactive
   "Show next entry, keeping other entries closed."
@@ -994,20 +1094,20 @@ Fold everything but the current headline. See this [[https://stackoverflow.com/q
     (org-reveal t)
     (org-show-entry)
     (show-children)))
-#+END_SRC
+#+end_src
 
 Recipe from [[https://orgmode.org/worg/org-hacks.html#org98f0887][org-hacks]]:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun org-back-to-top-level-heading ()
   "Go back to the current top level heading."
   (interactive)
   (or (re-search-backward "^\* " nil t)
       (goto-char (point-min))))
-#+END_SRC
+#+end_src
 
 ** Keybindings and evil-mode commands
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-define-key 'normal org-mode-map
   ;; narrow headings
   "<" '(lambda () (interactive) (org-demote-or-promote 1))
@@ -1017,7 +1117,7 @@ Recipe from [[https://orgmode.org/worg/org-hacks.html#org98f0887][org-hacks]]:
   "gP" 'org-back-to-top-level-heading
   "gh" 'counsel-org-goto
   "gt" 'counsel-org-tag)
-#+END_SRC
+#+end_src
 
 Use =o= prefix for =org-mode= commands in global scope:
 #+begin_src emacs-lisp
@@ -1053,77 +1153,71 @@ Local mode mappings:
 #+end_src
 
 Evil commands:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-ex-define-cmd "cal" 'calendar)
-#+END_SRC
+#+end_src
 
 Fix org-mode =TAB= in console mode:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook
           (lambda ()
           (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))) 
-#+END_SRC
+#+end_src
 
 ** ox-hugo: exporter backend for Hugo
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package ox-hugo
   :ensure t
   :after ox)
-#+END_SRC
+#+end_src
 
 ** org-babel
 
 PlantUML configuration:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-plantuml-jar-path
   (expand-file-name "/usr/share/plantuml/plantuml.jar"))
-#+END_SRC
+#+end_src
 
 Ditaa configuration:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-ditaa-jar-path
   (expand-file-name "/usr/share/ditaa/ditaa.jar"))
-#+END_SRC
+#+end_src
 
 Instantly show generated image:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-babel-after-execute-hook
           (lambda ()
             (when org-inline-image-overlays
               (org-redisplay-inline-images))))
-#+END_SRC
+#+end_src
 
 Don't confirm codeblock evaluation:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq org-confirm-babel-evaluate nil)
-#+END_SRC
+#+end_src
 
 Collapse source code blocks when open an org file.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'org-mode-hook 'org-hide-block-all)
-#+END_SRC
-
-Load additional babel languages:
-#+BEGIN_SRC emacs-lisp
-(load-file "~/.emacs.d/lisp/ob-racket.el")
-#+END_SRC
+#+end_src
 
 Setup available languages for =org-babel-execute=:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '(
   (plantuml . t)
   (ditaa . t)
-  (racket . t)
   (latex . t)
   (scheme . t)
   (emacs-lisp . t)
   (shell . t)
   (C . t)
   (python . t)))
-#+END_SRC
+#+end_src
 
 ** Cross-references with =org-ref=
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-ref
   :ensure t
   :defer t
@@ -1132,7 +1226,7 @@ Setup available languages for =org-babel-execute=:
   (setq org-ref-bibliography-notes "~/Org/references_notes.org"
         org-ref-default-bibliography '("~/Documents/references.bib")
         org-ref-pdf-directory "~/Documents/bibtex-pdfs/"))
-#+END_SRC
+#+end_src
 
 ** Download images to org-mode
 
@@ -1157,7 +1251,7 @@ Images are separated inside that image folder by additional folders one per org 
 + More info can be found [[https://github.com/abo-abo/org-download/issues/40][here]]
 + Usage example in [[https://github.com/abo-abo/org-download/commit/137c3d2aa083283a3fc853f9ecbbc03039bf397b][commit message]]
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun jubnzv/org-download-method (link)
   (let ((filename
          (file-name-nondirectory
@@ -1179,48 +1273,48 @@ Images are separated inside that image folder by additional folders one per org 
         (make-directory dir t))
       (message (format "Image: %s saved!" (expand-file-name filename-with-timestamp dir)))
 (expand-file-name filename-with-timestamp dir))))
-#+END_SRC
+#+end_src
 
 *** Plugin initialization
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package org-download
   :ensure t
   :config
   (setq org-download-method 'jubnzv/org-download-method)
   ;; Drag-and-drop to `dired`
   (add-hook 'dired-mode-hook 'org-download-enable))
-#+END_SRC
+#+end_src
 
 *** Keybindings
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-declare-key 'normal org-mode-map ",Dy" 'org-download-yank)
 (evil-declare-key 'normal org-mode-map ",Ds" 'org-download-screenshot)
-#+END_SRC
+#+end_src
 
 * LaTeX
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
   ;; (use-package auctex
   ;;   :ensure t)
   (use-package tex
     :defer t
     :ensure auctex)
-#+END_SRC
+#+end_src
 
 * Shell stuff
 ** Eshell
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun eshell-other-window ()
   "Open a `eshell' in a new window."
   (interactive)
   (let ((buf (eshell)))
     (switch-to-buffer (other-buffer buf))
     (switch-to-buffer-other-window buf)))
-#+END_SRC
+#+end_src
 
 *** Popup shell
 Function from [[https://github.com/howardabrams/dot-files/][howardabrams/dot-files]]. It makes small popup shell.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun eshell-here ()
   "Opens up a new shell in the directory associated with the
 current buffer's file. The eshell is renamed to match that
@@ -1238,17 +1332,17 @@ directory to make multiple eshell windows easier."
 
     (insert (concat "ls"))
     (eshell-send-input)))
-#+END_SRC
+#+end_src
 
 *** Keybindings
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-declare-key 'normal global-map "`\\" 'eshell-here)
 (evil-declare-key 'normal eshell-mode-map (kbd "M-j") 'eshell-previous-prompt)
 (evil-declare-key 'normal eshell-mode-map (kbd "M-k") 'eshell-next-prompt)
-#+END_SRC
+#+end_src
 
 *** Aliases
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun eshell/ll (&rest args)
   (eshell/ls "-la" args))
 (defun eshell/q (&rest args)
@@ -1257,7 +1351,7 @@ directory to make multiple eshell windows easier."
   (eshell/pushd args))
 (defun eshell/pdd (&rest args)
   (eshell/popd args))
-#+END_SRC
+#+end_src
 
 ** =term-mode=
 #+begin_src emacs-lisp
@@ -1275,20 +1369,20 @@ directory to make multiple eshell windows easier."
 #+end_src
 
 * TRAMP
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq tramp-default-method "ssh")
-#+END_SRC
+#+end_src
 
 * Snippets
 
 Collection of snippets:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yasnippet-snippets
   :ensure t)
-#+END_SRC
+#+end_src
 
 Initialize ~yasnippet~ plugin itself:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package yasnippet
   :ensure t
   :after yasnippet-snippets
@@ -1301,7 +1395,7 @@ Initialize ~yasnippet~ plugin itself:
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map (kbd "M-l") yas-maybe-expand))
-#+END_SRC
+#+end_src
 
 * Auto parens
 #+begin_SRC emacs-lisp
@@ -1310,15 +1404,15 @@ Initialize ~yasnippet~ plugin itself:
   :diminish
   :config
   (smartparens-global-mode))
-#+END_SRC
+#+end_src
 
 * Spell checking
 
-ispell can be configured to skip over regions that match regexes.
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+=ispell= can be configured to skip over regions that match regexes.
+#+begin_src emacs-lisp
+(add-to-list 'ispell-skip-region-alist '("#\\+begin_src" . "#\\+end_src"))
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXAMPLE" . "#\\+END_EXAMPLE"))
-#+END_SRC
+#+end_src
 
 * Other formats
 ** yaml
@@ -1332,12 +1426,12 @@ ispell can be configured to skip over regions that match regexes.
 
 Here is some common settings and minor mode configurations available in all programming modes.
 
-*** Highlight errors
-#+BEGIN_SRC emacs-lisp
+*** Flycheck — Syntax checking for GNU Emacs
+#+begin_src emacs-lisp
 (use-package flycheck
   :ensure t
   :diminish "fc")
-#+END_SRC
+#+end_src
 
 Disable flymake. =flycheck= is my choice.
 #+begin_src emacs-lisp :tangle no
@@ -1346,10 +1440,10 @@ Disable flymake. =flycheck= is my choice.
 #+end_src
 
 Jump to errors:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
 (evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
-#+END_SRC
+#+end_src
 
 *** =hs-mode=: folding
 
@@ -1357,28 +1451,28 @@ Jump to errors:
 + ~za~: Unfold
 + ~zR~: Unfold everything
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'prog-mode-hook #'hs-minor-mode)
-#+END_SRC
+#+end_src
 
 *** Display identation levels
 
 Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plugin.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package highlight-indent-guides
   :ensure t
   :config
   (setq highlight-indent-guides-method 'character)
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
-#+END_SRC
+#+end_src
 
 *** ctags
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package counsel-etags
   :ensure t
   :config
   (add-to-list 'counsel-etags-ignore-filenames "m4"))
-#+END_SRC
+#+end_src
 
 *** =which-func-mode=: display function name in modline
 
@@ -1392,13 +1486,13 @@ Customize =???= in which-func-mode:
 #+end_src
 
 ***  face
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package form-feed
   :ensure t
   :diminish form-feed-mode
   :config
   (add-hook 'prog-mode-hook 'form-feed-mode))
-#+END_SRC
+#+end_src
 
 *** =company-mode=: autocompletion
 
@@ -1424,9 +1518,43 @@ Company is a text completion framework for Emacs similar with vim's =deoplete=.
 #+end_src
 
 *** Spaces > tabs
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq-default indent-tabs-mode nil)
-#+END_SRC
+#+end_src
+
+** LSP
+*** lsp-mode
+#+begin_src emacs-lisp
+(use-package lsp-mode
+  :ensure t
+  :commands lsp
+  :config (gsetq lsp-prefer-flymake nil
+                 lsp-highlight-symbol-at-point nil))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  :init (setq lsp-ui-doc-enable nil
+              lsp-ui-doc-header t
+              lsp-ui-doc-include-signature t
+              lsp-ui-doc-position 'top
+              lsp-ui-doc-use-webkit t
+              lsp-ui-doc-border (face-foreground 'default)
+              lsp-ui-sideline-enable nil
+              lsp-ui-sideline-ignore-duplicate t))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package company-lsp :commands company-lsp)
+#+end_src
+
+*** ccls extensions
+#+begin_src emacs-lisp
+(use-package ccls
+  :hook ((c-mode c++-mode objc-mode) .
+         (lambda () (require 'ccls) (lsp))))
+#+end_src
 
 ** LISP
 
@@ -1436,36 +1564,36 @@ Here is my configuration for following languages:
 + Emacs lisp
 
 [[https://gitlab.com/jaor/geiser][Geiser]] is an Emacs environment to hack and have fun in Scheme.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package geiser
   :ensure t
   :config
   (setq geiser-active-implementations '(chicken)))
-#+END_SRC
+#+end_src
 
 Use [[https://wiki.call-cc.org/][Chicken Scheme]] as default implementation:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (setq scheme-program-name "csi -:c")
-#+END_SRC
+#+end_src
 
 For Racket, [[https://github.com/greghendershott/racket-mode][racket-mode]] looks more interesring because it provides more Racket REPL interraction routines.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package racket-mode
   :ensure t)
-#+END_SRC
+#+end_src
 
 *** Some general settings
 
 Treat dash as part of word:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (modify-syntax-entry ?- "w" emacs-lisp-mode-syntax-table)
 ;(modify-syntax-entry ?- "w" scheme-mode-syntax-table)
 (modify-syntax-entry ?- "w" racket-mode-syntax-table)
 (modify-syntax-entry ?- "w" racket-repl-mode-syntax-table)
-#+END_SRC
+#+end_src
 
 Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html][this]] article):
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun my-add-pretty-lambda ()
   "Make some word or string show as pretty Unicode symbols"
   (setq prettify-symbols-alist
@@ -1479,12 +1607,12 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 (add-hook 'geiser-mode-hook 'my-add-pretty-lambda)
 (add-hook 'racket-mode-hook 'my-add-pretty-lambda)
 (add-hook 'racket-repl-mode-hook 'my-add-pretty-lambda)
-#+END_SRC
+#+end_src
 
 *** Lispy & LispyVille
 
 [[https://github.com/abo-abo/lispy][Lispy]] is vi-inspired plugin that provides useful keybindings for editing LISP sources. It looks pretty interesting, but unfamiliar for me as native vim user. So, my choice is [[https://github.com/noctuid/lispyville][LispyVille]] that serve as a minimal layer on top of lispy-mode for better integration with evil.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package lispy
   :ensure t)
 (use-package lispyville
@@ -1494,12 +1622,12 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (add-hook 'geiser-mode-hook 'lispyville-mode)
   (add-hook 'racket-repl-mode-hook 'lispyville-mode)
   (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
-#+END_SRC
+#+end_src
 
 *** Rainbow delimiters
 
 =rainbow-delimiters= mode is too distracting to use for languages other than Lisp.
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package rainbow-delimiters
   :ensure t
   :commands (rainbow-delimiters-mode rainbow-delimiters)
@@ -1508,12 +1636,12 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (add-hook 'racket-repl-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'geiser-mode-hook 'rainbow-delimiters-mode)
   (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
-#+END_SRC
+#+end_src
 
 ** C/C++
 
 *** Common
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'c-mode-common-hook '(lambda ()
   (setq indent-tabs-mode t
      c-basic-offset 4
@@ -1524,41 +1652,41 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (flycheck-mode)
   (yas-reload-all)
   (yas-minor-mode)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (modify-syntax-entry ?- "w" c-mode-syntax-table)
 (modify-syntax-entry ?_ "w" c-mode-syntax-table)
-#+END_SRC
+#+end_src
 
 *** Explore C/C++ code
 
 =distater=: disassemble C/C++ code under cursor:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package disaster
   :ensure t)
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun jbz-objdump-file ()
   (interactive)
   (setq file (expand-file-name (read-file-name "File: ")))
   (shell-command (concat "objdump -D -M intel " file) "*objdump*"))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun jbz-objdump-lib-symbols ()
   (interactive)
   (setq file (expand-file-name (read-file-name "File: ")))
   (shell-command (concat "objdump -TC " file) "*objdump*"))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun jbz-readelf-so ()
   (interactive)
   (setq file (expand-file-name (read-file-name ".so: ")))
   (shell-command (concat "readelf -S " file) "*readelf*"))
-#+END_SRC
+#+end_src
 
 ** Rust
 
@@ -1568,49 +1696,56 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   :ensure t)
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (add-hook 'rust-mode-hook '(lambda()
   (which-function-mode 1)
   (flycheck-mode)
   (yas-reload-all)
   (yas-minor-mode)))
-#+END_SRC
+#+end_src
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (evil-declare-key 'normal rust-mode-map ",Ef" 'rust-format-buffer)
-#+END_SRC
+#+end_src
 
 ** Python
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 (modify-syntax-entry ?- "w" python-mode-syntax-table)
 (modify-syntax-entry ?_ "w" python-mode-syntax-table)
-#+END_SRC
+#+end_src
 
 * Exploring Emacs
 ** Profile startup with =ESUP=
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package esup
   :ensure t)
-#+END_SRC
+#+end_src
 
 * Utilities
 
 Re-create a =*scratch*= buffer (see [[https://www.emacswiki.org/emacs/RecreateScratchBuffer][EmacsWiki: Recreate Scratch Buffer]]):
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun create-scratch-buffer nil
    "create a scratch buffer"
    (interactive)
    (switch-to-buffer (get-buffer-create "*scratch*"))
    (org-mode))
-#+END_SRC
+#+end_src
+
+Open external terminal in current directory:
+#+begin_src emacs-lisp
+(defun run-kitty-here ()
+  (interactive)
+  (call-process "kitty" nil 0 nil "-d" (file-name-directory (or load-file-name buffer-file-name))))
+#+end_src
 
 * Exploring Emacs
 ** Profile startup with =ESUP=
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package esup
   :ensure t)
-#+END_SRC
+#+end_src
 
 ** Track frequently used commands with ~keyfreq~
 
@@ -1619,7 +1754,7 @@ See this [[http://blog.binchen.org/posts/how-to-be-extremely-efficient-in-emacs.
 
 See generated report with ~keyfreq-html~.
 
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (use-package keyfreq
   :ensure t
   :config
@@ -1655,38 +1790,30 @@ See generated report with ~keyfreq-html~.
 	keyfreq-file-lock "~/.emacs.d/keyfreq.lock")
   (keyfreq-mode 1)
   (keyfreq-autosave-mode 1))
-#+END_SRC
+#+end_src
 
 ** Instant access to Emacs configuration files
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (defun open-config-file (file-path)
   "Open file from ~/.emacs.d in another window."
   (interactive)
   (find-file-other-window (expand-file-name file-path user-emacs-directory)))
-#+END_SRC
+#+end_src
 
 ** Keybindings
 
 Configuration:
-#+BEGIN_SRC emacs-lisp
+#+begin_src emacs-lisp
 (which-key-add-key-based-replacements "SPC C" "Configure Emacs")
 
 ;; TODO: Why not define macro for it?
-(evil-leader/set-key "CC"  (lambda() (interactive) (open-config-file "config.org")))
+(evil-leader/set-key "rr"  (lambda() (interactive) (open-config-file "config.org")))
 (which-key-add-key-based-replacements "SPC C C" " config.org")
 
-(evil-leader/set-key "Ct"  (lambda()
-  (interactive) (open-config-file "TODO.org")))
-(which-key-add-key-based-replacements "SPC C t" " TODO.org")
-
-(evil-leader/set-key "Cf"  (lambda()
-  (interactive) (open-config-file "elfeed-feeds.org")))
-(which-key-add-key-based-replacements "SPC C f" " elfeed-feeds.org")
-
-(evil-leader/set-key "Cr"  (lambda()
+(evil-leader/set-key "rc"  (lambda()
   (interactive)(load-file "~/.emacs.d/init.el")))
 (which-key-add-key-based-replacements "SPC C r" "reload config")
-#+END_SRC
+#+end_src
 
 * Hooks to set everything up
 
@@ -1694,7 +1821,7 @@ When using =emacsclient=, some settings do not get set in the newly created fram
 
 I have now removed any customization options that requires this hooks. But it may be very useful later.
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+begin_src emacs-lisp :tangle no
 (defvar jbz:appearance-setup-done nil)
 
 (defun jbz:appearance-setup-hook (&rest args)
@@ -1706,4 +1833,4 @@ I have now removed any customization options that requires this hooks. But it ma
 (if (daemonp)
   (add-hook 'after-make-frame-functions 'jbz:appearance-setup-hook)
   (add-hook 'after-init-hook 'jbz:appearance-setup-hook))
-#+END_SRC
+#+end_src
