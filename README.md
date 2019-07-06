@@ -1,37 +1,7 @@
 ![](https://raw.githubusercontent.com/jubnzv/dotfiles/master/screenshot.png)
 
-**Disclaimer:** This repository contains my personal system
-configuration files. There are no fancy icons, powerline fonts,
-transparent terminal screens and similar stuff, but only robust tools
-that I use day-to-day to do my work. Maybe you will find something
-useful here.
-
-Hardware
---------
-
--   ~~ThinkPad R52 (Pentium M / 256 MiB RAM)~~
--   ~~ThinkPad L450 (Core i5 5200U / 8 GiB RAM)~~
--   ~~ThinkPad X200 (Core 2 Duo P8600 / 2 GiB DDR3-1066 RAM / 160 GB
-    SSD); [libreboot](https://libreboot.org/docs/hardware/x200.html)
-    installed.~~
--   ThinkPad X230 (i5-3230M / 16 GiB DDR3-1600 RAM / WDC WDS500G2B0A 500
-    GB SSD) with [classic
-    keyboard](http://www.thinkwiki.org/wiki/Install_Classic_Keyboard_on_xx30_Series_ThinkPads).
-
 Desktop environment
 -------------------
-
-### GUI options
-
--   Fonts
-    -   **Iosevka Term** with
-        [NerdFont](https://github.com/ryanoasis/nerd-fonts) patch in
-        terminal
-    -   **IBM Plex Sans Text** in GUI applications
-    -   **Proto Sans** and **Font Awesome** in window manager
--   **numix** GTK theme
--   **Breeze** icons and cursors
--   **gruvbox dark medium** colorscheme everywhere
 
 ### Software
 
@@ -44,6 +14,18 @@ Desktop environment
     -   **dunst** - lightweight and customizable notification daemon
     -   **fbxkb** - keymap tray icon
     -   **udiskie** - automount daemon and tray icon
+
+### GUI options
+
+-   Fonts
+    -   **Iosevka Term** with
+        [NerdFont](https://github.com/ryanoasis/nerd-fonts) patch in
+        terminal
+    -   **IBM Plex Sans Text** in GUI applications
+    -   **Proto Sans** and **Font Awesome** in window manager
+-   **numix** GTK theme
+-   **Breeze** icons and cursors
+-   **gruvbox dark medium** colorscheme everywhere
 
 Tools
 -----
