@@ -20,6 +20,7 @@ Plug 'will133/vim-dirdiff'            " Diff two directories
 Plug 'andymass/vim-matchup'           " Better `%` for some modes
 Plug 'godlygeek/tabular'              " Vim script for text filtering and alignment
 Plug 'tpope/vim-surround'
+Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
 Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
 Plug 'osyo-manga/vim-over'            " :substitute preview
@@ -32,8 +33,8 @@ Plug 'junegunn/vim-peekaboo'          " Shows vim registers content into vertica
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'             " Git wrapper
+Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'mhinz/vim-sayonara'             " Sane buffer/window deletion
@@ -97,7 +98,7 @@ set clipboard=unnamedplus,unnamed           " Use system clipboard
 set showmatch                               " Show matching brackets when text indicator is over them
 set mat=1                                   " How many tenths of a second to blink when matching brackets
 set wildmenu                                " wildmenu: command line completion
-set wildmode=longest,list
+set wildmode=longest,list,full
 set wildignore=*.o,*~,*.pyc,*.aux,*.out,*.toc
 set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
 set notimeout                               " Remove delay between complex keybindings.
@@ -193,7 +194,7 @@ nnoremap Y y$
 " nmap zk O<Esc>j
 
 " Reload vimrc
-nnoremap <leader>rc :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <leader>Rc :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Free <F1>
 nmap <F1> :echo <CR>
@@ -234,11 +235,18 @@ let g:suda#prefix = 'sudo://'
 cnoremap e!! execute 'edit! sudo://%'
 cnoremap w!! execute 'write sudo://% <bar> edit! sudo://%'
 
-" Create directories before write
+" Command to manually create directory for current file
 function! WriteCreatingDirs()
   execute ':silent !mkdir -p %:h'
 endfunction
 command! Mkw call WriteCreatingDirs()
+
+" Create directories before write
+" [1]: https://stackoverflow.com/questions/4292733/vim-creating-parent-directories-on-save
+augroup BWCCreateDir
+    autocmd!
+    autocmd BufWritePre * if expand("<afile>")!~#'^\w\+:/' && !isdirectory(expand("%:h")) | execute "silent! !mkdir -p ".shellescape(expand('%:h'), 1) | redraw! | endif
+augroup END
 
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <leader>rm mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
@@ -317,6 +325,9 @@ nnoremap <C-F4> :Sayonara<CR>
 
 " Switch to recent buffer
 nnoremap <A-r> <C-^>
+
+" Use Ctrl-W operation in insert mode
+inoremap <C-w> <C-g>u<C-w>
 
 " {{{ Copy file path to system clipboard
 if has('win32')
@@ -557,12 +568,10 @@ au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ff :Files<CR>
-nnoremap <leader>xf :Files<CR>
 nnoremap <leader>ft :Tags<CR>
-nnoremap <A-7> :BTags<CR>
+nnoremap <leader>xf :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>w :Windows<CR>
 nnoremap <leader>xr :FZFMru <CR>
 
 nnoremap <leader>fs :Ag<CR>
@@ -650,7 +659,10 @@ au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
 " {{{ ctags and vista.vim configuration
 set tags=./tags;
+let g:vista_default_executive = 'ctags'
+let g:vista_fzf_preview = ['right:50%']
 
+" Show current method name in lightline
 function! NearestMethodOrFunction() abort
   let l:method = get(b:, 'vista_nearest_method_or_function', '')
   if l:method != ''
@@ -660,8 +672,8 @@ function! NearestMethodOrFunction() abort
 endfunction
 autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
-let g:vista_default_executive = 'ctags'
 nnoremap <F7> :Vista!!<CR>
+nnoremap <A-7>:Vista focus<CR>
 " }}}
 
 " {{{ syntastic
@@ -674,7 +686,10 @@ let g:syntastic_error_symbol = 'ee'
 let g:syntastic_style_error_symbol = 'se'
 let g:syntastic_warning_symbol = 'ww'
 let g:syntastic_style_warning_symbol = 'sw'
-cnoreabbrev SC SyntasticCheck
+cnoreabbrev sc SyntasticCheck
+
+" Run it only manually.
+let g:syntastic_mode_map={'mode': 'passive'}
 
 let g:syntastic_c_checkers = ['cppcheck']
 let g:syntastic_cpp_checkers = ['cppcheck']
@@ -705,7 +720,7 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 
 " Reload snippets
-nnoremap <leader>rs :call neosnippet#variables#set_snippets({})<cr>
+nnoremap <leader>Rs :call neosnippet#variables#set_snippets({})<cr>
 " }}}
 
 " {{{ LanguageClient settings
@@ -721,8 +736,8 @@ let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
-  \ 'cpp': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
-  \ 'c': ['/usr/local/bin/cquery', '--log-file=/tmp/cquery.log'],
+  \ 'cpp': ['ccls', '--log-file=/tmp/ccls.log'],
+  \ 'c': ['ccls', '--log-file=/tmp/ccls.log'],
   \ }
 let g:LanguageClient_rootMarkers = {
   \ 'cpp': ['compile_commands.json', 'build'],
@@ -815,13 +830,18 @@ function! LSPUpdateStatus(status) abort
   let g:lsp_status = a:status
   call lightline#update()
 endfunction
+" A bit complicated. See :he lightline-problem-12 for description.
 function! LightlineLSPStatus() abort
+  let map = { 'V': 'n', "\<C-v>": 'n', 's': 'n', 'v': 'n', "\<C-s>": 'n', 'c': 'n', 'R': 'n'}
+  let mode = get(map, mode()[0], mode()[0])
+  let bgcolor = {'n': [237, '#3c3836'], 'i': [239, '#504945']}
+  let color = get(bgcolor, mode, bgcolor.n)
   if g:lsp_status == 1
-    exe printf('hi LSPColor ctermbg=237 ctermfg=66 guifg=#427b58 term=bold cterm=bold')
+    exe printf('hi LSPColor ctermbg=%d ctermfg=106 guifg=#98971a guibg=%d term=bold cterm=bold', color[0], color[1])
   else
-    exe printf('hi LSPColor ctermbg=237 ctermfg=241 guifg=#665c54')
+    exe printf('hi LSPColor ctermbg=%d ctermfg=241 guifg=#665c54 guibg=%d', color[0], color[1])
   endif
-  return 'λ'
+  return ''
 endfunction
 " }}}
 
@@ -882,7 +902,7 @@ au FileType c,cpp call LCKeymap()
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
-nnoremap <F4> :A<CR>
+nnoremap <A-a> :A<CR>
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
@@ -895,8 +915,8 @@ au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>
 au FileType c,cpp setlocal cinoptions+=l1
 
 " Autoformat on save
-au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
-au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
+" au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
+" au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
 
 " {{{ Commands and binds
 au FileType c call CmdC()
@@ -997,12 +1017,19 @@ au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
 au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
+au FileType markdown nnoremap <F7> :Vista toc<CR>
 
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
 let g:mkdp_auto_close = 0
-cnoreabbrev MP MarkdownPreview
-" au FileType markdown nmap <silent> <leader>m :MarkdownPreview<CR>
+" Open preview in new firefox window
+" [1]: https://github.com/iamcco/markdown-preview.nvim/issues/19#issuecomment-464338238
+function! g:OpenBrowser(url)
+  silent exe 'silent !open -a "firefox --new-window " ' . a:url
+endfunction
+let g:mkdp_browserfunc = 'g:OpenBrowser'
+cnoreabbrev mp MarkdownPreview
+au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
 " }}}
 
 " {{{ Other ft-specific autocommands

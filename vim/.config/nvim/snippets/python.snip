@@ -1,7 +1,19 @@
-snippet pr
-abbr    print("")
+snippet print
+alias   pr
+abbr    print()
 options head
-    print("${1}")
+    print(${1})
+snippet pprint
+alias   ppr
+abbr    pprint
+options head
+    import pprint; pp = pprint.PrettyPrinter(indent=2);
+    pp.pprint(${1})
+
+snippet sizeof
+options head
+    import sys
+    sys.getsizeof($0)
 
 # {{{ https://github.com/cool-RR/PySnooper
 snippet snoop
