@@ -436,7 +436,7 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
 #+end_src
 
-* UI
+* UI/Apperance/Formatting
 #+begin_src emacs-lisp
 (ignore-errors
   (menu-bar-mode -1)
@@ -463,12 +463,14 @@ Show file name and mode in window title:
 (setq-default frame-title-format '("%b (%m) — Emacs"))
 #+end_src
 
-** Highlight matching parens
+** Show parens
 #+begin_src emacs-lisp
-(show-paren-mode t)
+(use-package paren
+  :init (show-paren-mode)
+  :config (gsetq show-paren-delay 0))
 #+end_src
 
-** Show trailing whitespaces in essential modes
+** Trailing whitespaces
 
 #+begin_src emacs-lisp
 (setq-default whitespace-style '(face trailing spaces space-mark))
@@ -514,18 +516,7 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 #+end_src
 
 ** Modeline configuration
-
-[[https://github.com/emacsmirror/diminish][diminish]] - plugin to hide minor modes in modeline:
-#+begin_src emacs-lisp
-(use-package diminish
-  :ensure t)
-#+end_src
-
-#+begin_src emacs-lisp
-(diminish 'abbrev-mode)
-(diminish 'auto-revert-mode)
-#+end_src
-
+*** Doom Modeline
 #+begin_src emacs-lisp
 (use-package doom-modeline
       :ensure t
@@ -535,6 +526,18 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 #+begin_src emacs-lisp
 (setq doom-modeline-height 18)
 (setq doom-modeline-bar-width 1)
+#+end_src
+
+*** Diminish
+[[https://github.com/emacsmirror/diminish][diminish]] - plugin to hide minor modes in modeline:
+#+begin_src emacs-lisp
+(use-package diminish
+  :ensure t)
+#+end_src
+
+#+begin_src emacs-lisp
+(diminish 'abbrev-mode)
+(diminish 'auto-revert-mode)
 #+end_src
 
 ** Color scheme
@@ -559,7 +562,7 @@ Gruvbox colors for line numbers column:
 (set-face-attribute 'default nil :font "Iosevka-12")
 #+end_src
 
-** Setup all-the-icons
+** All The Icons
 
 Just don’t forget to use =M-x all-the-icons-install-fonts RET= after install.
 #+begin_src emacs-lisp
@@ -806,7 +809,7 @@ Following keybindings are very similar to FZF section in my vim/zsh configuratio
 (evil-leader/set-key "fs" 'counsel-rg)
 #+end_src
 
-* Working with files
+* File system
 ** =treemacs=
 
 A tree layout file explorer for Emacs similar to =NerdTree=.
@@ -886,6 +889,7 @@ Human readable units:
 (use-package deadgrep
   :ensure t)
 #+end_src
+
 * org-mode
 #+BEGIN_QUOTE
 Friends don't let friends use heroin or org-mode.
@@ -1300,7 +1304,7 @@ Images are separated inside that image folder by additional folders one per org 
     :ensure auctex)
 #+end_src
 
-* Shell stuff
+* Terminal/shell settings
 ** Eshell
 
 #+begin_src emacs-lisp
@@ -1359,8 +1363,18 @@ directory to make multiple eshell windows easier."
   (which-function-mode -1)))
 #+end_src
 
+** Run =kitty=
+Run =kitty= in current directory:
+#+begin_src emacs-lisp
+(defun run-kitty-here ()
+  (interactive)
+  (call-process "kitty" nil 0 nil "-d" (file-name-directory (or load-file-name buffer-file-name))))
+#+end_src
+
 ** Serial terminal
-#+begin_src emacs-lisp :tangle no
+
+Configuration options for [[http://kpda.ru/products/kpda00002/][KPDA QNX]]:
+#+begin_src emacs-lisp
   (defun jbz-serial-qnx-setup ()
     (interactive)
     (set-buffer-process-coding-system
@@ -1395,15 +1409,6 @@ Initialize ~yasnippet~ plugin itself:
   (define-key yas-minor-mode-map (kbd "<tab>") nil)
   (define-key yas-minor-mode-map (kbd "TAB") nil)
   (define-key yas-minor-mode-map (kbd "M-l") yas-maybe-expand))
-#+end_src
-
-* Auto parens
-#+begin_SRC emacs-lisp
-(use-package smartparens
-  :ensure t
-  :diminish
-  :config
-  (smartparens-global-mode))
 #+end_src
 
 * Spell checking
@@ -1733,14 +1738,6 @@ Re-create a =*scratch*= buffer (see [[https://www.emacswiki.org/emacs/RecreateSc
    (org-mode))
 #+end_src
 
-Open external terminal in current directory:
-#+begin_src emacs-lisp
-(defun run-kitty-here ()
-  (interactive)
-  (call-process "kitty" nil 0 nil "-d" (file-name-directory (or load-file-name buffer-file-name))))
-#+end_src
-
-* Exploring Emacs
 ** Profile startup with =ESUP=
 #+begin_src emacs-lisp
 (use-package esup
