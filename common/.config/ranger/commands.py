@@ -39,7 +39,7 @@ class my_edit(Command):
             # reference to the currently selected file.
             target_filename = self.fm.thisfile.path
 
-        # This is a generic function to print text in ranger.  
+        # This is a generic function to print text in ranger.
         self.fm.notify("Let's edit the file " + target_filename + "!")
 
         # Using bad=True in fm.notify allows you to print error messages:
@@ -153,6 +153,29 @@ class fzf_select(Command):
                 self.fm.cd(fzf_file)
             else:
                 self.fm.select_file(fzf_file)
+
+
+class fzf_rga_documents_search(Command):
+    """
+    :fzf_rga_search_documents
+    Search in PDFs, E-Books and Office documents. Allowed extensions: .epub, .odt, .docx, .fb2, .ipynb, .pdf.
+    Usage: fzf_rga_search_documents <search string>
+    """
+    def execute(self):
+        if self.arg(1):
+            search_string = self.rest(1)
+        else:
+            self.fm.notify("Usage: fzf_rga_search_documents <search string>", bad=True)
+            return
+
+        import subprocess
+        import os.path
+        command="rga '%s' . --rga-adapters=pandoc,poppler | fzf +m | awk -F':' '{print $1}'" % search_string
+        fzf = self.fm.execute_command(command, universal_newlines=True, stdout=subprocess.PIPE)
+        stdout, stderr = fzf.communicate()
+        if fzf.returncode == 0:
+            fzf_file = os.path.abspath(stdout.rstrip('\n'))
+            self.fm.open_file(fzf_file)
 
 
 # Command to quick scp to a remote machine.

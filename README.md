@@ -70,6 +70,7 @@ Tools
 -   **git** - version control system for tracking changes in files and
     coordinating the work
 -   **ag** - faster grep replacement
+-   [ripgrep-all](https://github.com/phiresky/ripgrep-all) – ripgrep, but also search in PDFs, E-Books, Office documents, zip, tar.gz, etc. 
 -   **bat** - a cat clone with additional features like git integration
     and syntax highlighting
 -   **python**
