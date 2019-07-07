@@ -18,6 +18,8 @@ This is my Emacs configuration file written as Org document.
 + [[https://github.com/andreyorst/dotfiles/tree/master/.emacs.d][andreyorst/dotfiles]] - Clean and easy to read emacs configuration in org-mode
 + [[https://github.com/IvanMalison/dotfiles/tree/master/dotfiles/emacs.d][IvanMalison/dotfiles]] (available in [[https://ivanmalison.github.io/dotfiles][readable format]])
 + [[https://github.com/kshenoy/dotfiles/blob/master/emacs.org][kshenoy/dotfiles]] another literate config with interesting solutions in org and evilmodes.
++ [[https://www.youtube.com/watch?v=GxMAPW9_LsA][2019-02-27: Emacs as a Python IDE - Sean Farley]] talk which demonstrate LSP and DAP usage for Python. See also: [[https://github.com/Emacs-SF/meetup-notes/blob/master/meetups/20190227.org#speaker-sean-farley][talk notes]] and [[https://bitbucket.org/seanfarley/dotfiles/src/default/][dotfiles]].
+
 
 * User info
 
@@ -519,8 +521,11 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
 *** Doom Modeline
 #+begin_src emacs-lisp
 (use-package doom-modeline
-      :ensure t
-      :hook (after-init . doom-modeline-mode))
+  :ensure t
+  :hook (after-init . doom-modeline-mode)
+  :config
+    (progn
+      (set-face-attribute 'doom-modeline-bar nil :background "#3c3836")))
 #+end_src
 
 #+begin_src emacs-lisp
@@ -882,6 +887,13 @@ Source: [[http://steve.yegge.googlepages.com/my-dot-emacs-file][Steve Yegge's .e
 Human readable units:
 #+begin_src emacs-lisp
 (setq-default dired-listing-switches "-alh")
+#+end_src
+
+All The Icons patch:
+#+begin_src emacs-lisp
+(use-package all-the-icons-dired
+  :ensure t
+  :hook (dired-mode . all-the-icons-dired-mode))
 #+end_src
 
 * Integration with ripgrep
@@ -1426,29 +1438,10 @@ Initialize ~yasnippet~ plugin itself:
   :ensure t)
 #+end_src
 
-* Writing code
-** General
+* Programming
+** General settings
 
 Here is some common settings and minor mode configurations available in all programming modes.
-
-*** Flycheck — Syntax checking for GNU Emacs
-#+begin_src emacs-lisp
-(use-package flycheck
-  :ensure t
-  :diminish "fc")
-#+end_src
-
-Disable flymake. =flycheck= is my choice.
-#+begin_src emacs-lisp :tangle no
-(add-hook 'prog-mode-hook '(lambda ()
-  (flymake-mode)))
-#+end_src
-
-Jump to errors:
-#+begin_src emacs-lisp
-(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
-(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
-#+end_src
 
 *** =hs-mode=: folding
 
@@ -1499,7 +1492,12 @@ Customize =???= in which-func-mode:
   (add-hook 'prog-mode-hook 'form-feed-mode))
 #+end_src
 
-*** =company-mode=: autocompletion
+*** Spaces > tabs
+#+begin_src emacs-lisp
+(setq-default indent-tabs-mode nil)
+#+end_src
+
+** Autocompletion with =company-mode=
 
 Company is a text completion framework for Emacs similar with vim's =deoplete=.
 #+begin_src emacs-lisp
@@ -1522,9 +1520,36 @@ Company is a text completion framework for Emacs similar with vim's =deoplete=.
   (add-hook 'prog-mode-hook 'company-mode))
 #+end_src
 
-*** Spaces > tabs
+** =flycheck.el= — Syntax checking plugin
 #+begin_src emacs-lisp
-(setq-default indent-tabs-mode nil)
+(use-package flycheck
+  :ensure t
+  :diminish "fc")
+#+end_src
+
+Disable flymake. =flycheck= is my choice.
+#+begin_src emacs-lisp :tangle no
+(add-hook 'prog-mode-hook '(lambda ()
+  (flymake-mode)))
+#+end_src
+
+Jump to errors:
+#+begin_src emacs-lisp
+(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
+(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
+#+end_src
+
+** DAP
+
+[[https://code.visualstudio.com/api/extension-guides/debugger-extension][DAP]] - is a wire protocol for communication between client and Debug Server. It’s similar to the LSP but provides integration with debug server.
+
+Note: =ptvsd= must should be installed: =pip install "ptvsd>=4.2"=.
+
+#+begin_src emacs-lisp
+(use-package dap-mode
+  :ensure t
+  :config
+  (require 'dap-python))
 #+end_src
 
 ** LSP
@@ -1554,6 +1579,14 @@ Company is a text completion framework for Emacs similar with vim's =deoplete=.
 (use-package company-lsp :commands company-lsp)
 #+end_src
 
+*** Microsoft’s python-language-server
+#+begin_src emacs-lisp
+(use-package lsp-python-ms
+  :ensure t
+  :demand
+  :hook (python-mode . lsp))
+#+end_src
+
 *** ccls extensions
 #+begin_src emacs-lisp
 (use-package ccls
@@ -1561,7 +1594,8 @@ Company is a text completion framework for Emacs similar with vim's =deoplete=.
          (lambda () (require 'ccls) (lsp))))
 #+end_src
 
-** LISP
+** Language-specific
+*** LISP
 
 Here is my configuration for following languages:
 + Scheme ([[https://www.call-cc.org/][Chicken Scheme]])
@@ -1587,7 +1621,7 @@ For Racket, [[https://github.com/greghendershott/racket-mode][racket-mode]] look
   :ensure t)
 #+end_src
 
-*** Some general settings
+**** Some general settings
 
 Treat dash as part of word:
 #+begin_src emacs-lisp
@@ -1614,7 +1648,7 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 (add-hook 'racket-repl-mode-hook 'my-add-pretty-lambda)
 #+end_src
 
-*** Lispy & LispyVille
+**** Lispy & LispyVille
 
 [[https://github.com/abo-abo/lispy][Lispy]] is vi-inspired plugin that provides useful keybindings for editing LISP sources. It looks pretty interesting, but unfamiliar for me as native vim user. So, my choice is [[https://github.com/noctuid/lispyville][LispyVille]] that serve as a minimal layer on top of lispy-mode for better integration with evil.
 #+begin_src emacs-lisp
@@ -1629,7 +1663,7 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
 #+end_src
 
-*** Rainbow delimiters
+**** Rainbow delimiters
 
 =rainbow-delimiters= mode is too distracting to use for languages other than Lisp.
 #+begin_src emacs-lisp
@@ -1643,9 +1677,9 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
 #+end_src
 
-** C/C++
+*** C/C++
 
-*** Common
+**** Common
 #+begin_src emacs-lisp
 (add-hook 'c-mode-common-hook '(lambda ()
   (setq indent-tabs-mode t
@@ -1664,7 +1698,7 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 (modify-syntax-entry ?_ "w" c-mode-syntax-table)
 #+end_src
 
-*** Explore C/C++ code
+**** Explore C/C++ code
 
 =distater=: disassemble C/C++ code under cursor:
 #+begin_src emacs-lisp
@@ -1693,7 +1727,7 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
   (shell-command (concat "readelf -S " file) "*readelf*"))
 #+end_src
 
-** Rust
+*** Rust
 
 [[https://github.com/brotzeit/rustic][rustic]] - Rust development environment for Emacs. =org-babel= integration it's his strength.
 #+begin_src emacs-lisp
@@ -1713,7 +1747,7 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 (evil-declare-key 'normal rust-mode-map ",Ef" 'rust-format-buffer)
 #+end_src
 
-** Python
+*** Python
 
 #+begin_src emacs-lisp :tangle no
 (modify-syntax-entry ?- "w" python-mode-syntax-table)
