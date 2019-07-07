@@ -17,7 +17,6 @@ set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 set $APP_TELEGRAM $HOME/.local/bin/Telegram
 set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
 set $APP_THUNDERBIRD /usr/bin/thunderbird
-set $APP_VNOTE $HOME/.local/bin/VNote
 
 # Windows behavior
 floating_modifier $mod
@@ -98,6 +97,7 @@ for_window [class="^Slack$"] move container to workspace 13$tile_13_msg
 for_window [class="TelegramDesktop"] move container to workspace 13$tile_13_msg
 for_window [class="^Thunderbird$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
+for_window [title="^PLCOpenEditor$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^xev$"] floating enable
 for_window [title="^Debug" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
 for_window [title="^Run" class="jetbrains-pycharm"] floating disable, move container to workspace 10$tile_10_2
@@ -121,10 +121,10 @@ bindsym $mod+Shift+B border toggle
 bindsym $mod+Shift+ampersand layout toggle split
 
 # Workspaces
-#bindsym $mod+bracketleft workspace prev
-#bindsym $mod+bracketright workspace next
-#bindsym $mod+Shift+R move workspace prev
-#bindsym $mod+Shift+U move workspace next
+# bindsym $mod+bracketleft workspace prev
+# bindsym $mod+bracketright workspace next
+# bindsym $mod+Shift+braceleft move workspace prev
+# bindsym $mod+Shift+braceright move workspace next
 
 # Move workspaces through monitors
 bindsym $mod+Shift+underscore move workspace to output left
@@ -169,6 +169,7 @@ bindsym $mod+m workspace number 14$tile_14_music
 # Control urgent workspaces
 bindsym $mod+u [urgent=latest] focus
 bindsym $mod+Control+u exec --no-startup-id $SCRIPTS_PATH/i3/unset-urgent
+bindsym $mod+Shift+u exec $SCRIPTS_PATH/i3/set-urgent-with-delay
 
 # Move focused container to workspace
 bindsym $mod+Shift+Q move container to workspace 1$tile_01_q
@@ -197,7 +198,6 @@ bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
-bindsym $mod+Control+v exec $APP_VNOTE
 bindsym $mod+Control+a exec anki # start or focus
 bindsym $mod+Control+z exec zeal # start or focus
 bindsym $mod+Control+F10 workspace 1$tile_01_q; exec $APP_JBTOOLBOX
@@ -209,7 +209,7 @@ bindsym $mod+F7 exec sleep 1 && xset dpms force off
 
 # Rofi
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
-bindsym $mod+F2 exec $SCRIPTS_PATH/rofi/google
+bindsym $mod+BackSpace exec "rofi -show window"
 
 # Additional scripts/utils
 bindsym $mod+F10 exec $SCRIPTS_PATH/i3/toggle-notifications
@@ -218,7 +218,7 @@ bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='C
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
 bindsym Control+XF86Launch1 exec screengrab -r
-bindsym Shift+XF86Launch1 exec notify-send " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=7 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
 bindsym $mod+XF86ScreenSaver exec xset s activate
 bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
@@ -289,13 +289,13 @@ mode --pango_markup "$mode_exec_apps" {
 # }}}
 # {{{ Power control
 set $mode_exec_power <span bgcolor='#9d0006' fgcolor='#282828'> Power management</span>\t\t\
-<span bgcolor='#a89984' fgcolor='#282828'>[S]</span><span fgcolor='#a89984'>  poweroff\t</span>  \
-<span bgcolor='#a89984' fgcolor='#282828'>[R]</span><span fgcolor='#a89984'>  reboot\t</span>  \
-<span bgcolor='#a89984' fgcolor='#282828'>[s]</span><span fgcolor='#a89984'>  sleep</span>
+<span bgcolor='#a89984' fgcolor='#282828'>[S ]</span><span fgcolor='#a89984'>  poweroff\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[F5]</span><span fgcolor='#a89984'>  reboot\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[s ]</span><span fgcolor='#a89984'>  sleep</span>
 bindsym $mod+Control+Delete mode "$mode_exec_power"
 mode --pango_markup "$mode_exec_power" {
 	bindsym Shift+s     exec systemctl poweroff; mode "default"
-	bindsym R           exec systemctl reboot; mode "default"
+    bindsym F5           exec systemctl reboot; mode "default"
 	bindsym s           exec systemctl suspend; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
@@ -347,7 +347,6 @@ bar {
     binding_mode_indicator yes
     # status_command i3blocks
     status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
-    # status_command /usr/local/bin/i3status
     colors {
         background		#282828
         statusline		#a89984

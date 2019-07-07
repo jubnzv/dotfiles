@@ -40,6 +40,7 @@ then
 fi
 
 select=$(ls --group-directories-first --color=never --indicator-style=slash | _rofi -dmenu -mesg "Note" -p "> ")
+
 note=$NOTES_DIR/$select
 if [ ! -f $note ] && [[ ! $note =~ .*.md$ ]]; then
     note=$NOTES_DIR/${select///}.md

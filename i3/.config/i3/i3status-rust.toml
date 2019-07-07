@@ -4,7 +4,7 @@ name = "awesome"
 [theme]
 name = "gruvbox-dark"
 [theme.overrides]
-separator = ""
+separator=""
 idle_bg = "#282828"
 idle_fg = "#bdae93"
 info_bg = "#282828"
@@ -20,6 +20,12 @@ critical_fg = "#cc241d"
 block = "sound"
 
 [[block]]
+block = "custom"
+command = "if [[ -f /tmp/dunst-notifications-disabled ]]; then echo ; fi"
+on_click = "/home/jubnzv/Scripts/i3/toggle-notifications"
+interval = 10
+
+[[block]]
 block = "backlight"
 device = "intel_backlight"
 
@@ -28,11 +34,11 @@ block = "disk_space"
 path = "/"
 alias = "/"
 info_type = "available"
-show_percentage = true
-# unit = "Percent"
+# show_percentage = true
+unit = "Percent"
 interval = 30
-warning = 20.0
-alert = 10.0
+warning = 15
+alert = 5
 
 [[block]]
 block = "memory"
