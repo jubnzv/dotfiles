@@ -78,10 +78,12 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'
 Plug 'cespare/vim-toml'
 Plug 'aklt/plantuml-syntax'
+Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'rhysd/vim-grammarous' " A powerful grammar checker using LanguageTool
 Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug '~/Dev/IEC.vim'
 
 call plug#end()
 " }}}
@@ -1030,6 +1032,11 @@ endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev mp MarkdownPreview
 au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
+" }}}
+
+" {{{ Plant UML
+au! BufNewFile,BufReadPost *.{uml,puml} set filetype=plantuml
+au FileType plantuml set spell! spelllang=en_us,ru_yo
 " }}}
 
 " {{{ Other ft-specific autocommands
