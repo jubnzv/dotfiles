@@ -33,6 +33,7 @@ Plug 'junegunn/vim-peekaboo'          " Shows vim registers content into vertica
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
+Plug 'chrisbra/NrrwRgn'               " Narrowing feature from emacs
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
@@ -51,7 +52,7 @@ Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
-Plug 'scrooloose/nerdcommenter'
+Plug 'scrooloose/nerdcommenter'       " Comment plugin
 Plug 'Shougo/neosnippet.vim'
 Plug 'Shougo/neosnippet-snippets'
 Plug 'Shougo/deoplete.nvim', {
@@ -64,11 +65,12 @@ Plug 'autozimu/LanguageClient-neovim', {
 Plug 'jubnzv/DoxygenToolkit.vim'
 Plug 'LucHermitte/lh-vim-lib'         " Dependency for alternate-lite
 Plug 'LucHermitte/alternate-lite'     " Switch between source and header
-Plug '~/Dev/IEC.vim'
+Plug 'vhda/verilog_systemverilog.vim' " Verilog/SystemVerilog Syntax and Omni-completion
 Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
 Plug 'jpalardy/vim-slime'             " Some slime in my vim.
 Plug 'wlangstroth/vim-racket'         " Racket mode
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
+Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'
 Plug 'dhruvasagar/vim-table-mode'
@@ -180,10 +182,6 @@ au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g
 
 " {{{ Common
 inoremap jj <Esc>
-inoremap <M-t> TODO 
-nnoremap <M-t> iTODO <ESC>4h
-inoremap <M-x> xxx 
-nnoremap <M-x> ixxx <ESC>3h
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>xc :q<CR>
 nnoremap <leader>s :w<CR>
@@ -197,6 +195,9 @@ nnoremap Y y$
 
 " Reload vimrc
 nnoremap <leader>Rc :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+
+" Update plugins
+nnoremap <leader>Rp :PlugUpdate<CR>
 
 " Free <F1>
 nmap <F1> :echo <CR>
@@ -620,7 +621,6 @@ let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
 let g:NERDAltDelims_c = 1
 
-" Commenting by <C-/> like Intellij
 if has('win32')
   nmap <C-/> <leader>c<Space>
   vmap <C-/> <leader>c<Space>
@@ -674,8 +674,8 @@ function! NearestMethodOrFunction() abort
 endfunction
 autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
-nnoremap <F7> :Vista!!<CR>
-nnoremap <A-7>:Vista focus<CR>
+nnoremap <silent> <F7> :Vista!!<CR>
+nnoremap <silent> <A-7>:Vista focus<CR>
 " }}}
 
 " {{{ syntastic
@@ -693,15 +693,18 @@ cnoreabbrev sc SyntasticCheck
 " Run it only manually.
 let g:syntastic_mode_map={'mode': 'passive'}
 
-let g:syntastic_c_checkers = ['cppcheck']
-let g:syntastic_cpp_checkers = ['cppcheck']
+let g:syntastic_c_checkers = ['cppcheck', 'gcc']
+let g:syntastic_cpp_checkers = ['cppcheck', 'gcc']
+let g:syntastic_python_checkers = ['pyflakes']
+let g:syntastic_bash_checkers = ['shellcheck']
 " }}}
 
 " {{{ deoplete
 let g:deoplete#enable_at_startup = 1
 inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
 inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr><A-l> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr><A-l> pumvisible() ? "\<CR>" : ""
 inoremap <expr><A-o> deoplete#mappings#manual_complete()
 
 call deoplete#custom#source('_',
@@ -766,7 +769,7 @@ function! LCKeymap()
     nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
     nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
     " Editing
-    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<cr>
+    nnoremap <silent> <leader>cf :call LanguageClient#textDocument_formatting()<cr>
   endif
 endfunction
 " }}}
@@ -872,8 +875,11 @@ nmap <leader>vv <Plug>GitGutterPreviewHunk
 nmap <leader>v- <Plug>GitGutterUndoHunk
 nmap <leader>v= <Plug>GitGutterStageHunk
 nmap <leader>vs :Gstatus<cr>
+nmap <leader>vp :Gpull<cr>
+nmap <leader>vP :Gpush 
 nmap <leader>ve :Gedit 
-nmap <leader>vd :Gdiff 
+nmap <leader>vd :Gdiff HEAD
+nmap <leader>vD :Git! diff<cr>
 nmap <leader>vb :Gblame<cr>
 nmap <leader>vl :Glog<cr>:copen<cr>
 nmap <leader>vB :Twiggy<cr>
@@ -900,6 +906,8 @@ omap i/ <Plug>(textobj-comment-i)
 au FileType c,cpp setlocal tw=80
 au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
 au FileType c,cpp call LCKeymap()
+
+
 " Use C filetype for headers by default
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
@@ -919,6 +927,12 @@ au FileType c,cpp setlocal cinoptions+=l1
 " Autoformat on save
 " au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
 " au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
+
+" Autoformatting with clang-format
+autocmd FileType c,cpp,objc nnoremap <buffer><leader>cf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><leader>cf :ClangFormat<CR>
+nmap <leader>tf :ClangFormatAutoToggle<CR>
+" autocmd FileType c ClangFormatAutoEnable
 
 " {{{ Commands and binds
 au FileType c call CmdC()
@@ -1019,12 +1033,12 @@ au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
 au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
-au FileType markdown nnoremap <F7> :Vista toc<CR>
+" au FileType markdown nnoremap <F7> :Vista toc<CR>
 
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
 let g:mkdp_auto_close = 0
-" Open preview in new firefox window
+" Open preview in a new firefox window
 " [1]: https://github.com/iamcco/markdown-preview.nvim/issues/19#issuecomment-464338238
 function! g:OpenBrowser(url)
   silent exe 'silent !open -a "firefox --new-window " ' . a:url
@@ -1067,7 +1081,7 @@ au FileType gitcommit inoremap <buffer> -><space> →<space>
 au FileType gitcommit inoremap <buffer> =><space> ⇒<space>
 " }}}
 
-" {{{ Toggle features
+" {{{ Toggle settings functions
 function! ToggleConceal()
   if (&conceallevel == 0)
     set conceallevel=1
@@ -1137,7 +1151,7 @@ function! ToggleHex()
   endif
 endfunction
 
-nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
+" nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
 nnoremap <leader>tl :call ToggleLSP()<CR>
