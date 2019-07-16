@@ -24,9 +24,6 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
     # Auto-close and delete matching delimiters
 	zplug "hlissner/zsh-autopair", defer:2
 
-    # Autojump
-    zplug "rupa/z", use:z.sh
-
     # Install plugins if not all are installed
     if ! zplug check; then
         zplug install
@@ -38,6 +35,11 @@ fi
 # }}}
 
 fpath=( ~/.zfunc "${fpath[@]}" )
+
+# {{{ fasd
+# have a (any), s (show), z (cd), etc.
+eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
+# }}}
 
 # {{{ Options
 # PATH
@@ -79,6 +81,9 @@ autoload -Uz vcs_info        # Show git branch name
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats '  %b'
 setopt prompt_subst
+
+zstyle ':zce:*' fg 'fg=124,bold'
+zstyle ':zce:*' bg 'fg=7'
 
 function precmd() {
     vcs_info
@@ -363,6 +368,7 @@ pkill_cq() {
 
 # {{{ Keybinds
 bindkey -e                        # Enable emacs-mode
+
 autoload -Uz compinit && compinit # Command completion
 bindkey "^[;" zce                 # easymotion
 
@@ -381,11 +387,9 @@ zle -N backward-kill-dir
 bindkey '^[^?' backward-kill-dir
 
 bindkey -s "\ei" "^Qvimfzf .^J" # Select file with fzf and open in vim
-bindkey -s "\et" "^Qtmp^J"      # Select tmuxp session and attach
+bindkey -s "\et" "^Qtmp^J"      # Select tmuxp session fzf and attach
 bindkey -s "\el" "^Qls^J"       # ls
 # }}}
-
-# {{{ Plugins
 
 # {{{ fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
@@ -435,19 +439,15 @@ function vmans() {
 
 # Disable <TAB> completion
 bindkey '^I' $fzf_default_completion
-# }}}
 
-# {{{ z
-export _Z_EXCLUDE_DIRS=(
-    $HOME/Work/Beremiz/Projects
-)
-# }}}
-
-# {{{ zce
-zstyle ':zce:*' fg 'fg=124,bold'
-zstyle ':zce:*' bg 'fg=7'
-# }}}
-
+function fzf-fasd-dir() {
+	# otherwise will end up as a cdable var
+	local dir
+	dir="$(fasd -ds | fzf --tac | awk '{print $2}')" && \
+	cd "$dir"
+}
+zle -N fzf-fasd-dir
+bindkey "^[c" fzf-fasd-dir
 # }}}
 
 # {{{ Autocompletion

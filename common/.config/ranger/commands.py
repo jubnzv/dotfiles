@@ -15,49 +15,20 @@ from ranger.core.loader import CommandLoader
 # You can import any python module as needed.
 import os
 
-# Any class that is a subclass of "Command" will be integrated into ranger as a
-# command.  Try typing ":my_edit<ENTER>" in ranger!
-class my_edit(Command):
-    # The so-called doc-string of the class will be visible in the built-in
-    # help that is accessible by typing "?c" inside ranger.
-    """:my_edit <filename>
 
-    A sample command for demonstration purposes that opens a file in an editor.
+class fasd(Command):
     """
+    :fasd
 
-    # The execute method is called when you run this command in ranger.
+    Jump to directory using fasd
+    """
     def execute(self):
-        # self.arg(1) is the first (space-separated) argument to the function.
-        # This way you can write ":my_edit somefilename<ENTER>".
-        if self.arg(1):
-            # self.rest(1) contains self.arg(1) and everything that follows
-            target_filename = self.rest(1)
-        else:
-            # self.fm is a ranger.core.filemanager.FileManager object and gives
-            # you access to internals of ranger.
-            # self.fm.thisfile is a ranger.container.file.File object and is a
-            # reference to the currently selected file.
-            target_filename = self.fm.thisfile.path
+        import subprocess
+        arg = self.rest(1)
+        if arg:
+            directory = subprocess.check_output(["fasd", "-d"]+arg.split(), universal_newlines=True).strip()
+            self.fm.cd(directory)
 
-        # This is a generic function to print text in ranger.
-        self.fm.notify("Let's edit the file " + target_filename + "!")
-
-        # Using bad=True in fm.notify allows you to print error messages:
-        if not os.path.exists(target_filename):
-            self.fm.notify("The given file does not exist!", bad=True)
-            return
-
-        # This executes a function from ranger.core.acitons, a module with a
-        # variety of subroutines that can help you construct commands.
-        # Check out the source, or run "pydoc ranger.core.actions" for a list.
-        self.fm.edit_file(target_filename)
-
-    # The tab method is called when you press tab, and should return a list of
-    # suggestions that the user will tab through.
-    def tab(self):
-        # This is a generic tab-completion function that iterates through the
-        # content of the current directory.
-        return self._tab_directory_content()
 
 # Archive extraction command
 class extracthere(Command):
@@ -158,7 +129,8 @@ class fzf_select(Command):
 class fzf_rga_documents_search(Command):
     """
     :fzf_rga_search_documents
-    Search in PDFs, E-Books and Office documents. Allowed extensions: .epub, .odt, .docx, .fb2, .ipynb, .pdf.
+    Search in PDFs, E-Books and Office documents in current directory.
+    Allowed extensions: .epub, .odt, .docx, .fb2, .ipynb, .pdf.
     Usage: fzf_rga_search_documents <search string>
     """
     def execute(self):
@@ -170,12 +142,13 @@ class fzf_rga_documents_search(Command):
 
         import subprocess
         import os.path
+        from ranger.container.file import File
         command="rga '%s' . --rga-adapters=pandoc,poppler | fzf +m | awk -F':' '{print $1}'" % search_string
         fzf = self.fm.execute_command(command, universal_newlines=True, stdout=subprocess.PIPE)
         stdout, stderr = fzf.communicate()
         if fzf.returncode == 0:
             fzf_file = os.path.abspath(stdout.rstrip('\n'))
-            self.fm.open_file(fzf_file)
+            self.fm.execute_file(File(fzf_file))
 
 
 # Command to quick scp to a remote machine.
@@ -210,3 +183,15 @@ class upload(Command):
         # remove any wildcard host settings since they're not real servers
         hosts.discard("*")
         return (self.start(1) + host + ":" for host in hosts)
+
+
+class tmsu_tag(Command):
+    """:tmsu_tag
+
+    Tags the current file with tmsu
+    """
+
+    def execute(self):
+        cf = self.fm.thisfile
+
+        self.fm.run("tmsu tag \"{0}\" {1}".format(cf.basename, self.rest(1)))
