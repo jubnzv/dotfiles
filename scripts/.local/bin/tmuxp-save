@@ -1,0 +1,89 @@
+#!/usr/bin/env bash
+#
+# Save current tmuxp session in .yaml configuration file.
+# If it doesn't exists, create new one.
+#
+set -euo pipefail
+
+# If we have a STDIN, use it, otherwise get one
+if tty >/dev/null 2>&1; then
+    TTY=$(tty)
+else
+    TTY=/dev/tty
+fi
+
+ask() {
+    while true; do
+        if [ "${2:-}" = "Y" ]; then
+            prompt="Y/n"
+            default=Y
+        elif [ "${2:-}" = "N" ]; then
+            prompt="y/N"
+            default=N
+        else
+            prompt="y/n"
+            default=
+        fi
+
+        # Ask the question (not using "read -p" as it uses stderr not stdout)
+        echo -n "$1 [$prompt] "
+
+        # Read the answer
+        read REPLY < "$TTY"
+
+        # Default?
+        if [ -z "$REPLY" ]; then
+            REPLY=$default
+        fi
+
+        # Check if the reply is valid
+        case "$REPLY" in
+            Y*|y*) return 0 ;;
+            N*|n*) return 1 ;;
+        esac
+
+        done
+}
+
+save_tmuxp() {
+    fpath="$HOME/.tmuxp/${1}.yaml"
+    session_name=$1
+
+    rm -f $fpath
+
+    echo "
+    y
+
+    y
+    " | tmuxp freeze ${session_name} >/dev/null 2>&1
+
+    echo "$session_name was saved."
+    return 0
+}
+
+if [[ -z "$TMUX" ]]; then
+    echo "tmux is not running."
+    exit 1
+fi
+if [[ ! -x "$(command -v tmuxp)" ]]; then
+    echo "tmuxp: command not found"
+    exit 1
+fi
+
+session=`tmux display-message -p '#S'`
+
+if [ -f "$HOME/.tmuxp/${session}.yaml" ]; then
+    save_tmuxp $session
+    exit 0
+fi
+
+echo ""$HOME/.tmuxp/${session}.yaml" is inaccessible"
+if ask "Create new configuration?"; then
+    save_tmuxp $session
+    exit 0
+else
+    echo "Bailing out."
+    exit 1
+fi
+
+# vim: set ft=sh :
