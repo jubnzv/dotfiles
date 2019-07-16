@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+#
+# Edit current tmuxp session. If it doesn't exits, you should first create it
+# with 'tmuxp-save' script.
+#
+set -euo pipefail
+
+if [[ -z "$TMUX" ]]; then
+    echo "tmux is not running."
+    exit 1
+fi
+if [[ -z "$EDITOR" ]]; then
+    EDITOR="vim"
+fi
+
+session=`tmux display-message -p '#S'`
+fpath="$HOME/.tmuxp/${session}.yaml"
+
+if [ ! -f $fpath ]; then
+    echo $fpath is inaccessable!
+    echo 'Use tmuxp-save to save current session.'
+    exit 127
+fi
+
+$EDITOR $fpath
+
+# vim: set ft=sh :
