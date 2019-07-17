@@ -34,6 +34,8 @@ Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
 Plug 'chrisbra/NrrwRgn'               " Narrowing feature from emacs
+Plug 'thiagoalessio/rainbow_levels.vim' " Highlights code by indentation level
+Plug 'luochen1990/rainbow'            " Rainbow Parentheses
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
@@ -1102,14 +1104,6 @@ function! ToggleNumber()
   endif
 endfunction
 
-function! ToggleFoldColumn()
-  if(&foldcolumn != 0)
-    set foldcolumn=0
-  else
-    set foldcolumn=3
-  endif
-endfunction
-
 function! Togglegjgk()
   if !exists("g:togglegjgk") || g:togglegjgk==0
     let g:togglegjgk=1
@@ -1151,7 +1145,6 @@ function! ToggleHex()
   endif
 endfunction
 
-" nnoremap <leader>tfc :call ToggleFoldColumn()<CR>
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
 nnoremap <leader>tl :call ToggleLSP()<CR>
@@ -1159,6 +1152,8 @@ nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
+nnoremap <leader>ti :RainbowLevelsToggle<cr>
+nnoremap <leader>tr :RainbowLevelsToggle<cr>
 " }}}
 
 " vim:fdm=marker:fen:sw=2:tw=120
