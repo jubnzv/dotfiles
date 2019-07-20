@@ -192,6 +192,11 @@ alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
 
+# emacs
+alias e='emacsclient -t'
+alias em='emacsclient -t'
+alias Em='emacs -nw'
+
 # tmux
 alias tm='tmux'
 alias tmp='find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y; tmux attach'
@@ -225,11 +230,37 @@ vnf() {
     nvim $(find ~/Org/Notes/ -type f | fzf)
 }
 
-# git
+# {{{ git
 alias g='git'
+
+alias gh='git help'
+
+alias gb='git branch'
+alias gbd='git branch --delete'
+alias gbdd='git branch --delete --force'
+
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
+
+alias gdl="git diff --unified=0 | grep -Po '(?<=^\+)(?!\+\+).*'"
+
+alias gf='git fetch --prune'
+alias gfa='git fetch --prune --all'
+
+alias gsm='git submodule'
+alias gsma='git submodule add'
+alias gsmi='git submodule init'
+alias gsmu='git submodule update'
+alias gsmui='git submodule update --init --recursive'
+alias gsmy='git submodule sync'
+#  }}}
+
+# {{{ apt
+alias ap='apt-get'
+alias apu='apt-get update'
+alias aps='apt-cache search'
+# }}}
 
 # zsh
 alias _up source ~/.zshrc
