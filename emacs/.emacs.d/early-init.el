@@ -1,6 +1,4 @@
 ;; -*- lexical-binding: t -*-
-;; * Improve Startup Speed
-;; ** Kill package.el
 ;; Must use early init file as of Emacs 27
 
 ;; ** Disable Tool Bar, Menu Bar, and Scroll Bar
@@ -13,3 +11,7 @@
 
 ;; ** Set Font
 (push '(font . "Iosevka-12") default-frame-alist)
+
+;; We don't use package.el. This needs to happen here because
+;; package.el gets initialized before loading the regular init-file.
+(setq package-enable-at-startup nil)
