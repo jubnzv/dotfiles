@@ -23,30 +23,11 @@ abbr #ifndef ... #define ... #endif
 snippet pr
 abbr    printf("...\n", ...);
     printf("${1}\n"${2});
-snippet prp
-    printf("%ld: ${1}\n", (long)getpid()${2});
-snippet prpp
-    printf("%ld:%ld: ${1}\n", (long)getppid(), (long)getpid()${2});
-snippet prt
-    printf("%ld: ${1}\n", (long)pthread_self()${2});
-
-# {{{ Debug prints
 # :g/\/\/\ prdbg$/d to clean them all
-snippet     prd
-alias       prdbg
+snippet     print_debug
+alias       prd
 options     head
-    printf("%s:%d ${1}\n", __func__, __LINE__${2}); // prdbg
-snippet     prdh
-options     head
-    printf("%s:%d\n", __func__, __LINE__); // prdbg
-snippet     prda
-options     head
-    printf("%s:%d ${1}=%${2:fmt}\n", __func__, __LINE__, $1); // prdbg
-    ${0}
-snippet     prdk
-options     head
-    printk("%s:%d ${1}\n", __func__, __LINE__${2}); // prdbg
-# }}}
+    printf("%s:%d ${1:#:here}\n", __func__, __LINE__${2:#:}); // prdbg
 
 # Print bits of integer
 snippet prb

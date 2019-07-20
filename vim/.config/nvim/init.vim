@@ -105,7 +105,12 @@ set showmatch                               " Show matching brackets when text i
 set mat=1                                   " How many tenths of a second to blink when matching brackets
 set wildmenu                                " wildmenu: command line completion
 set wildmode=longest,list,full
-set wildignore=*.o,*~,*.pyc,*.aux,*.out,*.toc
+set wildignore+=*.o                         " Compiled object files
+set wildignore+=*.pyc                       " Python bytecode
+set wildignore+=*.aux,*.out,*.toc           " LaTeX output
+set wildignore+=*.jpg,*.jpeg,*.gif,*.png    " Binary images
+set wildignore+=.hg,.git,.svn               " VCS
+set wildignore+=*~                          " Backup files
 set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
 set notimeout                               " Remove delay between complex keybindings.
 set noautochdir                             " Set working directory to the current file
@@ -116,6 +121,7 @@ set tabstop=4
 set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
+set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
 
 " Default conceal settings.
 " concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
@@ -771,7 +777,7 @@ function! LCKeymap()
     nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
     nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
     " Editing
-    nnoremap <silent> <leader>cf :call LanguageClient#textDocument_formatting()<cr>
+    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<cr>
   endif
 endfunction
 " }}}
@@ -904,11 +910,11 @@ omap i/ <Plug>(textobj-comment-i)
 " }}}
 
 " {{{ C/C++
-" au FileType c,cpp setlocal commentstring=//\ %s
+au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp setlocal tw=80
 au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
 au FileType c,cpp call LCKeymap()
-
+au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
 
 " Use C filetype for headers by default
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
@@ -926,25 +932,10 @@ au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>
 " Align statements relative to case label
 au FileType c,cpp setlocal cinoptions+=l1
 
-" Autoformat on save
-" au BufWritePre *.cpp :call LanguageClient#textDocument_formatting_sync()
-" au BufWritePre *.hpp :call LanguageClient#textDocument_formatting_sync()
-
 " Autoformatting with clang-format
-autocmd FileType c,cpp,objc nnoremap <buffer><leader>cf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer><leader>cf :ClangFormat<CR>
+autocmd FileType c,cpp,objc nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
+autocmd FileType c,cpp,objc vnoremap <buffer><leader>lf :ClangFormat<CR>
 nmap <leader>tf :ClangFormatAutoToggle<CR>
-" autocmd FileType c ClangFormatAutoEnable
-
-" {{{ Commands and binds
-au FileType c call CmdC()
-function! CmdC()
-    " Clean debug prints from `prdbg` snippet
-    command! CleanDebugPrints :g/\/\/\ prdbg$/d
-    nnoremap <leader>rd :CleanDebugPrints<CR>
-endfunction
-" }}}
-
 " }}}
 
 " {{{ Lisp-family languages
@@ -1034,8 +1025,8 @@ au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
-au FileType markdown nmap <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
-" au FileType markdown nnoremap <F7> :Vista toc<CR>
+au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
+au FileType markdown nnoremap <buffer> <F7> :Vista toc<CR>
 
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
@@ -1153,7 +1144,7 @@ nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 nnoremap <leader>ti :RainbowLevelsToggle<cr>
-nnoremap <leader>tr :RainbowLevelsToggle<cr>
+nnoremap <leader>tr :RainbowToggle<cr>
 " }}}
 
 " vim:fdm=marker:fen:sw=2:tw=120
