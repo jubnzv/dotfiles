@@ -38,6 +38,9 @@ map <A-\<> goto top
 map <A-\>> goto bottom
 map <A-v> scroll full-up
 
+# Show only the file name in the window title.
+set window-title-basename true
+
 # Gruvbox dark theme
 # https://github.com/Mange/dotfiles/blob/master/config/zathura/zathurarc
 # https://github.com/morhetz/gruvbox-contrib/issues/40
