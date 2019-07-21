@@ -1309,12 +1309,49 @@ directory to make multiple eshell windows easier."
   (which-function-mode -1)))
 #+end_src
 
-** Run =kitty=
-Run =kitty= in current directory:
+** Start dropdown terminal
+
+Dropdown terminal implemented using [[https://github.com/noctuid/tdrop/blob/master/tdrop][tdrop]] script by noctuid.
 #+begin_src emacs-lisp
-(defun run-kitty-here ()
+(defvar tdrop-session-name nil
+  "tmux session name for tdrop.")
+
+(defvar tdrop-start-directory nil
+  "Start directory for tdrop session.")
+
+(defun jbz:tdrop-session-name ()
+  "Generate tmux session name for dropdown terminal."
+  (setq tdrop-session-name (projectile-project-name))
+  ; Create per-buffer sessions for non-project files
+  (when (string= tdrop-session-name "-")
+        (setq tdrop-session-name (buffer-file-name)))
+  ; Default value when called from default buffers (like *scratch*)
+  (unless tdrop-session-name
+        (setq tdrop-session-name "dropdown"))
+  tdrop-session-name)
+
+(defun jbz:tdrop-start-directory ()
+  "Dispatch current directory for dropdown terminal."
+  (setq tdrop-start-directory (projectile-project-root))
+  (unless tdrop-start-directory
+    (if buffer-file-name
+      (setq tdrop-start-directory (file-name-directory buffer-file-name))
+      (setq tdrop-start-directory "~")))
+  tdrop-start-directory)
+
+(defun run-tdrop-here ()
   (interactive)
-  (call-process "kitty" nil 0 nil "-d" (file-name-directory (or load-file-name buffer-file-name))))
+  (call-process "~/.local/bin/tdrop"
+                nil nil nil
+                "-a"
+                "-w" "700"
+                "-h" "768"
+                "-x" "666"
+                "-s" (format "e-%s" (jbz:tdrop-session-name))
+                "-f" (format "-d %s" (jbz:tdrop-start-directory))
+                "kitty"))
+
+(general-def "M-\\" #'run-tdrop-here)
 #+end_src
 
 ** Serial terminal
