@@ -1354,6 +1354,49 @@ Dropdown terminal implemented using [[https://github.com/noctuid/tdrop/blob/mast
 (general-def "M-\\" #'run-tdrop-here)
 #+end_src
 
+** Vterm
+#+begin_src emacs-lisp
+(defun jbz:vterm-kill-buffers (buffer)
+  "Automatically kill buffer when vterm exits."
+  (if buffer (kill-buffer buffer)))
+
+;; TODO: Somehow vterm enables cursor blinking after the start.
+;; See: https://github.com/akermu/emacs-libvterm/issues/98
+(defun jbz:vterm-restore-blink (buffer)
+  "Disable blink-cursor-mode."
+  (blink-cursor-mode 0))
+
+(defun jbz:vterm-set-emacs-mode ()
+  "Set emacs keybindings for a terminal."
+   (evil-emacs-state))
+
+(use-package vterm
+  :init
+  ;; Not defined, vterm checks boundp for some reason
+  (defvar vterm-install t)
+  :config
+  (add-hook 'vterm-mode-hook #'jbz:vterm-set-emacs-mode)
+  (add-to-list 'vterm-exit-functions #'jbz:vterm-kill-buffers)
+  (add-to-list 'vterm-exit-functions #'jbz:vterm-restore-blink)
+  ;; TODO: Consider usage of minimal zsh configuration file to
+  ;;       reduce startup time (~0.6 sec now).
+  (gsetq vterm-shell "zsh"
+         ;; Set colors pallette suitable for doom-vibrant theme
+         ;; Reference: https://raw.githubusercontent.com/joshdick/onedark.vim/master/img/color_reference.png
+         ansi-color-names-vector
+         ["#282c34" "#e06c75" "#98c379" "#e5c07b" "#61afef" "#c678dd" "#56b6c2" "#abb2bf"]
+         ;; increase scrollback
+         vterm-max-scrollback 10000))
+
+(use-package vterm-toggle
+  :straight (vterm-toggle
+             :type git
+             :host github
+             :repo "jixiuf/vterm-toggle")
+  :general
+  ('normal 'override "T" #'vterm-toggle-cd))
+#+end_src
+
 ** Serial terminal
 
 Configuration options for [[http://kpda.ru/products/kpda00002/][KPDA QNX]]:
