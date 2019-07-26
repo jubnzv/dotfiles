@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: doxygen_brief
+# key: dxbrief
+# --
+/** @brief $0 */

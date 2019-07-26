@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: def_max
+# key: def_max
+# --
+#define max(a, b) ((a) > (b) ? (a) : (b))

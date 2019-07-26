@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: exf
+# key: exf
+# --
+exit(EXIT_FAILURE);

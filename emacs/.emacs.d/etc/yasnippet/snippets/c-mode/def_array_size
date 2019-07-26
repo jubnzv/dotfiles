@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: def_array_size
+# key: def_array_size
+# --
+# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))

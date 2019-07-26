@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: kbhitf
+# key: kbhitf
+# --
+if (kbhit() == 1) {
+char c = getchar();
+if (c == 32) {
+printf("\n");
+${1:ACTION}
+printf("Press <Space> for statistics or <Esc> for exit\n");
+} else if (c == 27) break;
+}

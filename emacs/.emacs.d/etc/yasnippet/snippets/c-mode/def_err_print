@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: def_err_print
+# key: def_err_print
+# --
+#define err(fmt, args...) fprintf(stderr, "[${1:ERR}]: " fmt "\n", ##args)

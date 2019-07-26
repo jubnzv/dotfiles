@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: src-latex
+# key: <l
+# --
+#+begin_src latex
+$0
+#+end_src

@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: print_debug
+# key: prd
+# --
+printf("%s:%d ${1:#:here}\n", __func__, __LINE__${2:#:}); // prdbg

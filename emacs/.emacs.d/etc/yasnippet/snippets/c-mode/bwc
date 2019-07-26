@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: bwc
+# key: bwc
+# --
+&= ~(1 << ${0:BIT})

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: ch_tmux
+# key: ch_tmux
+# --
+if [[ -z "$TMUX" ]]; then
+echo "tmux is not running."
+exit 1
+fi
+$0

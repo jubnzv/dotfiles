@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: src-rustic
+# key: <sr
+# --
+#+begin_src rustic
+$0
+#+end_src

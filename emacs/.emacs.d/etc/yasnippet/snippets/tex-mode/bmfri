@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: bmfri
+# key: bmfri
+# --
+\begin{frame}{}
+\begin{itemize}
+\setlength{\itemindent}{1em}
+\item[${1:#:ITEM}] ${0:DESCRIPTION}
+\end{itemize}
+\end{frame}

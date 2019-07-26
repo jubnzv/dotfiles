@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: clang-format-multi
+# key: clang-format-multi
+# --
+// clang-format off
+${0}
+// clang-format on

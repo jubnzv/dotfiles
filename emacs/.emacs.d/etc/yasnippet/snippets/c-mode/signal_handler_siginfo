@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: signal_handler_siginfo
+# key: signal_handler_siginfo
+# --
+static void ${1:handler}(int signum, siginfo_t *si, void *data)
+{
+	${0:TARGET}
+}

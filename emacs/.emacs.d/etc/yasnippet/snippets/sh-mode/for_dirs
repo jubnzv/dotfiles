@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: for_dirs
+# key: for_dirs
+# --
+for [ d in * ]; do
+if [[ -d $d ]]; then
+${0}
+fi
+done

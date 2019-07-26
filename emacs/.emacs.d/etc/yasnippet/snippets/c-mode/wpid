@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: wpid
+# key: wpid
+# --
+int return_status;
+if (waitpid(child_pid, &return_status, 0) == -1) {
+perror("waitpid");
+exit(EXIT_FAILURE);
+}

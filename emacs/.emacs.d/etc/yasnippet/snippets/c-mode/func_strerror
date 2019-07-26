@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: func_strerror
+# key: func_strerror
+# --
+const char *strerror_${1:name}(int errno_)
+{
+switch(errno_) {
+case ${0:E}:
+return "$0";
+default:
+return strerror(errno_);
+}
+}

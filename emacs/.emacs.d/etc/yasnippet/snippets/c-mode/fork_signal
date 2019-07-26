@@ -1,0 +1,28 @@
+# -*- mode: snippet -*-
+# name: fork_signal
+# key: fork_signal
+# --
+switch (child_pid = fork()) {
+case -1:
+perror("fork");
+exit(EXIT_FAILURE);
+case 0:
+/* Waits for parent signal */
+sigemptyset(&empty_mask);
+if (sigsuspend(&empty_mask) == -1 && errno != EINTR) {
+perror("sigsuspend");
+exit(EXIT_FAILURE);
+}
+
+${0:CHILD_ACTIONS}
+exit(EXIT_SUCCESS);
+default:
+${0:PARENT_ACTIONS}
+
+/* Awake child */
+if (kill(child_pid, SYNC_SIG) == -1) {
+perror("kill");
+exit(EXIT_FAILURE);
+}
+break;
+}

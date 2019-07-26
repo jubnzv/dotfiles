@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: log
+# key: logger
+# --
+logger "$0"

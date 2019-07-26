@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: print
+# key: pr
+# --
+message("$0")

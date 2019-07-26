@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: exs
+# key: exs
+# --
+exit(EXIT_SUCCESS);

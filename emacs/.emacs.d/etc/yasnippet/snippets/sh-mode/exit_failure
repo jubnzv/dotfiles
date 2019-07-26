@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: exit_failure
+# key: exf
+# --
+exit 1
+$0

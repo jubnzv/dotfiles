@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: ch_file
+# key: ch_file
+# --
+if [ ! -f ${1:/} ]; then
+echo "$1 is inaccessible"
+exit 127
+fi
+$0

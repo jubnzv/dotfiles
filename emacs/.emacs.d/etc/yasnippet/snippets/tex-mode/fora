@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: fora
+# key: fora
+# --
+for (${1:auto const& }${2:var} : ${3:container}) {
+${0:TARGET}
+}

@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: getnum_cores
+# key: getnum_cores
+# --
+num_cores=$(grep -c ^processor /proc/cpuinfo)
+if [ -z "$num_cores" ]; then
+num_cores=4
+fi
+$0

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sizeof
+# key: sizeof
+# --
+import sys
+sys.getsizeof($0)

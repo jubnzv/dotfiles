@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: bzch
+# key: bzch
+# --
+code = []
+code.append("${1}")
+return "\n".join(code)

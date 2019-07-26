@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: print
+# key: pr
+# --
+echo "$0"

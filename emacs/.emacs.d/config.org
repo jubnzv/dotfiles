@@ -82,7 +82,6 @@ Consistently sets the paths for various configuration, history, temporary, etc. 
 ** Increase GC
 
 Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/][following post]] describes GC in details.
-
 #+begin_src emacs-lisp
 (defvar file-name-handler-alist-backup
         file-name-handler-alist)
@@ -100,10 +99,18 @@ Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/b
           file-name-handler-alist))))
 #+end_src
 
+** Utilities
+#+begin_src emacs-lisp
+(defun jbz:run-in-new-frame (command)
+  (select-frame (make-frame))
+  (funcall #'command))
+
+(require 'cl-seq)
+#+end_src
+
 * Essential keybindings: =general.el= and evil-mode
 ** =general.el=
 =general.el= provides a more convenient method for binding keys in emacs.
-
 #+begin_src emacs-lisp
 (use-package general
   :straight (general
@@ -124,14 +131,27 @@ Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/b
 #+end_src
 
 #+begin_src emacs-lisp
+;; Universal <leader> mappings
 (general-create-definer general-spc
   :states 'normal
   :keymaps 'override
   :prefix "SPC")
 
-(general-create-definer general-m
+;; t prefix for Helm commands.
+(general-create-definer general-t
   :states 'normal
-  :prefix "m")
+  :keymaps 'override
+  :prefix "t")
+
+;; TODO: Mappings with m prefix from noctuid files. It seems like a good idea.
+;(general-create-definer general-m
+;  :states 'normal
+;  :prefix "m")
+
+(general-create-definer general-comma
+  :states 'normal
+  :keymaps 'override
+  :prefix ",")
 #+end_src
 
 **** General options
@@ -151,7 +171,8 @@ Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/b
 *** evil-mode
 #+begin_src emacs-lisp
 (use-package evil
-  :init
+  :init (evil-mode)
+  :config
   (gsetq evil-search-module 'evil-search
          ;; Vim keybinds behaviour
          evil-want-C-i-jump t
@@ -170,7 +191,14 @@ Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/b
          evil-split-window-below t
          evil-shift-round nil)
 
-  (evil-mode))
+  :general
+  ;; Switch between windows
+  ('override
+    "C-h" #'evil-window-left
+    "C-j" #'evil-window-down
+    "C-k" #'evil-window-top
+    "C-l" #'evil-window-right))
+
 #+end_src
 
 *** evil-collection
@@ -201,7 +229,6 @@ Evil-numbers:
 Here is most essential keybindings that available in every major mode.
 
 **** Prevent [[https://web.eecs.umich.edu/~cscott/rsi.html##whatis][RSI]]
-
 Disable some default keybindings to safe my arms. I got used them years before when first started with plain Emacs.
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-x C-c") nil)
@@ -218,7 +245,8 @@ Disable some default keybindings to safe my arms. I got used them years before w
 
 **** Fix ~C-i~ behaviour
 #+begin_src emacs-lisp
-(define-key evil-normal-state-map (kbd "<C-i>") 'evil-jump-forward)
+(general-def normal
+    "C-i" #'evil-jump-forward)
 #+end_src
 
 **** ~jj~ to leave insert mode:
@@ -232,11 +260,10 @@ Disable some default keybindings to safe my arms. I got used them years before w
 
 #+begin_src emacs-lisp
 (general-spc "xs"  #'save-buffer
-             ;"h"   #'evil-ex-nohighlight
+             "h"   #'evil-ex-nohighlight
              "s"   #'save-buffer
              "xk"  #'kill-buffer
-             "xc"  #'save-buffers-kill-terminal
-             "SPC" #'counsel-M-x)
+             "xc"  #'save-buffers-kill-terminal)
 #+end_src
 
 **** Basic refactoring functions
@@ -287,13 +314,12 @@ Kill all dired buffers:
 #+end_src
 
 *** Avy
-
 It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 #+begin_src emacs-lisp
 (use-package avy
   :config
-  (global-set-key (kbd "M-;") 'avy-goto-char)
-  (global-set-key (kbd "M-C-;") 'avy-resume))
+  (general-def '(normal insert)
+     "M-;" #'avy-goto-char))
 #+end_SRC
 
 *** Which-key mode
@@ -312,29 +338,31 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
 **** Evil surround
 #+begin_src emacs-lisp
 (use-package evil-surround
-  :config
+  :init
   (global-evil-surround-mode 1))
 #+end_src
 
 **** Evil nerdcommenter
-
 #+begin_src emacs-lisp
 (use-package evil-nerd-commenter
-  :after evil
   :config
-  (evilnc-default-hotkeys nil t))
+  (evilnc-default-hotkeys nil t)
+  :general
+  (general-spc (normal visual)
+     "ci" #'evilnc-comment-or-uncomment-lines
+     "cl" #'evilnc-quick-comment-or-uncomment-to-the-line
+     "ll" #'evilnc-quick-comment-or-uncomment-to-the-line
+     "cc" #'evilnc-copy-and-comment-lines
+     "cp" #'evilnc-comment-or-uncomment-paragraphs
+     "cr" #'comment-or-uncomment-region
+     "cr" #'comment-or-uncomment-region
+     "cv" #'evilnc-toggle-invert-comment-line-by-line
+     "."  #'evilnc-copy-and-comment-operator))
 #+end_src
 
+**** Evil matchit
 #+begin_src emacs-lisp
-(general-spc "ci" #'evilnc-comment-or-uncomment-lines
-             "cl" #'evilnc-quick-comment-or-uncomment-to-the-line
-             "ll" #'evilnc-quick-comment-or-uncomment-to-the-line
-             "cc" #'evilnc-copy-and-comment-lines
-             "cp" #'evilnc-comment-or-uncomment-paragraphs
-             "cr" #'comment-or-uncomment-region
-             "cr" #'comment-or-uncomment-region
-             "cv" #'evilnc-toggle-invert-comment-line-by-line
-             "."  #'evilnc-copy-and-comment-operator)
+(use-package evil-matchit)
 #+end_src
 
 **** Evil-org
@@ -350,13 +378,7 @@ It works like [[https://github.com/easymotion/vim-easymotion][vim-easymotion]].
   (evil-org-agenda-set-keys))
 #+end_src
 
-**** Evil-treemacs
-#+begin_src emacs-lisp
-(use-package treemacs-evil
-  :after treemacs)
-#+end_src
 **** Evil-snipe
-
 #+begin_src emacs-lisp
 (use-package evil-snipe)
 #+end_src
@@ -410,6 +432,30 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 (evil-define-key 'normal help-mode-map "q" 'quit-window)
 #+end_src
 
+** Remaps
+
+*** Escape Everywhere
+Taken from [[https://github.com/noctuid/dotfiles][noctuid dotfiles]]. Escape should be bound to ~keyboard-quit~ or ~keyboard-escape-quit~ in various minibuffer keymaps.
+#+begin_src emacs-lisp
+(general-def '(minibuffer-local-map
+               minibuffer-local-ns-map
+               minibuffer-local-completion-map
+               minibuffer-local-must-match-map
+               minibuffer-local-isearch-map)
+  "<escape>" #'keyboard-escape-quit)
+#+end_src
+
+*** Disabled defaults
+The following binds are used for these purposes: navigation in
+minibuffers and some minor modes to emulate normal =hjkl= behaviour
+and for confirming/undoing some actions.
+#+begin_src emacs-lisp
+(global-set-key (kbd "M-h") nil)
+(global-set-key (kbd "M-j") nil)
+(global-set-key (kbd "M-k") nil)
+(global-set-key (kbd "M-l") nil)
+#+end_src
+
 * UI/Apperance/Formatting
 #+begin_src emacs-lisp
 (ignore-errors
@@ -427,7 +473,7 @@ See following [[https://www.reddit.com/r/emacs/comments/7dsm0j/how_to_get_evilmo
 
 ** Disable cursor blinking
 #+begin_src emacs-lisp
-(blink-cursor-mode 0)
+(blink-cursor-mode -1)
 #+end_src
 
 ** Window title
@@ -455,6 +501,27 @@ Show file name and mode in window title:
 Activate this to make it available in all other modes:
 #+begin_src emacs-lisp :tangle no
 (gsetq-default show-trailing-whitespace t)
+#+end_src
+
+** Clickable URLs everywhere
+#+BEGIN_SRC emacs-lisp
+(define-globalized-minor-mode jbz:global-goto-address-mode goto-address-mode
+  (lambda () (goto-address-mode 1)))
+
+(jbz:global-goto-address-mode 1)
+#+END_SRC
+
+** Solaire mode
+=solaire mode= is a plugin that used to visually distinguish file-visiting windows from other types of windows:
+#+begin_src emacs-lisp
+(use-package solaire-mode
+  :init (solaire-global-mode +1)
+  :config
+  ;; highlight the minibuffer when it is activated:
+  (add-hook 'minibuffer-setup-hook #'solaire-mode-in-minibuffer)
+  (add-hook 'after-revert-hook #'turn-on-solaire-mode)
+  ;; This is necessary for themes in the doom-themes package
+  (solaire-mode-swap-bg))
 #+end_src
 
 ** Highlight current line
@@ -495,12 +562,10 @@ Futher explantation: https://www.masteringemacs.org/article/improving-performanc
   :hook (after-init . doom-modeline-mode)
   :config
     (progn
-      (set-face-attribute 'doom-modeline-bar nil :background "#3c3836")))
-#+end_src
+      (set-face-attribute 'doom-modeline-bar nil :background "#3c3836")
 
-#+begin_src emacs-lisp
-(gsetq doom-modeline-height 18)
-(gsetq doom-modeline-bar-width 1)
+  (gsetq doom-modeline-height 18
+         doom-modeline-bar-width 1)))
 #+end_src
 
 *** Diminish
@@ -517,14 +582,29 @@ TODO: Should be removed, because not use it after switching to =doom-modeline=.
 
 ** Color scheme
 
+*** Doom theme
 #+begin_src emacs-lisp
+(use-package doom-themes
+  :config
+  (gsetq doom-themes-enable-bold t
+         doom-themes-enable-italic t)
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+
+(load-theme 'doom-vibrant t)
+#+end_src
+
+*** (fallback) gruvbox-dark
+#+begin_src emacs-lisp :tangle no
 (use-package gruvbox-theme
   :init
   (load-theme 'gruvbox-dark-medium t))
 #+end_src
 
 Gruvbox colors for line numbers column:
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (set-face-attribute 'line-number nil
                     :background "#282828")
 (set-face-attribute 'line-number-current-line nil
@@ -592,7 +672,6 @@ Instead default startup screen open ~*scratch*~ with org-mode:
 #+end_src
 
 ** Undo-tree
-
 There are no standard way to implement persistent undo in Emacs. I use modified solution from [[https://github.com/syl20bnr/spacemacs/issues/774][this issue]].
 #+begin_src emacs-lisp
 (use-package undo-tree
@@ -622,19 +701,14 @@ There are no standard way to implement persistent undo in Emacs. I use modified 
 (load custom-file :noerror)
 #+end_src
 
-** Tabs
+** Indentation/Tabs
 
-Set default tab width to 2 for all buffers:
+Use 4 spaces instead of a tab:
 #+begin_src emacs-lisp
-(gsetq-default tab-width 2)
+(gsetq-default tab-width 4)
 #+end_src
 
-Use 2 spaces instead of a tab:
-#+begin_src emacs-lisp
-(gsetq-default tab-width 2 indent-tabs-mode nil)
-#+end_src
-
-Indentation cannot insert tabs:
+Don't use tabs at all:
 #+begin_src emacs-lisp
 (gsetq-default indent-tabs-mode nil)
 #+end_src
@@ -663,10 +737,16 @@ Indentation cannot insert tabs:
 #+end_src
 
 ** Supress `defadvice' warnings
-
 See [[https://andrewjamesjohnson.com/suppressing-ad-handle-definition-warnings-in-emacs/][this]] post.
 #+begin_src emacs-lisp
 (gsetq ad-redefinition-action 'accept)
+#+end_src
+
+** Follow symlinks
+Follow symlinks under VCS without confirmation and edit the "actual" file directly:
+#+begin_src emacs-lisp
+;; Symbolic link to Git-controlled source file; follow link? (y or n)
+(gsetq vc-follow-symlinks nil)
 #+end_src
 
 ** Choose default external apps
@@ -678,7 +758,6 @@ Web-browser:
 #+end_src
 
 ** User info
-
 #+begin_src emacs-lisp
 (gsetq user-full-name
   (replace-regexp-in-string "\n$" ""
@@ -691,48 +770,107 @@ Web-browser:
 * Helm
 
 ** Setup
+#+begin_src emacs-lisp
+  (use-package helm
+    :init (helm-mode)
+    :config
+    (helm-autoresize-mode t)
+
+    (gsetq helm-autoresize-max-height 40
+           helm-autoresize-min-height 40
+           ;; Enable fuzzy matching for helm commands
+           helm-M-x-fuzzy-match t
+           helm-buffers-fuzzy-matching t
+           helm-recentf-fuzzy-match t
+           helm-semantic-fuzzy-match t
+           helm-imenu-fuzzy-match t
+           ;; Find files settings
+           helm-ff-search-library-in-sexp t
+           helm-ff-file-name-history-use-recentf t
+           helm-ff-skip-boring-files t)
+    :general
+    (general-def
+      "M-x" #'helm-M-x
+      "M-i" #'helm-semantic-or-imenu)
+
+    (general-def helm-map
+      "M-k" #'helm-previous-line
+      "M-j" #'helm-next-line
+      "M-p" #'previous-history-element
+      "M-n" #'next-history-element
+      "M-l" #'helm-execute-persistent-action)
+
+    (general-def helm-find-files-map
+      "M-h" #'helm-find-files-up-one-level
+      "M-l" #'helm-execute-persistent-action)
+
+    (general-t "o" #'helm-occur
+               "a" #'helm-apropos
+               "m" #'helm-man-woman
+               "y" #'helm-show-kill-ring
+               "e" #'helm-sexp-eval-1
+               "r" #'helm-regexp
+               "'" #'helm-register
+               "C" #'helm-colors
+               "T" #'helm-top
+               "g" #'helm-google-suggest
+               "f" #'helm-find)
+
+    (general-spc "SPC" #'helm-M-x
+                 "ee" #'helm-find-files
+                 "xr" #'helm-mini
+                 "b" #'helm-buffers-list))
+#+end_src
+
+** Navigation quickmarks
+*** Explore filesystem with Helm:
+#+begin_src emacs-lisp
+(defmacro jbz:f (f)
+  "Wrapper for creating `helm-find-files-1' commands."
+  `(lambda () (interactive) (helm-find-files-1 ,f)))
+#+end_src
 
 #+begin_src emacs-lisp
-(use-package helm
-  :init (helm-mode)
-  :config
-  (helm-autoresize-mode t)
+(general-spc "eh" (jbz:f "~/")
+             "eff" (jbz:f "~/Documents/")
+             "efu" (jbz:f "~/Documents/C & UNIX/")
+             "efx" (jbz:f "~/Documents/C++/")
+             "efp" (jbz:f "~/Documents/Python/")
+             "ed" (jbz:f "~/Dev/")
+             "es" (jbz:f "~/Sources/")
+             "eS" (jbz:f "~/Scripts/")
+             "ew" (jbz:f "~/Work/")
+             "eu" (jbz:f "~/Uni/")
+             "eo" (jbz:f "~/Org/")
+             "en" (jbz:f "~/Org/Notes/")
+             "ep" (jbz:f "~/Pictures/")
+             "eD" (jbz:f "~/Downloads/")
+             "ea" (jbz:f "~/Audio/"))
+#+end_src
 
-  (gsetq helm-autoresize-max-height 40
-         helm-autoresize-min-height 40
-         ;; Enable fuzzy matching for helm commands
-         helm-M-x-fuzzy-match        t
-         helm-buffers-fuzzy-matching t
-         helm-recentf-fuzzy-match    t
-         helm-semantic-fuzzy-match   t
-         helm-imenu-fuzzy-match      t)
-  :general
-  (general-def '(normal insert)
-    "M-x" #'helm-M-x
-    "M-y" #'helm-show-kill-ring
-    "M-i" #'helm-semantic-or-imenu)
+*** Direct access to certain files
+#+begin_src emacs-lisp
+(defmacro jbz:fd (f)
+  `(lambda () (interactive) (find-file ,f)))
+#+end_src
 
-  (general-def helm-map
-    "M-k" #'helm-previous-line
-    "M-j" #'helm-next-line
-    "M-p" #'previous-history-element
-    "M-n" #'next-history-element
-    "M-l" #'helm-execute-persistent-action)
+#+begin_src emacs-lisp
+(general-spc "emz" (jbz:fd "~/.zshrc")
+             "emr" (jbz:fd "~/.config/ranger/rc.conf")
+             "emv" (jbz:fd "~/.config/nvim/init.vim")
+             "emi" (jbz:fd "~/.config/i3/config")
+             "emI" (jbz:fd "~/.config/i3/i3status-rust.toml")
+             "emt" (jbz:fd "~/.tmux/tmux.conf")
+             "eme" (jbz:fd "~/.emacs.d/config.org"))
+#+end_src
 
-  (general-spc "ho" #'helm-occur
-               "ha" #'helm-apropos
-               "hm" #'helm-man-woman
-               "hr" #'helm-regexp
-               "h'" #'helm-register
-               "hC" #'helm-colors
-               "ht" #'helm-top
-               "hg" #'helm-google-suggest
-               "hf" #'helm-find)
+** Search with =ag=
+#+begin_src emacs-lisp
+(use-package ag)
+#+end_src
 
-  (general-spc "<SPC>" #'helm-M-x
-               "xf" #'helm-find-files
-               "xr" #'helm-mini
-               "b" #'helm-buffers-list))
+#+begin_src emacs-lisp
+(use-package helm-ag)
 #+end_src
 
 ** Integration with =fasd=
@@ -753,13 +891,34 @@ Basically a drop-in replacement for =describe-bindings=:
   :init (helm-descbinds-mode))
 #+end_src
 
+** TRAMP interface
+#+begin_src emacs-lisp
+(use-package helm-tramp
+  :general
+  (general-t "R" #'helm-tramp))
+#+end_src
+
 ** Interface for system package manager
 =helm-system-packages= is an helm interface to the package manager of host operating system and *remote systems* as well.
 #+begin_src emacs-lisp
 (use-package helm-system-packages)
 #+end_src
 
-* File system
+* Treemacs/File system
+
+
+** Treemacs
+#+begin_src emacs-lisp
+(use-package treemacs
+  :general
+  (general-def "M-1" #'treemacs))
+
+(treemacs-resize-icons 14)
+
+(use-package treemacs-evil)
+(use-package treemacs-projectile)
+#+end_src
+
 ** Helpers for UNIX
 
 Those functions works like tpope's [[https://github.com/tpope/vim-eunuch][vim-eunuch]] to provide access to common shell commands.
@@ -823,23 +982,43 @@ Set human readable units:
 
 ** Setup
 #+begin_src emacs-lisp
+;; Buffers used by emacs internals.
+(defvar jbz:system-buffers
+  (list "*scratch*"
+        "*Backtrace*"
+        "*Messages*"))
+
+(defun jbz:fuzzy-open-files (current-dir-p)
+"Context-aware wrapper for `helm-find-files'."
+  (interactive "P")
+  (cond ((and (projectile-project-p)
+              (not current-dir-p))
+         (projectile-find-file))
+        ((cl-member (buffer-name) jbz:system-buffers :test #'string-match)
+         (helm-mini))
+        (t
+         (helm-find-files nil))))
+
 (use-package projectile
   :init (projectile-mode)
   :general
   (general-spc
-    "pf" #'projectile-find-file
-    "pP" #'projectile-find-file-in-known-projects
-    "ps" #'projectile-switch-project)
+    "xf" #'jbz:fuzzy-open-files
+    "ps" #'projectile-find-file-in-known-projects
+    "pp" #'projectile-switch-project
+    "pr" #'projectile-invalidate-cache
+    "\/"  #'helm-projectile-ag)
   :config
   (gsetq projectile-enable-caching t
+         projectile-completion-system 'helm
+         ;; Open magit on project switch
+         ;; projectile-switch-project-action 'projectile-vc
+         projectile-switch-project-action 'projectile-find-file
          projectile-project-test-cmd "make test")
-
-  (gsetq projectile-completion-system 'helm)
 
   (add-to-list 'projectile-globally-ignored-directories ".ccls-cache")
   (add-to-list 'projectile-globally-ignored-directories ".pytest_cache")
   (add-to-list 'projectile-globally-ignored-directories ".mypy_cache")
-
   (add-to-list 'projectile-globally-ignored-file-suffixes ".o")
   (add-to-list 'projectile-globally-ignored-file-suffixes ".so")
   (add-to-list 'projectile-globally-ignored-file-suffixes ".a")
@@ -858,6 +1037,18 @@ Set human readable units:
 (use-package helm-projectile)
 #+end_src
 
+* Perspective
+#+begin_src emacs-lisp
+(use-package perspective
+  :init (persp-mode)
+  :config
+  (general-def '(normal insert)
+    "M-]" #'persp-next
+    "M-[" #'persp-prev
+    "M-," #'persp-rename
+    [M-tab] #'persp-switch))
+#+end_src
+
 * Version Control
 
 ** Magit
@@ -873,6 +1064,13 @@ Set human readable units:
     (gsetq magit-completing-read-function #'ivy-completing-read)))
 #+end_src
 
+** Git Link
+#+begin_src emacs-lisp
+(use-package git-link
+  :general
+  ('normal "SPC vy" #'git-link))
+#+end_src
+
 ** Git Gutter
 #+begin_src emacs-lisp
 (use-package git-gutter
@@ -882,6 +1080,8 @@ Set human readable units:
     "]v" (list #'git-gutter:next-hunk :jump t)
     "[v" (list #'git-gutter:previous-hunk :jump t))
   (general-spc
+    "vv" #'git-gutter:popup-diff
+    "vu" #'git-gutter:update-all-windows
     "v=" #'git-gutter:stage-hunk
     "v-" #'git-gutter:revert-hunk)
   :config
@@ -1121,11 +1321,11 @@ Evil commands:
 (evil-ex-define-cmd "cal" 'calendar)
 #+end_src
 
-Fix org-mode =TAB= in console mode:
+Fix org-mode =TAB= in terminal emacs:
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook
           (lambda ()
-          (define-key evil-normal-state-map (kbd "TAB") 'org-cycle))) 
+          (define-key evil-normal-state-map (kbd "TAB") 'org-cycle)))
 #+end_src
 
 ** ox-hugo: exporter backend for Hugo
@@ -1253,43 +1453,6 @@ Images are separated inside that image folder by additional folders one per org 
 
 * Terminal/Shell settings
 ** Eshell
-#+begin_src emacs-lisp
-(defun eshell-other-window ()
-  "Open a `eshell' in a new window."
-  (interactive)
-  (let ((buf (eshell)))
-    (switch-to-buffer (other-buffer buf))
-    (switch-to-buffer-other-window buf)))
-#+end_src
-
-*** Popup shell
-Function from [[https://github.com/howardabrams/dot-files/][howardabrams/dot-files]]. It makes small popup shell.
-#+begin_src emacs-lisp
-(defun eshell-here ()
-  "Opens up a new shell in the directory associated with the
-current buffer's file. The eshell is renamed to match that
-directory to make multiple eshell windows easier."
-  (interactive)
-  (let* ((parent (if (buffer-file-name)
-                     (file-name-directory (buffer-file-name))
-                   default-directory))
-         (height (/ (window-total-height) 3))
-         (name   (car (last (split-string parent "/" t)))))
-    (split-window-vertically (- height))
-    (other-window 1)
-    (eshell "new")
-    (rename-buffer (concat "*eshell: " name "*"))
-
-    (insert (concat "ls"))
-    (eshell-send-input)))
-#+end_src
-
-*** Keybindings
-#+begin_src emacs-lisp
-(evil-declare-key 'normal global-map "`\\" 'eshell-here)
-(evil-declare-key 'normal eshell-mode-map (kbd "M-j") 'eshell-previous-prompt)
-(evil-declare-key 'normal eshell-mode-map (kbd "M-k") 'eshell-next-prompt)
-#+end_src
 
 *** Aliases
 #+begin_src emacs-lisp
@@ -1309,92 +1472,67 @@ directory to make multiple eshell windows easier."
   (which-function-mode -1)))
 #+end_src
 
-** Start dropdown terminal
-
-Dropdown terminal implemented using [[https://github.com/noctuid/tdrop/blob/master/tdrop][tdrop]] script by noctuid.
-#+begin_src emacs-lisp
-(defvar tdrop-session-name nil
-  "tmux session name for tdrop.")
-
-(defvar tdrop-start-directory nil
-  "Start directory for tdrop session.")
-
-(defun jbz:tdrop-session-name ()
-  "Generate tmux session name for dropdown terminal."
-  (setq tdrop-session-name (projectile-project-name))
-  ; Create per-buffer sessions for non-project files
-  (when (string= tdrop-session-name "-")
-        (setq tdrop-session-name (buffer-file-name)))
-  ; Default value when called from default buffers (like *scratch*)
-  (unless tdrop-session-name
-        (setq tdrop-session-name "dropdown"))
-  tdrop-session-name)
-
-(defun jbz:tdrop-start-directory ()
-  "Dispatch current directory for dropdown terminal."
-  (setq tdrop-start-directory (projectile-project-root))
-  (unless tdrop-start-directory
-    (if buffer-file-name
-      (setq tdrop-start-directory (file-name-directory buffer-file-name))
-      (setq tdrop-start-directory "~")))
-  tdrop-start-directory)
-
-(defun run-tdrop-here ()
-  (interactive)
-  (call-process "~/.local/bin/tdrop"
-                nil nil nil
-                "-a"
-                "-w" "700"
-                "-h" "768"
-                "-x" "666"
-                "-s" (format "e-%s" (jbz:tdrop-session-name))
-                "-f" (format "-d %s" (jbz:tdrop-start-directory))
-                "kitty"))
-
-(general-def "M-\\" #'run-tdrop-here)
-#+end_src
-
 ** Vterm
 #+begin_src emacs-lisp
-(defun jbz:vterm-kill-buffers (buffer)
-  "Automatically kill buffer when vterm exits."
-  (if buffer (kill-buffer buffer)))
+  (defun jbz:vterm-kill-buffers (buffer)
+    "Automatically kill buffer when vterm exits."
+    (if buffer (kill-buffer buffer)))
 
-;; TODO: Somehow vterm enables cursor blinking after the start.
-;; See: https://github.com/akermu/emacs-libvterm/issues/98
-(defun jbz:vterm-restore-blink (buffer)
-  "Disable blink-cursor-mode."
-  (blink-cursor-mode 0))
+  ;; TODO: Somehow vterm enables cursor blinking after the start.
+  ;; See: https://github.com/akermu/emacs-libvterm/issues/98
+  (defun jbz:vterm-restore-blink (buffer)
+    "Disable blink-cursor-mode."
+    (blink-cursor-mode 0))
 
-(defun jbz:vterm-set-emacs-mode ()
-  "Set emacs keybindings for a terminal."
-   (evil-emacs-state))
+  (defun jbz:vterm-set-emacs-mode ()
+    "Set emacs keybindings for a terminal."
+     (evil-emacs-state))
 
-(use-package vterm
-  :init
-  ;; Not defined, vterm checks boundp for some reason
-  (defvar vterm-install t)
-  :config
-  (add-hook 'vterm-mode-hook #'jbz:vterm-set-emacs-mode)
-  (add-to-list 'vterm-exit-functions #'jbz:vterm-kill-buffers)
-  (add-to-list 'vterm-exit-functions #'jbz:vterm-restore-blink)
-  ;; TODO: Consider usage of minimal zsh configuration file to
-  ;;       reduce startup time (~0.6 sec now).
-  (gsetq vterm-shell "zsh"
-         ;; Set colors pallette suitable for doom-vibrant theme
-         ;; Reference: https://raw.githubusercontent.com/joshdick/onedark.vim/master/img/color_reference.png
-         ansi-color-names-vector
-         ["#282c34" "#e06c75" "#98c379" "#e5c07b" "#61afef" "#c678dd" "#56b6c2" "#abb2bf"]
-         ;; increase scrollback
-         vterm-max-scrollback 10000))
+  (use-package vterm
+    :init
+    ;; Not defined, vterm checks boundp for some reason
+    (defvar vterm-install t)
+    :config
+    (add-hook 'vterm-mode-hook #'jbz:vterm-set-emacs-mode)
+    (add-to-list 'vterm-exit-functions #'jbz:vterm-kill-buffers)
+    (add-to-list 'vterm-exit-functions #'jbz:vterm-restore-blink)
+    ;; TODO: Consider usage of minimal zsh configuration file to
+    ;;       reduce startup time (~0.6 sec now).
+    (gsetq vterm-shell "zsh"
+           ;; Set colors pallette suitable for doom-vibrant theme
+           ;; Reference: https://raw.githubusercontent.com/joshdick/onedark.vim/master/img/color_reference.png
+           ansi-color-names-vector
+           ["#282c34" "#e06c75" "#98c379" "#e5c07b" "#61afef" "#c678dd" "#56b6c2" "#abb2bf"]
+           ;; increase scrollback
+           vterm-max-scrollback 10000))
 
-(use-package vterm-toggle
-  :straight (vterm-toggle
-             :type git
-             :host github
-             :repo "jixiuf/vterm-toggle")
-  :general
-  ('normal 'override "T" #'vterm-toggle-cd))
+  (defun jbz:multi-vterm-toggle ()
+    "Toggles popup term in horizontal split. Handle single non-project
+  '*vterminal*' buffer and per-project buffers."
+    (interactive)
+    (cond ((projectile-project-p)
+           (multi-libvterm-projectile))
+          ((string-match "*vterm -" (buffer-name))
+           (multi-libvterm-projectile))
+          (t
+           (multi-libvterm-dedicated-toggle)))
+    (blink-cursor-mode 0))
+
+  (use-package multi-libvterm
+    :straight (multi-libvterm
+               :type git
+               :host github
+               :repo "suonlight/multi-libvterm")
+    :general
+    ('normal 'override "M-t" #'jbz:multi-vterm-toggle)
+    (general-def
+      :keymaps 'vterm-mode-map
+      "M-t" #'jbz:multi-vterm-toggle
+      "M-]" #'persp-next
+      "M-[" #'persp-prev
+      "M-," #'persp-rename
+      [M-backspace] nil
+      [M-tab] #'persp-switch))
 #+end_src
 
 ** Serial terminal
@@ -1415,16 +1553,25 @@ Configuration options for [[http://kpda.ru/products/kpda00002/][KPDA QNX]]:
 
 * Snippets
 
-Initialize =yasnippet= plugin itself:
+*** Setup
 #+begin_src emacs-lisp
 (use-package yasnippet
   :defer t
   :commands (yas-reload-all yas-minor-mode)
+  :general
+  (general-def help-map "y" #'yas-describe-tables)
   :config
-  (add-to-list 'yas-snippet-dirs (locate-user-emacs-file "snippets"))
+  ;; Eliminate a message about successful snippet lazy-loading setup
+  ;; on init.
+  (gsetq yas-verbosity 2)
 
-  ;(general-spc 'normal snippet-mode-map
-  ;  "M-l" #'yas-maybe-expand)
+  ;; Never expand snippets in normal state
+  (general-def 'normal yas-minor-mode-map
+    [remap yas-expand] #'ignore)
+
+  ; FIXME: Complition with company works only with name, not key
+  (general-spc 'normal snippet-mode-map
+    "M-l" #'yas-maybe-expand)
 
   (yas-global-mode 1))
 
@@ -1433,11 +1580,11 @@ Initialize =yasnippet= plugin itself:
     "<tab>"         nil
     "TAB"           nil
     "<backtab>"     nil
-    "M-h"           'yas-next-field-or-maybe-expand
-    "M-l"           'yas-prev-field)
+    "M-l"           'yas-next-field-or-maybe-expand
+    "M-h"           'yas-prev-field)
 #+end_src
 
-Extra snippets:
+*** Extra snippets
 #+begin_src emacs-lisp
 (use-package yasnippet-snippets
   :after yasnippet
@@ -1445,7 +1592,6 @@ Extra snippets:
 #+end_src
 
 * Spell checking
-
 =ispell= can be configured to skip over regions that match regexes.
 #+begin_src emacs-lisp
 (add-to-list 'ispell-skip-region-alist '("#\\+begin_src" . "#\\+end_src"))
@@ -1453,6 +1599,7 @@ Extra snippets:
 #+end_src
 
 * System applications replacement
+
 ** IRC
 #+begin_src emacs-lisp
 (use-package rcirc
@@ -1483,13 +1630,8 @@ Extra snippets:
 (use-package elfeed)
 #+end_src
 
-* Other formats
-** yaml
-#+begin_src emacs-lisp
-(use-package yaml-mode)
-#+end_src
-
 * Programming
+
 ** General settings
 
 Here is some common settings and minor mode configurations available in all programming modes.
@@ -1514,8 +1656,6 @@ Alternative to vim's [[https://github.com/Yggdroot/indentLine][indentLine]] plug
   (add-hook 'prog-mode-hook 'highlight-indent-guides-mode))
 #+end_src
 
-*** TODO ctags
-
 *** =which-func-mode=: display function name in modline
 
 Customize =???= in which-func-mode:
@@ -1535,9 +1675,40 @@ Customize =???= in which-func-mode:
   (add-hook 'prog-mode-hook 'form-feed-mode))
 #+end_src
 
+*** Highlight TODOs
+#+begin_src emacs-lisp
+(defun jbz:font-lock-todo ()
+  (font-lock-add-keywords
+   nil
+   ;; See: https://github.com/bbatsov/emacs-lisp-style-guide#comment-annotations
+   '(("\\<\\(TODO\\|FIXME\\|OPTIMIZE\\|HACK\\|REVIEW\\|BUG\\|Note\\|xxx\\)"
+      1 font-lock-warning-face prepend))))
+
+(general-add-hook 'prog-mode-hook #'jbz:font-lock-todo)
+#+END_SRC
+
 *** Spaces > tabs
 #+begin_src emacs-lisp
 (gsetq-default indent-tabs-mode nil)
+#+end_src
+
+** ctags support
+
+*** Auto re-generate tags database
+This plugin works like [[https://github.com/ludovicchabant/vim-gutentags][vim-gutentags]].
+#+begin_src emacs-lisp
+(use-package ctags-update
+  :config
+  (general-spc
+    "ct" #'update-tags))
+#+end_src
+
+*** Helm interface
+#+begin_src emacs-lisp
+(use-package helm-etags-plus
+  :config
+  (general-spc
+    "]" #'helm-etags-plus-select))
 #+end_src
 
 ** Goto definition with =dumb-jump=
@@ -1601,7 +1772,8 @@ Note: =ptvsd= must should be installed: =pip install "ptvsd>=4.2"=.
 #+begin_src emacs-lisp
 (use-package dap-mode
   :config
-  (require 'dap-python))
+  (require 'dap-python)
+  (gsetq python-executable 'python3))
 #+end_src
 
 ** LSP
@@ -1646,7 +1818,117 @@ LSP UI looks too noisy out of box. Disabled for now.
 ;     (lambda () (require 'ccls) (lsp))))
 #+end_src
 
+** Build systems/Configuration/Other formats
+
+*** CMake
+#+begin_src emacs-lisp
+(load-file "~/.emacs.d/lisp/cmake-mode.el")
+#+end_src
+
+*** Dockerfile
+#+begin_src emacs-lisp
+(use-package dockerfile-mode
+  :mode "Dockerfile\\'")
+#+end_src
+
+*** yaml
+#+begin_src emacs-lisp
+(use-package yaml-mode)
+#+end_src
+
 ** Languages
+*** C/C++
+**** Common
+#+begin_src emacs-lisp
+(add-hook 'c-mode-common-hook '(lambda ()
+  (gsetq indent-tabs-mode t
+     c-basic-offset 4
+     tab-width 4)
+  ;; Switch between source and header
+  (local-set-key  (kbd "M-a") 'ff-find-other-file)
+  (which-function-mode 1) ;; show function name in modeline
+  (flycheck-mode)
+  (yas-reload-all)
+  (yas-minor-mode)))
+#+end_src
+
+#+begin_src emacs-lisp
+(use-package cc-mode
+  :config
+  (gsetq-default c-basic-offset 4)
+  (setf (alist-get 'other c-default-style) "linux")
+
+  (general-def 'insert c-mode-map
+    "RET" #'c-indent-new-comment-line))
+#+end_src
+
+#+begin_src emacs-lisp
+(modify-syntax-entry ?- "w" c-mode-syntax-table)
+(modify-syntax-entry ?_ "w" c-mode-syntax-table)
+#+end_src
+
+**** clang tools
+
+#+begin_src emacs-lisp :tangle no
+(use-package clang-format
+  :general
+  (general-spc "lf" #'clang-format-buffer))
+#+end_src
+
+
+#+BEGIN_SRC emacs-lisp
+;; Copy-pasted from official LLVM mirror:
+;; https://github.com/llvm-mirror/clang/blob/master/tools/clang-format/clang-format.el
+(load-file "~/.emacs.d/lisp/clang-format.el")
+
+;; TODO: Use .clang-format from projectile root
+;; See: https://eklitzke.org/smarter-emacs-clang-format
+;(defun jbz:clang-format-fixed ()
+;  "Be aware of .clang-format in projectile root."
+;  (when (f-exists? (expand-file-name ".clang-format" (projectile-project-root)))
+;    (clang-format-buffer)))
+#+END_SRC
+
+**** Explore C/C++ code
+
+=distater=: disassemble C/C++ code under cursor:
+#+begin_src emacs-lisp
+(use-package disaster)
+#+end_src
+
+#+begin_src emacs-lisp
+(defun jbz-objdump-file ()
+  (interactive)
+  (gsetq file (expand-file-name (read-file-name "File: ")))
+  (shell-command (concat "objdump -D -M intel " file) "*objdump*"))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun jbz-objdump-lib-symbols ()
+  (interactive)
+  (gsetq file (expand-file-name (read-file-name "File: ")))
+  (shell-command (concat "objdump -TC " file) "*objdump*"))
+#+end_src
+
+#+begin_src emacs-lisp
+(defun jbz-readelf-so ()
+  (interactive)
+  (gsetq file (expand-file-name (read-file-name ".so: ")))
+  (shell-command (concat "readelf -S " file) "*readelf*"))
+#+end_src
+
+*** Python
+**** Common
+#+begin_src emacs-lisp :tangle no
+(modify-syntax-entry ?- "w" python-mode-syntax-table)
+(modify-syntax-entry ?_ "w" python-mode-syntax-table)
+#+end_src
+
+**** pytest integration
+#+begin_src emacs-lisp
+(use-package python-pytest)
+#+end_src
+
 *** LISP
 Here is my configuration for following languages:
 + Scheme ([[https://www.call-cc.org/][Chicken Scheme]])
@@ -1699,16 +1981,23 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 
 **** Lispy & LispyVille
 
-[[https://github.com/abo-abo/lispy][Lispy]] is vi-inspired plugin that provides useful keybindings for editing LISP sources. It looks pretty interesting, but unfamiliar for me as native vim user. So, my choice is [[https://github.com/noctuid/lispyville][LispyVille]] that serve as a minimal layer on top of lispy-mode for better integration with evil.
+***** Lispy
+[[https://github.com/abo-abo/lispy][Lispy]] is vi-inspired plugin that provides useful keybindings for editing LISP sources.
 #+begin_src emacs-lisp
 (use-package lispy)
+#+end_src
 
+***** Lispyville
+#+begin_src emacs-lisp
 (use-package lispyville
   :init
   (add-hook 'racket-mode-hook 'lispyville-mode)
   (add-hook 'geiser-mode-hook 'lispyville-mode)
   (add-hook 'racket-repl-mode-hook 'lispyville-mode)
-  (add-hook 'emacs-lisp-mode-hook 'lispyville-mode))
+  (add-hook 'emacs-lisp-mode-hook 'lispyville-mode)
+  :config
+  (lispyville-set-key-theme
+   '(operators c-w prettify)))
 #+end_src
 
 **** Rainbow delimiters
@@ -1734,54 +2023,6 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
          verilog-tab-to-comment         nil))
 #+end_src
 
-*** C/C++
-**** Common
-#+begin_src emacs-lisp
-(add-hook 'c-mode-common-hook '(lambda ()
-  (gsetq indent-tabs-mode t
-     c-basic-offset 4
-     tab-width 4)
-  ;; vim's :A
-  (local-set-key  (kbd "M-a") 'ff-find-other-file)
-  (which-function-mode 1) ;; show function name in modeline
-  (flycheck-mode)
-  (yas-reload-all)
-  (yas-minor-mode)))
-#+end_src
-
-#+begin_src emacs-lisp
-(modify-syntax-entry ?- "w" c-mode-syntax-table)
-(modify-syntax-entry ?_ "w" c-mode-syntax-table)
-#+end_src
-
-**** Explore C/C++ code
-
-=distater=: disassemble C/C++ code under cursor:
-#+begin_src emacs-lisp
-(use-package disaster)
-#+end_src
-
-#+begin_src emacs-lisp
-(defun jbz-objdump-file ()
-  (interactive)
-  (gsetq file (expand-file-name (read-file-name "File: ")))
-  (shell-command (concat "objdump -D -M intel " file) "*objdump*"))
-#+end_src
-
-#+begin_src emacs-lisp
-(defun jbz-objdump-lib-symbols ()
-  (interactive)
-  (gsetq file (expand-file-name (read-file-name "File: ")))
-  (shell-command (concat "objdump -TC " file) "*objdump*"))
-#+end_src
-
-#+begin_src emacs-lisp
-(defun jbz-readelf-so ()
-  (interactive)
-  (gsetq file (expand-file-name (read-file-name ".so: ")))
-  (shell-command (concat "readelf -S " file) "*readelf*"))
-#+end_src
-
 *** Rust
 [[https://github.com/brotzeit/rustic][rustic]] - Rust development environment for Emacs. =org-babel= integration it's his strength.
 #+begin_src emacs-lisp
@@ -1798,20 +2039,6 @@ Display Lambda as λ (see [[http://ergoemacs.org/emacs/emacs_pretty_lambda.html]
 
 #+begin_src emacs-lisp
 (evil-declare-key 'normal rust-mode-map ",Ef" 'rust-format-buffer)
-#+end_src
-
-**** Integration with =clang-format=
-
-#+begin_src emacs-lisp
-(use-package clang-format
-  :general
-  (general-spc "lf" #'clang-format-buffer))
-#+end_src
-
-*** Python
-#+begin_src emacs-lisp :tangle no
-(modify-syntax-entry ?- "w" python-mode-syntax-table)
-(modify-syntax-entry ?_ "w" python-mode-syntax-table)
 #+end_src
 
 * Utilities/Configuration/Help
@@ -1843,6 +2070,19 @@ Re-create a =*scratch*= buffer (see [[https://www.emacswiki.org/emacs/RecreateSc
    (interactive)
    (switch-to-buffer (get-buffer-create "*scratch*"))
    (org-mode))
+#+end_src
+
+** Display Key and Command in Real Time
+#+begin_src emacs-lisp
+(use-package command-log-mode
+  :config
+  (gsetq command-log-mode-open-log-turns-on-mode t
+         command-log-mode-key-binding-open-log nil
+         command-log-mode-is-global t
+         clm/log-command-indentation 2
+         command-log-mode-window-font-size 0)
+  :general
+  (general-spc "Rl" #'clm/toggle-command-log-buffer))
 #+end_src
 
 ** Track frequently used commands with ~keyfreq~
@@ -1897,24 +2137,30 @@ See generated report with ~keyfreq-html~.
   (find-file-other-window (expand-file-name file-path user-emacs-directory)))
 #+end_src
 
-
 #+begin_src emacs-lisp
 (which-key-add-key-based-replacements "SPC R" "Configure Emacs")
 (which-key-add-key-based-replacements "SPC R c" "reload config")
-(general-spc "Rc" (lambda() (interactive)(load-file "~/.emacs.d/init.el")))
+(general-spc "Rc" (lambda() (interactive)(load-file "~/.emacs.d/config.el")))
 #+end_src
 
 ** Emacs daemon hooks
 
 Following lines are required to load theme when using =emacsclient -c=.
 See [[https://stackoverflow.com/questions/18904529/after-emacs-deamon-i-can-not-see-new-theme-in-emacsclient-frame-it-works-fr][this]] stackoverflow for explantations.
-
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (if (daemonp)
     (add-hook 'after-make-frame-functions (lambda (frame)
                         (when (eq (length (frame-list)) 2)
                             (progn
                               (select-frame frame)
-                              (load-theme 'gruvbox-dark-medium)))))
-  (load-theme 'gruvbox-dark-medium  1))
+                              (load-theme 'doom-vibrant)))))
+  (load-theme 'doom-vibrant  1))
+#+end_src
+
+* Load private settings
+#+begin_src emacs-lisp
+(let ((local-file "~/Work/env/emacs-local.el"))
+  (if (file-exists-p local-file)
+      (load-file local-file)
+      (message "Warning: %s is inaccessable!" local-file)))
 #+end_src

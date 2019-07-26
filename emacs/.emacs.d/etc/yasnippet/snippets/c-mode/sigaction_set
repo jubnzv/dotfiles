@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: sigaction_set
+# key: sigaction_set
+# --
+struct sigaction sa;
+sa.sa_flags = ${1:0};
+sa.sa_handler = ${2:handler};
+sigaction(SIG${3:SEGV}, &sa, NULL);
+${0:TARGET}

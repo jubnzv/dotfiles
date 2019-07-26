@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: file_extension
+# key: file_extension
+# --
+fileext="\${${1:varname}##.*}"$0

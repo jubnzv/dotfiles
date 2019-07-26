@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: check_root
+# key: check_root
+# --
+if (setuid(0) < 0) {
+perror("Must be root.");
+exit(EXIT_FAILURE);
+}

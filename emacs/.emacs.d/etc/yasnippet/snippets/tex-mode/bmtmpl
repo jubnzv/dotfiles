@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: bmtmpl
+# key: bmtmpl
+# --
+\documentclass{beamer}
+\usetheme{Rochester}
+
+\title[${1:#:TITLE}]{$1}
+\author[G. Komarov]{Georgy Komarov}
+\date{\today}
+
+\begin{document}
+
+%--- the titlepage frame -------------------------%
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+${0:TARGET}
+
+\end{document}

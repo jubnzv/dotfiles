@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: check_rc
+# key: ifnrc
+# --
+if (rc == -1) {
+$0
+return -1;
+}

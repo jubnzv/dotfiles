@@ -1,0 +1,12 @@
+# -*- mode: snippet -*-
+# name: head_alpine
+# key: head_alpine
+# --
+FROM alpine:3.7
+
+LABEL MAINTAINER="Georgy Komarov <jubnzv@gmail.com>"
+
+$0
+
+CMD ["/bin/sh"]
+# vim: set ft=dockerfile :

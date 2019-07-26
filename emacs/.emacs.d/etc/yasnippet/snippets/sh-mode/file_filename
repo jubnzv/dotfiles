@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: file_filename
+# key: file_filename
+# --
+filename="\${${1:varname}%.*}"$0

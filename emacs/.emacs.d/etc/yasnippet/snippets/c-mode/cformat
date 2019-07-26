@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: cformat
+# key: cformat
+# --
+/* clang-format ${0} */
