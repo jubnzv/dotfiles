@@ -8,4 +8,4 @@ A collection of personal configuration files for *nix.
 - Convenient *taskwarrior* workflow with custom libnotify notifications and several issues trackers integration (see [bugwarrior](https://github.com/ralphbean/bugwarrior)).
 
 
-There also was my configuration of Emacs at this commit: https://github.com/jubnzv/dotfiles/commit/1b498935234a24484eab2c287b5f58926f6d829b.
+There also was my [Emacs configuration](https://github.com/jubnzv/dotfiles/tree/8ea29553c64d1ec1a58ad719afa23c5570f3553e/emacs).
