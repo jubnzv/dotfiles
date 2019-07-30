@@ -1,71 +1,81 @@
-snippet     inc
-options     head
-alias       import
-    import ${1:sys}
+snippet		inc
+options		head
+alias		import
+	import ${1:sys}
 
 snippet print
-alias   pr
-abbr    print()
+alias	pr
+abbr	print()
 options head
-    print(${1})
+	print(${1})
 snippet pprint
-alias   ppr
-abbr    pprint
+alias	ppr
+abbr	pprint
 options head
-    import pprint; pp = pprint.PrettyPrinter(indent=2);
-    pp.pprint(${1})
+	import pprint; pp = pprint.PrettyPrinter(indent=2);
+	pp.pprint(${1})
 
 snippet sizeof
 options head
-    import sys
-    sys.getsizeof($0)
+	import sys
+	sys.getsizeof($0)
 
 # {{{ https://github.com/cool-RR/PySnooper
 snippet snoop
 options head
-    import pysnooper
-    @pysnooper.snoop()$0
+	import pysnooper
+	@pysnooper.snoop()$0
 
 snippet snoop_with
 options head
-    import pysnooper
-    with pysnooper.snoop():
-        $0
+	import pysnooper; with pysnooper.snoop():
+		$0
 # }}}
 
 snippet raise_ni
 alias rni
 options head
-    raise NotImplementedError
+	raise NotImplementedError
 
 # "Execute once" decorator
 snippet execute_once
 options head
-    def execute_once(f):
-        def wrapper(*args, **kwargs):
-            if not wrapper.has_run:
-                wrapper.has_run = True
-                wrapper.value = f(*args, **kwargs)
-            return wrapper.value
-        wrapper.has_run = False
-        return functools.update_wrapper(wrapper, f)
+	def execute_once(f):
+		def wrapper(*args, **kwargs):
+			if not wrapper.has_run:
+				wrapper.has_run = True
+				wrapper.value = f(*args, **kwargs)
+			return wrapper.value
+		wrapper.has_run = False
+		return functools.update_wrapper(wrapper, f)
 
 # Detect exception type
 snippet detect_exception
 options head
-    try:
-        ${1}
-    except Exception as e:
-        _m = f"An exception {e.__class__.__name__} occurred. Arguments: {e.args}"
-        print(_m)
+	try:
+		${1}
+	except Exception as e:
+		_m = f"An exception {e.__class__.__name__} occurred. Arguments: {e.args}"
+		print(_m)
+
+snippet for_files
+options head
+	import os
+	for file in os.listdir("${1}"):
+		fpath = os.path.join("${1}", file)
+		$0
+
+snippet non_implemented
+options head
+	raise NotImplementedError
 
 # {{{ Beremiz
 snippet bzch
 options head
-    code = []
-    code.append("${1}")
-    return "\n".join(code)
+	code = []
+	code.append("${1}")
+	return "\n".join(code)
 snippet bzc
 options head
-    code.append("${1}")
+	code.append("${1}")
 # }}}

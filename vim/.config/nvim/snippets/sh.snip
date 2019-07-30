@@ -1,250 +1,255 @@
 snippet modeline_ft
 options head
-    # vim: set ft=sh :
+	# vim: set ft=sh :
 
 snippet exit_failure
 alias exf
 options head
-    exit 1
-    $0
+	exit 1
+	$0
 
 snippet exit_success
 alias exs
 options head
-    exit 0
-    $0
+	exit 0
+	$0
 
 snippet print
-alias   pr
-    echo "$0"
+alias	pr
+	echo "$0"
 
 snippet log
 alias logger
-    logger "$0"
+	logger "$0"
+
+snippet ch_rc
+options head
+	${1:#:command}
+	if [ $? == 0 ]; then
+		$0
+	fi
 
 snippet ch_args
 options head
-    if [ $# -ne ${1:1} ]; then
-        echo "Usage: \$0 $1"
-        exit 1
-    fi
-    $0
+	if [ $# -ne ${1:1} ]; then
+		echo "Usage: \$0 $1"
+		exit 1
+	fi
+	$0
 
 snippet ch_command
 options head
-    if [[ ! -x "$(command -v ${1})" ]]; then
-        echo "$1: command not found"
-        exit 1
-    fi
-    $0
+	if [[ ! -x "$(command -v ${1})" ]]; then
+		echo "$1: command not found"
+		exit 1
+	fi
+	$0
 
 snippet ch_dir
 options head
-    if [ ! -d ${1:/} ]; then
-        echo "$1 is inaccessible"
-        exit 127
-    fi
-    $0
+	if [ ! -d ${1:/} ]; then
+		echo "$1 is inaccessible"
+		exit 127
+	fi
+	$0
 
 snippet ch_file
 options head
-    if [ ! -f ${1:/} ]; then
-        echo "$1 is inaccessible"
-        exit 127
-    fi
-    $0
+	if [ ! -f ${1:/} ]; then
+		echo "$1 is inaccessible"
+		exit 127
+	fi
+	$0
 
 snippet ch_root
 options head
-    if [[ $EUID -ne 0 ]]; then
-            echo "Please run this script as root."
-            exit 1
-    fi
-    $0
+	if [[ $EUID -ne 0 ]]; then
+			echo "Please run this script as root."
+			exit 1
+	fi
+	$0
 
 snippet ch_connection
 options head
-    wget -q --spider http://google.com
-    if [ ! $? -eq 0 ]; then
-        echo "Please connect to the internet before continuing."
-    fi
-    $0
+	wget -q --spider http://google.com
+	if [ ! $? -eq 0 ]; then
+		echo "Please connect to the internet before continuing."
+	fi
+	$0
 
 snippet ch_process
 options head
-    pgrep -a ${1:PROCESS_NAME} >/dev/null 2>&1
-    if [[ $? -ne 0 ]]; then
-            echo "$1: process not running."
-            exit 1
-    fi
-    $0
+	pgrep -a ${1:PROCESS_NAME} >/dev/null 2>&1
+	if [[ $? -ne 0 ]]; then
+			echo "$1: process not running."
+			exit 1
+	fi
+	$0
 
 snippet ch_docker_image
 options head
-    if [[ "\$(docker images -q ${1:myimage\:mytag} 2> /dev/null)" == "" ]]; then
-        echo "docker: Could not find image '$1' locally."
-        exit 127
-    fi
-    $0
+	if [[ "\$(docker images -q ${1:myimage\:mytag} 2> /dev/null)" == "" ]]; then
+		echo "docker: Could not find image '$1' locally."
+		exit 127
+	fi
+	$0
 
 snippet ch_systemd_service
 options head
-    if [[ "\$(systemctl is-active ${1:service})" != "active" ]]; then
-        echo "systemctl: Starting '$1'..."
-        systemctl start $1
-    fi
-    $0
+	if [[ "\$(systemctl is-active ${1:service})" != "active" ]]; then
+		echo "systemctl: Starting '$1'..."
+		systemctl start $1
+	fi
+	$0
 
 snippet ch_tmux
 options head
-    if [[ -z "$TMUX" ]]; then
-        echo "tmux is not running."
-        exit 1
-    fi
-    $0
+	if [[ -z "$TMUX" ]]; then
+		echo "tmux is not running."
+		exit 1
+	fi
+	$0
 
 # Credits: http://djm.me/ask
 # Don't forget to get STDIN (see get_stdin)
 snippet ask
 options head
-    ask() {
-        while true; do
-            if [ "\${2:-}" = "Y" ]; then
-                prompt="Y/n"
-                default=Y
-            elif [ "\${2:-}" = "N" ]; then
-                prompt="y/N"
-                default=N
-            else
-                prompt="y/n"
-                default=
-            fi
+	ask() {
+		while true; do
+			if [ "\${2:-}" = "Y" ]; then
+				prompt="Y/n"
+				default=Y
+			elif [ "\${2:-}" = "N" ]; then
+				prompt="y/N"
+				default=N
+			else
+				prompt="y/n"
+				default=
+			fi
 
-            # Ask the question (not using "read -p" as it uses stderr not stdout)
-            echo -n "\$1 [\$prompt] "
+			# Ask the question (not using "read -p" as it uses stderr not stdout)
+			echo -n "\$1 [\$prompt] "
 
-            # Read the answer
-            read REPLY < "\$TTY"
+			# Read the answer
+			read REPLY < "\$TTY"
 
-            # Default?
-            if [ -z "\$REPLY" ]; then
-                REPLY=$default
-            fi
+			# Default?
+			if [ -z "\$REPLY" ]; then
+				REPLY=$default
+			fi
 
-            # Check if the reply is valid
-            case "\$REPLY" in
-                Y*|y*) return 0 ;;
-                N*|n*) return 1 ;;
-            esac
+			# Check if the reply is valid
+			case "\$REPLY" in
+				Y*|y*) return 0 ;;
+				N*|n*) return 1 ;;
+			esac
 
-        done
-    }
+		done
+	}
 
 # If we have a STDIN, use it, otherwise get one
 snippet get_stdin
 options head
-    if tty >/dev/null 2>&1; then
-        TTY=$(tty)
-    else
-        TTY=/dev/tty
-    fi
+	if tty >/dev/null 2>&1; then
+		TTY=$(tty)
+	else
+		TTY=/dev/tty
+	fi
 
 snippet KE
 options head
-    2>&1
+	2>&1
 snippet NE
 options head
-    2>/dev/null
+	2>/dev/null
 snippet NUL
 options head
-    >/dev/null 2>&1
+	>/dev/null 2>&1
 snippet G
 options head
-    '|& ag -i'
+	'|& ag -i'
 
 snippet file_filename
 options head
-    filename="\${${1:varname}%.*}"$0
+	filename="\${${1:varname}%.*}"$0
 
 snippet file_extension
 options head
-    fileext="\${${1:varname}##.*}"$0
+	fileext="\${${1:varname}##.*}"$0
 
 snippet for_dirs
 options head
-    for [ d in * ]; do
-        if [[ -d $d ]]; then
-            ${0}
-        fi
-    done
+	for [ d in * ]; do
+		if [[ -d $d ]]; then
+			${0}
+		fi
+	done
 
 snippet strict_mode
 options head
-    set -euo pipefail
+	set -euo pipefail
 
 snippet exit_err
 options head
-    ext=$?
-    if [[ $ext -ne 0 ]]; then
-        exit $ext
-    fi
+	ext=$?
+	if [[ $ext -ne 0 ]]; then
+		exit $ext
+	fi
 
 snippet fdisk_partitioning
 options head
-    (
-    echo o   # Create a new empty DOS partition table
-    echo n   # Add a new partition
-    echo p   # Primary partition
-    echo 1   # Partition number
-    echo     # First sector
-    echo     # Last sector
-    echo w   # Write changes
-    ) | fdisk ${0}
+	(
+	echo o	 # Create a new empty DOS partition table
+	echo n	 # Add a new partition
+	echo p	 # Primary partition
+	echo 1	 # Partition number
+	echo	 # First sector
+	echo	 # Last sector
+	echo w	 # Write changes
+	) | fdisk ${0}
 
 snippet pushd_popd
 options head
-    pushd ${1:./} >/dev/null
-    ${0}
-    popd >/dev/null
+	pushd ${1:./} >/dev/null
+	${0}
+	popd >/dev/null
 
 snippet getopts_verbose
 options head
-    vison=0
+	vison=0
 
-    while getopts "iv" option; do
-        case "$option" in
-            v)
-                echo "verbose mode"
-                vison=1 ;;
-            *)
-                exit 1 ;;
-        esac
-    done
-    shift $(( OPTIND - 1 ))
+	while getopts "iv" option; do
+		case "$option" in
+			v)
+				echo "verbose mode"
+				vison=1 ;;
+			*)
+				exit 1 ;;
+		esac
+	done
+	shift $(( OPTIND - 1 ))
 
-    (( vison )) && echo 'Verbose mode'
-    $0
+	(( vison )) && echo 'Verbose mode'
+	$0
 
 snippet getnum_cores
 options head
-    num_cores=$(grep -c ^processor /proc/cpuinfo)
-    if [ -z "$num_cores" ]; then
-        num_cores=4
-    fi
-    $0
+	num_cores=$(grep -c ^processor /proc/cpuinfo)
+	if [ -z "$num_cores" ]; then
+		num_cores=4
+	fi
+	$0
 
 # {{{ LSB-compilant init scripts
 snippet lsbinit_head
 options head
-    ### BEGIN INIT INFO
-    # Provides:          ${1:daemon-name}
-    # Required-Start:    ${2}
-    # Required-Stop:     ${3}
-    # Default-Start:     ${4:3 5}
-    # Default-Stop:      ${5:0 6}
-    # Short-Description: ${6:Start daemon at boot time}
-    # Description:       ${7:Enable service provided by daemon}
-    ### END INIT INFO
+	### BEGIN INIT INFO
+	# Provides:			 ${1:daemon-name}
+	# Required-Start:	 ${2}
+	# Required-Stop:	 ${3}
+	# Default-Start:	 ${4:3 5}
+	# Default-Stop:		 ${5:0 6}
+	# Short-Description: ${6:Start daemon at boot time}
+	# Description:		 ${7:Enable service provided by daemon}
+	### END INIT INFO
 # }}}
-
-# vim: set ft=neosnippet :
