@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: ch_systemd_service
-# key: ch_systemd_service
-# --
-if [[ "\$(systemctl is-active ${1:service})" != "active" ]]; then
-echo "systemctl: Starting '$1'..."
-systemctl start $1
-fi
-$0

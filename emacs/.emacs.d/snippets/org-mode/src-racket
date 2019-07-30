@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: src-racket
-# key: <sR
-# --
-#+BEGIN_SRC racket :results output
-$0
-#+END_SRC

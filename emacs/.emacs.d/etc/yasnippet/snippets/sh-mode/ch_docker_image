@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: ch_docker_image
-# key: ch_docker_image
-# --
-if [[ "\$(docker images -q ${1:myimage\:mytag} 2> /dev/null)" == "" ]]; then
-echo "docker: Could not find image '$1' locally."
-exit 127
-fi
-$0

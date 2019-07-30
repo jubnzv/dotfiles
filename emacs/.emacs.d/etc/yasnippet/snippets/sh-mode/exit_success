@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: exit_success
-# key: exs
-# --
-exit 0
-$0

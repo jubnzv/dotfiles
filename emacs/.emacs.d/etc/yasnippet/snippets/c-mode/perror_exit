@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: perror_exit
-# key: perror_exit
-# --
-perror("${1:function}");
-exit(EXIT_FAILURE);

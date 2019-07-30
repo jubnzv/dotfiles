@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: detect_exception
-# key: detect_exception
-# --
-try:
-${1}
-except Exception as e:
-_m = f"An exception {e.__class__.__name__} occurred. Arguments: {e.args}"
-print(_m)

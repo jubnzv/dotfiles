@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: ch_dir
-# key: ch_dir
-# --
-if [ ! -d ${1:/} ]; then
-echo "$1 is inaccessible"
-exit 127
-fi
-$0

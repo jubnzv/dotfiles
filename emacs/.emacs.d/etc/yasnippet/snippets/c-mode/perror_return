@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: perror_return
-# key: perror_return
-# --
-perror("${1:function}");
-return -1;

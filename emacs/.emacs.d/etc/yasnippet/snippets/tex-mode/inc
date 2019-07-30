@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: inc
-# key: import
-# --
-import ${1:sys}

@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: bwt
-# key: bwt
-# --
-^= (1 << ${0:BIT})

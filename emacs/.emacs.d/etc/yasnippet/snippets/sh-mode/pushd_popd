@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: pushd_popd
-# key: pushd_popd
-# --
-pushd ${1:./} >/dev/null
-${0}
-popd >/dev/null

@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: bmfrend
-# key: bmfrend
-# --
-\begin{frame}{}
-\Huge Thank you for your attention.
-\end{frame}

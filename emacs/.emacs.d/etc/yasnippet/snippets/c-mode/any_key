@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: any_key
-# key: any_key
-# --
-printf("Press any key to continue...\n");
-getchar();

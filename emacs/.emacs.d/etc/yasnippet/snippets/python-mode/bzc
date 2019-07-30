@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: bzc
-# key: bzc
-# --
-code.append("${1}")

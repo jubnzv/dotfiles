@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: bmfr
-# key: bmfr
-# --
-\begin{frame}{${1:TITLE}}
-${0:TARGET}
-\end{frame}

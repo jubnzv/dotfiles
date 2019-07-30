@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: src-shell
-# key: <ss
-# --
-#+begin_src shell
-$0
-#+end_src

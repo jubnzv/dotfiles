@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: link
-# key: ln
-# --
-[${1:#:link}](${2:#:url})${3}

@@ -1,7 +1,0 @@
-# -*- mode: snippet -*-
-# name: function_once
-# key: function_once
-# --
-static short _once = 0;
-if (_once == 1) return;
-_once = 1;

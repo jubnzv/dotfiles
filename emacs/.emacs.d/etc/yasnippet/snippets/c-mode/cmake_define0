@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: cmake_define0
-# key: cmake_define0
-# --
-#cmakedefine ${1} @$1@
-#ifndef $1
-#define $1    0
-#endif // $1

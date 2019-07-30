@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: graphics
-# key: graphics
-# --
-\begin{figure}[H]
-\label{fig:$1}
-\includegraphics[scale=0.5]{${1:#:PICTURE}}
-\caption{${2:DESCRIPTION}}
-\end{figure}

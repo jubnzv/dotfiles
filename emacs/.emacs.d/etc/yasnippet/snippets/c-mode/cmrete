@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: cmrete
-# key: cmrete
-# --
-0 if success, -1 and sets errno otherwise

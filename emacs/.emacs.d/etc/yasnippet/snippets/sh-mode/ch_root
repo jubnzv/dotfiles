@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: ch_root
-# key: ch_root
-# --
-if [[ $EUID -ne 0 ]]; then
-echo "Please run this script as root."
-exit 1
-fi
-$0

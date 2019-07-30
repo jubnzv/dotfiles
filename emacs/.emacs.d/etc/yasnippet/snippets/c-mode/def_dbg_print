@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: def_dbg_print
-# key: def_dbg_print
-# --
-#define dbg(fmt, args...) do { if (${2:DEBUG_ENABLED}) fprintf(stderr, "[${1:DBG}]: " fmt "\n", ##args); } while (0)

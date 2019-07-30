@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: signal_handler_basic
-# key: signal_handler_basic
-# --
-static void ${1:handler}(int signum)
-{
-	${0:TARGET}
-}

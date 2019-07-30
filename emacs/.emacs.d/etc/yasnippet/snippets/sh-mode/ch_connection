@@ -1,9 +1,0 @@
-# -*- mode: snippet -*-
-# name: ch_connection
-# key: ch_connection
-# --
-wget -q --spider http://google.com
-if [ ! $? -eq 0 ]; then
-echo "Please connect to the internet before continuing."
-fi
-$0

@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: incgrx
-# key: incgrx
-# --
-\usepackage{graphicx}
-\graphicspath{ {./img/} }
-\DeclareGraphicsExtensions{.png}
-\usepackage{float}

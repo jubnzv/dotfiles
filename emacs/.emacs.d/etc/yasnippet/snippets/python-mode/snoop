@@ -1,6 +1,0 @@
-# -*- mode: snippet -*-
-# name: snoop
-# key: snoop
-# --
-import pysnooper
-@pysnooper.snoop()$0

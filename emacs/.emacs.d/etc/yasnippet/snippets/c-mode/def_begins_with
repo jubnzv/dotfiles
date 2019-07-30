@@ -1,5 +1,0 @@
-# -*- mode: snippet -*-
-# name: def_begins_with
-# key: def_begins_with
-# --
-#define BEGINS_WITH(haystack, needle) (strncmp(haystack, needle, strlen(needle)) == 0)
