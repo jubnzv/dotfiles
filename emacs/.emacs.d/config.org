@@ -148,6 +148,7 @@ Increasing GC is a common way to speed up Emacs. The [[https://bling.github.io/b
 ;  :states 'normal
 ;  :prefix "m")
 
+;; , prefix for major-mode specific actions.
 (general-create-definer general-comma
   :states 'normal
   :keymaps 'override
@@ -529,6 +530,27 @@ Activate this to make it available in all other modes:
 (global-hl-line-mode t)
 #+end_src
 
+** Visual bookmarks
+#+begin_src emacs-lisp
+(use-package bm
+  :ghook
+  ('after-init-hook #'bm-repository-load)
+  ('kill-buffer-hook #'bm-buffer-save)
+  :config
+  (gsetq bm-marker 'bm-marker-right
+         ;; Disallow cross-buffer 'next'
+         bm-cycle-all-buffers nil
+         ;; Save and restore bookmarks
+         bm-buffer-persistence t
+         bm-repository-file "~/.emacs.d/bm-repository"
+         bm-restore-repository-on-load t)
+
+  (general-def 'normal
+    "]m" #'bm-next
+    "[m" #'bm-previous
+    "m TAB" #'bm-toggle))
+#+end_src
+
 ** Show columns numbers
 #+begin_src emacs-lisp
 (column-number-mode)
@@ -757,6 +779,11 @@ Web-browser:
        browse-url-generic-program  "/home/jubnzv/.local/bin/firefox")
 #+end_src
 
+** Kill process without confirmation
+#+begin_src emacs-lisp
+(setq kill-buffer-query-functions (delq 'process-kill-buffer-query-function kill-buffer-query-functions))
+#+end_src
+
 ** User info
 #+begin_src emacs-lisp
 (gsetq user-full-name
@@ -779,19 +806,22 @@ Web-browser:
     (gsetq helm-autoresize-max-height 40
            helm-autoresize-min-height 40
            ;; Enable fuzzy matching for helm commands
+           helm-mode-fuzzy-match t
+           helm-completion-in-region-fuzzy-match t
            helm-M-x-fuzzy-match t
            helm-buffers-fuzzy-matching t
            helm-recentf-fuzzy-match t
            helm-semantic-fuzzy-match t
            helm-imenu-fuzzy-match t
+           ;; Make fuzzy matching faster
+           helm-candidate-number-limit 100
            ;; Find files settings
            helm-ff-search-library-in-sexp t
            helm-ff-file-name-history-use-recentf t
            helm-ff-skip-boring-files t)
     :general
     (general-def
-      "M-x" #'helm-M-x
-      "M-i" #'helm-semantic-or-imenu)
+      "M-x" #'helm-M-x)
 
     (general-def helm-map
       "M-k" #'helm-previous-line
@@ -819,6 +849,7 @@ Web-browser:
     (general-spc "SPC" #'helm-M-x
                  "ee" #'helm-find-files
                  "xr" #'helm-mini
+                 "fi" #'helm-semantic-or-imenu
                  "b" #'helm-buffers-list))
 #+end_src
 
@@ -836,6 +867,7 @@ Web-browser:
              "efu" (jbz:f "~/Documents/C & UNIX/")
              "efx" (jbz:f "~/Documents/C++/")
              "efp" (jbz:f "~/Documents/Python/")
+             "en" (jbz:f "~/Org/Notes/")
              "ed" (jbz:f "~/Dev/")
              "es" (jbz:f "~/Sources/")
              "eS" (jbz:f "~/Scripts/")
@@ -905,7 +937,6 @@ Basically a drop-in replacement for =describe-bindings=:
 #+end_src
 
 * Treemacs/File system
-
 
 ** Treemacs
 #+begin_src emacs-lisp
@@ -1006,8 +1037,12 @@ Set human readable units:
     "xf" #'jbz:fuzzy-open-files
     "ps" #'projectile-find-file-in-known-projects
     "pp" #'projectile-switch-project
-    "pr" #'projectile-invalidate-cache
+    "pR" #'projectile-invalidate-cache
+    "pc" #'projectile-compile-project
+    "pr" #'projectile-run-project
     "\/"  #'helm-projectile-ag)
+  (general-def
+    "<F10>" #'projectile-make-project)
   :config
   (gsetq projectile-enable-caching t
          projectile-completion-system 'helm
@@ -1037,18 +1072,6 @@ Set human readable units:
 (use-package helm-projectile)
 #+end_src
 
-* Perspective
-#+begin_src emacs-lisp
-(use-package perspective
-  :init (persp-mode)
-  :config
-  (general-def '(normal insert)
-    "M-]" #'persp-next
-    "M-[" #'persp-prev
-    "M-," #'persp-rename
-    [M-tab] #'persp-switch))
-#+end_src
-
 * Version Control
 
 ** Magit
@@ -1057,6 +1080,7 @@ Set human readable units:
   :general
   (general-spc
     "vs" #'magit-status
+    "vl" #'magit-log-buffer-file
     "vP" #'magit-pull
     "vb" #'magit-blame)
   :config
@@ -1522,17 +1546,7 @@ Images are separated inside that image folder by additional folders one per org 
     :straight (multi-libvterm
                :type git
                :host github
-               :repo "suonlight/multi-libvterm")
-    :general
-    ('normal 'override "M-t" #'jbz:multi-vterm-toggle)
-    (general-def
-      :keymaps 'vterm-mode-map
-      "M-t" #'jbz:multi-vterm-toggle
-      "M-]" #'persp-next
-      "M-[" #'persp-prev
-      "M-," #'persp-rename
-      [M-backspace] nil
-      [M-tab] #'persp-switch))
+               :repo "suonlight/multi-libvterm"))
 #+end_src
 
 ** Serial terminal
@@ -1544,6 +1558,20 @@ Configuration options for [[http://kpda.ru/products/kpda00002/][KPDA QNX]]:
     (set-buffer-process-coding-system
      'cyrillic-alternativnyj-unix
      'cyrillic-alternativnyj-unix))
+#+end_src
+
+* Perspective
+#+begin_src emacs-lisp
+(use-package perspective
+  :init (persp-mode)
+  :config
+  (general-def '(normal insert vterm-mode-map)
+    "M-\\" #'jbz:multi-vterm-toggle
+    "M-]" #'persp-next
+    "M-[" #'persp-prev
+    "M-," #'persp-rename
+    "M-r" #'persp-switch-last
+    "<M-tab>" #'persp-switch))
 #+end_src
 
 * TRAMP
@@ -1680,7 +1708,7 @@ Customize =???= in which-func-mode:
 (defun jbz:font-lock-todo ()
   (font-lock-add-keywords
    nil
-   ;; See: https://github.com/bbatsov/emacs-lisp-style-guide#comment-annotations
+   ;; See also: https://github.com/bbatsov/emacs-lisp-style-guide#comment-annotations
    '(("\\<\\(TODO\\|FIXME\\|OPTIMIZE\\|HACK\\|REVIEW\\|BUG\\|Note\\|xxx\\)"
       1 font-lock-warning-face prepend))))
 
@@ -1690,6 +1718,24 @@ Customize =???= in which-func-mode:
 *** Spaces > tabs
 #+begin_src emacs-lisp
 (gsetq-default indent-tabs-mode nil)
+#+end_src
+
+*** =gf=: find files
+#+begin_src emacs-lisp
+(defun jbz:find-file-at-point ()
+  "Projectile-aware `find-files-at-point'."
+  (interactive)
+  (if (projectile-project-p)
+      (helm-projectile-find-file-dwim)
+      (find-file-at-point)))
+
+(general-def 'normal
+  "gf" #'jbz:find-file-at-point)
+#+end_src
+
+*** Follow *compile* buffer output
+#+begin_src emacs-lisp
+(gsetq compilation-scroll-output t)
 #+end_src
 
 ** ctags support
@@ -1754,13 +1800,19 @@ Company is a text completion framework for Emacs similar with vim's =deoplete=.
 ** =flycheck.el= — Syntax checking plugin
 #+begin_src emacs-lisp
 (use-package flycheck
-  :diminish "fc")
-#+end_src
+  :general
+  (general-def 'normal
+    "]e" #'flycheck-next-error
+    "[e" #'flycheck-previous-error)
+  :config
+  ;; Run a syntax check when changing buffers, just in case you
+  ;; modified some other files that impact the current one. See
+  ;; https://github.com/flycheck/flycheck/pull/1308.
+  (add-to-list 'flycheck-check-syntax-automatically 'idle-buffer-switch)
 
-Jump to errors:
-#+begin_src emacs-lisp
-(evil-declare-key 'normal prog-mode-map "]e" 'flycheck-next-error)
-(evil-declare-key 'normal prog-mode-map "[e" 'flycheck-previous-error)
+  (gsetq flycheck-enabled-checkers '(c/c++-cppcheck))
+
+  (global-flycheck-mode +1))
 #+end_src
 
 ** DAP
@@ -1919,9 +1971,36 @@ LSP UI looks too noisy out of box. Disabled for now.
 
 *** Python
 **** Common
-#+begin_src emacs-lisp :tangle no
+#+begin_src emacs-lisp
+(defun jbz:run-python ()
+  "Execute current buffer with system interpreter."
+  (interactive)
+  (compile (concat "python " (buffer-name)))
+  (select-window (previous-window) t))
+
+(use-package python
+  :general
+  (general-def 'normal
+    "<f10>" #'jbz:run-python)
+  (general-comma
+    "r" 'run-python
+    "sb" 'python-shell-send-buffer
+    "sd" 'python-shell-send-defun
+    "sr" 'python-shell-send-region))
+#+end_src
+
+#+begin_src emacs-lisp
 (modify-syntax-entry ?- "w" python-mode-syntax-table)
 (modify-syntax-entry ?_ "w" python-mode-syntax-table)
+#+end_src
+
+**** virtualenv
+#+begin_src emacs-lisp
+(use-package pyvenv
+  :general
+  (general-comma
+    "va" 'pyvenv-activate
+    "vd" 'pyvenv-deactivate))
 #+end_src
 
 **** pytest integration
