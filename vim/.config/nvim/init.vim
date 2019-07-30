@@ -40,7 +40,6 @@ Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
-Plug 'mhinz/vim-sayonara'             " Sane buffer/window deletion
 Plug 'vim-syntastic/syntastic'        " Syntax checking hacks for vim
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
@@ -85,7 +84,6 @@ Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
-Plug 'rhysd/vim-grammarous' " A powerful grammar checker using LanguageTool
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug '~/Dev/IEC.vim'
 
@@ -111,6 +109,7 @@ set wildignore+=*.aux,*.out,*.toc           " LaTeX output
 set wildignore+=*.jpg,*.jpeg,*.gif,*.png    " Binary images
 set wildignore+=.hg,.git,.svn               " VCS
 set wildignore+=*~                          " Backup files
+set wildcharm=<C-z>
 set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
 set notimeout                               " Remove delay between complex keybindings.
 set noautochdir                             " Set working directory to the current file
@@ -268,23 +267,6 @@ imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 " Fix previous error
 noremap <A-u> [s1z=``
 inoremap <A-u> <c-g>u<Esc>[s1z=`]a<c-g>u
-
-" LanguageTool (https://www.languagetool.org/) integration
-" Use above <Plug> mappings only after checking.
-let g:grammarous#hooks = {}
-function! g:grammarous#hooks.on_check(errs) abort
-    nmap <buffer><C-n> <Plug>(grammarous-move-to-next-error)
-    nmap <buffer><C-p> <Plug>(grammarous-move-to-previous-error)
-endfunction
-function! g:grammarous#hooks.on_reset(errs) abort
-    nunmap <buffer><C-n>
-    nunmap <buffer><C-p>
-endfunction
-nnoremap <leader>Ge :GrammarousCheck<cr>
-vnoremap <leader>Ge :GrammarousCheck<cr>
-nnoremap <leader>Gr :GrammarousCheck --lang=ru<cr>
-vnoremap <leader>Gr :GrammarousCheck --lang=ru<cr>
-nnoremap <leader>Gs :GrammarousReset<cr>
 " }}}
 
 " {{{ indentLine configuration
@@ -331,9 +313,6 @@ nnoremap <silent> <leader>rs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar
 " ё -> е
 nnoremap <silent> <leader>r` :%s/ё/е/g<cr>
 
-" Close buffer
-nnoremap <C-F4> :Sayonara<CR>
-
 " Switch to recent buffer
 nnoremap <A-r> <C-^>
 
@@ -365,6 +344,13 @@ map T <Plug>Sneak_T
 let g:sneak#label = 1
 map <A-;> <Plug>SneakLabel_s
 " }}}
+
+" Duplicate previous line word by word
+" Refrence: https://vim.fandom.com/wiki/Duplicate_previous_line_word_by_word
+inoremap <F1> @<Esc>kyWjPA<BS>
+nnoremap <F1> @<Esc>kyWjPA<BS>
+inoremap <F2> <Esc>o<Esc>kyWjPA<BS><Space>
+nnoremap <F2> <Esc>o<Esc>kyWjPA<BS><Space>
 
 " Tabularize
 cnoreabbrev Tab Tabularize
@@ -961,18 +947,20 @@ let g:rustfmt_autosave = 1
 " }}}
 
 " {{{ Python
-au FileType python nnoremap <leader>ri :!isort %<CR><CR>
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
 au FileType python call LCKeymap()
 au Filetype python set cinoptions=:0,l1,t0,g0,(0
+au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
+au FileType python nnoremap <buffer> <leader>ev :e ./venv/lib/python*/site-packages/<C-Z><C-Z>
+au FileType python nnoremap <buffer> <leader>fv :FZF ./venv/lib/python*/site-packages/<C-Z><CR>
 " }}}
 
 " {{{ vimscript
 let g:vim_indent_cont = 2
 au FileType vim setlocal sw=4 ts=4 expandtab
 au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
-au FileType vim nnore <silent><buffer> K <Esc>:help <C-R><C-W><CR>
+au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
 au FileType help noremap <buffer> q :q<cr>
 " }}}
 
@@ -1012,7 +1000,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm']
 au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
 au FileType markdown set spell! spelllang=en_us,ru_yo
 au FileType markdown call Togglegjgk()
@@ -1055,7 +1043,10 @@ au Filetype css setlocal ts=4
 au Filetype html setlocal ts=4
 
 au BufNewFile,BufRead .clang-format set ft=config
-au BufNewFile,BufRead   .pdbrc set ft=python
+au BufNewFile,BufRead .pdbrc set ft=python
+
+" neosnippet snippets
+au BufNewFile,BufRead *.snip set ft=neosnippet fdm=marker foldlevel=0 fen tw=120 ts=4 noexpandtab
 
 " ansible playbooks
 au BufRead,BufNewFile */playbooks/*.yml set filetype=yaml.ansible
