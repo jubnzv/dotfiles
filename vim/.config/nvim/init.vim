@@ -11,7 +11,7 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'scrooloose/nerdtree'            " A tree explorer plugin for vim
 Plug 'kshenoy/vim-signature'          " Extended marks support
-Plug 'justinmk/vim-sneak'             " Jump to any location specified by two characters.
+Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
 Plug 'lambdalisue/suda.vim'           " Read or write files with sudo command. Required for neovim.
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
@@ -72,6 +72,7 @@ Plug 'jpalardy/vim-slime'             " Some slime in my vim.
 Plug 'wlangstroth/vim-racket'         " Racket mode
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
+Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'
 Plug 'dhruvasagar/vim-table-mode'
@@ -201,14 +202,10 @@ nnoremap Y y$
 " nmap zk O<Esc>j
 
 " Reload vimrc
-nnoremap <leader>Rc :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <F1>c :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Update plugins
-nnoremap <leader>Rp :PlugUpdate<CR>
-
-" Free <F1>
-nmap <F1> :echo <CR>
-imap <F1> <C-o>:echo <CR>
+nnoremap <F1>U :PlugUpdate<CR>
 
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@
@@ -334,23 +331,19 @@ map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
 
-" {{{ vim-sneak
-" Use vim-sneak mappings instead default f/t
-map f <Plug>Sneak_f
-map F <Plug>Sneak_F
-map t <Plug>Sneak_t
-map T <Plug>Sneak_T
-" Poor man easymotion
-let g:sneak#label = 1
-map <A-;> <Plug>SneakLabel_s
+" {{{ easymotion
+let g:EasyMotion_do_mapping = 0        " Disable default mappings
+let g:EasyMotion_smartcase = 1         " Turn on case insensitive feature
+let g:EasyMotion_use_smartsign_us = 1  " Smartsign (type `3` and match `3` & `#`)
+map <A-;> <Plug>(easymotion-overwin-f)
 " }}}
 
 " Duplicate previous line word by word
 " Refrence: https://vim.fandom.com/wiki/Duplicate_previous_line_word_by_word
-inoremap <F1> @<Esc>kyWjPA<BS>
-nnoremap <F1> @<Esc>kyWjPA<BS>
-inoremap <F2> <Esc>o<Esc>kyWjPA<BS><Space>
-nnoremap <F2> <Esc>o<Esc>kyWjPA<BS><Space>
+inoremap <F2> @<Esc>kyWjPA<BS>
+nnoremap <F2> @<Esc>kyWjPA<BS>
+inoremap <F3> <Esc>o<Esc>kyWjPA<BS><Space>
+nnoremap <F3> <Esc>o<Esc>kyWjPA<BS><Space>
 
 " Tabularize
 cnoreabbrev Tab Tabularize
@@ -564,9 +557,9 @@ omap <A-z> <plug>(fzf-maps-o)
 au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
-nnoremap <leader>ff :Files<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <leader>xf :Files<CR>
+nnoremap <M-i> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>xr :FZFMru <CR>
@@ -719,7 +712,10 @@ xmap <A-l> <Plug>(neosnippet_expand_target)
 let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
 
 " Reload snippets
-nnoremap <leader>Rs :call neosnippet#variables#set_snippets({})<cr>
+nnoremap <F1>s :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
+
+" Select and edit snippet file using fzf
+nnoremap <F1>y :FZF ~/.config/nvim/snippets/<cr>
 " }}}
 
 " {{{ LanguageClient settings
@@ -735,6 +731,7 @@ let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
 let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
+  \ 'go': ['gopls'],
   \ 'cpp': ['ccls', '--log-file=/tmp/ccls.log'],
   \ 'c': ['ccls', '--log-file=/tmp/ccls.log'],
   \ }
@@ -946,6 +943,10 @@ au FileType rust nnoremap <buffer> <f9> :!cargo build<cr>
 let g:rustfmt_autosave = 1
 " }}}
 
+" {{{ Go
+au FileType go call LCKeymap()
+" }}}
+
 " {{{ Python
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
@@ -954,6 +955,11 @@ au Filetype python set cinoptions=:0,l1,t0,g0,(0
 au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
 au FileType python nnoremap <buffer> <leader>ev :e ./venv/lib/python*/site-packages/<C-Z><C-Z>
 au FileType python nnoremap <buffer> <leader>fv :FZF ./venv/lib/python*/site-packages/<C-Z><CR>
+au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
+
+" Enable extended Python syntax highlighting
+" FIXME: How does it slow on large projects? ~2.5 loc files seems OK.
+let g:python_highlight_all = 1
 " }}}
 
 " {{{ vimscript

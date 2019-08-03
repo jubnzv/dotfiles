@@ -20,6 +20,20 @@ options head
 	import sys
 	sys.getsizeof($0)
 
+snippet check_file
+alias ch_file
+options head
+	if not os.path.isfile(${1:fpath}):
+		print('%s: not found' % $1)
+		$0
+
+snippet check_dir
+alias ch_dir
+options head
+	if not os.path.isdir(${1:fpath}):
+		print('%s: not found' % $1)
+		$0
+
 # {{{ https://github.com/cool-RR/PySnooper
 snippet snoop
 options head
