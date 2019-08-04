@@ -18,7 +18,7 @@ Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
 Plug 'will133/vim-dirdiff'            " Diff two directories
 Plug 'andymass/vim-matchup'           " Better `%` for some modes
-Plug 'godlygeek/tabular'              " Vim script for text filtering and alignment
+Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
@@ -345,8 +345,12 @@ nnoremap <F2> @<Esc>kyWjPA<BS>
 inoremap <F3> <Esc>o<Esc>kyWjPA<BS><Space>
 nnoremap <F3> <Esc>o<Esc>kyWjPA<BS><Space>
 
-" Tabularize
-cnoreabbrev Tab Tabularize
+" vim-easyalign
+cnoreabbrev Tab EasyAlign
+" Start interactive EasyAlign in visual mode (e.g. vipga)
+xmap ga <Plug>(EasyAlign)
+" Start interactive EasyAlign for a motion/text object (e.g. gaip)
+nmap ga <Plug>(EasyAlign)
 " }}}
 
 " {{{ Lightline
