@@ -1023,6 +1023,9 @@ au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
+" Paste link to URL from clipboard in Emacs style
+au FileType markdown inoremap <buffer> <C-c><C-l> ()<Esc>hpl%i[]<C-o>h
+au FileType markdown nnoremap <buffer> <C-c><C-l> i()<Esc>hpl%i[]<C-o>h
 au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
 au FileType markdown nnoremap <buffer> <F7> :Vista toc<CR>
 
