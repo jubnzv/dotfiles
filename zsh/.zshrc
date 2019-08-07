@@ -199,7 +199,6 @@ alias Em='emacs -nw'
 
 # tmux
 alias tm='tmux'
-alias tmp='find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y; tmux attach'
 alias tmkill='tmux kill-session -t'
 alias tma='tmux attach -t'
 
@@ -417,9 +416,8 @@ backward-kill-dir () {
 zle -N backward-kill-dir
 bindkey '^[^?' backward-kill-dir
 
-bindkey -s "\ei" "^Qvimfzf .^J" # Select file with fzf and open in vim
-bindkey -s "\et" "^Qtmp^J"      # Select tmuxp session fzf and attach
-bindkey -s "\el" "^Qls^J"       # ls
+bindkey -s "\ei"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
+bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
 # }}}
 
 # {{{ fzf

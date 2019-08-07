@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+#
+# Select and open tmux session with fzf.
+#
+if [ ! -d ~/.tmux/sessions/ ]; then
+    echo "~/.tmux/sessions/ is inaccessible"
+    exit 127
+fi
+
+session_filename="$(find ~/.tmux/sessions/* -type f | fzf)"
+
+if [ -z "$session_filename" ]; then
+    exit 1 # Canceled
+fi
+
+tmux-session load $session_filename
+tmux attach
