@@ -36,25 +36,35 @@ fi
 
 fpath=( ~/.zfunc "${fpath[@]}" )
 
-# {{{ fasd
+# fasd setup
 # have a (any), s (show), z (cd), etc.
 eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
-# }}}
 
 # {{{ Options
-# PATH
-export SCRIPTS_PATH=$HOME/.local/bin/scripts/
-export PATH=$PATH:$HOME/.local/bin/:$SCRIPTS_PATH:$HOME/.cargo/bin:/usr/local/go/bin
+# Golang workspace location. References:
+# https://golang.org/doc/code.html#Workspaces
+# https://golang.org/doc/code.html#GOPATH
 export GOPATH=$HOME/Dev/go/
+
+# Path to golang installation. Should be set only if multiple versions of Go are using simultaneously.
+# See: https://golang.org/doc/install#extra_versions
 unset GOROOT
 
-# Credentials
+# PATH
+export PATH=$PATH:$HOME/.local/bin/:$HOME/.cargo/bin:/usr/local/go/bin:$GOPATH/bin/
+
+# Default username for https://hub.docker.com
 export DOCKER_ID_USER="jubnzv1"
 
-# Make java UI not so ugly
+# Contains latest cppcheck version with some personal customizations.
+export CPPCHECK_HOME=$HOME/Dev/cppcheck/cppcheck-clean/
+
+# Make Java UI not so ugly.
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 
+# Use latest nightly version of nvim.
 alias nvim=/usr/local/bin/nvim
+
 export EDITOR="nvim"
 export ALTERNATE_EDITOR="nvim"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
@@ -62,7 +72,7 @@ export TERMCMD="kitty"
 export TERMINAL="kitty -e"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
-export PYFLAKES_BUILTINS='_'
+export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
 export PYTHONSTARTUP=~/.pythonrc
 # }}}
 
@@ -192,11 +202,6 @@ alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
 
-# emacs
-alias e='emacsclient -t'
-alias em='emacsclient -t'
-alias Em='emacs -nw'
-
 # tmux
 alias tm='tmux'
 alias tmkill='tmux kill-session -t'
@@ -228,6 +233,9 @@ vnn() {
 vnf() {
     nvim $(find ~/Org/Notes/ -type f | fzf)
 }
+
+# rsync
+alias rs='rsync -ah --progress'
 
 # {{{ git
 alias g='git'
@@ -269,6 +277,8 @@ alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
 alias -g G='|& ag -i'
+alias -g L="|& less"
+alias -g V="| nvim -"
 
 # python
 alias vs='source venv/bin/activate'
@@ -356,6 +366,9 @@ alias ju='journalctl -u'
 # }}}
 
 alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
+
+# Sequence that disables cursor blinking
+alias stopblink="printf '\033[?12l'"
 # }}}
 
 # {{{ Functions
@@ -396,7 +409,7 @@ pkill_cq() {
 # }}}
 # }}}
 
-# {{{ Keybinds
+# {{{ Keybindings
 bindkey -e                        # Enable emacs-mode
 
 autoload -Uz compinit && compinit # Command completion
@@ -455,7 +468,7 @@ export FZF_DEFAULT_OPTS="
 # _gen_fzf_default_opts
 # }}}
 
-export FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS}" --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel"
+export FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS}" --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel,esc:cancel"
 
 if [[ "$(command -v fd)" ]]; then
     export FZF_DEFAULT_COMMAND='fd --type f --follow'
@@ -485,28 +498,8 @@ compdef t=task
 compdef g=git
 # }}}
 
-# {{{ tmux
-# Use FZF to switch Tmux sessions
-# For now I use following script instead: https://github.com/siadat/session-finder
-# fzf_tmux_session() {
-#     local -r fmt='#{session_id}:|#S|(#{session_attached} attached)'
-#     { tmux display-message -p -F "$fmt" && tmux list-sessions -F "$fmt"; } \
-#         | awk '!seen[$1]++' \
-#         | column -t -s'|' \
-#         | fzf -q '$' --reverse --prompt 'switch session: ' -1 \
-#         | cut -d':' -f1 \
-#         | xargs tmux switch-client -t
-# }
-
-# tmuxp configuration
-if [[ -n $(which tmuxp) ]]; then
-    eval "$(_TMUXP_COMPLETE=source_zsh tmuxp)"
-    tmpz() { find ~/.tmuxp/* -type f | fzf | xargs tmuxp load -y }
-fi
-# }}}
-
-# {{{ Misc.
-# Command usage statistics
+# {{{ Utilities
+# Shell commands usage statistics
 function zsh_stats() {
 	fc -l 1 | \
 		awk '{CMD[$2]++;count++;}END { for (a in CMD)print CMD[a] " " CMD[a]/count*100 "% " a;}' | \

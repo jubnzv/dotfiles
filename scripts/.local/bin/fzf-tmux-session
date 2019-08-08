@@ -13,5 +13,5 @@ if [ -z "$session_filename" ]; then
     exit 1 # Canceled
 fi
 
-tmux-session load $session_filename
+tmux-sessions load $session_filename
 tmux attach
