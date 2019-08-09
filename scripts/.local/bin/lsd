@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ $# -ne 1 ]]; then
+	path=.
+else
+	path=$1
+fi
+
+ls -d $path/*/
