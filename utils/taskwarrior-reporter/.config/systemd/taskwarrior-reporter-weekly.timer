@@ -1,0 +1,11 @@
+[Unit]
+Description=Email taskwarrior tasks for a current week
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1d
+OnCalendar=Sat *-*-*
+
+[Install]
+WantedBy=timers.target
+

@@ -1,0 +1,11 @@
+[Unit]
+Wants=taskwarrior-reporter-weekly.timer
+Description=Run taskwarrior-reporter for this week
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=/home/jubnzv/.local/bin/taskwarrior-reporter --weekly
+Type=oneshot
+
+[Install]
+WantedBy=default.target

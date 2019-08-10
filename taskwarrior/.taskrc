@@ -1,8 +1,19 @@
+#
 # Use the command 'task show' to see all defaults and overrides
-data.location=~/Org/taskwarrior
+# See src/Context.cpp for description and default values.
+#
+data.location = ~/Org/taskwarrior
+
+weekstart = Monday
+
 confirmation = no
-weekstart=monday
-calendar.holidays=sparse
+recurrence.confirmation = no
+
+calendar.holidays = sparse
+calendar.legend = 0
+
+# Default due date for 'add' command
+default.due = eom
 
 # Aliases
 alias.a=add
