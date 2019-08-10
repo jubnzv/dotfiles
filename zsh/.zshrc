@@ -7,7 +7,7 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
     source ~/.zplug/init.zsh
 
     # Easymotion alternative for zsh
-    source ~/.config/zsh/zce.zsh/zce.zsh
+    #source ~/.config/zsh/zce.zsh/zce.zsh
     zplug 'hchbaw/zce.zsh'
 
     # Autosuggestions
@@ -38,7 +38,9 @@ fpath=( ~/.zfunc "${fpath[@]}" )
 
 # fasd setup
 # have a (any), s (show), z (cd), etc.
-eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
+if [[ -x "$(command -v fasd)" ]]; then
+    eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
+fi
 
 # {{{ Options
 # Golang workspace location. References:
@@ -61,9 +63,6 @@ export CPPCHECK_HOME=$HOME/Dev/cppcheck/cppcheck-clean/
 
 # Make Java UI not so ugly.
 export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
-
-# Use latest nightly version of nvim.
-alias nvim=/usr/local/bin/nvim
 
 export EDITOR="nvim"
 export ALTERNATE_EDITOR="nvim"
@@ -312,32 +311,35 @@ alias diffdir='diff -ENwbur'
 alias cpd='cpdiff'
 
 # {{{ taskwarrior
-alias t="task"                 # Default `task next` report
-alias tt="t recent"            # Recently added tasks
-alias tb="t -redmine -gitlab"  # Filter bugwarrior-imported tasks
-alias tc="t context"           # Select context
-alias tcn="t c none"           # Unset context
-alias tactive="date; t active"
-alias tstart="date; t start"
-alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no stop"
-alias tdoned='t end:today status:completed all'
-alias tdonew='t end.after:today-7d status:completed all'
-alias tdonem='t end.after:today-30d status:completed all'
-alias bwp="bugwarrior-pull"
+if [[ -x "$(command -v task)" ]]; then
+    alias t="task"                 # Default `task next` report
+    alias tt="t recent"            # Recently added tasks
+    alias tb="t -redmine -gitlab"  # Filter bugwarrior-imported tasks
+    alias tc="t context"           # Select context
+    alias tcn="t c none"           # Unset context
+    alias tactive="date; t active"
+    alias tstart="date; t start"
+    alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no stop"
+    alias tdoned='t end:today status:completed all'
+    alias tdonew='t end.after:today-7d status:completed all'
+    alias tdonem='t end.after:today-30d status:completed all'
+    alias bwp="bugwarrior-pull"
 
-# {{{ M-t: Select id one of taskwarrior tasks with fzf
-fzf_show_task() {
-    task_id=$(t minimal 2> /dev/null                      \
-    | sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' \
-    | fzf --tac --no-sort                                 \
-    | awk '{print $1}') &&
-        t $task_id
-}
-zle -N fzf_show_task
-bindkey '^[t' fzf_show_task
-# }}}
+    # {{{ M-t: Select id one of taskwarrior tasks with fzf
+    fzf_show_task() {
+	task_id=$(t minimal 2> /dev/null                      \
+	| sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' \
+	| fzf --tac --no-sort                                 \
+	| awk '{print $1}') &&
+	    t $task_id
+    }
+    zle -N fzf_show_task
+    bindkey '^[t' fzf_show_task
+    # }}}
+fi
 
-if [[ "$(command -v task)" ]]; then
+
+if [[ -x "$(command -v task)" ]]; then
     cal() {
         task calendar
     }
@@ -494,7 +496,6 @@ bindkey "^[c" fzf-fasd-dir
 
 # {{{ Autocompletion
 compdef sshrc=ssh
-compdef t=task
 compdef g=git
 # }}}
 
@@ -508,7 +509,9 @@ function zsh_stats() {
 # }}}
 
 # Load private settings
-source ~/Work/env.sh
+if [ -f ~/Work/env.sh ]; then
+    source ~/Work/env.sh
+fi
 
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
