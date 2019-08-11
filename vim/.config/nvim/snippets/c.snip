@@ -223,7 +223,7 @@ options head
 	static short _once = 0;
 	if (_once == 1) return;
 	_once = 1;
-snippet func_strerror
+snippet fn_strerror
 options head
 	const char *strerror_${1:name}(int errno_)
 	{
@@ -234,12 +234,12 @@ options head
 				return strerror(errno_);
 		}
 	}
-snippet func_print_usage
+snippet fn_print_usage
 	void print_usage(const char *argv0)
 	{
 		printf("Usage: %s ${1}\n", argv0);
 	}
-snippet func_int_from_bytes
+snippet fn_int_from_bytes
 	static int int_from_bytes(char *buf, int pos, int num)
 	{
 		 unsigned char tmp[num];
@@ -251,7 +251,7 @@ snippet func_int_from_bytes
 			 acc += tmp[i] << (8 * i);
 		 return acc;
 	}
-snippet func_kbhit
+snippet fn_kbhit
 options head
 	static int kbhit(void)
 	{

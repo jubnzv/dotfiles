@@ -14,6 +14,10 @@ abbr	pprint
 options head
 	import pprint; pp = pprint.PrettyPrinter(indent=2);
 	pp.pprint(${1})
+snippet send_notify
+alias pn
+options head
+    import os; os.system('notify-send "Debug" "${1:%s}"' % (${2}))
 
 snippet sizeof
 options head

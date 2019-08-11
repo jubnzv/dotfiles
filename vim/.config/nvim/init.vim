@@ -76,7 +76,7 @@ Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'
 Plug 'dhruvasagar/vim-table-mode'
-Plug 'tpope/vim-markdown'
+Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'
@@ -293,6 +293,7 @@ map <leader>es :sp %%
 map <leader>ev :vsp %%
 map <leader>et :tabe %%
 map <leader>ec :cd %%<cr>
+map <leader>eC :cd ..<cr>
 
 " Find and Replace
 map <leader>rs :%s///g<left><left><left>
@@ -569,6 +570,7 @@ nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>xr :FZFMru <CR>
 
 nnoremap <leader>fs :Ag<CR>
+nnoremap <leader>/ :Ag<CR>
 nnoremap <leader>fw :Ag<Space><C-r><C-w><CR>
 
 " Search in specific file types
@@ -581,6 +583,7 @@ command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40
 command! -bang -nargs=* AgElisp call fzf#vim#ag(<q-args>, '--elisp', {'down': '~40%'})
 command! -bang -nargs=* AgCSS call fzf#vim#ag(<q-args>, '--css', {'down': '~40%'})
 nnoremap <leader>fac :AgCC<CR>
+nnoremap <leader>fah :AgH<CR>
 nnoremap <leader>fax :AgCxx<CR>
 nnoremap <leader>fap :AgPython<CR>
 nnoremap <leader>far :AgRust<CR>
@@ -665,8 +668,61 @@ function! NearestMethodOrFunction() abort
 endfunction
 autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
 
+" Copy current function name to system clipboard.
+function! FunctionNameToClipboard() abort
+  redir @+
+    let l:method = get(b:, 'vista_nearest_method_or_function', '')
+    echon l:method
+  redir END
+endfunction
+nnoremap <leader>yf :call FunctionNameToClipboard()<cr>
+
 nnoremap <silent> <F7> :Vista!!<CR>
 nnoremap <silent> <A-7>:Vista focus<CR>
+" }}}
+
+" {{{ vim-signature configuration
+let g:SignatureMap = {
+        \ 'Leader'             :  "m",
+        \ 'PlaceNextMark'      :  "m,",
+        \ 'ToggleMarkAtLine'   :  "m.",
+        \ 'PurgeMarksAtLine'   :  "m-",
+        \ 'DeleteMark'         :  "dm",
+        \ 'PurgeMarks'         :  "m<Space>",
+        \ 'PurgeMarkers'       :  "m<BS>",
+        \ 'GotoNextLineAlpha'  :  "']",
+        \ 'GotoPrevLineAlpha'  :  "'[",
+        \ 'GotoNextSpotAlpha'  :  "`]",
+        \ 'GotoPrevSpotAlpha'  :  "`[",
+        \ 'GotoNextLineByPos'  :  "]'",
+        \ 'GotoPrevLineByPos'  :  "['",
+        \ 'GotoNextSpotByPos'  :  "]`",
+        \ 'GotoPrevSpotByPos'  :  "[`",
+        \ 'GotoNextMarker'     :  "]-",
+        \ 'GotoPrevMarker'     :  "[-",
+        \ 'GotoNextMarkerAny'  :  "]=",
+        \ 'GotoPrevMarkerAny'  :  "[=",
+        \ 'ListBufferMarks'    :  "m/",
+        \ 'ListBufferMarkers'  :  "m?"
+        \ }
+nnoremap [1 :call signature#marker#Goto('prev', 1, v:count)<cr>
+nnoremap ]1 :call signature#marker#Goto('next', 1, v:count)<cr>
+nnoremap [2 :call signature#marker#Goto('prev', 2, v:count)<cr>
+nnoremap ]2 :call signature#marker#Goto('next', 2, v:count)<cr>
+nnoremap [3 :call signature#marker#Goto('prev', 3, v:count)<cr>
+nnoremap ]3 :call signature#marker#Goto('next', 3, v:count)<cr>
+nnoremap [4 :call signature#marker#Goto('prev', 4, v:count)<cr>
+nnoremap ]4 :call signature#marker#Goto('next', 4, v:count)<cr>
+nnoremap [5 :call signature#marker#Goto('prev', 5, v:count)<cr>
+nnoremap ]5 :call signature#marker#Goto('next', 5, v:count)<cr>
+nnoremap [6 :call signature#marker#Goto('prev', 6, v:count)<cr>
+nnoremap ]6 :call signature#marker#Goto('next', 6, v:count)<cr>
+nnoremap [7 :call signature#marker#Goto('prev', 7, v:count)<cr>
+nnoremap ]7 :call signature#marker#Goto('next', 7, v:count)<cr>
+nnoremap [8 :call signature#marker#Goto('prev', 8, v:count)<cr>
+nnoremap ]8 :call signature#marker#Goto('next', 8, v:count)<cr>
+nnoremap [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
+nnoremap ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
 " }}}
 
 " {{{ syntastic
@@ -720,6 +776,8 @@ nnoremap <F1>s :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets re
 
 " Select and edit snippet file using fzf
 nnoremap <F1>y :FZF ~/.config/nvim/snippets/<cr>
+" Open file from neosnippet-snippets collection
+nnoremap <F1>Y :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
 " }}}
 
 " {{{ LanguageClient settings
@@ -937,7 +995,7 @@ let g:slime_target = "tmux"
 let g:slime_paste_file = tempname()
 let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
 let g:slime_dont_ask_default = 1
-au FileType racket RainbowToggle
+au FileType racket RainbowToggleOn
 au FileType racket call LispKeymap()
 " }}}
 
@@ -955,15 +1013,37 @@ au FileType go call LCKeymap()
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
 au FileType python call LCKeymap()
+au FileType python RainbowToggleOn
 au Filetype python set cinoptions=:0,l1,t0,g0,(0
 au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
 au FileType python nnoremap <buffer> <leader>ev :e ./venv/lib/python*/site-packages/<C-Z><C-Z>
 au FileType python nnoremap <buffer> <leader>fv :FZF ./venv/lib/python*/site-packages/<C-Z><CR>
 au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
 
-" Enable extended Python syntax highlighting
-" FIXME: How does it slow on large projects? ~2.5 loc files seems OK.
+" Enable extended Python syntax highlighting provided by vim-python/python-syntax.
+" xxx: How slow will it be on large projects? 2.5k LOC files seems OK.
 let g:python_highlight_all = 1
+
+" Configure python textobj's provided by bps/vim-textobj-python
+let g:textobj_python_no_default_key_mappings = 1
+call textobj#user#map('python', {
+      \   'class': {
+      \     'select-a': '<buffer>ac',
+      \     'select-i': '<buffer>ic',
+      \     'move-n': '<buffer>]c',
+      \     'move-p': '<buffer>[c',
+      \   },
+      \   'function': {
+      \     'select-a': '<buffer>af',
+      \     'select-i': '<buffer>if',
+      \     'move-n': '<buffer>]f',
+      \     'move-p': '<buffer>[f',
+      \   }
+      \ })
+
+" Narrowing functions: edit function/class body in separate window.
+" au FileType python nnoremap <buffer><leader>nf vaf:'<,'>NR<cr>
+" au FileType python nnoremap <buffer><leader>nc vac:'<,'>NR<cr>
 " }}}
 
 " {{{ vimscript
@@ -998,6 +1078,8 @@ au FileType rst setlocal textwidth=80
 au Filetype rst setlocal foldmethod=expr
 au FileType rst set spell! spelllang=en_us,ru_ru
 au FileType rst call Togglegjgk()
+
+" Settings for gu-fan/riv.vim. I don't use it nowdays.
 " Disable auto-folding on `:w`
 let g:riv_fold_auto_update=0
 " The position of fold info
@@ -1010,7 +1092,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm', 'go', 'python']
 au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
 au FileType markdown set spell! spelllang=en_us,ru_yo
 au FileType markdown call Togglegjgk()
@@ -1026,6 +1108,8 @@ au FileType markdown inoremap <buffer> =><space> ⇒<space>
 " Paste link to URL from clipboard in Emacs style
 au FileType markdown inoremap <buffer> <C-c><C-l> ()<Esc>hpl%i[]<C-o>h
 au FileType markdown nnoremap <buffer> <C-c><C-l> i()<Esc>hpl%i[]<C-o>h
+" Create TOC using https://github.com/ekalinin/github-markdown-toc.go
+au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
 au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
 au FileType markdown nnoremap <buffer> <F7> :Vista toc<CR>
 
