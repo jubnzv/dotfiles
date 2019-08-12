@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+# find + ag source search.
+if [[ ! -x "$(command -v ag)" ]]; then
+    echo "ag: command not found"
+    exit 1
+fi
+if [ $# -ne 2 ]; then
+    echo "Usage: $0 <filename glob> <ag pattern>"
+    echo "Example: agf '*defconfig*' 'CONFIG_FONT'"
+    exit 1
+fi
+
+find . -name $1 -exec ag -Hn $2 {} \;
