@@ -278,6 +278,14 @@ alias -g NUL=">/dev/null 2>&1"
 alias -g G='|& ag -i'
 alias -g L="|& less"
 alias -g V="| nvim -"
+# Perform operation using fzf. Examples:
+#   find /usr/include -name "test.h" F nvim
+#   find /usr/lib -name "test.so.*" F readelf -h
+if [[ -z "$TMUX" ]]; then
+    alias -g F="| fzf --multi --cycle | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
+else
+    alias -g F="| fzf-tmux --tac | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
+fi
 
 # python
 alias vs='source venv/bin/activate'
