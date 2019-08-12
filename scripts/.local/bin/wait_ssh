@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# Wait while ssh on remote host will be available, then send notification and
+# mark window as urgent in i3wm.
+#
+if [[ ! -x "$(command -v nmap)" ]]; then
+    echo "nmap: command not found"
+    exit 1
+fi
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <hostname>"
+    exit 1
+fi
+
+hostname=$1
+
+# Set new window title while running.
+pid="$(xdotool getwindowfocus getwindowpid)"
+saved_name="$(xdotool getwindowfocus getwindowname)"
+new_name="Wait SSH: $hostname"
+xdotool search --onlyvisible --pid $pid --name "$saved_name" set_window --name "$new_name"
+
+status="$(nmap $hostname -PN -p ssh | egrep 'open|closed|filtered')"
+until [[ "$status" =~ "open" ]]; do
+    status="$(nmap $hostname -PN -p ssh | egrep 'open|closed|filtered')"
+    sleep 1
+done
+
+notify-send "$hostname" "SSH available"
+wmctrl -r "$new_name" -b add,demands_attention # Mark window as urgent in i3
+
+# Restore window name
+xdotool search --onlyvisible --pid $pid --name "$new_name" set_window --name "$saved_name"
