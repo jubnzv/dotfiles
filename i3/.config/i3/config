@@ -189,9 +189,10 @@ bindsym $mod+Shift+m move container to workspace 14$tile_14_music
 
 # Application startup hotkeys
 bindsym $mod+n exec $SCRIPTS_PATH/rofi/notes
+bindsym $mod+backslash exec $SCRIPTS_PATH/rofi/tmux-sessions
 bindsym $mod+Control+n exec $TERMINAL -e nvim ~/Org/scratch.md
 bindsym $mod+Return exec $TERMINAL
-bindsym $mod+Control+Return exec $TERMINAL -e tmux
+bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
 bindsym $mod+Control+F2 workspace 2$tile_02_w; exec firefox
 bindsym $mod+Control+F5 workspace 2$tile_02_w; exec chromium --profile-directory=Dev
 bindsym $mod+Control+m workspace 14$tile_14_music; exec $TERMINAL -e cmus
