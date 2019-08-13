@@ -55,6 +55,7 @@ set t_ZR=^[[23m
 " {{{ Keybindings
 imap jj <Esc>
 nnoremap <leader>b :ls<CR>:b<space>
+nnoremap <leader>s :w<CR>
 " }}}
 
 """ Appearance
