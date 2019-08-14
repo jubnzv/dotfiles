@@ -38,33 +38,39 @@ for h in $homes; do
 done
 # }}}
 
-# {{{ Load tmux settings
-setup_tmux() {
-  local TMUXDIR=$SSHHOME/.tmux.jubnzv
-  if ! [ -d $TMUXDIR ]; then
-    rm -rf $TMUXDIR
-    mkdir -p $TMUXDIR
-  fi
-
-  local TMUX_COMMAND="/usr/bin/tmux -f $SSHHOME/.sshrc.d/.tmux.conf"
-
-  # Startup tmux after establish connection
-  if $TMUX_COMMAND has-session; then
-      exec $TMUX_COMMAND attach $@
-  else
-      exec $TMUX_COMMAND $@
-  fi
-}
-
-setup_tmux
-# }}}
-
 # {{{ Load vim settings
 setup_vim() {
     export VIMINIT="let \$MYVIMRC='$SSHHOME/.sshrc.d/.vimrc' | source \$MYVIMRC"
 }
 
 setup_vim
+# }}}
+
+# {{{ Collect some information about this target
+$SSHHOME/.sshrc.d/target-info.sh > $SSHHOME/target_info
+# }}}
+
+# {{{ Load tmux settings
+setup_tmux() {
+  local tmuxname=komarov_g
+
+  local TMUXDIR=$SSHHOME/.tmux.${tmuxname}
+  if ! [ -d $TMUXDIR ]; then
+    rm -rf $TMUXDIR
+    mkdir -p $TMUXDIR
+  fi
+
+  local TMUX_COMMAND="/usr/bin/tmux -f $SSHHOME/.sshrc.d/.tmux.conf "
+
+  # Initialize session
+  $TMUX_COMMAND $@ new -s ${tmuxname} -d
+  $TMUX_COMMAND send-keys -t ${tmuxname} 'cat $SSHHOME/target_info' ENTER
+
+  # Attach to created session
+  exec $TMUX_COMMAND attach-session -t ${tmuxname}
+}
+
+setup_tmux
 # }}}
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
