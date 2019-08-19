@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+#
+# Send desktop notification with number of remaning tasks for today.
+#
+if [[ ! -x "$(command -v notify-send)" ]]; then
+    echo "notify-send: command not found"
+    exit 1
+fi
+if [[ ! -x "$(command -v task)" ]]; then
+    echo "task: command not found"
+    exit 1
+fi
+
+sched_num="$(task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY count)"
+due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED count)"
+
+if [[ $sched_num ]] || [[ $due_num ]]; then
+    msg=""
+    if [[ ! $sched_num ]]; then
+        msg=$msg"0 scheduled"
+    else
+        msg=$msg"$sched_num scheduled"
+    fi
+    msg=$msg", "
+    if [[ ! $due_num ]]; then
+        msg=$msg"0 due"
+    else
+        msg=$msg"$due_num due"
+    fi
+
+    notify-send "taskwarrior" "There are some pending tasks for today: $msg"
+fi

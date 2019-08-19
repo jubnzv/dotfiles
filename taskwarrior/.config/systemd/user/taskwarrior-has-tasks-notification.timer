@@ -1,0 +1,9 @@
+[Unit]
+Description=Send notificaiton with number of remaining tasks for today.
+
+[Timer]
+OnCalendar=17:30
+OnCalendar=20:00
+
+[Install]
+WantedBy=timers.target

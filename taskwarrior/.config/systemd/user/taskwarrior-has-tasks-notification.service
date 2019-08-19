@@ -1,0 +1,10 @@
+[Unit]
+Description=Send notificaiton with number of remaining tasks for today.
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=notify_has_tasks
+Type=oneshot
+
+[Install]
+WantedBy=default.target
