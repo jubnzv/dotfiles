@@ -91,10 +91,10 @@ hide_edge_borders both
 # Use `xprop` command for WM_CLASS and WM_NAME.
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
-for_window [instance="^Emacs_Scratchpad$"] move scratchpad
 for_window [class="^Mattermost$"] move container to workspace 13$tile_13_msg
 for_window [class="^Slack$"] move container to workspace 13$tile_13_msg
 for_window [class="TelegramDesktop"] move container to workspace 13$tile_13_msg
+for_window [class="(?i)taskboard"] floating enable, move container to workspace current
 for_window [class="^Thunderbird$"] move container to workspace 13$tile_13_msg
 for_window [title="^Beremiz$"] move container to workspace 10$tile_10_2, focus, layout floating
 for_window [title="^PLCOpenEditor$"] move container to workspace 10$tile_10_2, focus, layout floating
@@ -134,8 +134,6 @@ bindsym $mod+Shift+plus move workspace to output right
 bindsym $mod+Tab focus output right
 
 # Switch between windows on workspace
-bindsym $mod+comma focus left
-bindsym $mod+period focus right
 bindsym $mod+bracketleft focus left
 bindsym $mod+bracketright focus right
 
@@ -214,12 +212,12 @@ bindsym $mod+BackSpace exec "rofi -show window"
 
 # Additional scripts/utils
 bindsym $mod+F10 exec $SCRIPTS_PATH/i3/toggle-notifications
-bindsym $mod+t exec $SCRIPTS_PATH/i3/active-task
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
 bindsym Control+XF86Launch1 exec screengrab -r
-bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+# bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
+bindsym Shift+XF86Launch1 exec peek
 bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
 bindsym $mod+XF86ScreenSaver exec xset s activate
 bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
@@ -239,10 +237,6 @@ bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 
 # i3bar control
 bindsym $mod+F8 bar mode toggle bar-main
-
-# Scratchpad
-bindsym $mod+Shift+S move scratchpad
-bindsym $mod+s scratchpad show
 
 # Highlight focused window
 bindsym Shift+F4 [class=".*"] border pixel 5
@@ -316,6 +310,18 @@ mode --pango_markup "$mode_exec_i3cmd" {
 	bindsym Escape 	    mode "default"
 }
 # }}}
+# {{{ taskwarrior
+set $mode_taskwarrior <span bgcolor='#8f3f71' fgcolor='#282828'> taskwarrior</span>\t\t\
+<span bgcolor='#a89984' fgcolor='#282828'>[a]</span><span fgcolor='#a89984'> active\t</span>  \
+<span bgcolor='#a89984' fgcolor='#282828'>[h]</span><span fgcolor='#a89984'> has-tasks</span>
+bindsym $mod+t mode "$mode_taskwarrior"
+mode --pango_markup "$mode_taskwarrior" {
+	bindsym a           exec $SCRIPTS_PATH/i3/active-task; mode "default"
+    bindsym h           exec notify_has_task; mode "default"
+	bindsym Return 	    mode "default"
+	bindsym Escape 	    mode "default"
+}
+# }}}
 # {{{ Run selected REPL
 set $mode_run_repl <span bgcolor='#d79921' fgcolor='#282828'> REPL</span>\t\t\
 <span bgcolor='#a89984' fgcolor='#282828'>[2]</span><span fgcolor='#a89984'> ipython2\t</span>  \
@@ -346,7 +352,9 @@ bar {
     workspace_buttons yes
     strip_workspace_numbers yes
     binding_mode_indicator yes
-    # status_command i3blocks
+    # TODO:
+    # i3bar_command i3bar --transparency # Since i3wm 4.17
+    # status_command exec ~/.local/bin/barista-i3status
     status_command ~/.local/bin/i3status-rs ~/.config/i3/i3status-rust.toml
     colors {
         background		#282828
