@@ -11,6 +11,13 @@ if [[ ! -x "$(command -v task)" ]]; then
     exit 1
 fi
 
+# Show notification even if there are no tasks.
+if [[ $1 == "-v" ]]; then
+    verbose=1
+else
+    verbose=0
+fi
+
 sched_num="$(task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY count)"
 due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED count)"
 
@@ -28,5 +35,8 @@ if [[ $sched_num ]] || [[ $due_num ]]; then
         msg=$msg"$due_num due"
     fi
 
-    notify-send "taskwarrior" "There are some pending tasks for today: $msg"
+    notify-send -i $(realpath ~/.icon/taskwarrior.png) "taskwarrior" "There are some pending tasks for today: $msg"
+elif [[ $verbose == 1 ]]; then
+    notify-send -i $(realpath ~/.icon/taskwarrior.png) "taskwarrior" "There are no tasks!"
 fi
+

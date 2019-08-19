@@ -316,8 +316,8 @@ set $mode_taskwarrior <span bgcolor='#8f3f71' fgcolor='#282828'> taskwarrior<
 <span bgcolor='#a89984' fgcolor='#282828'>[h]</span><span fgcolor='#a89984'> has-tasks</span>
 bindsym $mod+t mode "$mode_taskwarrior"
 mode --pango_markup "$mode_taskwarrior" {
-	bindsym a           exec $SCRIPTS_PATH/i3/active-task; mode "default"
-    bindsym h           exec notify_has_task; mode "default"
+	bindsym a           exec taskwarrior-notify-active-task; mode "default"
+    bindsym h           exec taskwarrior-notify-has-tasks; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
 }

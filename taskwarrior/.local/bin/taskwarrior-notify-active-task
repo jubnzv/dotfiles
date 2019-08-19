@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
-
+#
+# Send desktop notification with recent active taskwarrior task.
+#
+if [[ ! -x "$(command -v notify-send)" ]]; then
+    echo "notify-send: command not found"
+    exit 1
+fi
 if [[ ! -x "$(command -v task)" ]]; then
     echo "task: command not found"
     exit 1
@@ -14,4 +20,4 @@ task_body=`task minimal +ACTIVE | sed '4q;d' | awk -F' ' '{ $2=""};1'`
 task_id=`echo $task_body | awk '{ print $1 }'`
 task_desc=`echo $task_body | awk '{ $1=""; print }' | awk '{$1=$1};1'`
 
-notify-send "Active task: ${task_id} ${context}" "${task_desc}" -i task-due
+notify-send -i $(realpath ~/.icon/taskwarrior.png) "taskwarrior" "Active task: ${task_id} ${context}: ${task_desc}"
