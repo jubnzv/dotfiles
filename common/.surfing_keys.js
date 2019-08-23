@@ -2,125 +2,92 @@
 settings.smoothScroll = false;
 settings.hintAlign = "left";
 
-// Nagivate in tabs
-map(']t', 'R');
-map('[t', 'E');
-map('<Ctrl-j>', 'E');
-map('<Ctrl-k>', 'R');
+// Unmap undesired defaults
+var unmaps = [ "sb" ,  "sw", "ob"
+         , "ow" ,  "cp", ";cp"
+         , "od", "og"
+         , "]]", "[["
+         , ";ap", "spa", "spb"
+         , "spd", "sps", "spc"
+         , "spi", "sfr", "zQ"
+         , "zz" ,  "zR", "ab"
+         , "Q"  ,   "q", "ag"
+         , "af"
+         ];
+unmaps.forEach(function(u) {
+  unmap(u);
+});
+
+// Switch tabs
+map('`[', 'E');
+map('`]', 'R');
+map('`1', '<Alt-1>');
+
+// Open new tab
+map('t', 'on');
+
+// Open link in new tab
+map('F', 'gf');
+
+mapkey('p', "Open the clipboard's URL in the current tab", function() {
+    Front.getContentFromClipboard(function(response) {
+        window.location.href = response.data;
+    });
+});
+
+mapkey(';w', "Lookup whois information for domain", whois, {
+    repeatIgnore: true
+});
 
 // Pin tab
 map('gp', '<Alt-p>')
 
-// Navigate in pop-down menus
+// Navigate in pop-up menus
 cmap('<Alt-j>', '<Tab>');
 cmap('<Alt-k>', '<Shift-Tab>');
 
-// Unmap some default mappings
-unmap('od');
+// Yandex.Translate
+addSearchAliasX('te', 'yandex.translate (ru → en)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
+addSearchAliasX('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
 
-// google.translate
-//mapkey('ote', 'Translate clipboard text with google (auto => en)', function() {
-//    searchSelectedWith('https://translate.google.com/?hl=en#auto/en/', false, false, '');
-//});
-mapkey('otg', 'Translate clipboard text with google (en => ru)', function() {
-    searchSelectedWith('https://translate.google.com/#view=home&op=translate&sl=en&tl=ru&text=', false, false, '');
-});
+// Oxford dictionaries
+addSearchAliasX('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
 
-// yandex.translate
-//mapkey('ote', 'Translate clipboard text with yandex (ru => en)', function() {
-//    searchSelectedWith('https://translate.yandex.ru/?lang=ru-en&text=', false, false, '');
-//});
-mapkey('otr', 'Translate clipboard text with yandex (en => ru)', function() {
-    searchSelectedWith('https://translate.yandex.ru/?lang=en-ru&text=', false, false, '');
-});
-
-// Oxford dictionary
-//mapkey('oo', 'Search word in Oxford dictionary', function() {
-//    searchSelectedWith('https://en.oxforddictionaries.com/definition/', false, false, '');
-//});
-
-// Search sources on Debian Code Search
-addSearchAlias('oDc', 'DebianCodeSearch', 'https://codesearch.debian.net/search?q=');
-mapkey('oDc', 'DebianCodeSearch', function() {
-    searchSelectedWith("https://codesearch.debian.net/search?q=");
-});
-
-// Search by packages content for Debian
-addSearchAlias('oDp', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=');
-mapkey('oDp', 'Debian packages content', function() {
-    searchSelectedWith("https://packages.debian.org/search?searchon=contents&keywords=");
-});
+// Search in Debian packages sources
+addSearchAliasX('pd', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=', 'o');
+addSearchAliasX('pc', 'Debian codesearch', 'https://codesearch.debian.net/search?q=', 'o');
 
 // Search sources on GitHub
-// Generic
-addSearchAlias('ogg', 'GitHub', 'https://github.com/search?q=');
-mapkey('ogg', 'GitHub', function() {
-    searchSelectedWith("https://github.com/search?q=");
-});
-vmapkey('ogg', 'GitHub', function() {
-    searchSelectedWith("https://github.com/search?q=");
-});
-// vimscript
-mapkey('ogv', 'GitHub: elisp', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
-});
-vmapkey('ogv', 'GitHub: elisp', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22vimscript%22+");
-});
-// Emacs Lisp
-mapkey('oge', 'GitHub: elisp', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
-});
-vmapkey('oge', 'GitHub: elisp', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22Emacs+Lisp%22+");
-});
-// Racket
-addSearchAlias('ogR', 'GitHub: racket', 'https://github.com/search?q=language%3A%22Racket%22+');
-mapkey('ogR', 'GitHub: racket', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
-});
-vmapkey('ogR', 'GitHub: racket', function() {
-    searchSelectedWith("https://github.com/search?q=language%3A%22Racket%22+");
-});
-// C
-mapkey('ogc', 'GitHub: C', function() {
-    searchSelectedWith("https://github.com/search?q=language%3AC+");
-});
-vmapkey('ogc', 'GitHub: C', function() {
-    searchSelectedWith("https://github.com/search?q=language%3AC+");
-});
-// C++
-mapkey('ogC', 'GitHub: C++', function() {
-    searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
-});
-vmapkey('ogC', 'GitHub: C++', function() {
-    searchSelectedWith("https://github.com/search?q=language%3AC%2B%2B+");
-});
-// Python
-mapkey('ogp', 'GitHub: Python', function() {
-    searchSelectedWith("https://github.com/search?q=language%3APython+");
-});
-vmapkey('ogp', 'GitHub: Python', function() {
-    searchSelectedWith("https://github.com/search?q=language%3APython+");
-});
-// Rust
-mapkey('ogr', 'GitHub: Rust', function() {
-    searchSelectedWith("https://github.com/search?q=language%3ARust+");
-});
-vmapkey('ogr', 'GitHub: Rust', function() {
-    searchSelectedWith("https://github.com/search?q=language%3ARust+");
-});
+addSearchAliasX('gg', 'github', 'https://github.com/search?q=', 'o');
+addSearchAliasX('gv', 'github: vimscript', 'https://github.com/search?q=language%3A%22vimscript%22+', 'o');
+addSearchAliasX('ge', 'github: emacs lisp', 'https://github.com/search?q=language%3A%22Emacs+Lisp%22+', 'o');
+addSearchAliasX('gR', 'github: racket', 'https://github.com/search?q=language%3A%22Racket%22+', 'o');
+addSearchAliasX('gc', 'github: C', 'https://github.com/search?q=language%3AC+', 'o');
+addSearchAliasX('gx', 'github: C++', 'https://github.com/search?q=language%3AC%2B%2B+', 'o');
+addSearchAliasX('gp', 'github: Python', 'https://github.com/search?q=language%3APython+', 'o');
 
-// GNOME documentation
-mapkey('odg', 'GNOME documentation', function() {
-    searchSelectedWith("https://developer.gnome.org/search?q=");
-});
-vmapkey('odg', 'GNOME documentation', function() {
-    searchSelectedWith("https://developer.gnome.org/search?q=");
-});
+// Documentation and language references
+addSearchAliasX('dx', 'doc: cppreference', 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=', 'o');
+addSearchAliasX('dX', 'doc: isocpp', 'https://isocpp.org/search/google?q=', 'o');
+addSearchAliasX('dg', 'doc: gnome', 'https://developer.gnome.org/search?q=', 'o');
+addSearchAliasX('dp', 'doc: docs.python', 'https://docs.python.org/3/search.html?q=', 'o');
+addSearchAliasX('dl', 'LWN', 'https://lwn.net/Search/DoSearch?words=', 'o');
+
+function whois() {
+    var url = "https://who.is/whois/" + window.location.hostname;
+    window.open(url, '_blank').focus();
+}
 
 // Set theme
 settings.theme = `
+/* Disable RichHints CSS animation */
+.expandRichHints {
+    animation: 0s ease-in-out 1 forwards expandRichHints;
+}
+.collapseRichHints {
+    animation: 0s ease-in-out 1 forwards collapseRichHints;
+}
+
 .sk_theme {
     font-family: Input Sans Condensed, Charcoal, sans-serif;
     font-size: 10pt;
