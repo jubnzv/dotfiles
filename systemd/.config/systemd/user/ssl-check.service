@@ -1,0 +1,10 @@
+[Unit]
+Description=Check SSL certificates
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=/home/jubnzv/.local/bin/ssl-checker
+Type=oneshot
+
+[Install]
+WantedBy=default.target

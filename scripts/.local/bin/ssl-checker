@@ -1,0 +1,49 @@
+#!/usr/bin/python2
+import OpenSSL
+import ssl, socket
+from datetime import datetime
+from email.mime.text import MIMEText
+from subprocess import Popen, PIPE
+
+DOMAINS = []
+
+
+def send_email_notify(text):
+    msg = MIMEText(text)
+    msg["From"] = "noreply@localhost"
+    msg["To"] = "jubnzv@remilia"
+    msg["Subject"] = "SSL expiration warning"
+    p = Popen(["/usr/sbin/sendmail", "-t", "-oi"], stdin=PIPE)
+    p.communicate(msg.as_string())
+
+
+def show_libnotify(text):
+    p = Popen(["notify-send", "-u", "critical", "SSL expiration warning", text])
+
+
+def get_ssl_expiration_date(domain):
+    cert = ssl.get_server_certificate((domain, 443))
+    x509 = OpenSSL.crypto.load_certificate(OpenSSL.crypto.FILETYPE_PEM, cert)
+    return datetime.strptime(x509.get_notAfter().decode('ascii'), '%Y%m%d%H%M%SZ')
+
+
+if __name__ == "__main__":
+    send_text = []
+
+    for d in DOMAINS:
+        expire_date = get_ssl_expiration_date(d)
+        date_diff = expire_date - datetime.now()
+        if date_diff.days < 21:
+            send_text.append("%s will expire in %d days!" % (d, date_diff.days))
+        else:
+            print("[LOG] %s: %d days left." % (d, date_diff.days))
+
+    if send_text:
+        msg = "\n".join(send_text)
+        send_email_notify(msg)
+        show_libnotify(msg)
+
+    if send_text:
+        print("There are following problems:", "\n".join(send_text))
+    else:
+        print("No problems found. Check domains: %s" % " ".join(DOMAINS))

@@ -1,0 +1,9 @@
+[Unit]
+Description=Check SSL certificates
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=120min
+
+[Install]
+WantedBy=timers.target
