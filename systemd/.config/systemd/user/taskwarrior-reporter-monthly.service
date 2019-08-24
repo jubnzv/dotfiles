@@ -4,7 +4,7 @@ Description=Run taskwarrior-reporter for this month
 
 [Service]
 Environment="DISPLAY=:0"
-ExecStart=~/.local/bin/taskwarrior-reporter --monthly
+ExecStart=~/.local/bin/taskwarrior-reporter monthly
 Type=oneshot
 
 [Install]

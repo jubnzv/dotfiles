@@ -3,7 +3,7 @@ Description=Send notificaiton with number of remaining tasks for today.
 
 [Service]
 Environment="DISPLAY=:0"
-ExecStart=notify_has_tasks
+ExecStart=taskwarrior-notify-has-tasks
 Type=oneshot
 
 [Install]

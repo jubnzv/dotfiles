@@ -2,8 +2,8 @@
 Description=Send notificaiton with number of remaining tasks for today.
 
 [Timer]
-OnCalendar=17:30
-OnCalendar=20:00
+OnCalendar=*-*-* 7,9,17,19,21:30:00
 
 [Install]
 WantedBy=timers.target
+
