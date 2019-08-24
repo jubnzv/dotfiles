@@ -10,7 +10,7 @@ alias		include-guard
 options		head
 abbr #ifndef ... #define ... #endif
 	#ifndef ${1:#:SYMBOL}
-	#define $1
+    #define $1
 
 	${0:TARGET}
 	#endif /* $1 */
@@ -348,4 +348,20 @@ options head
 	typedef enum {
 		$0
 	} ${1:name}_t;
+# }}}
+
+# {{{ C++ compatibility
+snippet cxx_start
+alias cxx_s
+options head
+	#ifdef __cplusplus
+	extern "C" {
+	#endif
+
+snippet cxx_end
+alias cxx_e
+options head
+	#ifdef __cplusplus
+	}
+	#endif
 # }}}

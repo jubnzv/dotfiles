@@ -119,6 +119,13 @@ options head
 	fi
 	$0
 
+snippet ch_variable
+options head
+	if [[ \$${1:EDITOR} == "" ]]; then
+		$1=${2:nvim}
+	fi
+	$0
+
 # Credits: http://djm.me/ask
 # Don't forget to get STDIN (see get_stdin)
 snippet ask
