@@ -1,3 +1,6 @@
 tags
 tags.lock
 tags.temp
+.pyhistory
+taskwarrior/.config/taskwarrior/taskd.rc
+taskwarrior/.config/taskwarrior/*.pem

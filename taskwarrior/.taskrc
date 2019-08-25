@@ -40,6 +40,9 @@ include ~/.config/taskwarrior/tasksh.rc
 # Personal contexts settings
 include ~/.config/taskwarrior/context.rc
 
+# taskd configuration
+include ~/.config/taskwarrior/taskd.rc
+
 # {{{ User Defined Attributes (UDA)
 # Estimated time in hours
 # [1]: https://taskwarrior.org/docs/udas.html

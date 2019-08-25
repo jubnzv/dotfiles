@@ -312,12 +312,14 @@ mode --pango_markup "$mode_exec_i3cmd" {
 # }}}
 # {{{ taskwarrior
 set $mode_taskwarrior <span bgcolor='#8f3f71' fgcolor='#282828'> taskwarrior</span>\t\t\
-<span bgcolor='#a89984' fgcolor='#282828'>[a]</span><span fgcolor='#a89984'> active\t</span>  \
+<span bgcolor='#8ec07c' fgcolor='#282828'>[a]</span><span fgcolor='#a89984'> active\t</span>  \
+<span bgcolor='#d79921' fgcolor='#282828'>[e]</span><span fgcolor='#a89984'> end-day\t</span>  \
 <span bgcolor='#a89984' fgcolor='#282828'>[h]</span><span fgcolor='#a89984'> has-tasks</span>
 bindsym $mod+t mode "$mode_taskwarrior"
 mode --pango_markup "$mode_taskwarrior" {
 	bindsym a           exec taskwarrior-notify-active-task; mode "default"
-    bindsym h           exec taskwarrior-notify-has-tasks; mode "default"
+    bindsym e           exec taskwarrior-end-day; mode "default"
+    bindsym h           exec taskwarrior-notify-has-tasks -v; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
 }

@@ -11,13 +11,21 @@ if [[ ! -x "$(command -v task)" ]]; then
     exit 1
 fi
 
-context=`task rc.gc=off _get rc.context`
-if [[ $context != "" ]]; then
-    context="($context)"
+task_body=`task minimal +ACTIVE 2>/dev/null | sed '4q;d' | awk -F' ' '{ $2=""};1'`
+
+if [[ $task_body == "" ]]; then
+    notify-send -i $(realpath ~/.icon/taskwarrior.png) \
+        "taskwarrior" "No active tasks."
+else
+    task_id=`echo $task_body | awk '{ print $1 }'`
+    task_desc=`echo $task_body | awk '{ $1=""; print }' | awk '{$1=$1};1'`
+
+    context=`task rc.gc=off _get rc.context`
+    if [[ $context != "" ]]; then
+        context="($context)"
+    fi
+
+    notify-send -i $(realpath ~/.icon/taskwarrior.png) \
+        "taskwarrior" "Active task: ${task_id} ${context}: ${task_desc}"
 fi
 
-task_body=`task minimal +ACTIVE | sed '4q;d' | awk -F' ' '{ $2=""};1'`
-task_id=`echo $task_body | awk '{ print $1 }'`
-task_desc=`echo $task_body | awk '{ $1=""; print }' | awk '{$1=$1};1'`
-
-notify-send -i $(realpath ~/.icon/taskwarrior.png) "taskwarrior" "Active task: ${task_id} ${context}: ${task_desc}"
