@@ -504,6 +504,7 @@ bindkey "^[c" fzf-fasd-dir
 
 # {{{ Autocompletion
 compdef sshrc=ssh
+compdef scp-speed-test=scp
 compdef g=git
 # }}}
 
