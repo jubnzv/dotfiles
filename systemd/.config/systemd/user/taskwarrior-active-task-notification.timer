@@ -1,0 +1,9 @@
+[Unit]
+Description=Send notificaiton title of active task.
+
+[Timer]
+OnCalendar=*:0/20
+
+[Install]
+WantedBy=timers.target
+

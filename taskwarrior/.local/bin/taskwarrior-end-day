@@ -13,9 +13,11 @@ if [[ ! -x "$(command -v zenity)" ]]; then
 fi
 
 # Request user confirmation.
-zenity --question --text="Are you sure?"
-if [ ! $? = 0 ]; then
-    exit 0
+if [[ ! $1 == "-f" ]]; then
+    zenity --question --title="Finish this day" --text="Are you sure?"
+    if [ ! $? = 0 ]; then
+        exit 0
+    fi
 fi
 
 # Stop all active tasks.
@@ -46,14 +48,15 @@ fi
 
 # Count tasks completed today.
 completed_tasks="$(task end:today status:completed all rc.gc=off 2>/dev/null | egrep '[0-9]\ tasks$' | cut -d ' ' -f -1)"
+if [[ $completed_tasks == "" ]]; then
+    completed_tasks=0
+fi
 
 # Are there any non-finished due tasks?
 due_msg=""
 due_tasks="$(task due:today status:pending all rc.gc=off 2>/dev/null | egrep '[0-9]\ task$' | cut -d ' ' -f -1)"
 if [[ ! $due_tasks == "" ]]; then
     due_msg=" <span foreground='#fb4934'>${due_tasks}</span> tasks are overdue."
-else
-    echo "DUE: $due_tasks"
 fi
 
 notify-send -i $(realpath ~/.icon/taskwarrior.png) \

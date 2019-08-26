@@ -1,0 +1,10 @@
+[Unit]
+Description=Send notificaiton title of active task.
+
+[Service]
+Environment="DISPLAY=:0"
+ExecStart=/home/jubnzv/.local/bin/taskwarrior-notify-active-task
+Type=oneshot
+
+[Install]
+WantedBy=default.target

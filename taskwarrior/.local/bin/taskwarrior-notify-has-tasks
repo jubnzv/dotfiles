@@ -18,24 +18,24 @@ else
     verbose=0
 fi
 
-sched_num="$(task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY count 2>/dev/null)"
+sched_num="$(task rc.gc=off sched.before:eod -COMPLETED -DELETED -DUETODAY count 2>/dev/null)"
 sched_num=$(($sched_num))
-due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED count 2>/dev/null)"
+due_num="$(task rc.gc=off due.before:eod -COMPLETED -DELETED count 2>/dev/null)"
 due_num=$(($due_num))
 
 tasks_num=$(($sched_num+$due_num))
 if [[ $tasks_num -gt 0 ]]; then
     msg="("
     if [[ $sched_num -gt 0 ]]; then
-        msg=$msg"$sched_num scheduled"
+        msg=$msg"<span foreground='#fe8019'>$sched_num</span> scheduled"
     else
-        msg=$msg"0 scheduled"
+        msg=$msg"<span foreground='#b8bb26'>0</span> scheduled"
     fi
     msg=$msg", "
     if [[ $due_num -gt 0 ]]; then
-        msg=$msg"$due_num due"
+        msg=$msg"<span foreground='#fb4934'>$due_num</span> due"
     else
-        msg=$msg"0 due"
+        msg=$msg"<span foreground='#b8bb26'>0</span> due"
     fi
     msg=$msg")"
 

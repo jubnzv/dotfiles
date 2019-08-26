@@ -1,0 +1,9 @@
+[Unit]
+Description=Force taskwarrior-end-day routine at midnight.
+
+[Timer]
+OnCalendar=23:55:00
+
+[Install]
+WantedBy=timers.target
+
