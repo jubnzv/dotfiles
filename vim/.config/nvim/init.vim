@@ -64,8 +64,6 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ 'do': 'bash install.sh',
   \ }
 Plug 'jubnzv/DoxygenToolkit.vim'
-Plug 'LucHermitte/lh-vim-lib'         " Dependency for alternate-lite
-Plug 'LucHermitte/alternate-lite'     " Switch between source and header
 Plug 'vhda/verilog_systemverilog.vim' " Verilog/SystemVerilog Syntax and Omni-completion
 Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
 Plug 'jpalardy/vim-slime'             " Some slime in my vim.
@@ -965,7 +963,20 @@ au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
 " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
 
 " Switch between header and sources
-nnoremap <A-a> :A<CR>
+nnoremap <silent> <A-a> :call SwitchSourceHeader()<cr>
+function! SwitchSourceHeader()
+  if (expand ("%:e") == "cpp")
+    silent! find %:t:r.h
+    silent! find %:t:r.hpp
+  elseif (expand ("%:e") == "c")
+    silent! find %:t:r.h
+  elseif (expand ("%:e") == "hpp")
+    silent! find %:t:r.cpp
+  elseif (expand ("%:e") == "h")
+    silent! find %:t:r.cpp
+    silent! find %:t:r.c
+  endif
+endfunction
 
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
