@@ -218,7 +218,7 @@ bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/
 bindsym Control+XF86Launch1 exec screengrab -r
 # bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym Shift+XF86Launch1 exec peek
-bindsym XF86ScreenSaver exec i3lock --color=282828 -f -I 5 && sleep 1 && xset dpms force off
+bindsym XF86ScreenSaver exec $SCRIPTS_PATH/i3/i3lock-wrapper
 bindsym $mod+XF86ScreenSaver exec xset s activate
 bindsym $mod+F12 exec notify-send " `date +%D`" " `date +%H:%M:%S`" -i accept_time_event -t 700
 bindsym $mod+Shift+F12 exec notify-send " Clipboard content" "`xclip -o`"
