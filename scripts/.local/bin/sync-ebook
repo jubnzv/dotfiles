@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+device=`/sbin/blkid | ag LABEL=\"PB740\" | awk -F':' '{ print $1 }'`
+if [[ $device == "" ]]; then
+    echo "Device is not mounted! Bailing out."
+    exit 127
+fi
+
+mount_point=`mount | ag $device | awk -F' ' '{ print $3 }'`
+if [ ! -d $mount_point ]; then
+    echo "$mount_point is inaccessible"
+    exit 127
+fi
+
+echo "Sync documents with $mount_point ..."
+rsync -aurq -L --progress \
+    --exclude '*tar.gz'   \
+    --exclude '*tar.xz'   \
+    --exclude '*tar.bz2'  \
+    --exclude '*.rar'     \
+    --exclude '*.7z'      \
+    --exclude '*.zip'     \
+    ~/Documents/ "$mount_point"/Documents
