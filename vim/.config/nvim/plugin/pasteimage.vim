@@ -16,6 +16,10 @@ function! SaveFile(imgdir, tmpname) abort
 
     let mimetype = targets[0]
     let extension = split(mimetype, '/')[-1]
+    " Workaround for copying from Qt-based applications
+    if extension =~ "x-qt-image"
+        let extension = "png"
+    endif
     let tmpfile = a:imgdir . '/' . a:tmpname . '.' . extension
     call system(printf('xclip -selection clipboard -t %s -o > %s',
                 \ mimetype, tmpfile))
@@ -47,7 +51,7 @@ endfunction
 function! GetName()
     " let new_name = input("Enter name of image: ")
     " return l:new_name
-    let l:new_random = strftime("%Y-%m-%d-%H:%M")
+    let l:new_random = strftime("%Y-%m-%dT%H%M%S")
     return l:new_random
 endfunction
 
