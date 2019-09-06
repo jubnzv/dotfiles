@@ -920,11 +920,11 @@ au FileType c nnoremap <leader>d :Dox<CR>
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
-nmap [v <Plug>GitGutterPrevHunk
-nmap ]v <Plug>GitGutterNextHunk
-nmap <leader>vv <Plug>GitGutterPreviewHunk
-nmap <leader>v- <Plug>GitGutterUndoHunk
-nmap <leader>v= <Plug>GitGutterStageHunk
+nmap [v <Plug>(GitGutterPrevHunk)
+nmap ]v <Plug>(GitGutterNextHunk)
+nmap <leader>vv <Plug>(GitGutterPreviewHunk)
+nmap <leader>v- <Plug>(GitGutterUndoHunk)
+nmap <leader>v= <Plug>(GitGutterStageHunk)
 nmap <leader>vs :Gstatus<cr>
 nmap <leader>vp :Gpull<cr>
 nmap <leader>vP :Gpush 
