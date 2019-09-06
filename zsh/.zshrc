@@ -489,6 +489,11 @@ function vmans() {
     man -k . | fzf -n1,2 --preview "echo {} | cut -d' ' -f1 | sed 's# (#.#' | sed 's#)##' | xargs -I% man %" --bind "enter:execute: (echo {} | cut -d' ' -f1 | sed 's# (#.#' | sed 's#)##' | xargs -I% ${EDITOR:-vim} -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -c \"Man %\")"
 }
 
+# Choose one of APT repositories with fzf and show all packages.
+function fzf-list-repo-packages() {
+    find /var/lib/apt/lists/ -maxdepth 1 -type f | fzf | xargs grep ^Package:
+}
+
 # Search ctags.
 # Creds: https://github.com/vbauerster/dotfiles/blob/master/.functions.zsh
 function fzf-ctags() {
