@@ -61,13 +61,13 @@ session_finder() {
 		unset TMUX
 		word_count=$(echo "$fzf_out" | wc -w)
 		if [ $word_count -eq 1 ]; then
-			$tmux new-session -d -s "$session_name"
+			$tmux new-session -d -s "$session_name" -c "$HOME"
 			$tmux switch-client -t "$session_name"
 		else
 			session_name="$(echo "$fzf_out" | tail -n1 | awk '{ print $2 }')"
 			case "$command" in
 				":new")
-					$tmux new-session -d -s "$session_name"
+					$tmux new-session -d -s "$session_name" -c "$HOME"
 					$tmux switch-client -t "$session_name"
 					;;
 				":rename")
