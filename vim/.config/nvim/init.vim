@@ -792,8 +792,8 @@ let g:LanguageClient_serverCommands = {
   \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
   \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
   \ 'go': ['gopls'],
-  \ 'cpp': ['ccls', '--log-file=/tmp/ccls.log'],
-  \ 'c': ['ccls', '--log-file=/tmp/ccls.log'],
+  \ 'cpp': ['clangd'],
+  \ 'c': ['clangd'],
   \ }
 let g:LanguageClient_rootMarkers = {
   \ 'cpp': ['compile_commands.json', 'build'],
