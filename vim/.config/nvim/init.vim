@@ -1235,11 +1235,26 @@ function! ToggleHex()
   endif
 endfunction
 
+" Scroll all windows at the same time
+let s:scroll_mode = 0
+function! ToggleScrollBind()
+  if (s:scroll_mode == 0)
+    execute ":windo set scrollbind!"
+    let s:scroll_mode = 1
+    echo 'Enable scrollbind'
+  else
+    execute ":windo set noscrollbind!"
+    let s:scroll_mode = 0
+    echo 'Disable scrollbind'
+  endif
+endfunction
+
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
 nnoremap <leader>tl :call ToggleLSP()<CR>
 nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
+nnoremap <leader>ts :call ToggleScrollBind()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 nnoremap <leader>ti :RainbowLevelsToggle<cr>
