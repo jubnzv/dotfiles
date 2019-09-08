@@ -70,6 +70,30 @@ function! pasteimage#MarkdownClipboardImage()
     endif
 endfunction
 
+function! pasteimage#LatexClipboardImage()
+    let workdir = SafeMkdir()
+    " change temp-file-name and image-name
+    let g:pasteimage_tmpname = GetName()
+
+    let tmpfile = SaveFile(workdir, g:pasteimage_tmpname)
+    if tmpfile == 1
+        return
+    else
+        " Insert the following snippet:
+        " \begin{figure}[H]
+        "     \centering
+        "     \includegraphics[scale=0.1]{img-2019-09-08T0900}
+        " \end{figure}
+        "
+        " Make sure that preambule has following definition:
+        " \usepackage{graphicx}
+        " \graphicspath{ {./img/} }
+        " \DeclareGraphicsExtensions{.png}
+        " \usepackage{float} % [H] in pictures
+        execute "normal! i\\begin{figure}[H]\n\\centering\n\\includegraphics{" . g:pasteimage_tmpname . "}\n\\end{figure}"
+    endif
+endfunction
+
 if !exists('g:pasteimage_imgdir')
     let g:pasteimage_imgdir = 'img'
 endif

@@ -1081,6 +1081,7 @@ let g:tex_conceal='abdmg'
 au FileType tex set sw=2
 au FileType tex call Togglegjgk()
 au FileType tex set spell! spelllang=en_us,ru_yo
+au FileType tex nnoremap <buffer> <silent> <leader>p :call pasteimage#LatexClipboardImage()<CR>
 " }}}
 
 " {{{ reStructuredText
