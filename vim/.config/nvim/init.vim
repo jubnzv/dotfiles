@@ -4,7 +4,7 @@ let maplocalleader = ","
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
-let g:python3_host_prog  = '/usr/bin/python3.6'
+let g:python3_host_prog  = '/usr/bin/python3.7'
 
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
@@ -13,7 +13,6 @@ Plug 'scrooloose/nerdtree'            " A tree explorer plugin for vim
 Plug 'kshenoy/vim-signature'          " Extended marks support
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
-Plug 'lambdalisue/suda.vim'           " Read or write files with sudo command. Required for neovim.
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'tpope/vim-repeat'               " Remap `.` in a way that plugins can tap into it
 Plug 'will133/vim-dirdiff'            " Diff two directories
@@ -33,14 +32,12 @@ Plug 'junegunn/vim-peekaboo'          " Shows vim registers content into vertica
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
-Plug 'chrisbra/NrrwRgn'               " Narrowing feature from emacs
 Plug 'thiagoalessio/rainbow_levels.vim' " Highlights code by indentation level
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
-Plug 'vim-syntastic/syntastic'        " Syntax checking hacks for vim
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -64,15 +61,14 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ 'do': 'bash install.sh',
   \ }
 Plug 'jubnzv/DoxygenToolkit.vim'
-Plug 'vhda/verilog_systemverilog.vim' " Verilog/SystemVerilog Syntax and Omni-completion
 Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
-Plug 'jpalardy/vim-slime'             " Some slime in my vim.
 Plug 'wlangstroth/vim-racket'         " Racket mode
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
-Plug 'pearofducks/ansible-vim'
+Plug 'pearofducks/ansible-vim'        " Ansible configuration files
+Plug 'LnL7/vim-nix'                   " Nix expressions support
 Plug 'dhruvasagar/vim-table-mode'
 Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
@@ -89,7 +85,7 @@ Plug '~/Dev/IEC.vim'
 call plug#end()
 " }}}
 
-" {{{ General
+" {{{ General options
 set viminfo='1000,f1                        " Save global marks for up to 1000 files
 set scrolloff=7                             " 7 lines above/below cursor when scrolling
 set scroll=7                                " Number of lines scrolled by <C-u> and <C-d>
@@ -120,6 +116,12 @@ set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
 set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
+
+" Add additional information in popups (VIM 8.0+ only)
+if !has('nvim')
+  set completeopt+=popup
+  set completepopup=height:10,width:60,highlight:Pmenu,border:off
+endif
 
 " Default conceal settings.
 " concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
@@ -182,6 +184,14 @@ au! BufReadPost,BufNewFile * call ParseModeline()
 " Jump to the last position when reopening a file (see `/etc/vim/vimrc` on Debian)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
 
+function! OnBattery()
+  if has('macunix')
+    return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
+  elsif has('unix')
+    return readfile('/sys/class/power_supply/AC/online') == ['0']
+  endif
+  return 0
+endfunction
 " }}}
 
 " {{{ Keybindings
@@ -303,6 +313,9 @@ nnoremap <leader>B :checktime<CR>
 " Convert the ^M linebreak to 'normal' linebreaks
 nnoremap <silent> <leader>rl :set ff=unix<CR> :e ++ff=dos<CR>
 
+cnoreabbrev enc_dos e! ++enc=cp1251
+cnoreabbrev rep_n e! %s/\\n/\r/g
+
 " Remove all trailing whitespaces
 nnoremap <silent> <leader>rs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
 
@@ -400,6 +413,7 @@ let g:openbrowser_search_engines = extend(
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
 \       'wikipedia': 'http://en.wikipedia.org/wiki/{query}',
 \       'wikipedia-ru': 'http://ru.wikipedia.org/wiki/{query}',
+\       'cppreference': 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search={query}',
 \   },
 \   'keep'
 \)
@@ -408,15 +422,19 @@ let g:openbrowser_default_search = 'google'
 " Search selected visually selected word with appropriate search engine.
 nnoremap <leader>os <Plug>(openbrowser-smart-search)
 nnoremap <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
+" Translate
+nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
+" Github
 nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
 nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
 nnoremap <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
 nnoremap <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
-nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
 nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+" Documentation
+nnoremap <leader>odx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
+nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
 nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
 nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
-nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
 " }}}
 
 " {{{ tmux integration
@@ -487,7 +505,7 @@ function! NERDTreeOpen()
   endif
 endfunction
 
-map <A-1> :call NERDTreeOpen()<CR>
+map <A-0> :call NERDTreeOpen()<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore=[
   \ ".*\\.class$",
@@ -561,6 +579,7 @@ au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ft :Tags<CR>
+nnoremap <A-t> :Tags<CR>
 nnoremap <leader>xf :Files<CR>
 nnoremap <M-i> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
@@ -721,27 +740,6 @@ nnoremap [8 :call signature#marker#Goto('prev', 8, v:count)<cr>
 nnoremap ]8 :call signature#marker#Goto('next', 8, v:count)<cr>
 nnoremap [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
 nnoremap ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
-" }}}
-
-" {{{ syntastic
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_auto_loc_list = 0
-cabbrev <silent> bd <C-r>=(getcmdtype()==#':' && getcmdpos()==1 ? 'lclose\|bdelete' : 'bd')<CR>
-let g:syntastic_check_on_open = 0
-let g:syntastic_check_on_wq = 0
-let g:syntastic_error_symbol = 'ee'
-let g:syntastic_style_error_symbol = 'se'
-let g:syntastic_warning_symbol = 'ww'
-let g:syntastic_style_warning_symbol = 'sw'
-cnoreabbrev sc SyntasticCheck
-
-" Run it only manually.
-let g:syntastic_mode_map={'mode': 'passive'}
-
-let g:syntastic_c_checkers = ['cppcheck', 'gcc']
-let g:syntastic_cpp_checkers = ['cppcheck', 'gcc']
-let g:syntastic_python_checkers = ['pyflakes']
-let g:syntastic_bash_checkers = ['shellcheck']
 " }}}
 
 " {{{ deoplete
@@ -944,6 +942,12 @@ nmap gz <Plug>ZVOperator
 nmap <leader><leader>z <Plug>ZVKeyDocset
 " }}}
 
+" {{{ table-mode
+let g:table_mode_map_prefix = ',t'
+let g:table_mode_delete_row_map = ',tdd'
+let g:table_mode_delete_column_map = ',tdc'
+" }}}
+
 " {{{ textobj (https://github.com/glts/vim-textobj-comment) configuration
 let g:textobj_comment_no_default_key_mappings = 1
 xmap a/ <Plug>(textobj-comment-a)
@@ -964,17 +968,24 @@ au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
 
 " Switch between header and sources
 nnoremap <silent> <A-a> :call SwitchSourceHeader()<cr>
+nnoremap <silent> <F4> :call SwitchSourceHeader()<cr>
 function! SwitchSourceHeader()
   if (expand ("%:e") == "cpp")
     silent! find %:t:r.h
     silent! find %:t:r.hpp
+    silent! find include/%:t:r.h
+    silent! find include/%:t:r.hpp
   elseif (expand ("%:e") == "c")
     silent! find %:t:r.h
+    silent! find ../src/%:t:r.h
   elseif (expand ("%:e") == "hpp")
     silent! find %:t:r.cpp
+    silent! find src/%:t:r.cpp
   elseif (expand ("%:e") == "h")
     silent! find %:t:r.cpp
+    silent! find src/%:t:r.cpp
     silent! find %:t:r.c
+    silent! find src/%:t:r.c
   endif
 endfunction
 
@@ -1071,8 +1082,8 @@ let matiec_mkbuilddir = 1
 " }}}
 
 " {{{ LaTeX
-" See awesome LaTeX setup guide:
-" https://castel.dev/post/lecture-notes-1/
+" References:
+" [0] https://castel.dev/post/lecture-notes-1/
 let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
@@ -1117,9 +1128,9 @@ au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
 au FileType markdown inoremap <buffer> --<space> –<space>
 au FileType markdown inoremap <buffer> -><space> →<space>
 au FileType markdown inoremap <buffer> =><space> ⇒<space>
-" Paste link to URL from clipboard in Emacs style
-au FileType markdown inoremap <buffer> <C-c><C-l> ()<Esc>hpl%i[]<C-o>h
-au FileType markdown nnoremap <buffer> <C-c><C-l> i()<Esc>hpl%i[]<C-o>h
+" Paste links to URL from clipboard
+au FileType markdown nnoremap <buffer> <leader>L i()<Esc>hpl%i[]<C-o>h
+au FileType markdown nnoremap <buffer> <leader>l i<><Esc>hpl
 " Create TOC using https://github.com/ekalinin/github-markdown-toc.go
 au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
 au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
@@ -1225,14 +1236,14 @@ function! ToggleLSP()
   endif
 endfunction
 
-let g:hex_mode = 0
+let s:hex_mode = 0
 function! ToggleHex()
-  if (g:hex_mode == 0)
+  if (s:hex_mode == 0)
     execute ":%!xxd"
-    let g:hex_mode = 1
+    let s:hex_mode = 1
   else
     execute ":%!xxd -r"
-    let g:hex_mode = 0
+    let s:hex_mode = 0
   endif
 endfunction
 
@@ -1260,6 +1271,8 @@ nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
 nnoremap <leader>ti :RainbowLevelsToggle<cr>
 nnoremap <leader>tr :RainbowToggle<cr>
+nnoremap <leader>tm :NeomakeToggle<cr>
+nnoremap <leader>tt :TableModeToggle<cr>
 " }}}
 
 " vim:fdm=marker:fen:sw=2:tw=120
