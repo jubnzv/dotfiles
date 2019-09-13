@@ -879,18 +879,20 @@ augroup LanguageClient_config
   au User LanguageClientStarted call LSPUpdateStatus(1)
   au User LanguageClientStopped call LSPUpdateStatus(0)
 augroup END
-let g:lsp_status = 0
+
+if !exists('s:lsp_status') | let s:lsp_status = 0 | endif
 function! LSPUpdateStatus(status) abort
-  let g:lsp_status = a:status
+  let s:lsp_status = a:status
   call lightline#update()
 endfunction
+
 " A bit complicated. See :he lightline-problem-12 for description.
 function! LightlineLSPStatus() abort
   let map = { 'V': 'n', "\<C-v>": 'n', 's': 'n', 'v': 'n', "\<C-s>": 'n', 'c': 'n', 'R': 'n'}
   let mode = get(map, mode()[0], mode()[0])
   let bgcolor = {'n': [237, '#3c3836'], 'i': [239, '#504945']}
   let color = get(bgcolor, mode, bgcolor.n)
-  if g:lsp_status == 1
+  if s:lsp_status == 1
     exe printf('hi LSPColor ctermbg=%d ctermfg=106 guifg=#98971a guibg=%d term=bold cterm=bold', color[0], color[1])
   else
     exe printf('hi LSPColor ctermbg=%d ctermfg=241 guifg=#665c54 guibg=%d', color[0], color[1])
@@ -1176,7 +1178,7 @@ au BufRead,BufNewFile */ops/ansible/*.yml set filetype=yaml.ansible
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
 
-" Taskwarrior tasks (`task [id] edit`)
+" Taskwarrior tasks (`task <id> edit`)
 au BufRead *.task /Description:
 
 au FileType gitcommit call setpos('.', [0, 1, 1, 0])
@@ -1186,6 +1188,10 @@ au FileType gitcommit inoremap <buffer> =><space> ⇒<space>
 " }}}
 
 " {{{ Toggle settings functions
+if !exists('s:gjgk_mode')   | let s:gjgk_mode=0     | endif
+if !exists('s:hex_mode')    | let s:hex_mode = 0    | endif
+if !exists('s:scroll_mode') | let s:scroll_mode = 0 | endif
+
 function! ToggleConceal()
   if (&conceallevel == 0)
     set conceallevel=1
@@ -1207,25 +1213,25 @@ function! ToggleNumber()
 endfunction
 
 function! Togglegjgk()
-  if !exists("g:togglegjgk") || g:togglegjgk==0
-    let g:togglegjgk=1
+  if s:gjgk_mode==0
     nnoremap j gj
     nnoremap k gk
     nnoremap gk k
     nnoremap gj j
     echo 'Switch to gj/gk'
+    let s:gjgk_mode = 1
   else
-    let g:togglegjgk=0
     nunmap j
     nunmap k
     nunmap gk
     nunmap gj
     echo 'Switch to j/k'
+    let s:gjgk_mode = 0
   endif
 endfunction
 
 function! ToggleLSP()
-  if (g:lsp_status == 0)
+  if (s:lsp_status == 0)
     execute ":LanguageClientStart"
     let g:LanguageClient_autoStart = 1
     echo 'Enable LSP'
@@ -1236,7 +1242,6 @@ function! ToggleLSP()
   endif
 endfunction
 
-let s:hex_mode = 0
 function! ToggleHex()
   if (s:hex_mode == 0)
     execute ":%!xxd"
@@ -1248,7 +1253,6 @@ function! ToggleHex()
 endfunction
 
 " Scroll all windows at the same time
-let s:scroll_mode = 0
 function! ToggleScrollBind()
   if (s:scroll_mode == 0)
     execute ":windo set scrollbind!"
