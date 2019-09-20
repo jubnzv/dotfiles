@@ -224,13 +224,22 @@ options head
 	echo w	 # Write changes
 	) | fdisk ${0}
 
+snippet zenity_confirm
+options head
+	zenity --question --text="Are you sure?"
+	if [ $? = 0 ]; then
+		${0}
+	else
+		exit 0
+	fi
+
 snippet pushd_popd
 options head
 	pushd ${1:./} >/dev/null
 	${0}
 	popd >/dev/null
 
-snippet getopts_verbose
+snippet getopts_short
 alias go_verbose
 options head
 	vison=0
@@ -249,6 +258,27 @@ options head
 	(( vison )) && echo 'Verbose mode'
 	$0
 
+snippet getopts_long
+options head
+	SHORTOPTS="hv"
+	LONGOPTS="help,version"
+	ARGS=$(getopt -s bash --options $SHORTOPTS  \
+	  --longoptions $LONGOPTS --name $SCRIPT_NAME -- "$@" )
+	eval set -- "$ARGS"
+	while true; do
+		case "$1" in
+			-h|--help)
+				exit 0 ;;
+			-v|--version)
+				exit 0 ;;
+			*)
+				shift
+				break
+				;;
+		esac
+		shift
+	done
+
 snippet getnum_cores
 options head
 	num_cores=$(grep -c ^processor /proc/cpuinfo)
@@ -256,6 +286,13 @@ options head
 		num_cores=4
 	fi
 	$0
+
+snippet confirm
+options head
+	read -p "Are you sure (y/N)? " -r
+	if [[ $REPLY =~ ^[Yy]$ ]]; then
+	    $0
+	fi
 
 # {{{ Funcitons
 snippet fn_usage

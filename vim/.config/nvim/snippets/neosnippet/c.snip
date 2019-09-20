@@ -2,8 +2,6 @@ snippet		exf
 	exit(EXIT_FAILURE);
 snippet		exs
 	exit(EXIT_SUCCESS);
-snippet		pe
-	perror("$0");
 
 snippet		once
 alias		include-guard
@@ -14,6 +12,11 @@ abbr #ifndef ... #define ... #endif
 
 	${0:TARGET}
 	#endif /* $1 */
+
+snippet		once2
+options		head
+	#pragma once
+	$0
 
 snippet ifdef-endif
 abbr #ifndef ... #endif
@@ -31,6 +34,8 @@ abbr #ifndef ... #endif
 snippet pr
 abbr	printf("...\n", ...);
 	printf("${1}\n"${2});
+snippet pre
+	fprintf(stderr, "${1}\n"${2});
 # :g/\/\/\ prdbg$/d to clean them all
 snippet		print_debug
 alias		prd
@@ -203,6 +208,9 @@ options head
 # }}}
 
 # {{{ Prepared macroses
+snippet def_only_once
+options head
+	#define ONLY_ONCE static char OO = 0; if ((OO == 0) && (OO = 1))
 snippet def_begins_with
 	#define begins_with(haystack, needle) (strncmp((haystack), (needle), strlen((needle))) == 0)
 snippet def_max
@@ -218,11 +226,6 @@ snippet def_array_size
 # }}}
 
 # {{{ Common functions
-snippet function_once
-options head
-	static short _once = 0;
-	if (_once == 1) return;
-	_once = 1;
 snippet fn_strerror
 options head
 	const char *strerror_${1:name}(int errno_)

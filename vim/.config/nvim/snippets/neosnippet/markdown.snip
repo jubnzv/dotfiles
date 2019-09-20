@@ -1,0 +1,46 @@
+snippet codeblock
+alias cb
+abbr code block
+options head
+	\`\`\`${1:#:language}
+	${2:#:code }
+	\`\`\`
+
+snippet link
+alias ln
+abbr [link]()
+options word
+	[${1:#:link}](${2:#:url})${3}
+
+# {{{ orgmode-like source code blocks
+snippet src_block
+alias <s
+options head
+	\`\`\`
+	$0
+	\`\`\`
+snippet src_block_c
+alias <sc
+options head
+	\`\`\`c
+	$0
+	\`\`\`
+snippet src_block_cxx
+alias <sx
+options head
+	\`\`\`cpp
+	$0
+	\`\`\`
+snippet src_block_python
+alias <sp
+options head
+	\`\`\`python
+	$0
+	\`\`\`
+snippet src_block_bash
+alias <ss
+options head
+	\`\`\`bash
+	$0
+	\`\`\`
+#  }}}

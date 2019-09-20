@@ -6,6 +6,10 @@ if &shell =~# 'fish$'
 endif
 let g:python3_host_prog  = '/usr/bin/python3.7'
 
+" {{{ Configuration variables
+let g:my_snippet_manager = 'ultisnips'
+" }}}
+
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -28,7 +32,6 @@ Plug 'tyru/open-browser.vim'          " Open links in browser
 Plug 'itchyny/lightline.vim'
 Plug 'jubnzv/gruvbox'                 " Color scheme
 Plug 'chrisbra/Colorizer'             " Colorize color names and codes
-Plug 'junegunn/vim-peekaboo'          " Shows vim registers content into vertical split
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
@@ -51,8 +54,13 @@ Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
 Plug 'scrooloose/nerdcommenter'       " Comment plugin
-Plug 'Shougo/neosnippet.vim'
-Plug 'Shougo/neosnippet-snippets'
+" {{{ Snippets
+if g:my_snippet_manager ==? 'ultisnips'
+  Plug 'sirver/ultisnips' | Plug 'honza/vim-snippets'
+elseif g:my_snippet_manager ==? 'neosnippet'
+  Plug 'Shougo/neosnippet.vim' | Plug 'Shougo/neosnippet-snippets' | Plug 'honza/vim-snippets'
+endif
+" }}}
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
@@ -69,11 +77,12 @@ Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'        " Ansible configuration files
 Plug 'LnL7/vim-nix'                   " Nix expressions support
-Plug 'dhruvasagar/vim-table-mode'
+Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creation
+Plug 'rhysd/vim-grammarous'           " LanguageTool intergartion
 Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-Plug 'lervag/vimtex'
+Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'cespare/vim-toml'
 Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
@@ -123,6 +132,12 @@ if !has('nvim')
   set completepopup=height:10,width:60,highlight:Pmenu,border:off
 endif
 
+if has('nvim-0.4')
+  set termguicolors
+  set winblend=10    " Disable transparent floating windows
+  set pumblend=10    " Disable transparent popup menus
+endif
+
 " Default conceal settings.
 " concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
 set conceallevel=1
@@ -159,14 +174,11 @@ set t_ZR=^[[23m
 
 " Gruvbox configuration
 let g:gruvbox_sign_column='bg0'
-let g:gruvbox_color_column='bg0'
+let g:gruvbox_color_column='bg1'
 let g:gruvbox_number_column='bg0'
 colorscheme gruvbox
 
 " Highlighting
-hi CursorLine ctermbg=236
-hi CursorLineNr ctermbg=236
-hi ColorColumn ctermbg=236
 hi Todo ctermfg=130 guibg=#af3a03
 " }}}
 
@@ -444,6 +456,7 @@ map ` <Nop>
 if exists('$TMUX')
   " Execute previous command in right pane
   nnoremap <silent> <leader>; :silent !tmux send-keys -t right Up Enter<cr>
+  nnoremap <silent> <leader>: :silent !tmux clear-history -t right && tmux send-keys -t right C-l Up Enter<cr>
 else
   map <leader>; <Nop>
 endif
@@ -514,6 +527,10 @@ let NERDTreeIgnore=[
   \ "depcomp$",
   \ "install-sh$",
   \ ]
+" }}}
+
+" {{{ vim-eunuch
+nnoremap <leader><F6> :Rename 
 " }}}
 
 " {{{ DirDiff
@@ -759,21 +776,33 @@ call deoplete#custom#source('LanguageClient',
 set completeopt-=preview
 " }}}
 
+" {{{ Snippets
+" {{{ UltiSnips
+if g:my_snippet_manager ==? 'ultisnips'
+  let g:UltiSnipsSnippetsDir = "~/.config/nvim/snippets/ultisnips/"
+  let g:UltiSnipsExpandTrigger='<A-l>'
+  let g:UltiSnipsJumpForwardTrigger='<A-l>'
+  let g:UltiSnipsJumpBackwardTrigger='<A-h>'
+
+  nnoremap <F1>s :call :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
+  nnoremap <F1>y :UltiSnipsEdit<CR>
+" }}}
 " {{{ neosnippet
-imap <A-l> <Plug>(neosnippet_expand_or_jump)
-smap <A-l> <Plug>(neosnippet_expand_or_jump)
-xmap <A-l> <Plug>(neosnippet_expand_target)
+elseif g:my_snippet_manager ==? 'neosnippet'
+  " If your snippets trigger are same with builtin snippets, your snippets overwrite them.
+  let g:neosnippet#snippets_directory='~/.config/nvim/snippets/neosnippet'
 
-" If your snippets trigger are same with builtin snippets, your snippets overwrite them.
-let g:neosnippet#snippets_directory='~/.config/nvim/snippets'
+  imap <A-l> <Plug>(neosnippet_expand_or_jump)
+  smap <A-l> <Plug>(neosnippet_expand_or_jump)
+  xmap <A-l> <Plug>(neosnippet_expand_target)
 
-" Reload snippets
-nnoremap <F1>s :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
-
-" Select and edit snippet file using fzf
-nnoremap <F1>y :FZF ~/.config/nvim/snippets/<cr>
-" Open file from neosnippet-snippets collection
-nnoremap <F1>Y :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
+  nnoremap <F1>s :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
+  " Select and edit snippet file using fzf
+  nnoremap <F1>y :FZF ~/.config/nvim/snippets/<cr>
+  " Open file from neosnippet-snippets collection
+  nnoremap <F1>Y :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
+endif
+" }}}
 " }}}
 
 " {{{ LanguageClient settings
@@ -838,13 +867,14 @@ endfunction
 let g:LanguageClient_diagnosticsEnable = 1
 
 " Use something different for highlighting
-let sign_column_color=synIDattr(hlID('SignColumn'), 'bg#')
+let sign_column_color=synIDattr(hlID('SignColumn'), 'bg#', 'cterm')
+let sign_column_color_gui=synIDattr(hlID('SignColumn'), 'bg#', 'gui')
 execute "hi LSPError gui=undercurl cterm=underline term=underline guisp=red"
-execute "hi LSPErrorText guifg=yellow ctermbg=red  ctermfg=" . sign_column_color . "guibg=" . sign_column_color
+execute "hi LSPErrorText guifg=yellow ctermbg=red  ctermfg=" . sign_column_color . "' guibg=" . sign_column_color_gui
 execute "hi LSPWarning gui=undercurl cterm=underline term=underline guisp=yellow"
-execute "hi LSPWarningText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . "guibg=" . sign_column_color
+execute "hi LSPWarningText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . " guibg=" . sign_column_color_gui
 execute "hi LSPInfo gui=undercurl cterm=underline term=underline guisp=yellow"
-execute "hi LSPInfoText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . "guibg=" . sign_column_color
+execute "hi LSPInfoText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . " guibg=" . sign_column_color_gui
 
 let g:LanguageClient_diagnosticsDisplay = {
   \   1: {
@@ -893,9 +923,9 @@ function! LightlineLSPStatus() abort
   let bgcolor = {'n': [237, '#3c3836'], 'i': [239, '#504945']}
   let color = get(bgcolor, mode, bgcolor.n)
   if s:lsp_status == 1
-    exe printf('hi LSPColor ctermbg=%d ctermfg=106 guifg=#98971a guibg=%d term=bold cterm=bold', color[0], color[1])
+    exe printf('hi LSPColor ctermbg=%d ctermfg=106 guifg=#98971a guibg=%d term=bold cterm=bold', color[0], color[0])
   else
-    exe printf('hi LSPColor ctermbg=%d ctermfg=241 guifg=#665c54 guibg=%d', color[0], color[1])
+    exe printf('hi LSPColor ctermbg=%d ctermfg=241 guifg=#665c54 guibg=%d', color[0], color[0])
   endif
   return ''
 endfunction
@@ -904,6 +934,8 @@ endfunction
 " }}}
 
 " {{{ Doxygen
+" Reference: http://www.doxygen.nl/manual/docblocks.html
+
 " Enable syntax highlighting provided by default plugin
 let g:load_doxygen_syntax=1
 
@@ -913,7 +945,12 @@ let g:DoxygenToolkit_compactOneLineDoc = "no"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
-au FileType c nnoremap <leader>d :Dox<CR>
+
+" Use C-style /** */ comments
+function! Doxygen1Keymap()
+  nnoremap <buffer><localleader>dd :Dox<CR>
+  nnoremap <buffer><localleader>df $a /**<  */<Esc>hhi
+endfunction
 "}}}
 
 " {{{ Git workflow
@@ -948,6 +985,17 @@ nmap <leader><leader>z <Plug>ZVKeyDocset
 let g:table_mode_map_prefix = ',t'
 let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
+" }}}
+
+" {{{ grammarous: LanguageTool integration
+let g:grammarous#default_comments_only_filetypes = {
+            \ '*' : 1, 'markdown' : 0, 'tex': 0
+            \ }
+nmap <leader>gi <Plug>(grammarous-open-info-window)
+nmap <leader>gm <Plug>(grammarous-move-to-info-window)
+nmap <leader>gf <Plug>(grammarous-fixit)
+nmap ]g <Plug>(grammarous-move-to-next-error)
+nmap [g <Plug>(grammarous-move-to-previous-error)
 " }}}
 
 " {{{ textobj (https://github.com/glts/vim-textobj-comment) configuration
@@ -991,12 +1039,15 @@ function! SwitchSourceHeader()
   endif
 endfunction
 
+" Set doxygen keybindings
+au FileType c,cpp call Doxygen1Keymap()
+
 " clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
-au FileType c,cpp noremap <leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+au FileType c,cpp noremap <buffer><leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
 " Quick access to man pages
-au FileType c,cpp noremap <leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>:noh<cr>3j
+au FileType c,cpp noremap <buffer><leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>:noh<cr>3j
 
 " Align statements relative to case label
 au FileType c,cpp setlocal cinoptions+=l1
@@ -1005,6 +1056,12 @@ au FileType c,cpp setlocal cinoptions+=l1
 autocmd FileType c,cpp,objc nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
 autocmd FileType c,cpp,objc vnoremap <buffer><leader>lf :ClangFormat<CR>
 nmap <leader>tf :ClangFormatAutoToggle<CR>
+
+" C++-specific keybindings
+function! CxxKeymap()
+  nnoremap <buffer><silent> d; dt:2x
+endfunction
+au FileType cpp call CxxKeymap()
 " }}}
 
 " {{{ Lisp-family languages
