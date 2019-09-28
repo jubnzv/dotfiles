@@ -972,6 +972,16 @@ nmap <leader>vb :Gblame<cr>
 nmap <leader>vl :Glog<cr>:copen<cr>
 nmap <leader>vB :Twiggy<cr>
 nmap <leader>m <Plug>(git-messenger)
+
+" {{{ Copy git link
+function! CopyGitLink(...) range
+  redir @+
+  silent echo gitlink#GitLink(get(a:, 1, 0))
+  redir END
+endfunction
+nmap <silent> <leader>vy :call CopyGitLink()<CR>
+vmap <silent> <leader>vy :call CopyGitLink(1)<CR>
+" }}}
 " }}}
 
 " {{{ Search in Zeal docsets
