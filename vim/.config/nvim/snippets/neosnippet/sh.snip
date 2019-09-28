@@ -14,9 +14,19 @@ snippet print
 alias	pr
 	echo "$0"
 
+snippet print_error
+alias	pre
+	err "$0"
+
 snippet log
 alias logger
 	logger "$0"
+
+snippet filename_v
+	"\${${1:#:VAR})##*/}"
+
+snippet dirname_v
+	"\${${1:#:VAR}%/*}"
 
 snippet set_lockfile
 options head
@@ -69,6 +79,13 @@ options head
 		exit 127
 	fi
 	$0
+
+snippet ch_file_pattern
+options head
+	if ls ${1:/}/${2:pattern} 1> /dev/null 2>&1; then
+		# file exists
+		$0
+	fi
 
 snippet ch_root
 options head
@@ -294,13 +311,30 @@ options head
 	    $0
 	fi
 
-# {{{ Funcitons
-snippet fn_usage
+
+# Comments according Google's Shell Style Guide
+# Reference: https://google.github.io/styleguide/shell.xml#Comments
+snippet fn_doc
 options head
-	usage () {
+	#######################################
+	# ${1::function}: ${2::Description}
+	# Globals:
+	#   ${3::None}
+	# Arguments:
+	#   ${4::None}
+	# Returns:
+	#   ${5::None}
+	#######################################
+	$1() {
 		$0
 	}
-# }}}
+
+# Reference: https://google.github.io/styleguide/shell.xml?showone=STDOUT_vs_STDERR#STDOUT_vs_STDERR
+snippet fn_err
+options head
+	err() {
+	  echo "[\$(date +'%Y-%m-%dT%H:%M:%S%z')]: \$@" >&2
+	}
 
 # {{{ LSB-compilant init scripts
 snippet lsbinit_head

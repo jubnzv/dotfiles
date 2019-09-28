@@ -7,7 +7,7 @@ endif
 let g:python3_host_prog  = '/usr/bin/python3.7'
 
 " {{{ Configuration variables
-let g:my_snippet_manager = 'ultisnips'
+let g:my_snippet_manager = 'neosnippet'
 " }}}
 
 " {{{ Plugins
@@ -784,7 +784,7 @@ if g:my_snippet_manager ==? 'ultisnips'
   let g:UltiSnipsJumpForwardTrigger='<A-l>'
   let g:UltiSnipsJumpBackwardTrigger='<A-h>'
 
-  nnoremap <F1>s :call :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
+  nnoremap <F1>s :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
   nnoremap <F1>y :UltiSnipsEdit<CR>
 " }}}
 " {{{ neosnippet
