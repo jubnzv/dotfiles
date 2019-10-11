@@ -2,6 +2,8 @@
 
 # {{{ Environment
 export SHELL=`which bash`
+export LANG=C
+export LC_ALL=C
 
 # Maybe there is no `xterm-kitty` in terminfo
 export TERM=xterm
@@ -63,7 +65,7 @@ setup_tmux() {
   local TMUX_COMMAND="/usr/bin/tmux -f $SSHHOME/.sshrc.d/.tmux.conf "
 
   # Initialize session
-  $TMUX_COMMAND $@ new -s ${tmuxname} -d
+  $TMUX_COMMAND $@ new -s ${tmuxname} -d -D
   $TMUX_COMMAND send-keys -t ${tmuxname} 'cat $SSHHOME/target_info' ENTER
 
   # Attach to created session
@@ -71,6 +73,10 @@ setup_tmux() {
 }
 
 setup_tmux
+# }}}
+
+# {{{ Load custom shell binds
+bind -f $SSHHOME/.sshrc.d/.inputrc
 # }}}
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120

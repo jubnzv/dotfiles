@@ -16,7 +16,6 @@ set $display3 VGA1
 set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 set $APP_TELEGRAM $HOME/.local/bin/Telegram
 set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
-set $APP_THUNDERBIRD /usr/bin/thunderbird
 
 # Windows behavior
 floating_modifier $mod
