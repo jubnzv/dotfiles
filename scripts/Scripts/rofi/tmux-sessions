@@ -38,7 +38,7 @@ if [ -n "${SESSIONS_DIR}" ]; then
     pushd "${SESSIONS_DIR}" >/dev/null
 fi
 
-select=$(ls --group-directories-first --color=never --indicator-style=slash | _rofi -dmenu -mesg "tmux session" -p "> ")
+select=$(ls --group-directories-first --color=never --indicator-style=slash -t | _rofi -dmenu -mesg "tmux session" -p "> ")
 
 tmux_session=$SESSIONS_DIR/$select
 if [ ! -f $note ] && [[ ! $tmux_session =~ .*.yaml$ ]]; then

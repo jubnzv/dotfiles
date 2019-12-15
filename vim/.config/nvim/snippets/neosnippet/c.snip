@@ -207,7 +207,12 @@ options head
 	return -1;
 # }}}
 
-# {{{ Prepared macroses
+# {{{ Common macroses
+snippet def1
+	#define ${1}    \
+	do {			\
+		$0			\
+	} while (0)
 snippet def_only_once
 options head
 	#define ONLY_ONCE static char OO = 0; if ((OO == 0) && (OO = 1))
@@ -223,9 +228,18 @@ snippet def_dbg_print
 	#define dbg(fmt, args...) do { if (${2:DEBUG_ENABLED}) fprintf(stderr, "[${1:DBG}]: " fmt "\n", ##args); } while (0)
 snippet def_array_size
 	# define array_size(arr) (sizeof(arr) / sizeof((arr)[0]))
+snippet def_FREE
+	#define FREE(pointer)   \
+		do {                \
+			free(pointer);  \
+			pointer = NULL; \
+		} while (0)
 # }}}
 
 # {{{ Common functions
+# {{{ strerror
+snippet fnd_strerror
+	const char *strerror_${1:name}(int errno_);
 snippet fn_strerror
 options head
 	const char *strerror_${1:name}(int errno_)
@@ -237,6 +251,16 @@ options head
 				return strerror(errno_);
 		}
 	}
+# }}}
+
+snippet fn_scalloc
+	void *scalloc(size_t num, size_t size) {
+		void *result = calloc(num, size);
+		if (result == NULL)
+			${1:#:exit(EXIT_FAILURE);}
+		return result;
+	}
+
 snippet fn_print_usage
 	void print_usage(const char *argv0)
 	{

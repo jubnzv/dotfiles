@@ -37,9 +37,9 @@
     color = "#bdae93"
 
 [shortcuts]
-    close = mod4+backslash
-    history = mod4+shift+backslash
-    close_all = mod4+ctrl+backslash
+    close = mod4+d
+    history = mod4+shift+d
+    close_all = mod4+ctrl+d
 
 [urgency_low]
     background = "#282828"

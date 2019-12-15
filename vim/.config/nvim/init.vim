@@ -31,16 +31,16 @@ Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Open links in browser
 Plug 'itchyny/lightline.vim'
 Plug 'jubnzv/gruvbox'                 " Color scheme
+Plug 'lifepillar/vim-gruvbox8'
 Plug 'chrisbra/Colorizer'             " Colorize color names and codes
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
-Plug 'thiagoalessio/rainbow_levels.vim' " Highlights code by indentation level
-Plug 'luochen1990/rainbow'            " Rainbow Parentheses
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
+Plug 'mhinz/vim-grepper'              " Ag wrapper that works with quickfix window. Useful in large codebases.
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -70,13 +70,13 @@ Plug 'autozimu/LanguageClient-neovim', {
   \ }
 Plug 'jubnzv/DoxygenToolkit.vim'
 Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
+Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'wlangstroth/vim-racket'         " Racket mode
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'        " Ansible configuration files
-Plug 'LnL7/vim-nix'                   " Nix expressions support
 Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creation
 Plug 'rhysd/vim-grammarous'           " LanguageTool intergartion
 Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
@@ -134,8 +134,8 @@ endif
 
 if has('nvim-0.4')
   set termguicolors
-  set winblend=10    " Disable transparent floating windows
-  set pumblend=10    " Disable transparent popup menus
+  set winblend=10    " Transparency for floating windows
+  set pumblend=10    " Transparency for popup menus
 endif
 
 " Default conceal settings.
@@ -179,7 +179,7 @@ let g:gruvbox_number_column='bg0'
 colorscheme gruvbox
 
 " Highlighting
-hi Todo ctermfg=130 guibg=#af3a03
+highlight Todo ctermfg=130 guibg=#af3a03
 " }}}
 
 " {{{ Common functions and commands
@@ -560,6 +560,15 @@ endfun
 au BufWritePre * call LastModified()
 " }}}
 
+" {{{ Grepper
+let g:grepper = {}
+let g:grepper.tools = ["ag"]
+let g:grepper.jump = 1
+nnoremap <leader>\ :GrepperAg<Space>
+nnoremap gs :Grepper -cword -noprompt<CR>
+xmap gs <Plug>(GrepperOperator)
+" }}}
+
 " {{{ FZF
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
@@ -711,8 +720,7 @@ function! FunctionNameToClipboard() abort
 endfunction
 nnoremap <leader>yf :call FunctionNameToClipboard()<cr>
 
-nnoremap <silent> <F7> :Vista!!<CR>
-nnoremap <silent> <A-7>:Vista focus<CR>
+nnoremap <silent> <A-7> :Vista!!<CR>
 " }}}
 
 " {{{ vim-signature configuration
@@ -805,7 +813,7 @@ endif
 " }}}
 " }}}
 
-" {{{ LanguageClient settings
+" {{{ LanguageClient
 " let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
 let g:LanguageClient_loadSettings = 1
 let g:LanguageClient_autoStart = 0
@@ -903,7 +911,7 @@ let g:LanguageClient_diagnosticsDisplay = {
   \   },}
 " }}}
 
-" {{{ Functions to show LanguageClient status in modeline
+" {{{ Functions to show LanguageClient status in the modeline
 augroup LanguageClient_config
   au!
   au User LanguageClientStarted call LSPUpdateStatus(1)
@@ -933,6 +941,10 @@ endfunction
 
 " }}}
 
+" {{{ EditorConfig
+let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
+" }}}
+
 " {{{ Doxygen
 " Reference: http://www.doxygen.nl/manual/docblocks.html
 
@@ -960,8 +972,8 @@ let g:gitgutter_map_keys = 0
 nmap [v <Plug>(GitGutterPrevHunk)
 nmap ]v <Plug>(GitGutterNextHunk)
 nmap <leader>vv <Plug>(GitGutterPreviewHunk)
-nmap <leader>v- <Plug>(GitGutterUndoHunk)
-nmap <leader>v= <Plug>(GitGutterStageHunk)
+nmap <leader>v- <Plug>(GitGutterStageHunk)
+nmap <leader>v_ <Plug>(GitGutterUndoHunk)
 nmap <leader>vs :Gstatus<cr>
 nmap <leader>vp :Gpull<cr>
 nmap <leader>vP :Gpush 
@@ -1071,7 +1083,12 @@ nmap <leader>tf :ClangFormatAutoToggle<CR>
 function! CxxKeymap()
   nnoremap <buffer><silent> d; dt:2x
 endfunction
-au FileType cpp call CxxKeymap()
+autocmd FileType cpp call CxxKeymap()
+
+" View standard lib mans with cppman
+" Note: Too slow. Disabled for now.
+" command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
+" autocmd FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
 " }}}
 
 " {{{ Lisp-family languages
@@ -1203,7 +1220,7 @@ au FileType markdown nnoremap <buffer> <leader>l i<><Esc>hpl
 " Create TOC using https://github.com/ekalinin/github-markdown-toc.go
 au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
 au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
-au FileType markdown nnoremap <buffer> <F7> :Vista toc<CR>
+au FileType markdown nnoremap <buffer> <A-7> :Vista toc<CR>
 
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
@@ -1244,6 +1261,10 @@ au BufRead,BufNewFile */ops/ansible/*.yml set filetype=yaml.ansible
 " buildbot configuration files
 au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
 au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
+
+" cppcheck dumps
+au BufNewFile,BufRead *.c.dump      set filetype=xml tw=120
+au BufNewFile,BufRead *.cpp.dump    set filetype=xml tw=120
 
 " Taskwarrior tasks (`task <id> edit`)
 au BufRead *.task /Description:
@@ -1340,7 +1361,6 @@ nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>ts :call ToggleScrollBind()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorToggle<CR>
-nnoremap <leader>ti :RainbowLevelsToggle<cr>
 nnoremap <leader>tr :RainbowToggle<cr>
 nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>

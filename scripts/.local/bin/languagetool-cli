@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+java -jar ~/.local/LanguageTool-4.6/languagetool-commandline.jar -

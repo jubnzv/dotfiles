@@ -28,6 +28,9 @@ snippet filename_v
 snippet dirname_v
 	"\${${1:#:VAR}%/*}"
 
+snippet procnum
+	\`getconf _NPROCESSORS_ONLN\`
+
 snippet set_lockfile
 options head
 	LOCKFILE=/tmp/${1:#:my_lock}
@@ -63,6 +66,13 @@ options head
 		exit 1
 	fi
 	$0
+
+# Is docker running?
+snippet ch_docker
+options head
+	if [[ $(systemctl show --property ActiveState docker | egrep '=active') ]]; then
+		$0
+	fi
 
 snippet ch_dir
 options head

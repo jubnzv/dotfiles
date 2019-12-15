@@ -5,6 +5,7 @@ Description=Email taskwarrior tasks completed this month
 OnBootSec=1min
 OnUnitActiveSec=1d
 OnCalendar=*-*~01
+Persistent=true
 
 [Install]
 WantedBy=timers.target

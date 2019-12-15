@@ -18,6 +18,12 @@ snippet send_notify
 alias pn
 options head
     import os; os.system('notify-send "Debug" "${1:%s}"' % (${2}))
+snippet print_trace
+alias prtr
+options head
+	import traceback
+	import sys
+	traceback.print_exc(file=sys.stdout)
 
 snippet sizeof
 options head
@@ -36,6 +42,13 @@ alias ch_dir
 options head
 	if not os.path.isdir(${1:fpath}):
 		print('%s: not found' % $1)
+		$0
+
+snippet check_command
+alias ch_command
+options head
+	if os.system('command -v ${1:cmake}') != 0:
+		print('$1: not found')
 		$0
 
 # {{{ https://github.com/cool-RR/PySnooper

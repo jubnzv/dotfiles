@@ -21,6 +21,8 @@ inoremap <C-p> <up>
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 
+nmap <leader>s :action SaveAll<CR>
+
 """ Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
@@ -35,11 +37,11 @@ nnoremap zR :action ExpandAll<cr>
 nnoremap zM :action CollapsAll<cr>
 
 " Reload .ideavimrc
-nnoremap <leader>R :source ~/.ideavimrc<cr>
+nnoremap <F1>c :source ~/.ideavimrc<cr>
 
 " Search routines
 nnoremap <leader>fs :action FindInPath<cr>
-nnoremap <A-h> :noh<cr>
+nnoremap <leader>h :noh<cr>
 
 " Source navigation
 nnoremap <leader>gu :action FindUsages<cr>

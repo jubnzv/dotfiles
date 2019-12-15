@@ -24,6 +24,9 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
     # Auto-close and delete matching delimiters
 	zplug "hlissner/zsh-autopair", defer:2
 
+    # Automatically sends out a notification when a long running task has completed
+	zplug "MichaelAquilina/zsh-auto-notify", defer:2
+
     # Install plugins if not all are installed
     if ! zplug check; then
         zplug install
@@ -34,7 +37,7 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
 fi
 # }}}
 
-fpath=( ~/.zfunc "${fpath[@]}" )
+fpath=( ~/.zfunc ~/.zsh/zsh-completions/src/ "${fpath[@]}" )
 
 # fasd setup
 # have a (any), s (show), z (cd), etc.
@@ -58,11 +61,21 @@ export PATH=$PATH:$HOME/.local/bin/:$HOME/.cargo/bin:/usr/local/go/bin:$GOPATH/b
 # Default username for https://hub.docker.com
 export DOCKER_ID_USER="jubnzv1"
 
-# Contains latest cppcheck version with some personal customizations.
-export CPPCHECK_HOME=$HOME/Dev/cppcheck/cppcheck-clean/
+# Shortcuts for most used tools
+export CPPCHECK=$HOME/Dev/cppcheck/_latest/
+export CPPCHECK89=$HOME/Dev/cppcheck/_189/
+export TOOLS=$HOME/Dev/tools/
+export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
+export BCC=$HOME/Dev/tools/bcc/
 
+export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
-export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+# export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true
+# -Dswing.defaultlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel
+# -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
+
+# Configure Qt theme with qt5ct
+export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export EDITOR="nvim"
 export ALTERNATE_EDITOR="nvim"
@@ -73,6 +86,17 @@ export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
 export PYTHONSTARTUP=~/.pythonrc
+# }}}
+
+# {{{ Detect Linux distribution
+export OSTYPE=unknown
+if [ -f /etc/debian_version ]; then
+    OSTYPE=debian
+elif [[ ! -x "$(command -v nixos-version)" ]]; then
+    OSTYPE=nixos
+elif [[ ! -x "$(command -v termux-info)" ]]; then
+    OSTYPE=termux
+fi
 # }}}
 
 # {{{ Prompt & colors
@@ -189,6 +213,7 @@ alias rp='realpath'
 alias mkb='mkdir -p ./build; cd build'
 alias ag='ag --path-to-ignore ~/.ignore'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
+alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 alias r='ranger'
 alias zt='zathura'
 alias mrg='mirage'
@@ -229,6 +254,7 @@ alias vv='nvim ~/.config/nvim/init.vim'
 alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
 alias vsh='nvim ~/dotfiles/scripts/'
+alias vnu='nvim ~/.newsboat/urls'
 
 # Notekeeping in markdown with vim
 alias vns='nvim ~/Org/scratch.md'
@@ -244,22 +270,16 @@ alias rs='rsync -ah --progress'
 
 # {{{ git
 alias g='git'
-
 alias gh='git help'
-
 alias gb='git branch'
 alias gbd='git branch --delete'
 alias gbdd='git branch --delete --force'
-
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-
 alias gdl="git diff --unified=0 | grep -Po '(?<=^\+)(?!\+\+).*'"
-
 alias gf='git fetch --prune'
 alias gfa='git fetch --prune --all'
-
 alias gsm='git submodule'
 alias gsma='git submodule add'
 alias gsmi='git submodule init'
@@ -268,10 +288,9 @@ alias gsmui='git submodule update --init --recursive'
 alias gsmy='git submodule sync'
 #  }}}
 
-# {{{ apt
-alias ap='apt-get'
-alias apu='apt-get update'
-alias aps='apt-cache search'
+# {{{ docker
+alias d='docker'
+alias drmrunning='docker container rm -f $(docker container ls -q)'
 # }}}
 
 # zsh
@@ -281,16 +300,19 @@ alias _up source ~/.zshrc
 alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
-alias -g G='|& ag -i'
+alias -g O="> output.txt"
+alias -g G='| ag'
 alias -g L="|& less"
 alias -g V="| nvim -"
+alias -g ND="; notify-send 'Done' ''"
+
 # Perform operation using fzf. Examples:
 #   find /usr/include -name "test.h" F nvim
 #   find /usr/lib -name "test.so.*" F readelf -h
 if [[ -z "$TMUX" ]]; then
     alias -g F="| fzf --multi --cycle | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
 else
-    alias -g F="| fzf-tmux --tac | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
+    alias -g F="| fzf-tmux --multi --tac | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
 fi
 
 # python
@@ -308,6 +330,7 @@ alias cR='ctags -R'
 alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ctags='/usr/bin/ctags-universal'
 
+# ls
 alias ls='ls --color=auto'
 alias ll='ls -oh'
 alias lla='ls -oha'
@@ -326,14 +349,15 @@ alias cpd='cpdiff'
 
 # {{{ taskwarrior
 if [[ -x "$(command -v task)" ]]; then
-    alias t="task"                 # Default `task next` report
-    alias tt="t recent"            # Recently added tasks
-    alias tb="t -redmine -gitlab"  # Filter bugwarrior-imported tasks
-    alias tc="t context"           # Select context
-    alias tcn="t c none"           # Unset context
+    alias t="task"                        # Default `task next` report
+    alias tt="t recent"                   # Recently added tasks
+    alias tb="t -redmine -gitlab"         # Filter bugwarrior-imported tasks
+    alias tw="t waiting -redmine -gitlab" # Waiting tasks without bugwarrior noise
+    alias tc="t context"                  # Select context
+    alias tcn="t c none"                  # Unset context
     alias tactive="date; t active"
     alias tstart="date; t start"
-    alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no stop"
+    alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no rc.bulk=yes stop"
     alias tdoned='t end:today status:completed all'
     alias tdonew='t end.after:today-7d status:completed all'
     alias tdonem='t end.after:today-30d status:completed all'
@@ -385,15 +409,23 @@ alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
 
 # Sequence that disables cursor blinking
 alias stopblink="printf '\033[?12l'"
+
+# Tools
+alias psmem="sudo $(which ps_mem.py)"
 # }}}
 
 # {{{ Functions
 
 # Modprobe modules used by VirtualBox
-modbrobe_vb() {
+modprobe_vb() {
     sudo modprobe vboxguest
     sudo modprobe vboxnetadp
     sudo modprobe vboxnetflt
+}
+
+mount_iso() {
+    sudo mkdir -pv /mnt/iso/
+    sudo mount -o loop $1 /mnt/iso/ 2>/dev/null
 }
 
 # {{{ Find snippets
@@ -436,17 +468,23 @@ bindkey '^[и'	emacs-backward-word
 bindkey '\ef'   emacs-forward-word
 bindkey '\eb'   emacs-backward-word
 
-# Delete words like a bash
+# Ctrl+backspace to delete the previous word to slash
+#
+# References:
+# + https://unix.stackexchange.com/questions/313806/zsh-make-altbackspace-stop-at-non-alphanumeric-characters
+# + https://unix.stackexchange.com/questions/258656/how-can-i-delete-to-a-slash-or-a-word-in-zsh
 backward-kill-dir () {
     local WORDCHARS=${WORDCHARS/\/}
-	    zle backward-kill-word
-
+    zle backward-kill-word
 }
 zle -N backward-kill-dir
-bindkey '^[^?' backward-kill-dir
+bindkey '^H' backward-kill-dir
 
 bindkey -s "\ei"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
+bindkey -s "\em"  "^Qvmans .^J"             # Select manpage with fzf and read it.
+bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
 bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
+bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # }}}
 
 # {{{ fzf
@@ -531,6 +569,15 @@ bindkey "^[c" fzf-fasd-dir
 compdef sshrc=ssh
 compdef scp-speed-test=scp
 compdef g=git
+# }}}
+
+# {{{ auto-notify plugin configuration
+# Set threshold to 20seconds
+export AUTO_NOTIFY_THRESHOLD=60
+export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
+export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
+export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "git"
+                              "chk1" "cppcheck" "perf" "mprof" "svn")
 # }}}
 
 # {{{ Utilities

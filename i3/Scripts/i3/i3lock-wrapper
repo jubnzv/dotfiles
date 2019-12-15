@@ -17,6 +17,12 @@ enable_notifications() {
     fi
 }
 
+disable_notifications() {
+    if [[ "$1" -eq 0 ]]; then
+        notify-send "DUNST_COMMAND_PAUSE"
+    fi
+}
+
 # Is sound already muted?
 muted=0
 if [[ $(pacmd list-sinks | grep mute) == *yes* ]]; then
@@ -31,7 +37,7 @@ fi
 
 # Do lock.
 xset dpms force off &
-notify-send "DUNST_COMMAND_PAUSE"                && \
+disable_notifications $notifications_disabled    && \
     amixer -c 0 -q set Master mute               && \
     systemctl --user stop arbtt.service          && \
     i3lock -n --color=282828 -f                  && \

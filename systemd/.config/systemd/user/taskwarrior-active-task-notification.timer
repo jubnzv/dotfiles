@@ -3,6 +3,7 @@ Description=Send notificaiton title of active task.
 
 [Timer]
 OnCalendar=*:0/20
+Persistent=false
 
 [Install]
 WantedBy=timers.target

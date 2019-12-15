@@ -38,6 +38,11 @@ map <A-\<> goto top
 map <A-\>> goto bottom
 map <A-v> scroll full-up
 
+unmap d
+unmap u
+map d scroll half-down
+map u scroll half-up
+
 # Show only the file name in the window title.
 set window-title-basename true
 

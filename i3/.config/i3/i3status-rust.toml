@@ -51,6 +51,11 @@ interval = 5
 block = "cpu"
 interval = 3
 
+[[block]]
+block = "custom"
+command = "if [[ $(systemctl show --property ActiveState docker | egrep '=active') ]]; then echo d: $(docker ps -q | wc -l); fi"
+interval = 60
+
 # [[block]]
 # block = "load"
 # interval = 3
@@ -69,4 +74,9 @@ interval = 3
 block = "battery"
 interval = 15
 format = "{percentage}% {time}"
+
+[[block]]
+block = "time"
+format = "%H:%M"
+interval = 60
 

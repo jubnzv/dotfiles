@@ -107,3 +107,11 @@ options		head
 	for (${1:auto const& }${2:var} : ${3:container}) {
 		${0:TARGET}
 	}
+
+# {{{ Macroses
+# std::invoke before C++17
+# See: https://isocpp.org/wiki/faq/pointers-to-members
+snippet def_call_member_fn
+options head
+	#define CALL_MEMBER_FN(object,ptrToMember)  ((object).*(ptrToMember))
+# }}}

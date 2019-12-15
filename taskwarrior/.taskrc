@@ -59,6 +59,7 @@ uda.brainpower.values=H,M,L
 # {{{ Reports
 report.next.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
 report.next.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Est,S,Due,Until,Description,Urg
+# report.next.filter=-trac # bugwarrior is messy
 
 # Like "next" report, but show by creation date
 report.recent.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
@@ -75,6 +76,13 @@ report.simple.columns=id,project,description.count
 report.simple.labels=ID,Proj,Desc
 report.simple.sort=project+/,entry+
 report.simple.filter=status:pending
+
+# Note: `task ids` is taskwarrior reserved command.
+report.ilist.description=List of IDs
+report.ilist.columns=id
+report.ilist.labels=ID
+report.ilist.sort=project+/,entry+
+report.ilist.filter=status:pending
 
 # Report reccurring tasks
 report.recurring_full.description=All Recurring Tasks

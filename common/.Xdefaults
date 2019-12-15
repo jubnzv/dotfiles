@@ -116,11 +116,4 @@ URxvt.color246: #a89984
 URxvt.color248: #bdae93
 URxvt.color250: #d5c4a1
 
-!! XTerm settings {{{1
-XTerm.vt100.metaSendsEscape: true
-XTerm.vt100.saveLines: 5000
-XTerm*faceName: Terminus
-XTerm*faceSize: 11
-!! }}}1
-
 ! vim: foldmethod=marker sw=4

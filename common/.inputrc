@@ -1,2 +1,6 @@
 set bell-style none
 set show-all-if-ambiguous on
+
+$if bash
+    "\ev": "nvim .\C-j"
+    "\C-o": "> output.txt"
