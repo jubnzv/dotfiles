@@ -39,12 +39,12 @@ if [[ ! $sched_ids == "" ]]; then
 fi
 
 # Synchrnonize with taskserver.
-task sync
-if [ ! $? -eq 0 ]; then
-    notify-send -i $(realpath ~/.icon/taskwarrior.png) \
-        "taskwarrior" "Can't sync with taskserver!"
-    exit 1
-fi
+# task sync
+# if [ ! $? -eq 0 ]; then
+#     notify-send -i $(realpath ~/.icon/taskwarrior.png) \
+#         "taskwarrior" "Can't sync with taskserver!"
+#     exit 1
+# fi
 
 # Count tasks completed today.
 completed_tasks="$(task end:today status:completed all rc.gc=off 2>/dev/null | egrep '[0-9]\ tasks$' | cut -d ' ' -f -1)"

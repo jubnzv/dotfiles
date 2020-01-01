@@ -13,5 +13,9 @@ cd "$NOTES_PATH"
 git add -A
 git commit -m "Update $(date +%Y-%m-%d)"
 
-diff_text=$(git diff @^)
-echo -e "Content-Type: text/plain; charset=\"utf-8\";\nSubject: Notes diff $(date +%Y-%m-%d)\n\n${diff_text}" | /usr/sbin/sendmail jubnzv@remilia
+# diff_text=$(git diff @^)
+# echo -e "Content-Type: text/plain; charset=\"utf-8\";\nSubject: Notes diff $(date +%Y-%m-%d)\n\n${diff_text}" | /usr/sbin/sendmail jubnzv@remilia
+
+diff_html=$(git diff @^ | ~/.local/bin/diff2html.py)
+echo -e "Content-Type: text/html; charset=\"utf-8\";\nSubject: Notes diff $(date +%Y-%m-%d)\n\n${diff_html}" | /usr/sbin/sendmail jubnzv@remilia
+

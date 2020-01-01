@@ -18,12 +18,14 @@ else
     verbose=0
 fi
 
-sched_num="$(task rc.gc=off sched.before:eod -COMPLETED -DELETED -DUETODAY count 2>/dev/null)"
+sched_num="$(task rc.gc=off sched.before:eod status:pending -COMPLETED -DELETED -DUETODAY count 2>/dev/null)"
 sched_num=$(($sched_num))
-due_num="$(task rc.gc=off due.before:eod -COMPLETED -DELETED count 2>/dev/null)"
+due_num="$(task rc.gc=off due.before:eod status:pending -COMPLETED -DELETED count 2>/dev/null)"
 due_num=$(($due_num))
+overdue_num="$(task rc.gc=off status:pending +OVERDUE -DELETED count 2>/dev/null)"
+overdue_num=$(($overdue_num))
 
-tasks_num=$(($sched_num+$due_num))
+tasks_num=$(($sched_num+$due_num+$overdue_num))
 if [[ $tasks_num -gt 0 ]]; then
     msg="("
     if [[ $sched_num -gt 0 ]]; then
@@ -36,6 +38,9 @@ if [[ $tasks_num -gt 0 ]]; then
         msg=$msg"<span foreground='#fb4934'>$due_num</span> due"
     else
         msg=$msg"<span foreground='#b8bb26'>0</span> due"
+    fi
+    if [[ $overdue_num -gt 0 ]]; then
+        msg=$msg", <span foreground='#cc241d'>$overdue_num</span> overdue"
     fi
     msg=$msg")"
 

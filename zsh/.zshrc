@@ -6,10 +6,6 @@ fi
 if [[ -f ~/.zplug/init.zsh ]] ; then
     source ~/.zplug/init.zsh
 
-    # Easymotion alternative for zsh
-    #source ~/.config/zsh/zce.zsh/zce.zsh
-    zplug 'hchbaw/zce.zsh'
-
     # Autosuggestions
     zplug "tarruda/zsh-autosuggestions", use:"zsh-autosuggestions.zsh"
 
@@ -20,9 +16,6 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
 
     # A plugin to shrink directory paths for brevity and pretty-printing
     zplug "plugins/shrink-path", from:oh-my-zsh
-
-    # Auto-close and delete matching delimiters
-	zplug "hlissner/zsh-autopair", defer:2
 
     # Automatically sends out a notification when a long running task has completed
 	zplug "MichaelAquilina/zsh-auto-notify", defer:2
@@ -45,7 +38,7 @@ if [[ -x "$(command -v fasd)" ]]; then
     eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
 fi
 
-# {{{ Options
+# {{{ Global variables
 # Golang workspace location. References:
 # https://golang.org/doc/code.html#Workspaces
 # https://golang.org/doc/code.html#GOPATH
@@ -86,6 +79,9 @@ export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
 export PYTHONSTARTUP=~/.pythonrc
+
+# OCaml environment
+eval "$(opam config env)"
 # }}}
 
 # {{{ Detect Linux distribution
@@ -120,9 +116,6 @@ autoload -Uz vcs_info        # Show git branch name
 zstyle ':vcs_info:*' enable git
 zstyle ':vcs_info:git:*' formats '  %b'
 setopt prompt_subst
-
-zstyle ':zce:*' fg 'fg=124,bold'
-zstyle ':zce:*' bg 'fg=7'
 
 function precmd() {
     vcs_info
@@ -212,6 +205,7 @@ alias less='less -Q' # Turn off beeps
 alias rp='realpath'
 alias mkb='mkdir -p ./build; cd build'
 alias ag='ag --path-to-ignore ~/.ignore'
+alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 alias r='ranger'
@@ -225,8 +219,6 @@ alias tree='tree -C'
 # vim
 alias :e='nvim'
 alias v='nvim'
-alias v.='nvim .'
-alias vi='nvim'
 alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
@@ -249,11 +241,10 @@ mkcd() {
 # Edit configs
 alias vz='nvim ~/.zshrc; source ~/.zshrc'
 alias vi3='nvim ~/.config/i3/config; i3-msg restart'
-alias vi3s='nvim ~/.config/i3/i3status-rust.toml; i3-msg restart'
+alias vp='nvim ~/.config/polybar/config'
 alias vv='nvim ~/.config/nvim/init.vim'
 alias vr='nvim ~/.config/ranger/rc.conf'
 alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
-alias vsh='nvim ~/dotfiles/scripts/'
 alias vnu='nvim ~/.newsboat/urls'
 
 # Notekeeping in markdown with vim
@@ -333,6 +324,7 @@ alias ctags='/usr/bin/ctags-universal'
 # ls
 alias ls='ls --color=auto'
 alias ll='ls -oh'
+alias l1='ls -1'
 alias lla='ls -oha'
 alias lt='ls -ouht'
 alias lta='ls -lthua'
@@ -461,7 +453,6 @@ pkill_cq() {
 bindkey -e                        # Enable emacs-mode
 
 autoload -Uz compinit && compinit # Command completion
-bindkey "^[;" zce                 # easymotion
 
 bindkey '^[а'	emacs-forward-word
 bindkey '^[и'	emacs-backward-word
@@ -480,7 +471,7 @@ backward-kill-dir () {
 zle -N backward-kill-dir
 bindkey '^H' backward-kill-dir
 
-bindkey -s "\ei"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
+bindkey -s "\ep"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
 bindkey -s "\em"  "^Qvmans .^J"             # Select manpage with fzf and read it.
 bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
 bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
@@ -577,7 +568,20 @@ export AUTO_NOTIFY_THRESHOLD=60
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
 export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "git"
-                              "chk1" "cppcheck" "perf" "mprof" "svn")
+                              "chk1" "cppcheck" "perf" "mprof" "svn" "opam")
+# }}}
+
+# {{{ Show current directory in X window title
+function set-title-precmd() {
+  printf "\e]2;%s\a" "${PWD/#$HOME/~} - zsh"
+}
+function set-title-preexec() {
+  printf "\e]2;%s\a" "$1 - zsh"
+}
+
+autoload -Uz add-zsh-hook
+add-zsh-hook precmd set-title-precmd
+add-zsh-hook preexec set-title-preexec
 # }}}
 
 # {{{ Utilities
