@@ -31,7 +31,6 @@ Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Open links in browser
 Plug 'itchyny/lightline.vim'
 Plug 'jubnzv/gruvbox'                 " Color scheme
-Plug 'lifepillar/vim-gruvbox8'
 Plug 'chrisbra/Colorizer'             " Colorize color names and codes
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
@@ -64,14 +63,13 @@ endif
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
-Plug 'autozimu/LanguageClient-neovim', {
-  \ 'branch': 'next',
-  \ 'do': 'bash install.sh',
-  \ }
+Plug 'copy/deoplete-ocaml'
+Plug 'sbdchd/neoformat'
 Plug 'jubnzv/DoxygenToolkit.vim'
-Plug 'KabbAmine/zeavim.vim'           " Query Zeal docs from vim
 Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'wlangstroth/vim-racket'         " Racket mode
+Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
+Plug 'jpalardy/vim-slime'
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'vim-python/python-syntax'       " Extended python syntax
@@ -223,9 +221,6 @@ nnoremap Y y$
 
 " Reload vimrc
 nnoremap <F1>c :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
-
-" Update plugins
-nnoremap <F1>U :PlugUpdate<CR>
 
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@
@@ -390,7 +385,6 @@ let g:lightline = {
   \              [ 'gitbranch' ] ],
   \ },
   \ 'component': {
-  \   'lsp_status': '%#LSPColor#%{LightlineLSPStatus()}',
   \   'gitbranch': ' %{fugitive#head()}'
   \ },
   \ 'component_function': {
@@ -415,6 +409,7 @@ let g:openbrowser_search_engines = extend(
 \       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+{query}&type=Code',
 \       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+{query}&type=Code',
 \       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+{query}&type=Code',
+\       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+{query}&type=Code',
 \       'cplusplus': 'http://www.cplusplus.com/search.do?q={query}',
 \       'gnome': 'https://developer.gnome.org/search?q={query}',
 \       'buildbot': 'https://docs.buildbot.net/current/search.html?q={query}',
@@ -442,10 +437,10 @@ nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c
 nnoremap <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
 nnoremap <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
 nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+nnoremap <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
 " Documentation
 nnoremap <leader>odx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
 nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
-nnoremap <leader>odg :call openbrowser#smart_search(expand('<cword>'), "gnome")<CR>
 nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
 " }}}
 
@@ -607,7 +602,7 @@ nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <A-t> :Tags<CR>
 nnoremap <leader>xf :Files<CR>
-nnoremap <M-i> :Files<CR>
+nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>xr :FZFMru <CR>
@@ -623,7 +618,6 @@ command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
 command! -bang -nargs=* AgCxx call fzf#vim#ag(<q-args>, '--cpp', {'down': '~40%'})
 command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
 command! -bang -nargs=* AgRust call fzf#vim#ag(<q-args>, '--rust', {'down': '~40%'})
-command! -bang -nargs=* AgElisp call fzf#vim#ag(<q-args>, '--elisp', {'down': '~40%'})
 command! -bang -nargs=* AgCSS call fzf#vim#ag(<q-args>, '--css', {'down': '~40%'})
 nnoremap <leader>fac :AgCC<CR>
 nnoremap <leader>fah :AgH<CR>
@@ -777,9 +771,6 @@ inoremap <expr><A-o> deoplete#mappings#manual_complete()
 
 call deoplete#custom#source('_',
   \ 'matchers', ['matcher_full_fuzzy'])
-call deoplete#custom#source('LanguageClient',
-  \ 'min_pattern_length',
-  \ 2)
 
 set completeopt-=preview
 " }}}
@@ -813,132 +804,12 @@ endif
 " }}}
 " }}}
 
-" {{{ LanguageClient
-" let g:LanguageClient_loggingFile = '/tmp/LanguageClient.log'
-let g:LanguageClient_loadSettings = 1
-let g:LanguageClient_autoStart = 0
-let g:LanguageClient_hasSnippetSupport = 1
-let g:LanguageClient_waitOutputTimeout = 5
-let g:LanguageClient_useVirtualText = 0
-let g:LanguageClient_useFloatingHover = 1
-" let g:LanguageClient_hoverPreview = "Never"
-let g:LanguageClient_settingsPath = '~/.config/nvim/settings.json'
-let g:LanguageClient_serverCommands = {
-  \ 'python': ['pyls', '--log-file=/tmp/pyls.log'],
-  \ 'rust': ['~/.cargo/bin/rustup', 'run', 'nightly', 'rls'],
-  \ 'go': ['gopls'],
-  \ 'cpp': ['clangd'],
-  \ 'c': ['clangd'],
-  \ }
-let g:LanguageClient_rootMarkers = {
-  \ 'cpp': ['compile_commands.json', 'build'],
-  \ 'c': ['compile_commands.json', 'build'],
-  \ }
-
-" FIXME: Can be broken with cquery on some projects: use default `gq` instead.
-" set formatexpr=LanguageClient_textDocument_rangeFormatting()
-set formatexpr=""
-
-" {{{ Keybindings
-" I keep it as separated function to use this hotkeys when LSP is not started, e.g. use ctags/cscope binds for goto
-" definition / goto implementation in large C projects when LSP is slow.
-function! LCKeymap()
-  if has_key(g:LanguageClient_serverCommands, &filetype)
-    " General
-    nnoremap gD :only<bar>vsplit<cr>gd
-    nnoremap <silent> <F6> :call LanguageClient#textDocument_rename()<cr>
-    nnoremap <silent> <F5> :call LanguageClient_contextMenu()<CR>
-    nnoremap <silent> <leader>k :call LanguageClient#textDocument_hover()<cr>
-    " Movement
-    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<cr>
-    nnoremap <silent> gi :call LanguageClient#textDocument_implementation()<cr>
-    nnoremap <silent> gr :call LanguageClient_textDocument_references()<cr>
-    nnoremap <silent> gs :call LanguageClient#workspace_symbol()<cr>
-    " Editing
-    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<cr>
-  endif
-endfunction
-" }}}
-
-" Suppress autostart for large codebases
-function! LCDisableAutostart(ignored_paths)
-  let l:path = expand('%:p')
-  for ign_path in a:ignored_paths
-    if l:path =~ ign_path
-      let g:LanguageClient_autoStart = 0
-      break
-    endif
-  endfor
-endfunction
-
-" {{{ Format options for LSP diagnostic messages in signcolumn
-let g:LanguageClient_diagnosticsEnable = 1
-
-" Use something different for highlighting
-let sign_column_color=synIDattr(hlID('SignColumn'), 'bg#', 'cterm')
-let sign_column_color_gui=synIDattr(hlID('SignColumn'), 'bg#', 'gui')
-execute "hi LSPError gui=undercurl cterm=underline term=underline guisp=red"
-execute "hi LSPErrorText guifg=yellow ctermbg=red  ctermfg=" . sign_column_color . "' guibg=" . sign_column_color_gui
-execute "hi LSPWarning gui=undercurl cterm=underline term=underline guisp=yellow"
-execute "hi LSPWarningText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . " guibg=" . sign_column_color_gui
-execute "hi LSPInfo gui=undercurl cterm=underline term=underline guisp=yellow"
-execute "hi LSPInfoText guifg=yellow ctermfg=yellow ctermbg=" . sign_column_color . " guibg=" . sign_column_color_gui
-
-let g:LanguageClient_diagnosticsDisplay = {
-  \   1: {
-  \       "name": "Error",
-  \       "texthl": "LSPError",
-  \       "signText": "ee",
-  \       "signTexthl": "LSPErrorText",
-  \   },
-  \   2: {
-  \       "name": "Warning",
-  \       "texthl": "LSPWarning",
-  \       "signText": "ww",
-  \       "signTexthl": "LSPWarningText",
-  \   },
-  \   3: {
-  \       "name": "Information",
-  \       "texthl": "LSPInfo",
-  \       "signText": "ii",
-  \       "signTexthl": "LSPInfoText",
-  \   },
-  \   4: {
-  \       "name": "Hint",
-  \       "texthl": "LSPInfo",
-  \       "signText": "hh",
-  \       "signTexthl": "LSPInfoText",
-  \   },}
-" }}}
-
-" {{{ Functions to show LanguageClient status in the modeline
-augroup LanguageClient_config
-  au!
-  au User LanguageClientStarted call LSPUpdateStatus(1)
-  au User LanguageClientStopped call LSPUpdateStatus(0)
-augroup END
-
-if !exists('s:lsp_status') | let s:lsp_status = 0 | endif
-function! LSPUpdateStatus(status) abort
-  let s:lsp_status = a:status
-  call lightline#update()
-endfunction
-
-" A bit complicated. See :he lightline-problem-12 for description.
-function! LightlineLSPStatus() abort
-  let map = { 'V': 'n', "\<C-v>": 'n', 's': 'n', 'v': 'n', "\<C-s>": 'n', 'c': 'n', 'R': 'n'}
-  let mode = get(map, mode()[0], mode()[0])
-  let bgcolor = {'n': [237, '#3c3836'], 'i': [239, '#504945']}
-  let color = get(bgcolor, mode, bgcolor.n)
-  if s:lsp_status == 1
-    exe printf('hi LSPColor ctermbg=%d ctermfg=106 guifg=#98971a guibg=%d term=bold cterm=bold', color[0], color[0])
-  else
-    exe printf('hi LSPColor ctermbg=%d ctermfg=241 guifg=#665c54 guibg=%d', color[0], color[0])
-  endif
-  return ''
-endfunction
-" }}}
-
+" {{{ neoformat
+" let g:neoformat_ocaml_ocamlformat = {}
+" let g:neoformat_ocaml_ocamlformat.exe = 'ocamlformat'
+" let g:neoformat_ocaml_ocamlformat.args = ['--inplace']
+" let g:neoformat_ocaml_ocamlformat.replace = 1
+" let g:neoformat_enabled_ocaml = ['ocamlformat', 'ocpindent']
 " }}}
 
 " {{{ EditorConfig
@@ -1031,8 +902,6 @@ omap i/ <Plug>(textobj-comment-i)
 " {{{ C/C++
 au FileType c,cpp setlocal commentstring=//\ %s
 au FileType c,cpp setlocal tw=80
-au FileType c,cpp call LCDisableAutostart(['linux-', 'Kernel', 'Projects', 'Bugs', 'beremiz'])
-au FileType c,cpp call LCKeymap()
 au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
 
 " Use C filetype for headers by default
@@ -1099,28 +968,25 @@ endfunction
 let g:vim_parinfer_globs = ['*.scm', '*.rkt']
 let g:vim_parinfer_filetypes = ['scheme', 'racket']
 
-let g:slime_target = "tmux"
-let g:slime_paste_file = tempname()
-let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
-let g:slime_dont_ask_default = 1
 au FileType racket RainbowToggleOn
 au FileType racket call LispKeymap()
 " }}}
 
-" {{{ Rust
-au FileType rust call LCKeymap()
-au FileType rust nnoremap <buffer> <f9> :!cargo build<cr>
-let g:rustfmt_autosave = 1
+" {{{ slime
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
+let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
+let g:slime_dont_ask_default = 1
 " }}}
 
-" {{{ Go
-au FileType go call LCKeymap()
+" {{{ Rust
+au FileType rust nnoremap <buffer> <f9> :!cargo build<cr>
+let g:rustfmt_autosave = 1
 " }}}
 
 " {{{ Python
 au FileType python set tw=0
 au FileType python set foldmethod=indent foldnestmax=2
-au FileType python call LCKeymap()
 au FileType python RainbowToggleOn
 au Filetype python set cinoptions=:0,l1,t0,g0,(0
 au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
@@ -1152,6 +1018,17 @@ call textobj#user#map('python', {
 " Narrowing functions: edit function/class body in separate window.
 " au FileType python nnoremap <buffer><leader>nf vaf:'<,'>NR<cr>
 " au FileType python nnoremap <buffer><leader>nc vac:'<,'>NR<cr>
+" }}}
+
+" {{{ OCaml
+" Merlin
+" See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
+let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+execute "set rtp+=" . g:opamshare . "/merlin/vim"
+
+" ocp-indent
+" See: https://www.typerex.org/ocp-indent.html
+" autocmd FileType ocaml source /home/jubnzv/.opam/4.08.1/share/typerex/ocp-indent/ocp-indent.vim
 " }}}
 
 " {{{ vimscript
@@ -1318,18 +1195,6 @@ function! Togglegjgk()
   endif
 endfunction
 
-function! ToggleLSP()
-  if (s:lsp_status == 0)
-    execute ":LanguageClientStart"
-    let g:LanguageClient_autoStart = 1
-    echo 'Enable LSP'
-  else
-    execute ":LanguageClientStop"
-    let g:LanguageClient_autoStart = 0
-    echo 'Disable LSP'
-  endif
-endfunction
-
 function! ToggleHex()
   if (s:hex_mode == 0)
     execute ":%!xxd"
@@ -1355,7 +1220,6 @@ endfunction
 
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
-nnoremap <leader>tl :call ToggleLSP()<CR>
 nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>ts :call ToggleScrollBind()<CR>
