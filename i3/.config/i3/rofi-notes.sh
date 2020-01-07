@@ -39,7 +39,10 @@ then
     pushd "${NOTES_DIR}" >/dev/null
 fi
 
-select=$(ls --group-directories-first --color=never --indicator-style=slash -t | ag -v img  | _rofi -dmenu -mesg "Note" -p "> ")
+select=$(ls --group-directories-first --color=never --indicator-style=slash -tu | egrep -v '(img|tags|site_html|templates)' | _rofi -dmenu -mesg "Note" -p "> ")
+if [ ! $select ]; then
+    exit
+fi
 
 note=$NOTES_DIR/$select
 if [ ! -f $note ] && [[ ! $note =~ .*.md$ ]]; then

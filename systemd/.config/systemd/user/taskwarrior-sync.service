@@ -1,0 +1,11 @@
+[Unit]
+Description=Sync with taskserver at boot and shutdown.
+
+[Service]
+ExecStartPre=/bin/sleep 60
+ExecStart=task sync
+ExecStop=task sync
+Type=oneshot
+
+[Install]
+WantedBy=default.target
