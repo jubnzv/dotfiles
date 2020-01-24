@@ -14,6 +14,7 @@ fi
 
 echo "Syncing $HOME/Documents/ with $mount_point ..."
 rsync -aurq -L --progress \
+    --delete              \
     --exclude '*tar.gz'   \
     --exclude '*tar.xz'   \
     --exclude '*tar.bz2'  \

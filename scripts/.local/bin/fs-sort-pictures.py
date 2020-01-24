@@ -7,7 +7,7 @@ import re
 import os
 
 IMAGES_PATH = '/home/jubnzv/Pictures/'
-EXCLUDING= ['Screenshots', '282828_500x500.png']
+EXCLUDING= ['Screenshots', 'Photo', '282828_500x500.png']
 
 def get_next_index(path):
     index_is_free = lambda i,fl: True if i not in [f.split('.')[0] for f in fl] else False
