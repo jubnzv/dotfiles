@@ -12,7 +12,7 @@ var unmaps = [ "sb" ,  "sw", "ob"
          , "spi", "sfr", "zQ"
          , "zz" ,  "zR", "ab"
          , "Q"  ,   "q", "ag"
-         , "af"
+         , "af", "xx"
          ];
 unmaps.forEach(function(u) {
   unmap(u);
@@ -20,14 +20,25 @@ unmaps.forEach(function(u) {
 
 // Switch tabs
 map('`[', 'E');
+map('ёх', 'E');
 map('`]', 'R');
-map('`1', '<Alt-1>');
+map('ёъ', 'R');
 
 // Open new tab
 map('t', 'on');
+map('`t', 'on');
+
+// Restore closed tab
+unmap('T');
+map('T', '<Ctrl-T>');
 
 // Open link in new tab
 map('F', 'gf');
+map('А', 'gf');
+
+// Switch to recent tab
+map('`r', '<Ctrl-6>');
+map('ёк', '<Ctrl-6>');
 
 mapkey('p', "Open the clipboard's URL in the current tab", function() {
     Front.getContentFromClipboard(function(response) {
@@ -53,18 +64,27 @@ addSearchAliasX('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.
 // Oxford dictionaries
 addSearchAliasX('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
 
+// Search books
+addSearchAliasX('bc', 'b-ok.cc', 'https://b-ok.cc/s/?q=', 'o');
+
+// Search on pubmed
+addSearchAliasX('pm', 'pubmed', 'https://www.ncbi.nlm.nih.gov/pmc/?term=', 'o');
+
 // Search in Debian packages sources
 addSearchAliasX('pd', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=', 'o');
 addSearchAliasX('pc', 'Debian codesearch', 'https://codesearch.debian.net/search?q=', 'o');
 
+// Search sources at bootlin
+addSearchAliasX('ll', 'bootlin: linux', 'https://elixir.bootlin.com/linux/latest/ident/', 'o');
+addSearchAliasX('lg', 'bootlin: linux', 'https://elixir.bootlin.com/glibc/latest/ident/', 'o');
+
 // Search sources on GitHub
 addSearchAliasX('gg', 'github', 'https://github.com/search?q=', 'o');
 addSearchAliasX('gv', 'github: vimscript', 'https://github.com/search?q=language%3A%22vimscript%22+', 'o');
-addSearchAliasX('ge', 'github: emacs lisp', 'https://github.com/search?q=language%3A%22Emacs+Lisp%22+', 'o');
-addSearchAliasX('gR', 'github: racket', 'https://github.com/search?q=language%3A%22Racket%22+', 'o');
 addSearchAliasX('gc', 'github: C', 'https://github.com/search?q=language%3AC+', 'o');
 addSearchAliasX('gx', 'github: C++', 'https://github.com/search?q=language%3AC%2B%2B+', 'o');
 addSearchAliasX('gp', 'github: Python', 'https://github.com/search?q=language%3APython+', 'o');
+addSearchAliasX('go', 'github: OCaml', 'https://github.com/search?q=language%3AOCaml+', 'o');
 
 // Documentation and language references
 addSearchAliasX('dx', 'doc: cppreference', 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=', 'o');

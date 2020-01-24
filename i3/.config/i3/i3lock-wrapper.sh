@@ -31,16 +31,17 @@ fi
 
 # Are notifications already disabled?
 notifications_disabled=0
-if [[ ! -f $TMP_FILE ]] ; then
+if [[ -f $TMP_FILE ]] ; then
     notifications_disabled=1
 fi
 
 # Do lock.
 xset dpms force off &
-disable_notifications $notifications_disabled    && \
-    amixer -c 0 -q set Master mute               && \
-    systemctl --user stop arbtt.service          && \
-    i3lock -n --color=282828 -f                  && \
-    enable_sound $muted                          && \
-    enable_notifications $notifications_disabled && \
-    systemctl --user start arbtt.service
+
+disable_notifications $notifications_disabled
+amixer -c 0 -q set Master mute
+systemctl --user stop arbtt.service
+i3lock -n --color=282828 -f
+enable_sound $muted
+enable_notifications $notifications_disabled
+systemctl --user start arbtt.service

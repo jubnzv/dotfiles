@@ -37,7 +37,9 @@ exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id /usr/bin/xcompmgr
 exec --no-startup-id /usr/bin/keepassxc
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
+exec --no-startup-id syncthing-gtk
 exec --no-startup-id autorandr --change
+exec --no-startup-id "eval `ssh-agent -s`"
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 # }}}
 
@@ -173,10 +175,10 @@ bindsym $mod+Shift+A move container to workspace $ws_a
 bindsym $mod+Shift+0 move container to workspace $ws_0
 
 # Application startup hotkeys
-bindsym $mod+n exec $SCRIPTS_PATH/rofi/notes
-bindsym $mod+Control+n exec $TERMINAL -e nvim ~/Org/scratch.md
+bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh
+bindsym $mod+Control+n exec $TERMINAL -e nvim "+cd ~/Org/Notes" ~/Org/Notes/index.md
 bindsym $mod+Shift+N exec $TERMINAL -e nvim ~/Org/Notes/
-bindsym $mod+backslash exec $SCRIPTS_PATH/rofi/tmux-sessions
+bindsym $mod+backslash exec $SCRIPTS_PATH/rofi-tmux-sessions.sh
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
 bindsym $mod+Control+2 workspace $ws_w; exec firefox
@@ -190,14 +192,14 @@ bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py && sleep 0.2 && i3-msg '
 bindsym $mod+Control+z exec zeal # start or focus
 
 # Brightness control
-bindsym XF86MonBrightnessUp exec xbacklight -inc 7
-bindsym XF86MonBrightnessDown exec xbacklight -dec 7
+bindsym XF86MonBrightnessUp exec xbacklight -inc 5
+bindsym XF86MonBrightnessDown exec xbacklight -dec 5
 bindsym $mod+F7 exec sleep 1 && xset dpms force off
 bindsym $mod+Control+7 exec sleep 1 && xset dpms force off
 
 # Rofi
 bindsym $mod+asciitilde exec "rofi -show-icons -modi combi -show combi -combi-modi run,drun"
-bindsym $mod+BackSpace exec "rofi -show window"
+bindsym $mod+s exec "rofi -show window"
 
 # Additional scripts/utils
 bindsym $mod+Control+0 exec $SCRIPTS_PATH/toggle-notifications.sh
@@ -212,8 +214,8 @@ bindsym XF86ScreenSaver exec $SCRIPTS_PATH/i3lock-wrapper.sh
 bindsym $mod+XF86ScreenSaver exec xset s activate
 
 # Volume control
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +4%
-bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -4%
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 

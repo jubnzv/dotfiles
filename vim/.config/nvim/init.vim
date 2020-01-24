@@ -82,6 +82,7 @@ Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'cespare/vim-toml'
+Plug 'lervag/wiki.vim'
 Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
@@ -123,6 +124,9 @@ set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
 set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
+set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
+set eol
+set fixeol                                  "<EOL> at the end of file will be restored if missing
 
 " Add additional information in popups (VIM 8.0+ only)
 if !has('nvim')
@@ -138,7 +142,7 @@ endif
 
 " Default conceal settings.
 " concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
-set conceallevel=1
+set conceallevel=0
 set concealcursor=nc
 
 " Cyrillic layout in normal mode
@@ -219,8 +223,11 @@ nnoremap Y y$
 " nmap zj o<Esc>k
 " nmap zk O<Esc>j
 
+" Map Ctrl-Backspace to delete the previous word in insert mode.
+inoremap <C-BS> <C-W>
+
 " Reload vimrc
-nnoremap <F1>c :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <A-1>c :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@
@@ -584,6 +591,11 @@ return extend(
 \ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
 endfunction
 
+" cd with fzf
+command! -nargs=* -complete=dir Cd call fzf#run(fzf#wrap(
+  \ {'source': 'find '.(empty(<f-args>) ? '.' : <f-args>).' -type d',
+  \  'sink': 'cd'}))
+
 " Augmenting Ag command using fzf#vim#with_preview function
 " :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
 " :Ag! - Start fzf in fullscreen and display the preview window above
@@ -606,7 +618,7 @@ nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>xr :FZFMru <CR>
-
+nnoremap <leader>fc :Cd .<CR>
 nnoremap <leader>fs :Ag<CR>
 nnoremap <leader>/ :Ag<CR>
 nnoremap <leader>fw :Ag<Space><C-r><C-w><CR>
@@ -643,6 +655,51 @@ command! -bang -nargs=* AgFIXME call fzf#vim#ag("FIXME", <q-args>, {'down': '~40
 nnoremap <leader>fxt :AgTODO<CR>
 nnoremap <leader>fxx :Agxxx<CR>
 nnoremap <leader>fxf :AgFIXME<CR>
+
+" Using the custom window creation function
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+
+" Function to create the custom floating window
+function! FloatingFZF()
+  " creates a scratch, unlisted, new, empty, unnamed buffer
+  " to be used in the floating window
+  let buf = nvim_create_buf(v:false, v:true)
+
+  " 50% of the height
+  let height = float2nr(&lines * 0.5)
+  " 75% of the width
+  let width = float2nr(&columns * 0.75)
+  " horizontal position (centralized)
+  let horizontal = float2nr((&columns - width) / 2)
+  " vertical position (on the top)
+  let vertical = 0
+
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': vertical,
+        \ 'col': horizontal,
+        \ 'width': width,
+        \ 'height': height
+        \ }
+
+  " open the new window, floating, and enter to it
+  call nvim_open_win(buf, v:true, opts)
+endfunction
+
+let g:fzf_colors =
+\ { 'fg':      ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg':      ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl':      ['fg', 'Comment'],
+  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
+  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
+  \ 'hl+':     ['fg', 'Statement'],
+  \ 'info':    ['fg', 'PreProc'],
+  \ 'border':  ['fg', 'CursorLine', 'CursorColumn'],
+  \ 'prompt':  ['fg', 'Conditional'],
+  \ 'pointer': ['fg', 'Exception'],
+  \ 'marker':  ['fg', 'Keyword'],
+  \ 'spinner': ['fg', 'Label'],
+  \ 'header':  ['fg', 'Comment'] }
 " }}}
 
 " {{{ Nerdcommenter
@@ -810,6 +867,7 @@ endif
 " let g:neoformat_ocaml_ocamlformat.args = ['--inplace']
 " let g:neoformat_ocaml_ocamlformat.replace = 1
 " let g:neoformat_enabled_ocaml = ['ocamlformat', 'ocpindent']
+nnoremap <leader>lf :Neoformat<CR>
 " }}}
 
 " {{{ EditorConfig
@@ -1078,7 +1136,7 @@ autocmd FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm', 'go', 'python']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm', 'go', 'python', 'ocaml']
 au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
 au FileType markdown set spell! spelllang=en_us,ru_yo
 au FileType markdown call Togglegjgk()
@@ -1110,6 +1168,13 @@ endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev mp MarkdownPreview
 au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
+" }}}
+
+" {{{ wiki.vim
+let g:wiki_root = '~/Org/Notes/'
+let g:wiki_filetypes = ['md']
+let g:wiki_link_extension = 'md'
+let g:wiki_link_target_type = 'md'
 " }}}
 
 " {{{ Plant UML
@@ -1183,14 +1248,14 @@ function! Togglegjgk()
     nnoremap k gk
     nnoremap gk k
     nnoremap gj j
-    echo 'Switch to gj/gk'
+    " echo 'Switch to gj/gk'
     let s:gjgk_mode = 1
   else
     nunmap j
     nunmap k
     nunmap gk
     nunmap gj
-    echo 'Switch to j/k'
+    " echo 'Switch to j/k'
     let s:gjgk_mode = 0
   endif
 endfunction

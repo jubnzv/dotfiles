@@ -355,6 +355,16 @@ if [[ -x "$(command -v task)" ]]; then
     alias tdonem='t end.after:today-30d status:completed all'
     alias bwp="bugwarrior-pull"
 
+    # Simplify work with tasks marked with +event
+    alias tel="task +event"
+    tea() {
+        if [ $# -ne 2 ]; then
+            echo "Usage: tea DESCRIPTION DATE"
+            return 1
+        fi
+        task add +event "$1" due:"$2" until:due+1d
+    }
+
     # {{{ M-t: Select id one of taskwarrior tasks with fzf
     fzf_show_task() {
 	task_id=$(t minimal 2> /dev/null                      \
@@ -567,8 +577,9 @@ compdef g=git
 export AUTO_NOTIFY_THRESHOLD=60
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
-export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "git"
-                              "chk1" "cppcheck" "perf" "mprof" "svn" "opam")
+export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "git"
+                              "cmake" "ocamlbuild" "make"
+                              "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 # }}}
 
 # {{{ Show current directory in X window title
@@ -582,6 +593,35 @@ function set-title-preexec() {
 autoload -Uz add-zsh-hook
 add-zsh-hook precmd set-title-precmd
 add-zsh-hook preexec set-title-preexec
+# }}}
+
+# {{{ Start ssh-agent
+function start_ssh_agent() {
+	local lifetime
+	local -a identities
+
+	zstyle -s :plugins:ssh-agent lifetime lifetime
+
+	ssh-agent -s ${lifetime:+-t} ${lifetime} | sed 's/^echo/#echo/' >! $ssh_environment
+	chmod 600 $ssh_environment
+	source $ssh_environment > /dev/null
+
+	zstyle -a :plugins:ssh-agent identities identities
+
+	echo starting ssh-agent...
+	ssh-add $HOME/.ssh/${^identities}
+}
+
+ssh_environment="$HOME/.ssh/environment-$HOST"
+
+if [[ -f "$ssh_environment" ]]; then
+	source $ssh_environment > /dev/null
+	ps x | grep ssh-agent | grep -q $SSH_AGENT_PID || {
+		start_ssh_agent
+	}
+else
+	start_ssh_agent
+fi
 # }}}
 
 # {{{ Utilities
