@@ -44,7 +44,7 @@ font-1 = "Iosevka NF:size=10"
 
 modules-left = menu i3
 modules-center = mpd
-modules-right = pulseaudio xbacklight filesystem memory cpu wlan eth vpn-openvpn-isrunning docker battery temperature date
+modules-right = pulseaudio xbacklight filesystem memory cpu wlan eth vpn-openvpn-isrunning docker battery temperature notifications-status date
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
@@ -321,6 +321,13 @@ type = custom/script
 exec = ~/.config/polybar/vpn-openvpn-isrunning.sh
 interval = 5
 format-underline = ${colors.blue}
+
+[module/notifications-status]
+type = custom/script
+exec = ~/.config/polybar/notifications-status.sh
+interval = 5
+format-foreground = ${colors.orange}
+format-underline = ${colors.orange}
 
 [module/docker]
 type = custom/script
