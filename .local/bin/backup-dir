@@ -1,0 +1,21 @@
+#!/bin/bash
+if [ $# -ne 1 ]; then
+    echo "Usage: $0 <directory>"
+    exit 1
+fi
+
+directory=$1
+
+if [[ ! -d "$directory" ]]; then
+    echo "$directory is not directory! Bailing out."
+    exit 0
+fi
+
+if [[ "$directory" == "." ]]; then
+    directory=${PWD##*/}
+    cd ..
+fi
+
+name="${directory%%/}"_backup_$(date +'%Y-%m-%dT%H%M%S')
+cp -R "$directory" $name
+echo "Saved in $name"
