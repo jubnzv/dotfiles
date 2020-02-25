@@ -334,6 +334,7 @@ else
 fi
 
 # diffs
+alias kdiff="kitty +kitten diff"
 alias diffdir='diff -ENwbur'
 alias cpd='cpdiff'
 
@@ -487,7 +488,6 @@ zle -N backward-kill-dir
 bindkey '^H' backward-kill-dir
 
 bindkey -s "\ep"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
-bindkey -s "\em"  "^Qvmans .^J"             # Select manpage with fzf and read it.
 bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
 bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
 bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
@@ -537,10 +537,6 @@ if [[ "$(command -v fd)" ]]; then
     export FZF_DEFAULT_COMMAND='fd --type f --follow'
     export FZF_CTRL_T_COMMAND='fd --type file --follow'
 fi
-
-function vmans() {
-    man -k . | fzf -n1,2 --preview "echo {} | cut -d' ' -f1 | sed 's# (#.#' | sed 's#)##' | xargs -I% man %" --bind "enter:execute: (echo {} | cut -d' ' -f1 | sed 's# (#.#' | sed 's#)##' | xargs -I% ${EDITOR:-vim} -R -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -c \"Man %\")"
-}
 
 # Choose one of APT repositories with fzf and show all packages.
 function fzf-list-repo-packages() {

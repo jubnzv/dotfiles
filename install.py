@@ -46,6 +46,7 @@ class Configuration:
         '.Xdefaults': '~/',
         '.asoundrc': '~/',
         '.gitconfig': '~/',
+        '.gitconfig.work': '~/',
         '.inputrc': '~/',
         '.ctags': '~/',
         '.icon/taskwarrior.png': '~/.icon/',
@@ -62,6 +63,7 @@ class Configuration:
         '.config/rofi/gruvbox-jubnzv.rasi': '~/.config/rofi/',
         '.config/zathura/zathurarc': '~/.config/zathura/',
         '.config/kitty/kitty.conf': '~/.config/kitty/',
+        '.config/kitty/diff.conf': '~/.config/kitty/',
         '.taskrc': '~/',
         '.config/taskwarrior/gruvbox-dark-256.theme': '~/.config/taskwarrior/',
         '.tmux/session-finder/session-finder.bash': '~/.tmux/session-finder/',
@@ -79,6 +81,10 @@ class Configuration:
         '.config/nvim/plugin/pasteimage.vim': '~/.config/nvim/plugin/',
         '.config/nvim/after/ftplugin/c.vim': '~/.config/nvim/after/ftplugin/',
         '.config/nvim/after/ftplugin/help.vim': '~/.config/nvim/after/ftplugin/',
+
+        '.config/nvim/snippets/ultisnips/c.snippets': '~/.config/nvim/snippets/ultisnips/',
+        '.config/nvim/snippets/ultisnips/sh.snippets': '~/.config/nvim/snippets/ultisnips/',
+
         '.config/nvim/snippets/neosnippet/cmake.snip': '~/.config/nvim/snippets/neosnippet/',
         '.config/nvim/snippets/neosnippet/cpp.snip': '~/.config/nvim/snippets/neosnippet/',
         '.config/nvim/snippets/neosnippet/c.snip': '~/.config/nvim/snippets/neosnippet/',

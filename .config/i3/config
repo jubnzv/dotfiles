@@ -288,9 +288,8 @@ mode "$mode_taskwarrior" {
 set $mode_run_repl  REPL\t [2] ipy2 [3] ipy3 [j] jupyter [u] utop
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
-    bindsym 2       exec $TERMINAL -e ipython; mode "default"
-    bindsym 3       exec $TERMINAL -e ipython3; mode "default"
-    bindsym j       exec $TERMINAL -e jupyter notebook; mode "default"
+    bindsym i       exec $TERMINAL -e ipython3; mode "default"
+    bindsym j       exec $TERMINAL -e jupyter-notebook; mode "default"
     bindsym u       exec $TERMINAL -e utop; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"

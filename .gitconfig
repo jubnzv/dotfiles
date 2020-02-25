@@ -1,21 +1,30 @@
-[user]
-    name = Georgy Komarov
-    email = jubnzv@gmail.com
-
+[commit]
+gpgsign = true
 [core]
-    filemode = false
-	editor = nvim
-	pager = diff-so-fancy | less --tabs=4 -RFX
-
+filemode = false
+editor = nvim
+pager = diff-so-fancy | less --tabs=4 -RFX
+[diff]
+tool = kitty
+[difftool]
+prompt = false
+trustExitCode = true
+[difftool "kitty"]
+cmd = kitty +kitten diff $LOCAL $REMOTE
 [alias]
-    open = !nvim `git-open.sh`
-    # Gitlab
-    # git glmr origin 5
-    glmr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+open = !nvim `git-open.sh`
+# Gitlab
+# git glmr origin 5
+glmr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
 [filter "lfs"]
-	required = true
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
+required = true
+clean = git-lfs clean -- %f
+smudge = git-lfs smudge -- %f
+process = git-lfs filter-process
 [github]
-	user = jubnzv
+user = jubnzv
+[user]
+name = Georgy Komarov
+email = jubnzv@gmail.com
+[includeIf "gitdir:~/Work/*"]
+path = ~/.gitconfig.work

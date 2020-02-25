@@ -7,7 +7,7 @@ endif
 let g:python3_host_prog  = '/usr/bin/python3.7'
 
 " {{{ Configuration variables
-let g:my_snippet_manager = 'neosnippet'
+let g:my_snippet_manager = 'ultisnips'
 " }}}
 
 " {{{ Plugins
@@ -37,6 +37,8 @@ Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
+" TODO: Consider mhinz/vim-signify as replacement
+" Plug 'mhinz/vim-signify'              " Shows diff on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'mhinz/vim-grepper'              " Ag wrapper that works with quickfix window. Useful in large codebases.
@@ -45,7 +47,6 @@ Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
   \ 'do': './install --all'
   \ }
-Plug 'liuchengxu/vim-clap'
 Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
@@ -233,7 +234,7 @@ cnoremap <C-BS> <C-W>
 " vnoremap <C-BS> d
 
 " Reload vimrc
-nnoremap <A-1>c :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+nnoremap <localleader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@
@@ -279,8 +280,8 @@ command! Mkw call WriteCreatingDirs()
 " Create directories before write
 " [1]: https://stackoverflow.com/questions/4292733/vim-creating-parent-directories-on-save
 augroup BWCCreateDir
-    autocmd!
-    autocmd BufWritePre * if expand("<afile>")!~#'^\w\+:/' && !isdirectory(expand("%:h")) | execute "silent! !mkdir -p ".shellescape(expand('%:h'), 1) | redraw! | endif
+    au!
+    au BufWritePre * if expand("<afile>")!~#'^\w\+:/' && !isdirectory(expand("%:h")) | execute "silent! !mkdir -p ".shellescape(expand('%:h'), 1) | redraw! | endif
 augroup END
 
 " Remove the Windows ^M - when the encodings gets messed up
@@ -404,11 +405,11 @@ let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
 \   {
 \       'github': 'http://github.com/search?q=fork%3Afalse+{query}',
-\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+{query}&type=Code',
-\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+{query}&type=Code',
-\       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+{query}&type=Code',
-\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+{query}&type=Code',
-\       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+{query}&type=Code',
+\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
+\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+language%3APython+{query}&type=Code',
+\       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+language%3AC+{query}&type=Code',
+\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+language%3AC%2B%2B+{query}&type=Code',
+\       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+language%3AOCaml+{query}&type=Code',
 \       'cplusplus': 'http://www.cplusplus.com/search.do?q={query}',
 \       'gnome': 'https://developer.gnome.org/search?q={query}',
 \       'buildbot': 'https://docs.buildbot.net/current/search.html?q={query}',
@@ -521,10 +522,6 @@ let NERDTreeIgnore=[
   \ "depcomp$",
   \ "install-sh$",
   \ ]
-" }}}
-
-" {{{ vim-eunuch
-nnoremap <leader><F6> :Rename 
 " }}}
 
 " {{{ DirDiff
@@ -726,7 +723,7 @@ function! NearestMethodOrFunction() abort
   endif
   return l:method
 endfunction
-autocmd VimEnter * call vista#RunForNearestMethodOrFunction()
+au VimEnter * call vista#RunForNearestMethodOrFunction()
 
 " Copy current function name to system clipboard.
 function! FunctionNameToClipboard() abort
@@ -806,8 +803,8 @@ if g:my_snippet_manager ==? 'ultisnips'
   let g:UltiSnipsJumpForwardTrigger='<A-l>'
   let g:UltiSnipsJumpBackwardTrigger='<A-h>'
 
-  nnoremap <F1>s :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
-  nnoremap <F1>y :UltiSnipsEdit<CR>
+  nnoremap <localleader>ss :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
+  nnoremap <localleader>sy :UltiSnipsEdit<CR>
 " }}}
 " {{{ neosnippet
 elseif g:my_snippet_manager ==? 'neosnippet'
@@ -818,11 +815,11 @@ elseif g:my_snippet_manager ==? 'neosnippet'
   smap <A-l> <Plug>(neosnippet_expand_or_jump)
   xmap <A-l> <Plug>(neosnippet_expand_target)
 
-  nnoremap <F1>s :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
+  nnoremap <localleader>ss :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
   " Select and edit snippet file using fzf
-  nnoremap <F1>y :FZF ~/.config/nvim/snippets/<cr>
+  nnoremap <localleader>sy :FZF ~/.config/nvim/snippets/<cr>
   " Open file from neosnippet-snippets collection
-  nnoremap <F1>Y :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
+  nnoremap <localleader>sY :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
 endif
 " }}}
 " }}}
@@ -843,13 +840,14 @@ EOF
 endif
 
 nnoremap <silent> gd             <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> <c-]>          <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K              <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gt             <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> <localleader>k <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> gD             <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> 1gD            <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent> gr             <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> <localleader>e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
 " }}}
 
 " {{{ EditorConfig
@@ -922,41 +920,34 @@ let g:table_mode_delete_column_map = ',tdc'
 " }}}
 
 " {{{ C/C++
-au FileType c,cpp setlocal commentstring=//\ %s
-au FileType c,cpp setlocal tw=80
-au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
-
-" Use C filetype for headers by default
-" au BufReadPre,BufRead,BufNewFile *.h set filetype=c
-
-" Set doxygen keybindings
-au FileType c,cpp call Doxygen1Keymap()
-
-" clang include fixer
 let g:clang_include_fixer_path = "clang-include-fixer-7"
-au FileType c,cpp noremap <buffer><leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
 
-" Quick access to man pages
-au FileType c,cpp noremap <buffer><leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>:noh<cr>3j
-
-" Align statements relative to case label
-au FileType c,cpp setlocal cinoptions+=l1
-
-" Autoformatting with clang-format
-autocmd FileType c,cpp,objc nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
-autocmd FileType c,cpp,objc vnoremap <buffer><leader>lf :ClangFormat<CR>
-nmap <leader>tf :ClangFormatAutoToggle<CR>
-
-" C++-specific keybindings
-function! CxxKeymap()
-  nnoremap <buffer><silent> d; dt:2x
-endfunction
-autocmd FileType cpp call CxxKeymap()
-
-" View standard lib mans with cppman
-" Note: Too slow. Disabled for now.
-" command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
-" autocmd FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
+augroup c_cxx_group
+  au!
+  au FileType c,cpp setlocal commentstring=//\ %s
+  au FileType c,cpp setlocal tw=80
+  au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
+  " Autoformatting with clang-format
+  au FileType c,cpp,objc nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
+  au FileType c,cpp,objc vnoremap <buffer><leader>lf :ClangFormat<CR>
+  au FileType c,cpp,objc nnoremap <leader>tf :ClangFormatAutoToggle<CR>
+  " Align statements relative to case label
+  au FileType c,cpp setlocal cinoptions+=l1
+  " Include fixer
+  au FileType c,cpp noremap <buffer><leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+  " Set doxygen keybindings
+  au FileType c,cpp call Doxygen1Keymap()
+  " Enable rainbow parens
+  au FileType c,cpp RainbowToggleOn
+  " Use C filetype for headers by default
+  " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
+  " Quick access to man pages
+  " au FileType c,cpp noremap <buffer><leader>Ms :Man 2 syscalls<cr>/System call.*Kernel<cr>:noh<cr>3j
+  " View standard lib mans with cppman
+  " Note: Too slow. Disabled for now.
+  " command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
+  " au FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
+augroup END
 " }}}
 
 " {{{ slime
@@ -994,7 +985,6 @@ augroup ocaml_group
   " FSwitch associations
   au! BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
   au! BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
-  let b:fswitchlocs = 'reg:/src/include/,../include,../inc'
 augroup END
 " }}}
 
@@ -1013,6 +1003,11 @@ augroup END
 " {{{ IEC611-31
 let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
+augroup iec_group
+  au!
+  au FileType st setlocal sw=2 ts=2 expandtab
+  au FileType st RainbowToggleOn
+augroup END
 " }}}
 
 " {{{ LaTeX
@@ -1023,10 +1018,20 @@ let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
 let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
-au FileType tex set sw=2
-au FileType tex call Togglegjgk()
-au FileType tex set spell! spelllang=en_us,ru_yo
-au FileType tex nnoremap <buffer> <silent> <leader>p :call pasteimage#LatexClipboardImage()<CR>
+
+" Configure deoplete source
+call deoplete#custom#var('omni', 'input_patterns', {
+      \ 'tex': g:vimtex#re#deoplete
+      \})
+
+augroup tex_group
+  au!
+  au FileType tex set sw=2
+  au FileType tex call Togglegjgk()
+  au FileType tex set spell! spelllang=en_us,ru_yo
+  au FileType tex nnoremap <buffer> <silent> <leader>p :call pasteimage#LatexClipboardImage()<CR>
+  au FileType tex nnoremap <buffer> <silent> <leader>з :call pasteimage#LatexClipboardImage()<CR>
+augroup end
 " }}}
 
 " {{{ reStructuredText
@@ -1048,30 +1053,39 @@ augroup END
 
 " {{{ JSON
 let g:vim_json_syntax_conceal = 0
-autocmd FileType json syntax match Comment +\/\/.\+$+
+au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
 let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm', 'go', 'python', 'ocaml']
-au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
-au FileType markdown set spell! spelllang=en_us,ru_yo
-au FileType markdown call Togglegjgk()
-au FileType markdown nnoremap <buffer> <Tab> za<CR>k
-au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
-au FileType markdown nnoremap <buffer> <leader>' i``
-au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
-au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
-au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
-au FileType markdown inoremap <buffer> --<space> –<space>
-au FileType markdown inoremap <buffer> -><space> →<space>
-au FileType markdown inoremap <buffer> =><space> ⇒<space>
-" Paste links to URL from clipboard
-au FileType markdown nnoremap <buffer> <leader>L i()<Esc>hpl%i[]<C-o>h
-au FileType markdown nnoremap <buffer> <leader>l i<><Esc>hpl
-" Create TOC using https://github.com/ekalinin/github-markdown-toc.go
-au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
-au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
-au FileType markdown nnoremap <buffer> <A-7> :Vista toc<CR>
+augroup markdown_group
+  au!
+  au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+  au FileType markdown set spell! spelllang=en_us,ru_yo
+  au FileType markdown call Togglegjgk()
+  " Folding by Tab like org-mode
+  au FileType markdown nnoremap <buffer> <Tab> za<CR>k
+  au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
+  " Insert code blocks
+  au FileType markdown nnoremap <buffer> <leader>' i``
+  au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
+  au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
+  au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
+  " Abbrevations
+  au FileType markdown inoremap <buffer> --<space> –<space>
+  au FileType markdown inoremap <buffer> -><space> →<space>
+  au FileType markdown inoremap <buffer> =><space> ⇒<space>
+  " Paste links to URL from clipboard
+  au FileType markdown nnoremap <buffer> <leader>L i()<Esc>hpl%i[]<C-o>h
+  au FileType markdown nnoremap <buffer> <leader>Д i()<Esc>hpl%i[]<C-o>h
+  au FileType markdown nnoremap <buffer> <leader>l i<><Esc>hpl
+  au FileType markdown nnoremap <buffer> <leader>д i<><Esc>hpl
+  " Paste image from clipboard
+  au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
+  au FileType markdown nnoremap <buffer> <silent> <leader>з :call pasteimage#MarkdownClipboardImage()<CR>
+  " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
+  au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
+augroup end
 
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
@@ -1079,7 +1093,7 @@ let g:mkdp_auto_close = 0
 " Open preview in a new firefox window
 " [1]: https://github.com/iamcco/markdown-preview.nvim/issues/19#issuecomment-464338238
 function! g:OpenBrowser(url)
-  silent exe 'silent !open -a "firefox --new-window " ' . a:url
+  silent exec "!/home/jubnzv/.local/bin/firefox -new-window " . a:url " &"
 endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev mp MarkdownPreview
@@ -1100,7 +1114,7 @@ au FileType plantuml set spell! spelllang=en_us,ru_yo
 
 " {{{ Other ft-specific autocommands
 au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
-autocmd FileType yaml setlocal ts=2 sts=2 sw=2
+au FileType yaml setlocal ts=2 sts=2 sw=2
 
 au FileType conf set foldmethod=marker foldenable
 au Filetype css setlocal ts=4
