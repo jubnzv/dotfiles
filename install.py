@@ -82,22 +82,12 @@ class Configuration:
         '.config/nvim/after/ftplugin/c.vim': '~/.config/nvim/after/ftplugin/',
         '.config/nvim/after/ftplugin/help.vim': '~/.config/nvim/after/ftplugin/',
 
-        '.config/nvim/snippets/ultisnips/c.snippets': '~/.config/nvim/snippets/ultisnips/',
-        '.config/nvim/snippets/ultisnips/sh.snippets': '~/.config/nvim/snippets/ultisnips/',
-
-        '.config/nvim/snippets/neosnippet/cmake.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/cpp.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/c.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/dockerfile.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/markdown.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/plantuml.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/python.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/rust.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/sh.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/_.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/neosnippet/tex.snip': '~/.config/nvim/snippets/neosnippet/',
-        '.config/nvim/snippets/ultisnips/c.snippets': '~/.config/nvim/snippets/ultisnips/',
-        '.config/nvim/snippets/ultisnips/sh.snippets': '~/.config/nvim/snippets/ultisnips/',
+        '.config/nvim/UltiSnips/all.snippets':    '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/c.snippets':      '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/cpp.snippets':    '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/ocaml.snippets':  '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/python.snippets': '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/sh.snippets':     '~/.config/nvim/UltiSnips/',
 
         # i3wm
         '.config/i3/config': '~/.config/i3/',

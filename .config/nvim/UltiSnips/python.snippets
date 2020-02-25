@@ -1,0 +1,45 @@
+snippet main
+if __name__ == '__main__':
+	$0
+endsnippet
+
+snippet check_file
+if not os.path.isfile(${1:fpath}):
+	print('%s: not found' % $1)
+	$0
+endsnippet
+
+snippet for_files
+import os
+for file in os.listdir("${1}"):
+	fpath = os.path.join("${1}", file)
+	$0
+endsnippet
+
+snippet check_dir
+if not os.path.isdir(${1:fpath}):
+	print('%s: not found' % $1)
+	$0
+endsnippet
+
+snippet check_command
+if os.system('command -v ${1:cmake}') != 0:
+	print('$1: not found')
+	$0
+endsnippet
+
+snippet pprint
+import pprint; pp = pprint.PrettyPrinter(indent=2);
+pp.pprint(${1})
+endsnippet
+
+snippet print_notify
+import os; os.system('notify-send "Debug" "${1:%s}"' % (${2}))
+endsnippet
+
+snippet print_trace
+import traceback
+import sys
+traceback.print_exc(file=sys.stdout)
+endsnippet
+

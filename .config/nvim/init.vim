@@ -6,10 +6,6 @@ if &shell =~# 'fish$'
 endif
 let g:python3_host_prog  = '/usr/bin/python3.7'
 
-" {{{ Configuration variables
-let g:my_snippet_manager = 'ultisnips'
-" }}}
-
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -52,13 +48,8 @@ Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
 Plug 'scrooloose/nerdcommenter'       " Comment plugin
-" {{{ Snippets
-if g:my_snippet_manager ==? 'ultisnips'
-  Plug 'sirver/ultisnips' | Plug 'honza/vim-snippets'
-elseif g:my_snippet_manager ==? 'neosnippet'
-  Plug 'Shougo/neosnippet.vim' | Plug 'Shougo/neosnippet-snippets' | Plug 'honza/vim-snippets'
-endif
-" }}}
+Plug 'sirver/ultisnips'               " Snippets plugin
+Plug 'honza/vim-snippets'
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
@@ -795,33 +786,13 @@ call deoplete#custom#source('_',
 set completeopt-=preview
 " }}}
 
-" {{{ Snippets
 " {{{ UltiSnips
-if g:my_snippet_manager ==? 'ultisnips'
-  let g:UltiSnipsSnippetsDir = "~/.config/nvim/snippets/ultisnips/"
-  let g:UltiSnipsExpandTrigger='<A-l>'
-  let g:UltiSnipsJumpForwardTrigger='<A-l>'
-  let g:UltiSnipsJumpBackwardTrigger='<A-h>'
+let g:UltiSnipsExpandTrigger='<A-l>'
+let g:UltiSnipsJumpForwardTrigger='<A-l>'
+let g:UltiSnipsJumpBackwardTrigger='<A-h>'
 
-  nnoremap <localleader>ss :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
-  nnoremap <localleader>sy :UltiSnipsEdit<CR>
-" }}}
-" {{{ neosnippet
-elseif g:my_snippet_manager ==? 'neosnippet'
-  " If your snippets trigger are same with builtin snippets, your snippets overwrite them.
-  let g:neosnippet#snippets_directory='~/.config/nvim/snippets/neosnippet'
-
-  imap <A-l> <Plug>(neosnippet_expand_or_jump)
-  smap <A-l> <Plug>(neosnippet_expand_or_jump)
-  xmap <A-l> <Plug>(neosnippet_expand_target)
-
-  nnoremap <localleader>ss :call neosnippet#variables#set_snippets({})<cr>:echo "Snippets reloaded"<CR>
-  " Select and edit snippet file using fzf
-  nnoremap <localleader>sy :FZF ~/.config/nvim/snippets/<cr>
-  " Open file from neosnippet-snippets collection
-  nnoremap <localleader>sY :FZF ~/.local/share/nvim/plugged/neosnippet-snippets/neosnippets/<cr>
-endif
-" }}}
+nnoremap <localleader>ss :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
+nnoremap <localleader>sy :UltiSnipsEdit<CR>
 " }}}
 
 " {{{ neoformat
