@@ -148,7 +148,7 @@ bindsym $mod+Prior workspace prev
 
 # Switch to workspace
 bindsym $mod+q workspace $ws_q
-bindsym $mod+w workspace $ws_w; layout splith
+bindsym $mod+w workspace $ws_w
 bindsym $mod+e workspace $ws_e
 bindsym $mod+f workspace $ws_f
 bindsym $mod+j workspace $ws_j
@@ -183,7 +183,7 @@ bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
 bindsym $mod+Control+2 workspace $ws_w; exec firefox
 bindsym $mod+Control+3 workspace $ws_w; exec firefox -p local
 bindsym $mod+Control+5 workspace $ws_w; exec chromium --profile-directory=Dev
-bindsym $mod+Control+r exec $TERMINAL -e nnn
+bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+q exec code
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
@@ -285,7 +285,7 @@ mode "$mode_taskwarrior" {
 }
 # }}}
 # {{{ Run selected REPL
-set $mode_run_repl  REPL\t [2] ipy2 [3] ipy3 [j] jupyter [u] utop
+set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
     bindsym i       exec $TERMINAL -e ipython3; mode "default"

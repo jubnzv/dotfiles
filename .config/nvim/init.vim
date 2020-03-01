@@ -663,6 +663,8 @@ let g:NERDCompactSexyComs = 1
 let g:NERDCommentEmptyLines = 1
 let g:NERDAltDelims_c = 1
 
+let g:NERDCustomDelimiters = { 'st': { 'left': '(*','right': '*)' } }
+
 if has('win32')
   nmap <C-/> <leader>c<Space>
   vmap <C-/> <leader>c<Space>
@@ -977,6 +979,7 @@ let matiec_mkbuilddir = 1
 augroup iec_group
   au!
   au FileType st setlocal sw=2 ts=2 expandtab
+  au FileType st let Comment="(*" | let EndComment="*)"
   au FileType st RainbowToggleOn
 augroup END
 " }}}
@@ -1028,7 +1031,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'rust', 'asm', 'go', 'python', 'ocaml']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1112,7 +1115,6 @@ au BufNewFile,BufRead *.cpp.dump    set filetype=xml tw=120
 " Taskwarrior tasks (`task <id> edit`)
 au BufRead *.task /Description:
 
-au FileType gitcommit call setpos('.', [0, 1, 1, 0])
 au FileType gitcommit inoremap <buffer> --<space> –<space>
 au FileType gitcommit inoremap <buffer> -><space> →<space>
 au FileType gitcommit inoremap <buffer> =><space> ⇒<space>

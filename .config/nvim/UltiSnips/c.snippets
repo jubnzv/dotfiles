@@ -1,4 +1,3 @@
-# Disable C++ name mangling in C headers
 snippet nocxx
 	#ifdef __cplusplus
 	extern "C" {
@@ -9,4 +8,10 @@ snippet nocxx
 	#ifdef __cplusplus
 	} /* extern "C" */
 	#endif
+endsnippet
+
+snippet clangfmt_off
+	// clang-format off
+	${0:${VISUAL}}
+	// clang-format on
 endsnippet

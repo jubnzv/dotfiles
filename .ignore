@@ -1,0 +1,10 @@
+.git/
+.pytest_cache/
+.mypy_cache/
+autom4te.cache
+venv*/
+tags
+gdb.txt
+*.plist
+CMakeCache.txt
+CMakeFiles/

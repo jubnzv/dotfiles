@@ -214,6 +214,8 @@ alias j='z'
 alias du1="du --max-depth=1"
 alias du2="du --max-depth=2"
 alias tree='tree -C'
+alias r='ranger'
+alias jrnl=' jrnl'
 
 # vim
 alias :e='nvim'
@@ -491,10 +493,6 @@ bindkey -s "\ep"  "^Qvimfzf .^J"            # Select file with fzf and open it i
 bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
 bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
 bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
-# }}}
-
-# {{{ nnn
-export NNN_BMS='f:~/Documents;D:~/Downloads/'
 # }}}
 
 # {{{ fzf
