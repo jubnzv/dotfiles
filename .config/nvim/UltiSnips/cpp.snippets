@@ -1,26 +1,3 @@
-snippet gccdiag
-#if defined(__GNUC__)
-#    pragma GCC diagnostic ignored "$1"
-#    pragma GCC diagnostic push
-#endif // __GNUC__
-${0:${VISUAL}}
-#if defined(__GNUC__)
-#    pragma GCC diagnostic pop
-#endif // __GNUC__
-endsnippet
-
-snippet extern_c
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-${0:${VISUAL}}
-
-#ifdef __cplusplus
-}
-#endif
-endsnippet
-
 snippet prexec_time
 {
 	auto start__ = std::chrono::high_resolution_clock::now();
