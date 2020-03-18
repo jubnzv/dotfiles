@@ -8,3 +8,4 @@ gdb.txt
 *.plist
 CMakeCache.txt
 CMakeFiles/
+_build/

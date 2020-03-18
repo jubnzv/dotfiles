@@ -27,7 +27,7 @@ Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Open links in browser
 Plug 'itchyny/lightline.vim'
 Plug 'jubnzv/gruvbox'                 " Color scheme
-Plug 'chrisbra/Colorizer'             " Colorize color names and codes
+Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' } " Colorize color names and codes
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
@@ -391,6 +391,27 @@ let g:lightline = {
 let g:buftabline_indicators=1 " show modified
 " }}}
 
+" {{{ Hexokinase
+let g:Hexokinase_ftEnabled = ['css', 'html', 'javascript', 'markdown', 'conf']
+
+" All possible highlighters
+let g:Hexokinase_highlighters = [
+\   'background',
+\   'backgroundfull',
+\ ]
+
+" All possible values
+let g:Hexokinase_optInPatterns = [
+\     'full_hex',
+\     'triple_hex',
+\     'rgb',
+\     'rgba',
+\     'hsl',
+\     'hsla',
+\     'colour_names'
+\ ]
+" }}}
+
 " {{{ Integration with web-browser
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
@@ -504,7 +525,7 @@ function! NERDTreeOpen()
   endif
 endfunction
 
-map <A-0> :call NERDTreeOpen()<CR>
+map <silent> <A-0> :call NERDTreeOpen()<CR>
 let NERDTreeQuitOnOpen=1
 let NERDTreeIgnore=[
   \ ".*\\.class$",
@@ -893,21 +914,24 @@ let g:table_mode_delete_column_map = ',tdc'
 " }}}
 
 " {{{ C/C++
-let g:clang_include_fixer_path = "clang-include-fixer-7"
+let g:clang_include_fixer_path = "clang-include-fixer-8"
+let g:clang_rename_path = "clang-rename-8"
 
 augroup c_cxx_group
   au!
   au FileType c,cpp setlocal commentstring=//\ %s
   au FileType c,cpp setlocal tw=80
   au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
+  " Renaming with clang-rename
+  au FileType c,cpp nnoremap <buffer><leader>lr :py3f ~/.config/nvim/clang-rename.py<CR>
   " Autoformatting with clang-format
-  au FileType c,cpp,objc nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
-  au FileType c,cpp,objc vnoremap <buffer><leader>lf :ClangFormat<CR>
-  au FileType c,cpp,objc nnoremap <leader>tf :ClangFormatAutoToggle<CR>
+  au FileType c,cpp nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
+  au FileType c,cpp vnoremap <buffer><leader>lf :ClangFormat<CR>
+  au FileType c,cpp nnoremap <leader>tf :ClangFormatAutoToggle<CR>
   " Align statements relative to case label
   au FileType c,cpp setlocal cinoptions+=l1
   " Include fixer
-  au FileType c,cpp noremap <buffer><leader>ri :pyf /usr/lib/llvm-7/share/clang/clang-include-fixer.py<cr>
+  au FileType c,cpp nnoremap <buffer><leader>l# :pyf /usr/lib/llvm-8/share/clang/clang-include-fixer.py<cr>
   " Set doxygen keybindings
   au FileType c,cpp call Doxygen1Keymap()
   " Enable rainbow parens
@@ -950,6 +974,8 @@ augroup END
 " See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 execute "set rtp+=" . g:opamshare . "/merlin/vim"
+
+let g:neoformat_enabled_ocaml = ['ocpindent']
 
 augroup ocaml_group
   au!
@@ -1031,7 +1057,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1079,6 +1105,25 @@ let g:wiki_root = '~/Org/Notes/'
 let g:wiki_filetypes = ['md']
 let g:wiki_link_extension = 'md'
 let g:wiki_link_target_type = 'md'
+let g:wiki_mappings_use_defaults = 0
+let g:wiki_mappings_global = {
+  \ '<plug>(wiki-index)'            : ',wi',
+  \ '<plug>(wiki-journal)'          : ',wj',
+  \ '<plug>(wiki-fzf-toc)'          : ',wc',
+  \ '<plug>(wiki-list-toggle)'      : '<c-s>',
+  \ 'i_<plug>(wiki-list-toggle)'    : '<c-s>',
+  \ '<plug>(wiki-link-open)'        : '<cr>',
+  \ '<plug>(wiki-link-open-split)'  : '<c-cr>',
+  \ }
+
+" Highligth TODO and DONE entries
+highlight MdTodo ctermfg=red guifg=red
+highlight MdDone ctermfg=green guifg=green
+augroup HiglightMarkdownTODO
+    autocmd!
+    au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
+    au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
+augroup END
 " }}}
 
 " {{{ Plant UML
@@ -1192,7 +1237,7 @@ nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>ts :call ToggleScrollBind()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
-nnoremap <leader>tC :ColorToggle<CR>
+nnoremap <leader>tC :HexokinaseToggle<CR>
 nnoremap <leader>tr :RainbowToggle<cr>
 nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>

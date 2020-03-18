@@ -43,7 +43,7 @@ class Configuration:
 
     # Python packages that should be installed through pip --user
     PIP_PACKAGES = {
-        'pdbpp', 'pre-commit', 'yolk', 'jrnl'
+        'pdbpp', 'pre-commit', 'yolk', 'cmake_format'
     }
 
     # Rust packages that should be installed through cargo
@@ -113,6 +113,7 @@ class Configuration:
 
         # neovim
         '.config/nvim/init.vim':                  '~/.config/nvim/',
+        '.config/nvim/clang-rename.py':           '~/.config/nvim/',
         '.config/nvim/settings.json':             '~/.config/nvim/',
         '.config/nvim/plugin/gitlink.vim':        '~/.config/nvim/plugin/',
         '.config/nvim/plugin/pasteimage.vim':     '~/.config/nvim/plugin/',

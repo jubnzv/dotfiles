@@ -215,7 +215,6 @@ alias du1="du --max-depth=1"
 alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
-alias jrnl=' jrnl'
 
 # vim
 alias :e='nvim'
@@ -224,6 +223,7 @@ alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
+alias vj='nvim -c WikiJournal'
 
 # tmux
 alias tm='tmux'
@@ -581,6 +581,7 @@ export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
 export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "git"
                               "cmake" "ocamlbuild" "make"
+                              "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 # }}}
 

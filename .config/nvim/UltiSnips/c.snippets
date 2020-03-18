@@ -1,3 +1,15 @@
+snippet inc2
+#include "${1:`vim_snippets#Filename("$1.h")`}"
+endsnippet
+
+snippet exf
+exit(EXIT_FAILURE);
+endsnippet
+
+snippet cmrete
+@return 0 if success, -1 and sets errno otherwise
+endsnippet
+
 snippet once
 #ifndef ${1:`!p snip.rv = snip.fn.replace('.', '_').replace('-', '_').upper()`}
 #define $1

@@ -3,6 +3,10 @@ if __name__ == '__main__':
 	$0
 endsnippet
 
+snippet     pdb
+import pdb; pdb.set_trace()
+endsnippet
+
 snippet check_file
 if not os.path.isfile(${1:fpath}):
 	print('%s: not found' % $1)
@@ -26,6 +30,10 @@ snippet check_command
 if os.system('command -v ${1:cmake}') != 0:
 	print('$1: not found')
 	$0
+endsnippet
+
+snippet pr
+print(${1})
 endsnippet
 
 snippet pprint

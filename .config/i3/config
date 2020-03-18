@@ -36,7 +36,7 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id /usr/bin/xcompmgr
 exec --no-startup-id /home/jubnzv/.local/bin/keepassxc
-exec --no-startup-id anki
+exec --no-startup-id sleep 3; anki
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 exec --no-startup-id syncthing-gtk
 exec --no-startup-id autorandr --change
@@ -238,12 +238,13 @@ mode "$mode_exec_peripherial" {
 }
 # }}}
 # {{{ IM applications startup routines
-set $mode_exec_apps  IM [1]  Telegram [2]  Mattermost [3]  Thunderbird [9] All
+set $mode_exec_apps  IM [1]  Telegram [2]  Mattermost [3]  Thunderbird [4]  Discord [9] All
 bindsym $mod+Control+9 mode $mode_exec_apps
 mode "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
      bindsym 2 exec $APP_MATTERMOST; mode "default"
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
+     bindsym 4 exec --no-startup-id discord; mode "default"
      bindsym 9 workspace $ws_0; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; exec hexchat; layout tabbed; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
