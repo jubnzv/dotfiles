@@ -126,6 +126,7 @@ class Configuration:
         '.config/nvim/UltiSnips/ocaml.snippets':  '~/.config/nvim/UltiSnips/',
         '.config/nvim/UltiSnips/python.snippets': '~/.config/nvim/UltiSnips/',
         '.config/nvim/UltiSnips/sh.snippets':     '~/.config/nvim/UltiSnips/',
+        '.config/nvim/UltiSnips/tex.snippets':    '~/.config/nvim/UltiSnips/',
 
         # i3wm
         '.config/i3/config':                  '~/.config/i3/',
