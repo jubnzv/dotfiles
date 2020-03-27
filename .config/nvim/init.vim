@@ -917,16 +917,30 @@ let g:table_mode_delete_column_map = ',tdc'
 let g:clang_include_fixer_path = "clang-include-fixer-8"
 let g:clang_rename_path = "clang-rename-8"
 
+" {{{ Custom :ClangFormat with aware of my debug prints
+function! s:JbzClangFormat()
+  let found = search("prdbg")
+  if found
+      echo "Remove debug prints before running clang-format"
+  else
+      :ClangFormat
+  endif
+endfunction
+
+command! -range=% -nargs=0 JbzClangFormat call s:JbzClangFormat()
+" }}}
+
 augroup c_cxx_group
   au!
   au FileType c,cpp setlocal commentstring=//\ %s
   au FileType c,cpp setlocal tw=80
+  " Remove debug prints created with snippets
   au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
   " Renaming with clang-rename
   au FileType c,cpp nnoremap <buffer><leader>lr :py3f ~/.config/nvim/clang-rename.py<CR>
   " Autoformatting with clang-format
-  au FileType c,cpp nnoremap <buffer><leader>lf :<C-u>ClangFormat<CR>
-  au FileType c,cpp vnoremap <buffer><leader>lf :ClangFormat<CR>
+  au FileType c,cpp nnoremap <buffer><leader>lf :<C-u>JbzClangFormat<CR>
+  au FileType c,cpp vnoremap <buffer><leader>lf :JbzMyClangFormat<CR>
   au FileType c,cpp nnoremap <leader>tf :ClangFormatAutoToggle<CR>
   " Align statements relative to case label
   au FileType c,cpp setlocal cinoptions+=l1
