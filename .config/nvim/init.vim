@@ -919,12 +919,17 @@ let g:clang_rename_path = "clang-rename-8"
 
 " {{{ Custom :ClangFormat with aware of my debug prints
 function! s:JbzClangFormat()
-  let found = search("prdbg")
-  if found
+  " Save cursor position.
+  let save_cursor = getcurpos()
+
+  if search("prdbg")
       echo "Remove debug prints before running clang-format"
   else
       :ClangFormat
   endif
+
+  " Set the cursor back at the saved position.
+  call setpos('.', save_cursor)
 endfunction
 
 command! -range=% -nargs=0 JbzClangFormat call s:JbzClangFormat()
