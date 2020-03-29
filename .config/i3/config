@@ -128,6 +128,12 @@ bindsym $mod+Shift+Up move workspace next
 bindsym $mod+Shift+underscore move workspace to output left
 bindsym $mod+Shift+plus move workspace to output right
 
+# Change windows layout
+bindsym $mod+Control+Left move left
+bindsym $mod+Control+Down move down
+bindsym $mod+Control+Up move up
+bindsym $mod+Control+Right move right
+
 # Switch between screens
 bindsym $mod+Tab focus output right
 
@@ -279,7 +285,7 @@ mode "$mode_taskwarrior" {
 	bindsym a           exec taskwarrior-notify-active-task; mode "default"
     bindsym e           exec taskwarrior-end-day; mode "default"
     bindsym h           exec taskwarrior-notify-has-tasks -v; mode "default"
-	bindsym n           exec systemctl --user start taskwarrior-active-task-notification.timer; mode "default"
+	bindsym n           exec taskwarrior-notify-active-task && systemctl --user start taskwarrior-active-task-notification.timer; mode "default"
 	bindsym Shift+N     exec systemctl --user stop taskwarrior-active-task-notification.timer; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"

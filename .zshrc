@@ -208,13 +208,14 @@ alias ag='ag --path-to-ignore ~/.ignore'
 alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
-alias zt='zathura'
+zt() { zathura $1 2>&1 >/dev/null & }
 alias mrg='mirage'
 alias j='z'
 alias du1="du --max-depth=1"
 alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
+alias processing='java -jar ~/.local/processing.py-3056-linux64/processing-py.jar'
 
 # vim
 alias :e='nvim'
@@ -223,7 +224,7 @@ alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
-alias vj='nvim -c WikiJournal'
+alias vj="nvim +'cd ~/Org/Notes' +WikiJournal"
 
 # tmux
 alias tm='tmux'

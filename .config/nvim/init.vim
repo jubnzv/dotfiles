@@ -18,6 +18,7 @@ Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap in
 Plug 'will133/vim-dirdiff'            " Diff two directories
 Plug 'andymass/vim-matchup'           " Better `%` for some modes
 Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
+Plug 'wesQ3/vim-windowswap'           " Swap windows without ruining the layout
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
@@ -27,7 +28,7 @@ Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Open links in browser
 Plug 'itchyny/lightline.vim'
 Plug 'jubnzv/gruvbox'                 " Color scheme
-Plug 'RRethy/vim-hexokinase', { 'do': 'make hexokinase' } " Colorize color names and codes
+Plug 'norcalli/nvim-colorizer.lua'    " Colorize color names and codes
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
@@ -83,6 +84,7 @@ Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
+Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'jubnzv/IEC.vim'
 
@@ -391,25 +393,27 @@ let g:lightline = {
 let g:buftabline_indicators=1 " show modified
 " }}}
 
-" {{{ Hexokinase
-let g:Hexokinase_ftEnabled = ['css', 'html', 'javascript', 'markdown', 'conf']
+" {{{ nvim-colorizer
+if has('nvim')
+lua << EOF
+-- Attach to certain Filetypes, add special configuration for `html`
+-- Use `background` for everything else.
+require 'colorizer'.setup {
+  'css';
+  'javascript';
+  'html';
+  'markdown';
+  'conf';
+}
+EOF
+endif
+" }}}
 
-" All possible highlighters
-let g:Hexokinase_highlighters = [
-\   'background',
-\   'backgroundfull',
-\ ]
-
-" All possible values
-let g:Hexokinase_optInPatterns = [
-\     'full_hex',
-\     'triple_hex',
-\     'rgb',
-\     'rgba',
-\     'hsl',
-\     'hsla',
-\     'colour_names'
-\ ]
+" {{{ WindowSwap.vim
+let g:windowswap_map_keys = 0 "prevent default bindings
+nnoremap <silent> <leader>wy :call WindowSwap#MarkWindowSwap()<CR>
+nnoremap <silent> <leader>wp :call WindowSwap#DoWindowSwap()<CR>
+nnoremap <silent> <leader>ww :call WindowSwap#EasyWindowSwap()<CR>
 " }}}
 
 " {{{ Integration with web-browser
@@ -613,6 +617,7 @@ nnoremap <leader>xf :Files<CR>
 nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>wf :Windows<CR>
 nnoremap <leader>xr :FZFMru <CR>
 nnoremap <leader>fc :Cd .<CR>
 nnoremap <leader>fs :Ag<CR>
@@ -814,8 +819,8 @@ let g:UltiSnipsExpandTrigger='<A-l>'
 let g:UltiSnipsJumpForwardTrigger='<A-l>'
 let g:UltiSnipsJumpBackwardTrigger='<A-h>'
 
-nnoremap <localleader>ss :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
-nnoremap <localleader>sy :UltiSnipsEdit<CR>
+nnoremap <localleader>sr :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
+nnoremap <localleader>ss :UltiSnipsEdit<CR>
 " }}}
 
 " {{{ neoformat
@@ -826,10 +831,8 @@ nnoremap <leader>lf :Neoformat<CR>
 if has('nvim-0.5')
 lua << EOF
   require'nvim_lsp'.clangd.setup{}
-EOF
-
-lua << EOF
   require'nvim_lsp'.pyls.setup{}
+  require'nvim_lsp'.ocamllsp.setup{}
 EOF
 endif
 
@@ -919,7 +922,6 @@ let g:clang_rename_path = "clang-rename-8"
 
 " {{{ Custom :ClangFormat with aware of my debug prints
 function! s:JbzClangFormat()
-  " Save cursor position.
   let save_cursor = getcurpos()
 
   if search("prdbg")
@@ -928,11 +930,20 @@ function! s:JbzClangFormat()
       :ClangFormat
   endif
 
-  " Set the cursor back at the saved position.
   call setpos('.', save_cursor)
 endfunction
 
 command! -range=% -nargs=0 JbzClangFormat call s:JbzClangFormat()
+" }}}
+
+" {{{ Function to remove my debug prints
+function! s:JbzRemoveDebugPrints()
+  let save_cursor = getcurpos()
+  :g/\/\/\ prdbg$/d
+  call setpos('.', save_cursor)
+endfunction
+
+command! JbzRemoveDebugPrints call s:JbzRemoveDebugPrints()
 " }}}
 
 augroup c_cxx_group
@@ -940,7 +951,7 @@ augroup c_cxx_group
   au FileType c,cpp setlocal commentstring=//\ %s
   au FileType c,cpp setlocal tw=80
   " Remove debug prints created with snippets
-  au FileType c,cpp nnoremap <buffer><leader>rd :g/\/\/\ prdbg$/d<CR>
+  au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
   " Renaming with clang-rename
   au FileType c,cpp nnoremap <buffer><leader>lr :py3f ~/.config/nvim/clang-rename.py<CR>
   " Autoformatting with clang-format
@@ -1023,9 +1034,10 @@ let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
 let matiec_mkbuilddir = 1
 augroup iec_group
   au!
-  au FileType st setlocal sw=2 ts=2 expandtab
-  au FileType st let Comment="(*" | let EndComment="*)"
-  au FileType st RainbowToggleOn
+  au! BufNewFile,BufReadPost *.{il,st} set filetype=iec
+  au FileType iec setlocal sw=2 ts=2 expandtab
+  au FileType iec let Comment="(*" | let EndComment="*)"
+  au FileType iec RainbowToggleOn
 augroup END
 " }}}
 
@@ -1076,7 +1088,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1119,6 +1131,13 @@ cnoreabbrev mp MarkdownPreview
 au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
 " }}}
 
+" {{{ org-mode
+augroup org_mode_group
+    au!
+    au! BufNewFile,BufReadPost *.org set filetype=org
+augroup END
+" }}}
+
 " {{{ wiki.vim
 let g:wiki_root = '~/Org/Notes/'
 let g:wiki_filetypes = ['md']
@@ -1136,12 +1155,12 @@ let g:wiki_mappings_global = {
   \ }
 
 " Highligth TODO and DONE entries
-highlight MdTodo ctermfg=red guifg=red
-highlight MdDone ctermfg=green guifg=green
-augroup HiglightMarkdownTODO
+highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
+highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
+augroup HiglightTODO
     autocmd!
-    au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
-    au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
+    au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdTodo', 'TODO', -1)
+    au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdDone', 'DONE', -1)
 augroup END
 " }}}
 
@@ -1256,7 +1275,7 @@ nnoremap <leader>tx :call ToggleHex()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
 nnoremap <leader>ts :call ToggleScrollBind()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
-nnoremap <leader>tC :HexokinaseToggle<CR>
+nnoremap <leader>tC :ColorizerToggle<CR>
 nnoremap <leader>tr :RainbowToggle<cr>
 nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>

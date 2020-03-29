@@ -1,0 +1,15 @@
+global !p
+from vimsnippets import foldmarker, get_comment_format
+endglobal
+
+snippet foldp "Insert a vim fold marker pair with pair comment syntax" b
+`!p snip.rv = get_comment_format()[0]` `!p snip.rv = foldmarker()[0]` ${1:Fold description} `!p snip.rv = get_comment_format()[2]`
+${2:${VISUAL:Content}}
+`!p snip.rv = get_comment_format()[0]` `!p snip.rv = foldmarker()[1]` `!p snip.rv = get_comment_format()[2]`
+endsnippet
+
+snippet foldc "Insert a vim fold marker pair with single comment syntax" b
+`!p snip.rv = get_comment_format()[0]` `!p snip.rv = foldmarker()[0]` ${1:Fold description}
+${2:${VISUAL:Content}}
+`!p snip.rv = get_comment_format()[0]` `!p snip.rv = foldmarker()[1]`
+endsnippet
