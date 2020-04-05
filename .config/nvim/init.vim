@@ -48,7 +48,7 @@ Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
-Plug 'scrooloose/nerdcommenter'       " Comment plugin
+Plug 'tyru/caw.vim'                   " Comment plugin
 Plug 'sirver/ultisnips'               " Snippets plugin
 Plug 'honza/vim-snippets'
 Plug 'Shougo/deoplete.nvim', {
@@ -682,21 +682,13 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] }
 " }}}
 
-" {{{ Nerdcommenter
-let g:NERDSpaceDelims = 1
-let g:NERDRemoveExtraSpaces = 1
-let g:NERDCompactSexyComs = 1
-let g:NERDCommentEmptyLines = 1
-let g:NERDAltDelims_c = 1
-
-let g:NERDCustomDelimiters = { 'st': { 'left': '(*','right': '*)' } }
-
+" {{{ caw.vim
 if has('win32')
-  nmap <C-/> <leader>c<Space>
-  vmap <C-/> <leader>c<Space>
+  nmap <C-/> gcc<Space>
+  vmap <C-/> gcc<Space>
 else
-  nmap <C-_> <leader>c<Space>
-  vmap <C-_> <leader>c<Space>
+  nmap <C-_> gcc<Space>
+  vmap <C-_> gcc<Space>
 endif
 " }}}
 
