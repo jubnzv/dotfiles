@@ -8,11 +8,13 @@
 #  git clone https://github.com/jubnzv/dotfiles dotfiles
 #  cd dotfiles && ./install.py --install-all
 #
+# TODO:
+# * Enable systemd services after install
+#
 import argparse
 import codecs
 import os
 import subprocess
-import urllib
 
 from typing import List
 
@@ -38,7 +40,7 @@ class Configuration:
 
     # Required packages from Debian repositories
     APT_PACKAGES = {
-        'etckeeper', 'fasd', 'expect', 'lxappearance',
+        'etckeeper', 'fasd', 'expect', 'lxappearance', 'tidy'
     }
 
     # Python packages that should be installed through pip --user
@@ -208,7 +210,7 @@ class Configuration:
         '.local/bin/scp-speed-test':                 '~/.local/bin/',
         '.local/bin/sshd-find-duplicate':            '~/.local/bin/',
         '.local/bin/ssh-speed-test.sh':              '~/.local/bin/',
-        '.local/bin/ssl-checker':                    '~/.local/bin/',
+        '.local/bin/ssl-checker.py':                 '~/.local/bin/',
         '.local/bin/sync-ebook.sh':                  '~/.local/bin/',
         '.local/bin/syscall-num':                    '~/.local/bin/',
         '.local/bin/task-resched-work.sh':           '~/.local/bin/',

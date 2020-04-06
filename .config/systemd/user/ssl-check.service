@@ -3,7 +3,7 @@ Description=Check SSL certificates
 
 [Service]
 Environment="DISPLAY=:0"
-ExecStart=/home/jubnzv/.local/bin/ssl-checker
+ExecStart=/home/jubnzv/.local/bin/ssl-checker.py
 Type=oneshot
 
 [Install]
