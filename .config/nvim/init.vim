@@ -4,7 +4,7 @@ let maplocalleader = ","
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
-let g:python3_host_prog  = '/usr/bin/python3.7'
+let g:python3_host_prog  = '/usr/bin/python3.8'
 
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
@@ -817,12 +817,16 @@ nnoremap <localleader>ss :UltiSnipsEdit<CR>
 
 " {{{ neoformat
 nnoremap <leader>lf :Neoformat<CR>
+
+let g:neoformat_enabled_xsd = ['tidy']
 " }}}
 
 " {{{ LSP-client
 if has('nvim-0.5')
 lua << EOF
-  require'nvim_lsp'.clangd.setup{}
+require'nvim_lsp'.clangd.setup{
+    cmd = { "clangd-11", "--background-index" }
+  }
   require'nvim_lsp'.pyls.setup{}
   require'nvim_lsp'.ocamllsp.setup{}
 EOF
@@ -830,13 +834,13 @@ endif
 
 nnoremap <silent> gd             <cmd>lua vim.lsp.buf.declaration()<CR>
 nnoremap <silent> gt             <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> <localleader>k <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap <silent> <leader>lk     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <leader>lr     <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> gD             <cmd>lua vim.lsp.buf.implementation()<CR>
 nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.signature_help()<CR>
 nnoremap <silent> 1gD            <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent> gr             <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> <localleader>e <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+nnoremap <silent> <leader>le     <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
 " }}}
 
 " {{{ EditorConfig
@@ -980,12 +984,26 @@ let g:slime_dont_ask_default = 1
 " Enable extended Python syntax highlighting provided by vim-python/python-syntax.
 let g:python_highlight_all = 1
 
+let g:neoformat_enabled_python = ['autopep8']
+
+" {{{ Remove pdb breakpoints created with snippets
+function! s:JbzRemovePdbCalls()
+  let save_cursor = getcurpos()
+
+  :g/\import\ pdb;\ pdb\.set_trace\(\)$/d
+  call setpos('.', save_cursor)
+endfunction
+
+command! JbzRemovePdbCalls call s:JbzRemovePdbCalls()
+" }}}
+
 augroup python_group
   au!
   au FileType python set tw=0
   au FileType python set foldmethod=indent foldnestmax=2
   au FileType python RainbowToggleOn
   au Filetype python set cinoptions=:0,l1,t0,g0,(0
+  au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemovePdbCalls<CR>
   au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
   au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
 augroup END
@@ -1080,7 +1098,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1158,7 +1176,10 @@ augroup END
 
 " {{{ Plant UML
 au! BufNewFile,BufReadPost *.{uml,puml} set filetype=plantuml
-au FileType plantuml set spell! spelllang=en_us,ru_yo
+augroup plantuml_group
+    au!
+    au FileType plantuml set spell! spelllang=en_us,ru_yo
+augroup END
 " }}}
 
 " {{{ Other ft-specific autocommands
@@ -1196,7 +1217,8 @@ au FileType gitcommit inoremap <buffer> =><space> ⇒<space>
 " }}}
 
 " {{{ Toggle settings functions
-if !exists('s:gjgk_mode')   | let s:gjgk_mode=0     | endif
+if !exists('s:syn_on')      | let s:syn_on = 0      | endif
+if !exists('s:gjgk_mode')   | let s:gjgk_mode = 0   | endif
 if !exists('s:hex_mode')    | let s:hex_mode = 0    | endif
 if !exists('s:scroll_mode') | let s:scroll_mode = 0 | endif
 
@@ -1207,6 +1229,16 @@ function! ToggleConceal()
   else
     set conceallevel=0
     echo 'Disable conceal'
+  endif
+endfunction
+
+function! ToggleSyntax()
+  if s:syn_on==0
+    syn on
+    let s:syn_on = 1
+  else
+    syn off
+    let s:syn_on = 0
   endif
 endfunction
 
@@ -1264,8 +1296,9 @@ endfunction
 nnoremap <leader>tc :call ToggleConceal()<CR>
 nnoremap <leader>tg :call Togglegjgk()<CR>
 nnoremap <leader>tx :call ToggleHex()<CR>
+nnoremap <leader>ts :call ToggleSyntax()<CR>
 nnoremap <leader>tn :call ToggleNumber()<CR>
-nnoremap <leader>ts :call ToggleScrollBind()<CR>
+nnoremap <leader>tS :call ToggleScrollBind()<CR>
 nnoremap <leader>tp :setlocal paste!<CR>
 nnoremap <leader>tC :ColorizerToggle<CR>
 nnoremap <leader>tr :RainbowToggle<cr>

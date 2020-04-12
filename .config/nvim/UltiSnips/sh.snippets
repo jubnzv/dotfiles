@@ -10,3 +10,8 @@ snippet dirname_v
 "\${${1:#:VAR}%/*}"
 endsnippet
 
+snippet ch_file
+if [[ -f "$1" ]]; then
+	$0
+fi
+endsnippet

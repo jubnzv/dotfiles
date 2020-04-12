@@ -22,7 +22,7 @@ monitor = ${env:MONITOR:HDMI3}
 width = 100%
 height = 20
 radius = 0
-fixed-center = false
+fixed-center = true
 
 background = ${colors.background}
 foreground = ${colors.foreground}
@@ -43,7 +43,7 @@ font-0 = "FontAwesome:size=8"
 font-1 = "Iosevka NF:size=10"
 
 modules-left = menu i3
-modules-center = mpd
+modules-center = mpd active-task
 modules-right = pulseaudio xbacklight filesystem memory cpu wlan eth vpn-openvpn-isrunning docker battery temperature notifications-status date
 
 scroll-up = i3wm-wsnext
@@ -222,16 +222,12 @@ label = %date% %time%
 
 [module/mpd]
 type = internal/mpd
-
 format-online = <label-song> <label-time>
 format-online-background = ${colors.blue}
 format-online-padding = 1
-
 format-offline = <label-offline>
 label-offline = 🎝
 label-offline-foreground = ${colors.foreground-alt}
-
-
 icon-play = ⏵
 icon-pause = ⏸
 icon-prev = ⏮
@@ -335,6 +331,13 @@ exec = if [ $(systemctl show --property ActiveState docker | egrep '=active') ];
 interval = 1
 label =  %output%
 format-underline = ${colors.gray}
+
+[module/active-task]
+type = custom/script
+exec = res=`task minimal rc.gc=off +ACTIVE 2>/dev/null | sed '4q;d' | awk '{ $1=$2="" };1'`; if [ -z "$res" ]; then res='No active task'; fi; echo "$res"
+format-foreground = ${colors.gray}
+label =  %output%
+interval = 60
 
 [module/menu]
 type = custom/menu

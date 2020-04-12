@@ -208,14 +208,11 @@ bindsym $mod+s exec "rofi -show window"
 
 # Additional scripts/utils
 bindsym $mod+Control+0 exec $SCRIPTS_PATH/toggle-notifications.sh
-bindsym $mod+Control+4 exec ~/.local/bin/chk xclip
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
 bindsym $mod+Control+s exec screengrab -r
 # bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
-bindsym Shift+XF86Launch1 exec peek
-bindsym XF86ScreenSaver exec $SCRIPTS_PATH/i3lock-wrapper.sh
 bindsym $mod+XF86ScreenSaver exec xset s activate
 
 # Volume control
@@ -268,10 +265,12 @@ mode "$mode_exec_power" {
 }
 # }}}
 # {{{ i3wm control
-set $mode_exec_i3cmd  i3 command \t [l]  lock [r]  restart [e]  log out
+set $mode_exec_i3cmd  i3 command \t [l]  lock [r]  restart [e]  log out [d]  disable lock [s]  shut off screen
 bindsym $mod+Control+l mode "$mode_exec_i3cmd"
 mode "$mode_exec_i3cmd" {
 	bindsym l           exec $SCRIPTS_PATH/i3lock-wrapper.sh; mode "default"
+	bindsym d           exec pkill xss-lock; mode "default"
+	bindsym s           exec xset dpms force off; mode "default"
 	bindsym r           exec i3-msg "restart"; mode "default"
 	bindsym e           exec i3-msg "exit"; mode "default"
 	bindsym Return 	    mode "default"
