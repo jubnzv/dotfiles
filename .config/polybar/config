@@ -43,7 +43,7 @@ font-0 = "FontAwesome:size=8"
 font-1 = "Iosevka NF:size=10"
 
 modules-left = menu i3
-modules-center = mpd active-task
+modules-center = active-task task-counters
 modules-right = pulseaudio xbacklight filesystem memory cpu wlan eth vpn-openvpn-isrunning docker battery temperature notifications-status date
 
 scroll-up = i3wm-wsnext
@@ -220,19 +220,6 @@ format-underline = #0a6cf5
 
 label = %date% %time%
 
-[module/mpd]
-type = internal/mpd
-format-online = <label-song> <label-time>
-format-online-background = ${colors.blue}
-format-online-padding = 1
-format-offline = <label-offline>
-label-offline = 🎝
-label-offline-foreground = ${colors.foreground-alt}
-icon-play = ⏵
-icon-pause = ⏸
-icon-prev = ⏮
-icon-next = ⏭
-
 [module/pulseaudio]
 type = internal/pulseaudio
 
@@ -316,6 +303,7 @@ ramp-foreground = ${colors.foreground-alt}
 type = custom/script
 exec = ~/.config/polybar/vpn-openvpn-isrunning.sh
 interval = 5
+; format-prefix = "🖧 "
 format-underline = ${colors.blue}
 
 [module/notifications-status]
@@ -334,10 +322,22 @@ format-underline = ${colors.gray}
 
 [module/active-task]
 type = custom/script
-exec = res=`task minimal rc.gc=off +ACTIVE 2>/dev/null | sed '4q;d' | awk '{ $1=$2="" };1'`; if [ -z "$res" ]; then res='No active task'; fi; echo "$res"
+exec = ~/.config/polybar/active-task.sh
+click-left = "kill -USR1 $(pgrep --oldest --parent %pid%)"
+click-right = "kill -USR1 $(pgrep --oldest --parent %pid%)"
 format-foreground = ${colors.gray}
-label =  %output%
+format-prefix = " "
+label =  %output:0:30:...%
 interval = 60
+; Will the script output continous content?
+tail = true
+
+[module/task-counters]
+type = custom/script
+exec = ~/.config/polybar/task-counters.sh
+format-foreground = ${colors.gray}
+label = %output%
+interval = 180
 
 [module/menu]
 type = custom/menu
