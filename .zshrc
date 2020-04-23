@@ -49,7 +49,7 @@ export GOPATH=$HOME/Dev/go/
 unset GOROOT
 
 # PATH
-export PATH=$PATH:$HOME/.local/bin/:$HOME/.cargo/bin:/usr/local/go/bin:$GOPATH/bin/
+export PATH=$PATH:$HOME/.local/bin/:$HOME/.cargo/bin:/usr/local/go/bin:$GOPATH/bin/:$HOME/.dotnet/
 
 # Default username for https://hub.docker.com
 export DOCKER_ID_USER="jubnzv1"
@@ -216,6 +216,7 @@ alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
 alias processing='java -jar ~/.local/processing.py-3056-linux64/processing-py.jar'
+alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
 
 # vim
 alias :e='nvim'
@@ -296,7 +297,9 @@ alias -g O="> output.txt"
 alias -g G='| ag'
 alias -g L="|& less"
 alias -g V="| nvim -"
-alias -g ND="; notify-send 'Done' ''"
+alias -g ND="notify-send 'Done' ''"
+alias -g CP="xclip -selection clipboard"
+alias -g IR="i3-msg 'workspace back_and_forth' >/dev/null"
 
 # Perform operation using fzf. Examples:
 #   find /usr/include -name "test.h" F nvim
@@ -352,6 +355,8 @@ if [[ -x "$(command -v task)" ]]; then
     alias tactive="date; t active"
     alias tstart="date; t start"
     alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no rc.bulk=yes stop"
+    alias tschedd='task sched.before:today+1d -COMPLETED -DELETED -DUETODAY +PENDING'
+    alias tdued='task due.before:today+1d -COMPLETED -DELETED +PENDING'
     alias tdoned='t end:today status:completed all'
     alias tdonew='t end.after:today-7d status:completed all'
     alias tdonem='t end.after:today-30d status:completed all'
@@ -582,8 +587,9 @@ export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
 export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "git"
                               "cmake" "ocamlbuild" "make"
-                              "frama-c"
+                              "borg-linux64" "aria2" "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
+export AUTO_NOTIFY_IGNORE=("docker exec" "docker-compose")
 # }}}
 
 # {{{ Show current directory in X window title

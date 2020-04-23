@@ -404,6 +404,7 @@ require 'colorizer'.setup {
   'html';
   'markdown';
   'conf';
+  'plantuml';
 }
 EOF
 endif
@@ -818,16 +819,20 @@ nnoremap <localleader>ss :UltiSnipsEdit<CR>
 " {{{ neoformat
 nnoremap <leader>lf :Neoformat<CR>
 
-let g:neoformat_enabled_xsd = ['tidy']
+let g:neoformat_enabled_html = ['prettier']
+let g:neoformat_enabled_css = ['prettier']
+let g:neoformat_enabled_python = ['autopep8']
+let g:neoformat_enabled_ocaml = ['ocpindent']
 " }}}
 
 " {{{ LSP-client
 if has('nvim-0.5')
 lua << EOF
-require'nvim_lsp'.clangd.setup{
+  require'nvim_lsp'.clangd.setup{
     cmd = { "clangd-11", "--background-index" }
   }
   require'nvim_lsp'.pyls.setup{}
+  require'nvim_lsp'.gopls.setup{}
   require'nvim_lsp'.ocamllsp.setup{}
 EOF
 endif
@@ -984,8 +989,6 @@ let g:slime_dont_ask_default = 1
 " Enable extended Python syntax highlighting provided by vim-python/python-syntax.
 let g:python_highlight_all = 1
 
-let g:neoformat_enabled_python = ['autopep8']
-
 " {{{ Remove pdb breakpoints created with snippets
 function! s:JbzRemovePdbCalls()
   let save_cursor = getcurpos()
@@ -1009,13 +1012,18 @@ augroup python_group
 augroup END
 " }}}
 
+" {{{ Golang
+augroup go_group
+  au!
+  au FileType go RainbowToggleOn
+augroup END
+" }}}
+
 " {{{ OCaml
 " Merlin
 " See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
 execute "set rtp+=" . g:opamshare . "/merlin/vim"
-
-let g:neoformat_enabled_ocaml = ['ocpindent']
 
 augroup ocaml_group
   au!
@@ -1098,7 +1106,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml', 'html']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv

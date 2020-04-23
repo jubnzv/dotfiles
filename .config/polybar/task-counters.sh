@@ -9,8 +9,8 @@ get_counters() {
 
     # Count tasks
     t_done_num="$(task rc.gc=off end:today +COMPLETED -DELETED count 2> /dev/null)"
-    t_sched_num="$(task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY count 2> /dev/null)"
-    t_due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED count 2> /dev/null)"
+    t_sched_num="$(task rc.gc=off sched.before:today+1d -COMPLETED -DELETED -DUETODAY +PENDING count 2> /dev/null)"
+    t_due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED +PENDING count 2> /dev/null)"
 
     # Format output string
     tasks="%{F#b8bb26}$t_done_num%{F-}"

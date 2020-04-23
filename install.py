@@ -40,22 +40,29 @@ class Configuration:
 
     # Required packages from Debian repositories
     APT_PACKAGES = {
-        'etckeeper', 'fasd', 'expect', 'lxappearance', 'tidy'
+        'etckeeper', 'fasd', 'expect', 'lxappearance', 'npm',
+        'python-configparser',  # for matplotlib with py2
     }
 
-    # Python packages that should be installed through pip --user
+    # Python packages that should be installed with pip --user
+    # Note: Patched version of bugwarrior is required
     PIP_PACKAGES = {
-        'pdbpp', 'pre-commit', 'yolk', 'cmake_format'
+        'pdbpp', 'pre-commit', 'yolk', 'cmake_format', 'autopep8', 'neovim',
+        'python-language-server', 'offtrac', 'pluggy'
     }
 
-    # Rust packages that should be installed through cargo
+    NPM_PACKAGES = {
+        'prettier'
+    }
+
+    # Rust packages that should be installed with cargo
     CARGO_PACKAGES = {
         'bat'
     }
 
     # Packages that should be installed in ~/.local/bin
     BIN_PACKAGES = {
-        'borg'
+        'borg', 'mattermost-desktop'
     }
 
     # Scripts and utilities that should be cloned without build
@@ -146,6 +153,8 @@ class Configuration:
         '.config/polybar/launch.sh':                '~/.config/polybar/',
         '.config/polybar/notifications-status.sh':  '~/.config/polybar/',
         '.config/polybar/vpn-openvpn-isrunning.sh': '~/.config/polybar/',
+        '.config/polybar/active-task.sh':           '~/.config/polybar/',
+        '.config/polybar/task-counters.sh':         '~/.config/polybar/',
 
         # Python
         '.pythonrc':                                  '~/',
@@ -220,6 +229,7 @@ class Configuration:
         '.local/bin/taskwarrior-end-day':            '~/.local/bin/',
         '.local/bin/taskwarrior-notify-active-task': '~/.local/bin/',
         '.local/bin/taskwarrior-notify-has-tasks':   '~/.local/bin/',
+        '.local/bin/mattermost-wrapper.sh':          '~/.local/bin/',
         # Not public
         '.local/bin/chk1':                           '~/.local/bin/',
 

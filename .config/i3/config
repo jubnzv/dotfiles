@@ -14,7 +14,7 @@ set $display3 HDMI3
 # Applications from ~/.local/
 set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 set $APP_TELEGRAM $HOME/.local/bin/Telegram
-set $APP_MATTERMOST $HOME/.local/bin/mattermost-desktop
+set $APP_MATTERMOST $HOME/.local/bin/mattermost-wrapper.sh
 set $APP_THUNDERBIRD $HOME/.local/bin/thunderbird/thunderbird
 
 # Windows behavior
@@ -193,7 +193,10 @@ bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Control+q exec code
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
-bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py && sleep 0.2 && i3-msg '[con_mark="anki_add"] move workspace current' && i3-msg '[con_mark="anki_add"] focus'
+bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py                              \
+                            && sleep 0.2                                             \
+                            && i3-msg '[con_mark="anki_add"] move workspace current' \
+                            && i3-msg '[con_mark="anki_add"] focus'
 bindsym $mod+Control+z exec zeal # start or focus
 
 # Brightness control
@@ -248,7 +251,11 @@ mode "$mode_exec_apps" {
      bindsym 2 exec $APP_MATTERMOST; mode "default"
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
      bindsym 4 exec --no-startup-id discord; mode "default"
-     bindsym 9 workspace $ws_0; exec $APP_TELEGRAM; exec $APP_MATTERMOST; exec $APP_THUNDERBIRD; exec hexchat; layout tabbed; mode "default"
+     bindsym 9 workspace $ws_0; exec $APP_TELEGRAM;         \
+                                exec $APP_MATTERMOST        \
+                                exec $APP_THUNDERBIRD;      \
+                                exec slack;                 \
+                                layout tabbed; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
 }
