@@ -467,10 +467,8 @@ map ` <Nop>
 
 if exists('$TMUX')
   " Execute previous command in right pane
-  nnoremap <silent> <leader>; :silent !tmux send-keys -t right Up Enter<cr>
-  nnoremap <silent> <leader>: :silent !tmux clear-history -t right && tmux send-keys -t right C-l Up Enter<cr>
-else
-  map <leader>; <Nop>
+  nnoremap <silent> <leader><tab> :silent !tmux send-keys -t right Up Enter<cr>
+  nnoremap <silent> <leader><leader><tab> :silent !tmux clear-history -t right && tmux send-keys -t right C-l Up Enter<cr>
 endif
 " }}}
 
@@ -829,11 +827,11 @@ let g:neoformat_enabled_ocaml = ['ocpindent']
 if has('nvim-0.5')
 lua << EOF
   require'nvim_lsp'.clangd.setup{
-    cmd = { "clangd-11", "--background-index" }
+    cmd = { "clangd-10", "--background-index" } -- TODO: latest clang-11 is broken.
   }
   require'nvim_lsp'.pyls.setup{}
   require'nvim_lsp'.gopls.setup{}
-  require'nvim_lsp'.ocamllsp.setup{}
+  --require'nvim_lsp'.ocamllsp.setup{}
 EOF
 endif
 
@@ -1035,6 +1033,13 @@ augroup ocaml_group
 augroup END
 " }}}
 
+" {{{ Scala
+augroup scala_group
+  au!
+  au FileType scala RainbowToggleOn
+augroup END
+" }}}
+
 " {{{ vimscript
 let g:vim_indent_cont = 2
 
@@ -1106,7 +1111,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml', 'html']
+let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml', 'html', 'sql']
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv

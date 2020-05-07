@@ -4,7 +4,7 @@ if __name__ == '__main__':
 endsnippet
 
 snippet     pdb
-import pdb; pdb.set_trace()
+import pdb; pdb.set_trace()  # noqa
 endsnippet
 
 snippet check_file
@@ -51,3 +51,14 @@ import sys
 traceback.print_exc(file=sys.stdout)
 endsnippet
 
+snippet prexec_time
+start_time = time.perf_counter()
+${VISUAL}$0
+end_time = time.perf_counter()
+run_time = end_time - start_time
+print(f'{run_time:.4f} secs')
+endsnippet
+
+snippet usleep
+time.sleep(${1:100}/1000000.0)
+endsnippet

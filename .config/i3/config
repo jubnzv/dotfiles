@@ -252,9 +252,8 @@ mode "$mode_exec_apps" {
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
      bindsym 4 exec --no-startup-id discord; mode "default"
      bindsym 9 workspace $ws_0; exec $APP_TELEGRAM;         \
-                                exec $APP_MATTERMOST        \
+                                exec $APP_MATTERMOST;       \
                                 exec $APP_THUNDERBIRD;      \
-                                exec slack;                 \
                                 layout tabbed; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"

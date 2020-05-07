@@ -298,6 +298,7 @@ alias -g G='| ag'
 alias -g L="|& less"
 alias -g V="| nvim -"
 alias -g ND="notify-send 'Done' ''"
+alias -g U="echo -e '\a'"
 alias -g CP="xclip -selection clipboard"
 alias -g IR="i3-msg 'workspace back_and_forth' >/dev/null"
 

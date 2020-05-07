@@ -48,7 +48,7 @@ class Configuration:
     # Note: Patched version of bugwarrior is required
     PIP_PACKAGES = {
         'pdbpp', 'pre-commit', 'yolk', 'cmake_format', 'autopep8', 'neovim',
-        'python-language-server', 'offtrac', 'pluggy'
+        'python-language-server', 'offtrac', 'pluggy', 'pyls-mypy'
     }
 
     NPM_PACKAGES = {
@@ -108,6 +108,7 @@ class Configuration:
         '.taskrc':                                      '~/',
         '.config/taskwarrior/gruvbox-dark-256.theme':   '~/.config/taskwarrior/',
         '.tmux/session-finder/session-finder.bash':     '~/.tmux/session-finder/',
+        '.tmux/renumber-sessions.sh':                   '~/.tmux/',
         '.tmux.conf':                                   '~/',
         '.gdbinit':                                     '~/',
         '.sshrc':                                       '~/',

@@ -31,7 +31,7 @@ function get_tasks {
     t_due_num="$(task rc.gc=off due.before:today+1d -COMPLETED -DELETED count)"
 
     # Formate output string
-    tasks="<span color='#b8bb26'>$t_done_num</span>"
+    tasks="%{{'#b8bb26'$t_done_num}}"
     if [ "$t_sched_num" -ne "0" ]; then
         tasks=${tasks}" | <span color='#d79921'>$t_sched_num</span>"
     fi

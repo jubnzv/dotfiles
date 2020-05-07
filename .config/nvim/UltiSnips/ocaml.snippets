@@ -1,0 +1,14 @@
+snippet pr
+Printf.printf "${0}\n"${1};
+endsnippet
+
+snippet prd
+Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__ ${1};
+endsnippet
+
+snippet lfl
+List.fold_left
+  ${1:list}
+  ~init:${2:[]}
+  ~f:(fun acc ${3:v} -> ${0})
+endsnippet
