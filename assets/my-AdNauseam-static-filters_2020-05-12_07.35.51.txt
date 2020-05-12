@@ -1,0 +1,31 @@
+habr.com###neuro-habr > .default-block
+tproger.ru##[href^="https://tproger.ru/events/skillbox/"] > .internal-link
+tproger.ru##.sponsor-widget-bottom-header
+tproger.ru##.citation-widget > p
+tproger.ru##.citation-quote-left.citation-quote
+tproger.ru##.citation-quote-right.citation-quote
+tproger.ru###right_event_job_widget-8 > .widget-head
+tproger.ru###right_event_job_widget-8 > .widget-list
+tproger.ru###right_event_job_widget-8
+tproger.ru##.icon-arrows-ccw.quote_refresh_block
+tproger.ru###right_event_job_widget-6 > .widget-head
+tproger.ru###right_event_job_widget-6
+tproger.ru##.sponsor-widget-top-header
+khashtamov.com##div.sidebar-widget:nth-of-type(4)
+habr.com##div.default-block:nth-of-type(3)
+habr.com##div.default-block_sidebar.default-block:nth-of-type(2)
+mnorin.com###custom_html-7
+mnorin.com###secondary
+habr.com##div.default-block:nth-of-type(8)
+habr.com##div.default-block_sidebar.default-block:nth-of-type(7)
+habr.com##div.default-block_sidebar.default-block:nth-of-type(6)
+habr.com##div.default-block_sidebar.default-block:nth-of-type(5)
+habr.com##div.default-block_sidebar.default-block:nth-of-type(4)
+www.protocols.ru##.animated.bounceInLeft.msweb-subscribe__form
+||www.protocols.ru/WP/rfc1122-2/$image
+||www.annualreviews.org/pb-assets/assets/images/marketing/small-banner/pandemic-life-COVID-19-Susceptibility-2020-1587483313560.png$image
+||www.ncbi.nlm.nih.gov/core/icons/exclamation.png$image
+ru.qwe.wiki###mw-panel
+ru.qwe.wiki###SC_TBlock_666264 > .text-bottom.ts-wrapper
+ru-lambda.livejournal.com##.c81848a08.lb5a00a14.i92ad84fc
+||habrastorage.org/getpro/habr/branding/7ce/72a/2cd/7ce72a2cdbdfc5c49eb222b2942322ac.png$image

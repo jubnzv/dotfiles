@@ -87,6 +87,7 @@ Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'jubnzv/IEC.vim'
+" Plug '/home/jubnzv/Dev/IEC.vim/'
 
 call plug#end()
 " }}}
@@ -228,6 +229,9 @@ cnoremap <C-BS> <C-W>
 
 " Reload vimrc
 nnoremap <localleader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
+
+" Killing local buffer without losing split
+:command! Bc sb # | bd #
 
 " Disable the ever-annoying Ex mode shortcut key
 nnoremap Q @@

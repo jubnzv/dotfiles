@@ -6,9 +6,17 @@ snippet prd
 Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__ ${1};
 endsnippet
 
+snippet prl
+List.iter ${1:list} ~f:(fun e -> Printf.printf "${0:s} " ${2:e});
+endsnippet
+
 snippet lfl
 List.fold_left
   ${1:list}
   ~init:${2:[]}
   ~f:(fun acc ${3:v} -> ${0})
+endsnippet
+
+snippet ll
+(List.length ${0})
 endsnippet
