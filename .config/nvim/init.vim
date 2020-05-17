@@ -213,7 +213,7 @@ endfunction
 inoremap jj <Esc>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>xc :q<CR>
-nnoremap <leader>s :w<CR>
+" nnoremap <leader>s :w<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -465,7 +465,7 @@ nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplu
 nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
 " }}}
 
-" {{{ tmux integration
+" {{{ tmux and vim-slime configuration
 " Free my prefix key
 map ` <Nop>
 
@@ -474,6 +474,31 @@ if exists('$TMUX')
   nnoremap <silent> <leader><tab> :silent !tmux send-keys -t right Up Enter<cr>
   nnoremap <silent> <leader><leader><tab> :silent !tmux clear-history -t right && tmux send-keys -t right C-l Up Enter<cr>
 endif
+
+" slime
+let g:slime_target = "tmux"
+let g:slime_paste_file = tempname()
+let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
+let g:slime_dont_ask_default = 1
+let g:slime_no_mappings = 1
+
+" Configure slime for the right tmux pane in the current window
+function! s:JbzSlimeRight()
+  if !exists('$TMUX')
+    echo "tmux is not started"
+    return
+  endif
+  let win_num = split(system("tmux display-message -p '#I'"), "\n")[0]
+  let sock = split($TMUX, ",")[0]
+  let b:slime_config = {"socket_name": sock, "target_pane": win_num . '.2' }
+  call slime#config()
+endfunction
+command! JbzSlimeRight call s:JbzSlimeRight()
+
+nnoremap <leader>sc :JbzSlimeRight
+xmap <leader>ss <Plug>SlimeRegionSend
+nmap <leader>sp <Plug>SlimeParagraphSend
+nmap <leader>sl <Plug>SlimeLineSend
 " }}}
 
 " {{{ Parens settings
@@ -815,7 +840,7 @@ let g:UltiSnipsJumpForwardTrigger='<A-l>'
 let g:UltiSnipsJumpBackwardTrigger='<A-h>'
 
 nnoremap <localleader>sr :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
-nnoremap <localleader>ss :UltiSnipsEdit<CR>
+nnoremap <localleader>se :UltiSnipsEdit<CR>
 " }}}
 
 " {{{ neoformat
@@ -978,13 +1003,6 @@ augroup c_cxx_group
   " command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
   " au FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
 augroup END
-" }}}
-
-" {{{ slime
-let g:slime_target = "tmux"
-let g:slime_paste_file = tempname()
-let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
-let g:slime_dont_ask_default = 1
 " }}}
 
 " {{{ Python
