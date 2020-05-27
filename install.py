@@ -48,7 +48,7 @@ class Configuration:
     # Note: Patched version of bugwarrior is required
     PIP_PACKAGES = {
         'pdbpp', 'pre-commit', 'yolk', 'cmake_format', 'autopep8', 'neovim',
-        'python-language-server', 'offtrac', 'pluggy', 'pyls-mypy'
+        'python-language-server', 'offtrac', 'pluggy', 'pyls-mypy',
     }
 
     NPM_PACKAGES = {
@@ -96,7 +96,6 @@ class Configuration:
         '.latex/template-cyrillic.tex':                 '~/.latex/',
         '.latexmkrc':                                   '~/',
         '.xinitrc':                                     '~/',
-        '.arbtt/categorize.cfg':                        '~/.arbtt/',
         '.config/bat/config':                           '~/.config/bat/',
         '.config/qt5ct/colors/oomox-gruvbox-dark.conf': '~/.config/qt5ct/colors/',
         '.config/dunst/dunstrc':                        '~/.config/dunst/',
@@ -165,26 +164,13 @@ class Configuration:
         '.ipython/profile_default/ipython_config.py': '~/.ipython/profile_default/',
 
         # systemd
-        '.config/systemd/user/arbtt.service':                                '~/.config/systemd/user/',
         '.config/systemd/user/bugwarrior-pull.service':                      '~/.config/systemd/user/',
         '.config/systemd/user/bugwarrior-pull.timer':                        '~/.config/systemd/user/',
         '.config/systemd/user/diff-notes.service':                           '~/.config/systemd/user/',
         '.config/systemd/user/diff-notes.timer':                             '~/.config/systemd/user/',
-        '.config/systemd/user/diff-anki.service':                            '~/.config/systemd/user/',
-        '.config/systemd/user/diff-anki.timer':                              '~/.config/systemd/user/',
         '.config/systemd/user/rsi_keylogger.service':                        '~/.config/systemd/user/',
         '.config/systemd/user/ssl-check.service':                            '~/.config/systemd/user/',
         '.config/systemd/user/ssl-check.timer':                              '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-active-task-notification.service': '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-active-task-notification.timer':   '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-end-day.service':                  '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-end-day.timer':                    '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-has-tasks-notification.service':   '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-has-tasks-notification.timer':     '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-reporter-monthly.service':         '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-reporter-monthly.timer':           '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-reporter-weekly.service':          '~/.config/systemd/user/',
-        '.config/systemd/user/taskwarrior-reporter-weekly.timer':            '~/.config/systemd/user/',
 
         # Scripts in $PATH
         '.local/bin/advice-libtool-version.py':      '~/.local/bin/',
@@ -233,8 +219,6 @@ class Configuration:
         '.local/bin/mattermost-wrapper.sh':          '~/.local/bin/',
         # Not public
         '.local/bin/chk1':                           '~/.local/bin/',
-
-        #  '.surfing_keys.js': '~/',
     }
 
     def dotfiles(self):

@@ -3,7 +3,6 @@ set guioptions s
 set statusbar-home-tilde true
 set selection-clipboard clipboard
 set adjust-open width
-set smooth-scroll true
 set recolor-reverse-video false
 set incremental-search false
 set font "Iosevka 10"

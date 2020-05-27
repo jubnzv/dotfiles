@@ -211,12 +211,15 @@ alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 zt() { zathura $1 2>&1 >/dev/null & }
 alias mrg='mirage'
 alias j='z'
+jj() { z "$@"; [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}" }
 alias du1="du --max-depth=1"
 alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
 alias processing='java -jar ~/.local/processing.py-3056-linux64/processing-py.jar'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
+lfind() { find . -iname $@ 2>/dev/null }
+rtfm() { man $@ || firefox "https://www.google.com/search?q=$@"; }
 
 # vim
 alias :e='nvim'
@@ -655,5 +658,5 @@ if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
 # ~/.local/bin/cleanup-history ~/.history
 # fc -R # reload history
 # trap "~/.local/bin/cleanup-history ~/.history" EXIT
-
+#
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120

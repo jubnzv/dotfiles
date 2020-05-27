@@ -7,7 +7,13 @@ Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__ ${1};
 endsnippet
 
 snippet prl
-List.iter ${1:list} ~f:(fun e -> Printf.printf "${0:s} " ${2:e});
+List.iter ${1:list} ~f:(fun e -> Printf.printf "%${0:d} " ${2:e});
+endsnippet
+
+snippet be
+begin
+	${VISUAL}$0
+end
 endsnippet
 
 snippet lfl

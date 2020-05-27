@@ -42,8 +42,8 @@ xset dpms force off &
 
 disable_notifications
 amixer -c 0 -q set Master mute
-systemctl --user stop arbtt.service
+[[ `systemctl --all --type service | grep -q "arbtt"` ]] && systemctl --user stop arbtt.service
 i3lock -n --color=282828 -f
 enable_sound $muted
 enable_notifications
-systemctl --user start arbtt.service
+[[ `systemctl --all --type service | grep -q "arbtt"` ]] && systemctl --user start arbtt.service

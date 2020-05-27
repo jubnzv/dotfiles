@@ -16,6 +16,14 @@ if [[ -f "$1" ]]; then
 fi
 endsnippet
 
+snippet ch_var
+[[ "\$${1:var}" ]] && ${0:printf "%s\n" "$var"}
+endsnippet
+
+snippet cat
+$0="\$(< ${1:/path/to/file.txt})"
+endsnippet
+
 snippet strict_mode
 set -eou pipefail
 endsnippet

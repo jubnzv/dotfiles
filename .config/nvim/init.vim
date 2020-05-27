@@ -497,7 +497,7 @@ command! JbzSlimeRight call s:JbzSlimeRight()
 
 nnoremap <leader>sc :JbzSlimeRight
 xmap <leader>ss <Plug>SlimeRegionSend
-nmap <leader>sp <Plug>SlimeParagraphSend
+nmap <leader>ss <Plug>SlimeParagraphSend
 nmap <leader>sl <Plug>SlimeLineSend
 " }}}
 
@@ -1026,7 +1026,7 @@ augroup python_group
   au FileType python set foldmethod=indent foldnestmax=2
   au FileType python RainbowToggleOn
   au Filetype python set cinoptions=:0,l1,t0,g0,(0
-  au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemovePdbCalls<CR>
+  au FileType python nnoremap <buffer><leader>rd :JbzRemovePdbCalls<CR>
   au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
   au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
 augroup END
@@ -1071,6 +1071,14 @@ augroup vimscript_group
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
+augroup END
+" }}}
+
+" {{{ nix language
+augroup nix_group
+  au!
+  au FileType nix setlocal sw=2 ts=2 expandtab
+  au FileType nix RainbowToggleOn
 augroup END
 " }}}
 
@@ -1133,7 +1141,11 @@ au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
 " {{{ Markdown
-let g:markdown_fenced_languages = ['python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'python', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex', 'plantuml', 'html', 'sql']
+let g:markdown_fenced_languages = [
+  \'python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'ocaml',
+  \'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex',
+  \'plantuml', 'html', 'sql', 'nix'
+  \]
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv

@@ -16,6 +16,7 @@ set $APP_JBTOOLBOX $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
 set $APP_TELEGRAM $HOME/.local/bin/Telegram
 set $APP_MATTERMOST $HOME/.local/bin/mattermost-wrapper.sh
 set $APP_THUNDERBIRD $HOME/.local/bin/thunderbird/thunderbird
+set $APP_DISCORD $HOME/.local/Discord/Discord
 
 # Windows behavior
 floating_modifier $mod
@@ -129,10 +130,16 @@ bindsym $mod+Shift+underscore move workspace to output left
 bindsym $mod+Shift+plus move workspace to output right
 
 # Change windows layout
-bindsym $mod+Control+Left move left
-bindsym $mod+Control+Down move down
-bindsym $mod+Control+Up move up
-bindsym $mod+Control+Right move right
+# bindsym $mod+Control+Left move left
+# bindsym $mod+Control+Down move down
+# bindsym $mod+Control+Up move up
+# bindsym $mod+Control+Right move right
+
+# Resizing windows
+bindsym $mod+Control+Right resize shrink width 1 px or 1 ppt
+bindsym $mod+Control+Up resize grow height 1 px or 1 ppt
+bindsym $mod+Control+Down resize shrink height 1 px or 1 ppt
+bindsym $mod+Control+Left resize grow width 1 px or 1 ppt
 
 # Switch between screens
 bindsym $mod+Tab focus output right
@@ -250,10 +257,11 @@ mode "$mode_exec_apps" {
      bindsym 1 exec $APP_TELEGRAM; mode "default"
      bindsym 2 exec $APP_MATTERMOST; mode "default"
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
-     bindsym 4 exec --no-startup-id discord; mode "default"
+     bindsym 4 exec --no-startup-id $APP_DISCORD; mode "default"
      bindsym 9 workspace $ws_0; exec $APP_TELEGRAM;         \
                                 exec $APP_MATTERMOST;       \
                                 exec $APP_THUNDERBIRD;      \
+                                exec $APP_DISCORD;          \
                                 layout tabbed; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"

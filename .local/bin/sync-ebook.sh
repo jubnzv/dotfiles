@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-device=`sudo /sbin/blkid | ag LABEL=\"PB740\" | awk -F':' '{ print $1 }'`
+device=`sudo /sbin/blkid | grep LABEL=\"PB740_CARD\" | awk -F':' '{ print $1 }'`
 trap 'sudo -k' EXIT
 if [[ $device == "" ]]; then
     echo "Device is not mounted! Bailing out."
@@ -12,7 +12,7 @@ if [ ! -d $mount_point ]; then
     exit 127
 fi
 
-echo "Syncing $HOME/Documents/ with $mount_point ..."
+echo "[$(date +'%H:%M:%S')] Syncing $HOME/Documents/ with $mount_point ..."
 rsync -aurq -L --progress \
     --delete              \
     --exclude '*tar.gz'   \
@@ -20,7 +20,8 @@ rsync -aurq -L --progress \
     --exclude '*tar.bz2'  \
     --exclude '*.rar'     \
     --exclude 'websites'  \
+    --exclude '_Archive'  \
     --exclude '*.html'    \
     --exclude '*.7z'      \
-    --exclude '*.zip'     \
     $HOME/Documents/ "$mount_point"/Documents
+echo "[$(date +'%H:%M:%S')] Done"
