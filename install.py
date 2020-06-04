@@ -55,6 +55,10 @@ class Configuration:
         'prettier'
     }
 
+    OPAM_PACKAGES = {
+        'topkg-care'
+    }
+
     # Rust packages that should be installed with cargo
     CARGO_PACKAGES = {
         'bat'

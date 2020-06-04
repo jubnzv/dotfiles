@@ -78,6 +78,7 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'cespare/vim-toml'
 Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
+Plug 'wlangstroth/vim-racket'         " Racket support
 Plug 'lervag/wiki.vim'
 Plug 'ledger/vim-ledger'
 Plug 'aklt/plantuml-syntax'
@@ -485,7 +486,7 @@ let g:slime_no_mappings = 1
 " Configure slime for the right tmux pane in the current window
 function! s:JbzSlimeRight()
   if !exists('$TMUX')
-    echo "tmux is not started"
+    echo "tmux is not running"
     return
   endif
   let win_num = split(system("tmux display-message -p '#I'"), "\n")[0]
@@ -494,6 +495,18 @@ function! s:JbzSlimeRight()
   call slime#config()
 endfunction
 command! JbzSlimeRight call s:JbzSlimeRight()
+
+" Open tmux pane with selected REPL and run slime configuration routine
+function! s:JbzOpenSlimeREPL(repl_exe)
+  if !exists('$TMUX')
+    echo "tmux is not running"
+    return
+  endif
+  call system("tmux split-window -h " . a:repl_exe)
+  call system("tmux last-pane")
+  call s:JbzSlimeRight()
+endfunction
+command! -nargs=1 JbzOpenSlimeREPL call s:JbzOpenSlimeREPL(<f-args>)
 
 nnoremap <leader>sc :JbzSlimeRight
 xmap <leader>ss <Plug>SlimeRegionSend
@@ -992,8 +1005,9 @@ augroup c_cxx_group
   au FileType c,cpp nnoremap <buffer><leader>l# :pyf /usr/lib/llvm-8/share/clang/clang-include-fixer.py<cr>
   " Set doxygen keybindings
   au FileType c,cpp call Doxygen1Keymap()
-  " Enable rainbow parens
   au FileType c,cpp RainbowToggleOn
+  au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
+  au BufEnter *.cc let b:fswitchdst = "h,hpp"
   " Use C filetype for headers by default
   " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
   " Quick access to man pages
@@ -1024,18 +1038,12 @@ augroup python_group
   au!
   au FileType python set tw=0
   au FileType python set foldmethod=indent foldnestmax=2
-  au FileType python RainbowToggleOn
   au Filetype python set cinoptions=:0,l1,t0,g0,(0
   au FileType python nnoremap <buffer><leader>rd :JbzRemovePdbCalls<CR>
-  au FileType python nnoremap <buffer> <leader>ri :!isort %<CR><CR>
+  au FileType python nnoremap <buffer><leader>ri :!isort %<CR><CR>
   au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
-augroup END
-" }}}
-
-" {{{ Golang
-augroup go_group
-  au!
-  au FileType go RainbowToggleOn
+  au FileType python nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "ipython3"<CR>
+  au FileType python RainbowToggleOn
 augroup END
 " }}}
 
@@ -1047,18 +1055,26 @@ execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
 augroup ocaml_group
   au!
-  au FileType ocaml RainbowToggleOn
-  au FileType dune RainbowToggleOn
+  au FileType ocaml inoremap <A-1> `
+  au FileType dune setlocal foldmethod=marker
   " FSwitch associations
-  au! BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
-  au! BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
+  au BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
+  au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
+  au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "utop"<CR>
+  au FileType ocaml,dune RainbowToggleOn
 augroup END
 " }}}
 
-" {{{ Scala
-augroup scala_group
+" {{{ Racket
+augroup rkt_group
   au!
-  au FileType scala RainbowToggleOn
+  " au FileType racket inoremap <A-1> `()<Esc>i
+  au FileType racket inoremap <A-1> `
+  au FileType racket inoremap <A-2> '
+  au FileType racket setlocal foldmethod=marker
+  au FileType racket setlocal commentstring=;\ %s
+  au FileType racket nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "racket"<CR>
+  au FileType racket RainbowToggleOn
 augroup END
 " }}}
 

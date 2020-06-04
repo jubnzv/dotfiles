@@ -37,10 +37,10 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id /usr/bin/xcompmgr
 exec --no-startup-id /home/jubnzv/.local/bin/keepassxc
-exec --no-startup-id sleep 3; anki
+exec --no-startup-id sleep 10; anki
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 exec --no-startup-id syncthing-gtk
-exec --no-startup-id autorandr --change
+exec --no-startup-id autorandr --change home
 exec --no-startup-id "eval `ssh-agent -s`"
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 # }}}
