@@ -4,6 +4,7 @@ gpgsign = true
 filemode = false
 editor = nvim
 pager = diff-so-fancy | less --tabs=4 -RFX
+quotePath = false
 [diff]
 tool = kitty
 [difftool]

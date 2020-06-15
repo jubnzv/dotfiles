@@ -16,9 +16,8 @@ Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'justinmk/vim-sneak'             " The missing motion for Vim
 Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap into it
 Plug 'will133/vim-dirdiff'            " Diff two directories
-Plug 'andymass/vim-matchup'           " Better `%` for some modes
+Plug 'andymass/vim-matchup'           " Better %
 Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
-Plug 'wesQ3/vim-windowswap'           " Swap windows without ruining the layout
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
@@ -60,6 +59,12 @@ Plug 'sbdchd/neoformat'
 " Native neovim LSP client
 if has('nvim-0.5')
   Plug 'neovim/nvim-lsp'
+  Plug 'haorenW1025/diagnostic-nvim'  " A wrapper for neovim built in LSP diagnosis config
+  " Plug 'weilbith/nvim-lsp-smag'       " Use LSP tags instead of ctags when LSP server is running
+endif
+" Treesitter integration
+if has('nvim-0.5')
+  Plug 'nvim-treesitter/nvim-treesitter'
 endif
 Plug 'jubnzv/DoxygenToolkit.vim'
 Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
@@ -80,7 +85,6 @@ Plug 'cespare/vim-toml'
 Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
 Plug 'lervag/wiki.vim'
-Plug 'ledger/vim-ledger'
 Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
@@ -214,7 +218,7 @@ endfunction
 inoremap jj <Esc>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>xc :q<CR>
-" nnoremap <leader>s :w<CR>
+nnoremap <leader>w :w<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -415,13 +419,6 @@ EOF
 endif
 " }}}
 
-" {{{ WindowSwap.vim
-let g:windowswap_map_keys = 0 "prevent default bindings
-nnoremap <silent> <leader>wy :call WindowSwap#MarkWindowSwap()<CR>
-nnoremap <silent> <leader>wp :call WindowSwap#DoWindowSwap()<CR>
-nnoremap <silent> <leader>ww :call WindowSwap#EasyWindowSwap()<CR>
-" }}}
-
 " {{{ Integration with web-browser
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
@@ -497,16 +494,23 @@ endfunction
 command! JbzSlimeRight call s:JbzSlimeRight()
 
 " Open tmux pane with selected REPL and run slime configuration routine
-function! s:JbzOpenSlimeREPL(repl_exe)
+function! s:JbzOpenSlimeREPL(repl_exe, ...)
   if !exists('$TMUX')
     echo "tmux is not running"
     return
   endif
-  call system("tmux split-window -h " . a:repl_exe)
+
+  let cmd = a:repl_exe
+
+  " Parse additional command to execute before running the REPL
+  let cmd_aux = get(a:, 1, "")
+  if !empty(cmd_aux) | let cmd = cmd_aux . " && " . cmd | endif
+
+  call system("tmux split-window -h \"" . cmd . "\"")
   call system("tmux last-pane")
   call s:JbzSlimeRight()
 endfunction
-command! -nargs=1 JbzOpenSlimeREPL call s:JbzOpenSlimeREPL(<f-args>)
+command! -nargs=+ JbzOpenSlimeREPL call s:JbzOpenSlimeREPL(<f-args>)
 
 nnoremap <leader>sc :JbzSlimeRight
 xmap <leader>ss <Plug>SlimeRegionSend
@@ -658,7 +662,6 @@ nnoremap <leader>xf :Files<CR>
 nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>wf :Windows<CR>
 nnoremap <leader>xr :FZFMru <CR>
 nnoremap <leader>fc :Cd .<CR>
 nnoremap <leader>fs :Ag<CR>
@@ -866,26 +869,20 @@ let g:neoformat_enabled_ocaml = ['ocpindent']
 " }}}
 
 " {{{ LSP-client
-if has('nvim-0.5')
-lua << EOF
-  require'nvim_lsp'.clangd.setup{
-    cmd = { "clangd-10", "--background-index" } -- TODO: latest clang-11 is broken.
-  }
-  require'nvim_lsp'.pyls.setup{}
-  require'nvim_lsp'.gopls.setup{}
-  --require'nvim_lsp'.ocamllsp.setup{}
-EOF
-endif
+" Auxiliary configuration for haorenW1025/diagnostic-nvim
+let g:diagnostic_enable_virtual_text = 0
+call sign_define("LspDiagnosticsErrorSign", {"text" : "E", "texthl" : "LspDiagnosticsError"})
+call sign_define("LspDiagnosticsWarningSign", {"text" : "W", "texthl" : "LspDiagnosticsWarning"})
+call sign_define("LspDiagnosticInformationSign", {"text" : "I", "texthl" : "LspDiagnosticsInformation"})
+call sign_define("LspDiagnosticHintSign", {"text" : "H", "texthl" : "LspDiagnosticsHint"})
+" Neovim's built-in LSP support will keep sending diagnostic messages when you're in insert mode.
+let g:diagnostic_insert_delay = 1
+let g:diagnostic_enable_underline = 1
 
-nnoremap <silent> gd             <cmd>lua vim.lsp.buf.declaration()<CR>
-nnoremap <silent> gt             <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> <leader>lk     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <leader>lr     <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> gD             <cmd>lua vim.lsp.buf.implementation()<CR>
-nnoremap <silent> <c-k>          <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD            <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> gr             <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> <leader>le     <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+function! LSPKeymap()
+  nnoremap <buffer>]e :NextDiagnosticCycle<CR>
+  nnoremap <buffer>[e :PrevDiagnosticCycle<CR>
+endfunction
 " }}}
 
 " {{{ EditorConfig
@@ -912,12 +909,6 @@ let g:DoxygenToolkit_compactOneLineDoc = "no"
 let g:DoxygenToolkit_compactDoc = "yes"
 let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
 let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
-
-" Use C-style /** */ comments
-function! Doxygen1Keymap()
-  nnoremap <buffer><localleader>dd :Dox<CR>
-  nnoremap <buffer><localleader>df $a /**<  */<Esc>hhi
-endfunction
 "}}}
 
 " {{{ Git workflow
@@ -938,6 +929,7 @@ nmap <leader>vD :Git! diff<cr>
 nmap <leader>vb :Gblame<cr>
 nmap <leader>vl :Glog<cr>:copen<cr>
 nmap <leader>vB :Twiggy<cr>
+nmap <leader>vf :GFiles<cr>
 nmap <leader>m <Plug>(git-messenger)
 
 " {{{ Copy git link
@@ -1003,8 +995,8 @@ augroup c_cxx_group
   au FileType c,cpp setlocal cinoptions+=l1
   " Include fixer
   au FileType c,cpp nnoremap <buffer><leader>l# :pyf /usr/lib/llvm-8/share/clang/clang-include-fixer.py<cr>
-  " Set doxygen keybindings
-  au FileType c,cpp call Doxygen1Keymap()
+  " Set LSP keybindings
+  au FileType c,cpp call LSPKeymap()
   au FileType c,cpp RainbowToggleOn
   au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
   au BufEnter *.cc let b:fswitchdst = "h,hpp"
@@ -1042,7 +1034,7 @@ augroup python_group
   au FileType python nnoremap <buffer><leader>rd :JbzRemovePdbCalls<CR>
   au FileType python nnoremap <buffer><leader>ri :!isort %<CR><CR>
   au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
-  au FileType python nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "ipython3"<CR>
+  au FileType python nnoremap <buffer><leader>sC :JbzOpenSlimeREPL ipython3 [[\ -d\ ./venv/\ ]]\ &&\ source\ venv/bin/activate<CR>
   au FileType python RainbowToggleOn
 augroup END
 " }}}
@@ -1057,11 +1049,22 @@ augroup ocaml_group
   au!
   au FileType ocaml inoremap <A-1> `
   au FileType dune setlocal foldmethod=marker
-  " FSwitch associations
-  au BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
-  au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
   au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "utop"<CR>
   au FileType ocaml,dune RainbowToggleOn
+
+  " Print types from .annot files.
+  " au FileType ocaml nmap <buffer> <A-t> <Plug>OCamlPrintType
+  " au FileType ocaml xmap <buffer> <A-t> <Plug>OCamlPrintType
+
+  " Rebind switching keys defined at default ocaml.vim
+  au FileType ocaml nmap <buffer> <silent><A-o> <Plug>OCamlSwitchEdit
+  au FileType ocaml nmap <buffer> <silent><LocalLeader><A-o> <Plug>OCamlSwitchNewWin
+
+  " FSwitch associations
+  " au BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
+  " au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
+  au BufEnter *.mly let b:fswitchdst = 'lexer.mll'  | let b:fswitchlocs = 'ifrel:/././'
+  au BufEnter *.mll let b:fswitchdst = 'parser.mly'  | let b:fswitchlocs = 'ifrel:/././'
 augroup END
 " }}}
 
@@ -1207,7 +1210,7 @@ au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
 " {{{ org-mode
 augroup org_mode_group
     au!
-    au! BufNewFile,BufReadPost *.org set filetype=org
+    au BufNewFile,BufReadPost *.org set filetype=org
 augroup END
 " }}}
 
@@ -1368,5 +1371,7 @@ nnoremap <leader>tr :RainbowToggle<cr>
 nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>
 " }}}
+
+lua require'init'.setup()
 
 " vim:fdm=marker:fen:sw=2:tw=120

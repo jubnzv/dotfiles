@@ -197,6 +197,7 @@ bindsym $mod+Control+2 workspace $ws_w; exec firefox
 bindsym $mod+Control+3 workspace $ws_w; exec firefox -p local
 bindsym $mod+Control+5 workspace $ws_w; exec chromium --profile-directory=Dev
 bindsym $mod+Control+r exec $TERMINAL -e ranger
+bindsym $mod+Shift+R exec caja
 bindsym $mod+Control+q exec code
 bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
@@ -258,10 +259,12 @@ mode "$mode_exec_apps" {
      bindsym 2 exec $APP_MATTERMOST; mode "default"
      bindsym 3 exec --no-startup-id  $APP_THUNDERBIRD; mode "default"
      bindsym 4 exec --no-startup-id $APP_DISCORD; mode "default"
+     bindsym 5 exec --no-startup-id hexchat mode "default"
      bindsym 9 workspace $ws_0; exec $APP_TELEGRAM;         \
                                 exec $APP_MATTERMOST;       \
                                 exec $APP_THUNDERBIRD;      \
                                 exec $APP_DISCORD;          \
+                                exec hexchat;               \
                                 layout tabbed; mode "default"
      bindsym Return mode "default"
      bindsym Escape mode "default"
@@ -305,12 +308,13 @@ mode "$mode_taskwarrior" {
 }
 # }}}
 # {{{ Run selected REPL
-set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop
+set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop [r] r2
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
     bindsym i       exec $TERMINAL -e ipython3; mode "default"
     bindsym j       exec $TERMINAL -e jupyter-notebook; mode "default"
     bindsym u       exec $TERMINAL -e utop; mode "default"
+    bindsym r       exec $TERMINAL -e r2 -; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }

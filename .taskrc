@@ -28,9 +28,6 @@ alias.c=context
 # Color theme
 include ~/.config/taskwarrior/gruvbox-dark-256.theme
 
-# Holidays
-include ~/.local/share/taskwarrior/holidays.ru-RU.rc
-
 # Bugwarrior configuration
 include ~/.config/taskwarrior/bugwarrior.rc
 
