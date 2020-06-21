@@ -129,6 +129,7 @@ class Configuration:
         '.config/nvim/lua/init.lua':              '~/.config/nvim/lua/',
         '.config/nvim/lua/ts.lua':                '~/.config/nvim/lua/',
         '.config/nvim/lua/lsp.lua':               '~/.config/nvim/lua/',
+        '.config/nvim/lua/nvim-colorizer.lua':    '~/.config/nvim/lua/',
         '.config/nvim/clang-rename.py':           '~/.config/nvim/',
         '.config/nvim/settings.json':             '~/.config/nvim/',
         '.config/nvim/plugin/gitlink.vim':        '~/.config/nvim/plugin/',

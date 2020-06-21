@@ -13,7 +13,7 @@ if [ ! -d $mount_point ]; then
 fi
 
 echo "[$(date +'%H:%M:%S')] Syncing $HOME/Documents/ with $mount_point ..."
-rsync -aurq -L --progress \
+rsync --update -aurP -L   \
     --delete              \
     --exclude '*tar.gz'   \
     --exclude '*tar.xz'   \

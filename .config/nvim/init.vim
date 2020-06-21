@@ -92,7 +92,13 @@ Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'jubnzv/IEC.vim'
-" Plug '/home/jubnzv/Dev/IEC.vim/'
+" Plug '~/Dev/IEC.vim/'
+
+" LLVM plugin
+" See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
+if isdirectory('~/Dev/llvm-project/llvm/utils/vim/')
+  Plug '~/Dev/llvm-project/llvm/utils/vim/'
+endif
 
 call plug#end()
 " }}}
@@ -130,7 +136,8 @@ set lazyredraw                              " Do not redraw screen in the middle
 set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
 set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
 set eol
-set fixeol                                  "<EOL> at the end of file will be restored if missing
+set fixeol                                  " <EOL> at the end of file will be restored if missing
+set re=1                                    " Required for vista.vim: https://github.com/liuchengxu/vista.vim/issues/82
 
 " Add additional information in popups (VIM 8.0+ only)
 if !has('nvim')
@@ -230,7 +237,6 @@ nnoremap Y y$
 " Map Ctrl-Backspace to delete previous word or selected region
 inoremap <C-BS> <C-W>
 cnoremap <C-BS> <C-W>
-" vnoremap <C-BS> d
 
 " Reload vimrc
 nnoremap <localleader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
@@ -297,10 +303,6 @@ noremap <A-u> [s1z=``
 inoremap <A-u> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
 
-" {{{ indentLine configuration
-let g:indentLine_fileTypeExclude = ['tex', 'markdown']
-" }}}
-
 " {{{ Toggle quickfix window
 function! QuickFix_toggle()
     for i in range(1, winnr('$'))
@@ -325,6 +327,28 @@ map <leader>ev :vsp %%
 map <leader>et :tabe %%
 map <leader>ec :cd %%<cr>
 map <leader>eC :cd ..<cr>
+
+" Tabs managemenent
+nnoremap <A-t> :tabnew<CR>
+nnoremap <A-Tab> :tabnext<CR>
+nnoremap <A-1>      1gt
+inoremap <A-1> <C-O>1gt
+nnoremap <A-2>      2gt
+inoremap <A-2> <C-O>2gt
+nnoremap <A-3>      3gt
+inoremap <A-3> <C-O>3gt
+nnoremap <A-4>      4gt
+inoremap <A-4> <C-O>4gt
+nnoremap <A-5>      5gt
+inoremap <A-5> <C-O>5gt
+nnoremap <A-6>      6gt
+inoremap <A-6> <C-O>6gt
+nnoremap <A-7>      7gt
+inoremap <A-7> <C-O>7gt
+nnoremap <A-8>      8gt
+inoremap <A-8> <C-O>8gt
+nnoremap <A-9>      9gt
+inoremap <A-9> <C-O>9gt
 
 " Find and Replace
 map <leader>rs :%s///g<left><left><left>
@@ -374,7 +398,45 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 
+" {{{ indentLine configuration
+let g:indentLine_fileTypeExclude = ['tex', 'markdown']
+" }}}
+
 " {{{ Lightline
+" {{{ Function to show stripped filepath
+" This is modified version of:
+" https://github.com/itchyny/lightline.vim/issues/87#issuecomment-324988609
+function! LightLineFilename()
+	let subs = split(expand('%'), "/")
+
+    " Handle './filename' and 'filename' cases
+    let subs_len = len(subs)
+    if subs_len < 3
+      if subs_len == 1
+        return subs[0]
+      endif
+      if (subs_len == 2) && (subs[0] == '.')
+        return subs[1]
+      endif
+    endif
+
+	let name = ""
+	let i = 1
+	for s in subs
+		let parent = name
+		if  i == len(subs)
+			let name = parent . '/' . s
+		elseif i == 1
+			let name = parent . strpart(s, 0, 2)
+		else
+			let name = parent . '/' . strpart(s, 0, 2)
+		endif
+		let i += 1
+	endfor
+  return name
+endfunction
+" }}}
+
 let g:lightline = {
   \ 'colorscheme': 'gruvbox',
   \ 'active': {
@@ -390,7 +452,8 @@ let g:lightline = {
   \   'gitbranch': ' %{fugitive#head()}'
   \ },
   \ 'component_function': {
-  \   'method': 'NearestMethodOrFunction'
+  \   'method': 'NearestMethodOrFunction',
+  \   'filename': 'LightLineFilename'
   \ },
   \ 'component_type': {
   \   'lsp_warnings': 'warning',
@@ -400,23 +463,6 @@ let g:lightline = {
   \ }
 
 let g:buftabline_indicators=1 " show modified
-" }}}
-
-" {{{ nvim-colorizer
-if has('nvim')
-lua << EOF
--- Attach to certain Filetypes, add special configuration for `html`
--- Use `background` for everything else.
-require 'colorizer'.setup {
-  'css';
-  'javascript';
-  'html';
-  'markdown';
-  'conf';
-  'plantuml';
-}
-EOF
-endif
 " }}}
 
 " {{{ Integration with web-browser
@@ -657,7 +703,6 @@ au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ft :Tags<CR>
-nnoremap <A-t> :Tags<CR>
 nnoremap <leader>xf :Files<CR>
 nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
@@ -767,6 +812,12 @@ au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
 " {{{ ctags and vista.vim
 set tags=./tags;
+let g:gutentags_ctags_exclude = [
+  \'node_modules', '_build', 'build', 'CMakeFiles', '.mypy_cache', 'venv',
+  \'*.md', '*.tex', '*.css', '*.html', '*.json', '*.xml', '*.xmls']
+" Guttentags will exclude files from wildignore settings
+let g:gutentags_ctags_exclude_wildignore = 1
+
 let g:vista_default_executive = 'ctags'
 let g:vista_fzf_preview = ['right:50%']
 
@@ -789,7 +840,7 @@ function! FunctionNameToClipboard() abort
 endfunction
 nnoremap <leader>yf :call FunctionNameToClipboard()<cr>
 
-nnoremap <silent> <A-7> :Vista!!<CR>
+nnoremap <silent> <C-7> :Vista!!<CR>
 " }}}
 
 " {{{ vim-signature
@@ -816,24 +867,24 @@ let g:SignatureMap = {
         \ 'ListBufferMarks'    :  "m/",
         \ 'ListBufferMarkers'  :  "m?"
         \ }
-nnoremap [1 :call signature#marker#Goto('prev', 1, v:count)<cr>
-nnoremap ]1 :call signature#marker#Goto('next', 1, v:count)<cr>
-nnoremap [2 :call signature#marker#Goto('prev', 2, v:count)<cr>
-nnoremap ]2 :call signature#marker#Goto('next', 2, v:count)<cr>
-nnoremap [3 :call signature#marker#Goto('prev', 3, v:count)<cr>
-nnoremap ]3 :call signature#marker#Goto('next', 3, v:count)<cr>
-nnoremap [4 :call signature#marker#Goto('prev', 4, v:count)<cr>
-nnoremap ]4 :call signature#marker#Goto('next', 4, v:count)<cr>
-nnoremap [5 :call signature#marker#Goto('prev', 5, v:count)<cr>
-nnoremap ]5 :call signature#marker#Goto('next', 5, v:count)<cr>
-nnoremap [6 :call signature#marker#Goto('prev', 6, v:count)<cr>
-nnoremap ]6 :call signature#marker#Goto('next', 6, v:count)<cr>
-nnoremap [7 :call signature#marker#Goto('prev', 7, v:count)<cr>
-nnoremap ]7 :call signature#marker#Goto('next', 7, v:count)<cr>
-nnoremap [8 :call signature#marker#Goto('prev', 8, v:count)<cr>
-nnoremap ]8 :call signature#marker#Goto('next', 8, v:count)<cr>
-nnoremap [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
-nnoremap ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
+nnoremap <silent> [1 :call signature#marker#Goto('prev', 1, v:count)<cr>
+nnoremap <silent> ]1 :call signature#marker#Goto('next', 1, v:count)<cr>
+nnoremap <silent> [2 :call signature#marker#Goto('prev', 2, v:count)<cr>
+nnoremap <silent> ]2 :call signature#marker#Goto('next', 2, v:count)<cr>
+nnoremap <silent> [3 :call signature#marker#Goto('prev', 3, v:count)<cr>
+nnoremap <silent> ]3 :call signature#marker#Goto('next', 3, v:count)<cr>
+nnoremap <silent> [4 :call signature#marker#Goto('prev', 4, v:count)<cr>
+nnoremap <silent> ]4 :call signature#marker#Goto('next', 4, v:count)<cr>
+nnoremap <silent> [5 :call signature#marker#Goto('prev', 5, v:count)<cr>
+nnoremap <silent> ]5 :call signature#marker#Goto('next', 5, v:count)<cr>
+nnoremap <silent> [6 :call signature#marker#Goto('prev', 6, v:count)<cr>
+nnoremap <silent> ]6 :call signature#marker#Goto('next', 6, v:count)<cr>
+nnoremap <silent> [7 :call signature#marker#Goto('prev', 7, v:count)<cr>
+nnoremap <silent> ]7 :call signature#marker#Goto('next', 7, v:count)<cr>
+nnoremap <silent> [8 :call signature#marker#Goto('prev', 8, v:count)<cr>
+nnoremap <silent> ]8 :call signature#marker#Goto('next', 8, v:count)<cr>
+nnoremap <silent> [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
+nnoremap <silent> ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
 " }}}
 
 " {{{ deoplete
@@ -1229,12 +1280,15 @@ let g:wiki_mappings_global = {
   \ '<plug>(wiki-link-open)'        : '<cr>',
   \ '<plug>(wiki-link-open-split)'  : '<c-cr>',
   \ }
+" }}}
 
-" Highligth TODO and DONE entries
+" {{{ Highligth TODO and DONE entries in the documents
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
 augroup HiglightTODO
     autocmd!
+    au WinEnter,VimEnter,FileType {markdown,org} syntax match todoCheckbox "\[\ \]" conceal cchar=
+    au WinEnter,VimEnter,FileType {markdown,org} syntax match todoCheckbox "\[x\]" conceal cchar=
     au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdTodo', 'TODO', -1)
     au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdDone', 'DONE', -1)
 augroup END
@@ -1370,8 +1424,11 @@ nnoremap <leader>tC :ColorizerToggle<CR>
 nnoremap <leader>tr :RainbowToggle<cr>
 nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>
+nnoremap <leader>ti :IndentLinesToggle<cr>
 " }}}
 
+if has('nvim')
 lua require'init'.setup()
+endif
 
 " vim:fdm=marker:fen:sw=2:tw=120

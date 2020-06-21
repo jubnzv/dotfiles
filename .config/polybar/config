@@ -54,6 +54,7 @@ cursor-scroll = ns-resize
 
 tray-position = right
 tray-padding = 2
+tray-background = ${colors.background}
 
 [module/filesystem]
 type = internal/fs
@@ -71,6 +72,7 @@ label-unmounted-foreground = ${colors.foreground-alt}
 
 [module/i3]
 type = internal/i3
+; wm-restack = i3
 
 format = <label-state> <label-mode>
 index-sort = true

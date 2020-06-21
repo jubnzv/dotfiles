@@ -56,10 +56,12 @@ export DOCKER_ID_USER="jubnzv1"
 
 # Shortcuts for most used tools
 export CPPCHECK=$HOME/Dev/cppcheck/_latest/
-export CPPCHECK89=$HOME/Dev/cppcheck/_189/
 export TOOLS=$HOME/Dev/tools/
 export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
 export BCC=$HOME/Dev/tools/bcc/
+
+# Path to LLVM build directory
+export LLVM=$HOME/Dev/llvm-project/build/bin
 
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
