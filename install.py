@@ -38,17 +38,18 @@ class Configuration:
     HOME = '/home/jubnzv'
     SCRIPT_PATH = os.path.dirname(os.path.abspath(__file__)) + '/'
 
-    # Required packages from Debian repositories
     APT_PACKAGES = {
         'etckeeper', 'fasd', 'expect', 'lxappearance', 'npm',
-        'python-configparser',  # for matplotlib with py2
+        'python-configparser',  # matplotlib with py2
+        'wkhtmltopdf',          # pdfkit
+        'ccache',
     }
 
-    # Python packages that should be installed with pip --user
+    # Python packages that should be installed with pip3 --user
     # Note: Patched version of bugwarrior is required
     PIP_PACKAGES = {
         'pdbpp', 'pre-commit', 'yolk', 'cmake_format', 'autopep8', 'neovim',
-        'python-language-server', 'offtrac', 'pluggy', 'pyls-mypy',
+        'python-language-server', 'offtrac', 'pluggy', 'pyls-mypy', 'pdfkit',
     }
 
     NPM_PACKAGES = {
@@ -56,10 +57,16 @@ class Configuration:
     }
 
     OPAM_PACKAGES = {
-        'topkg-care'
+        'topkg-care',
+        'ocaml-lsp-server',
+        'uutf'
     }
 
-    # Rust packages that should be installed with cargo
+    # luarocks install --local
+    LUAROCKS_PACKAGES = {
+        'formatter', 'checks', 'json-lua'
+    }
+
     CARGO_PACKAGES = {
         'bat'
     }
@@ -76,12 +83,6 @@ class Configuration:
             'url': 'https://github.com/jubnzv/zsh-completions',
             'branch': 'cppcheck-compdef',
             'dst': '~/.zsh/'
-        },
-        {
-            'name': 'bat-gruvbox-theme',
-            'url': 'https://github.com/Briles/gruvbox',
-            'branch': 'master',
-            'dst': '~/.config/bat/themes/',
         },
     )
 
@@ -100,7 +101,6 @@ class Configuration:
         '.latex/template-cyrillic.tex':                 '~/.latex/',
         '.latexmkrc':                                   '~/',
         '.xinitrc':                                     '~/',
-        '.config/bat/config':                           '~/.config/bat/',
         '.config/qt5ct/colors/oomox-gruvbox-dark.conf': '~/.config/qt5ct/colors/',
         '.config/dunst/dunstrc':                        '~/.config/dunst/',
         '.config/rofi/config':                          '~/.config/rofi/',
@@ -120,6 +120,11 @@ class Configuration:
         '.config/ranger/rifle.conf':                    '~/.config/ranger/',
         '.config/ranger/commands.py':                   '~/.config/ranger/',
 
+        '.config/bat/config':                                             '~/.config/bat/',
+        '.config/bat/themes/gruvbox/gruvbox (Dark) (Hard) NDC.tmTheme':   '~/.config/bat/themes/gruvbox/',
+        '.config/bat/themes/gruvbox/gruvbox (Dark) (Hard).sublime-theme': '~/.config/bat/themes/gruvbox/',
+        '.config/bat/themes/gruvbox/gruvbox (Dark) (Hard).tmTheme':       '~/.config/bat/themes/gruvbox/',
+
         # zsh
         '.zshrc':                                       '~/',
         '.zsh/dircolors':                               '~/.zsh/dircolors',
@@ -134,8 +139,6 @@ class Configuration:
         '.config/nvim/settings.json':             '~/.config/nvim/',
         '.config/nvim/plugin/gitlink.vim':        '~/.config/nvim/plugin/',
         '.config/nvim/plugin/pasteimage.vim':     '~/.config/nvim/plugin/',
-        '.config/nvim/after/ftplugin/c.vim':      '~/.config/nvim/after/ftplugin/',
-        '.config/nvim/after/ftplugin/help.vim':   '~/.config/nvim/after/ftplugin/',
 
         '.config/nvim/UltiSnips/all.snippets':    '~/.config/nvim/UltiSnips/',
         '.config/nvim/UltiSnips/c.snippets':      '~/.config/nvim/UltiSnips/',
@@ -151,6 +154,7 @@ class Configuration:
         '.config/i3/lock.sh':                 '~/.config/i3/',
         '.config/i3/raise-anki.py':           '~/.config/i3/',
         '.config/i3/rofi-notes.sh':           '~/.config/i3/',
+        '.config/i3/rofi-configs.sh':         '~/.config/i3/',
         '.config/i3/setup-keys.sh':           '~/.config/i3/',
         '.config/i3/toggle-notifications.sh': '~/.config/i3/',
         '.config/i3/touchpad-toggle.sh':      '~/.config/i3/',
@@ -198,7 +202,6 @@ class Configuration:
         '.local/bin/fs-fix-notes-index.sh':          '~/.local/bin/',
         '.local/bin/fs-sort-downloads.sh':           '~/.local/bin/',
         '.local/bin/fs-sort-pictures.py':            '~/.local/bin/',
-        '.local/bin/fzf-tmux-session':               '~/.local/bin/',
         '.local/bin/gitignore-update':               '~/.local/bin/',
         '.local/bin/gitlog.sh':                      '~/.local/bin/',
         '.local/bin/kern-install-modules':           '~/.local/bin/',
@@ -216,17 +219,12 @@ class Configuration:
         '.local/bin/ssh-speed-test.sh':              '~/.local/bin/',
         '.local/bin/ssl-checker.py':                 '~/.local/bin/',
         '.local/bin/sync-ebook.sh':                  '~/.local/bin/',
-        '.local/bin/syscall-num':                    '~/.local/bin/',
         '.local/bin/task-resched-work.sh':           '~/.local/bin/',
         '.local/bin/unpack-all':                     '~/.local/bin/',
         '.local/bin/vimfzf':                         '~/.local/bin/',
         '.local/bin/wait_ssh':                       '~/.local/bin/',
-        '.local/bin/taskwarrior-end-day':            '~/.local/bin/',
-        '.local/bin/taskwarrior-notify-active-task': '~/.local/bin/',
-        '.local/bin/taskwarrior-notify-has-tasks':   '~/.local/bin/',
         '.local/bin/mattermost-wrapper.sh':          '~/.local/bin/',
-        # Not public
-        '.local/bin/chk1':                           '~/.local/bin/',
+        '.local/bin/save-webpage.py':                '~/.local/bin/',
     }
 
     def dotfiles(self):

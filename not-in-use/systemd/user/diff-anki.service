@@ -1,9 +1,0 @@
-[Unit]
-Description=diff-anki
-
-[Service]
-ExecStart=/home/jubnzv/.local/bin/diff-anki.py
-Type=oneshot
-
-[Install]
-WantedBy=default.target

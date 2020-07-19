@@ -8,12 +8,13 @@ trap 'echo $( date ) Backup interrupted >&2; exit 2' INT TERM
 
 info "Starting backup"
 
-${BORG_BIN} create                  \
-    --warning                       \
-    --show-rc                       \
-    --compression lz4               \
-    --exclude-caches                \
-    ::'{hostname}-{now}'            \
+${BORG_BIN} create                            \
+    --warning                                 \
+    --show-rc                                 \
+    --compression lz4                         \
+    --exclude '/home/jubnzv/Dev/llvm-project' \
+    --exclude-caches                          \
+    ::'{hostname}-{now}'                      \
     /home/jubnzv/Work       \
     /home/jubnzv/Uni        \
     /home/jubnzv/Org        \

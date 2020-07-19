@@ -27,7 +27,7 @@ focus_follows_mouse no
 # {{{ Autostart
 exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
-exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
+# exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
 exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle.sh
 exec --no-startup-id amixer -c 0 -q set Master mute
 exec --no-startup-id amixer -c 0 -q set Capture nocap
@@ -35,7 +35,6 @@ exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
 exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
-exec --no-startup-id /usr/bin/xcompmgr
 exec --no-startup-id /home/jubnzv/.local/bin/keepassxc
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 exec --no-startup-id syncthing-gtk
@@ -48,7 +47,7 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 # {{{ UI and appearance
 # Color theme
 # class                 border  backgr. text    indicator
-client.focused          #4e4e4e #282828  #fb4934 #d65d0e
+client.focused          #4e4e4e #282828 #ebdbb2 #d65d0e
 client.focused_inactive #282828 #282828 #93a1a1 #586e75
 client.unfocused        #282828 #282828 #93a1a1 #586e75
 client.urgent           #d65d0e #282828 #000000 #586e75
@@ -111,7 +110,7 @@ set $mod Mod4
 # Windows control
 bindsym $mod+Shift+C kill
 bindsym $mod+Shift+less kill
-bindsym $mod+F11 fullscreen
+bindsym $mod+F9 fullscreen
 bindsym $mod+Escape layout toggle tabbed splith
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Shift+B border toggle
@@ -189,6 +188,7 @@ bindsym $mod+Shift+0 move container to workspace $ws_0
 
 # Application startup hotkeys
 bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh
+bindsym $mod+c exec $SCRIPTS_PATH/rofi-configs.sh
 bindsym $mod+Control+n exec $TERMINAL -e nvim "+cd ~/Org/Notes" ~/Org/Notes/index.md
 bindsym $mod+Shift+N exec $TERMINAL -e nvim ~/Org/Notes/
 bindsym $mod+Return exec $TERMINAL
@@ -263,8 +263,6 @@ mode "$mode_exec_apps" {
      bindsym 9 workspace $ws_0; exec $APP_TELEGRAM;         \
                                 exec $APP_MATTERMOST;       \
                                 exec $APP_THUNDERBIRD;      \
-                                exec $APP_DISCORD;          \
-                                exec hexchat;               \
                                 exec hexchat;               \
                                 layout tabbed; mode "default"
      bindsym Return mode "default"
@@ -291,19 +289,6 @@ mode "$mode_exec_i3cmd" {
 	bindsym s           exec xset dpms force off; mode "default"
 	bindsym r           exec i3-msg "restart"; mode "default"
 	bindsym e           exec i3-msg "exit"; mode "default"
-	bindsym Return 	    mode "default"
-	bindsym Escape 	    mode "default"
-}
-# }}}
-# {{{ taskwarrior
-set $mode_taskwarrior  taskwarrior [a] active [e] end-day [h] has-tasks [n] start-notifications [N] stop-notifications
-bindsym $mod+t mode "$mode_taskwarrior"
-mode "$mode_taskwarrior" {
-	bindsym a           exec taskwarrior-notify-active-task; mode "default"
-    bindsym e           exec taskwarrior-end-day; mode "default"
-    bindsym h           exec taskwarrior-notify-has-tasks -v; mode "default"
-	bindsym n           exec taskwarrior-notify-active-task && systemctl --user start taskwarrior-active-task-notification.timer; mode "default"
-	bindsym Shift+N     exec systemctl --user stop taskwarrior-active-task-notification.timer; mode "default"
 	bindsym Return 	    mode "default"
 	bindsym Escape 	    mode "default"
 }

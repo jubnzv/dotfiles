@@ -1,5 +1,5 @@
 ## dotfiles
-*Disclamer*: This repository is intended only for my own personal use.
+This repository is intended only for my own personal use.
 
 * [Ergodox EZ layout](https://configure.ergodox-ez.com/ergodox-ez/layouts/pjYeR/latest/0)
 * Emacs configurations:

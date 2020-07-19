@@ -48,20 +48,25 @@ export GOPATH=$HOME/Dev/go/
 # See: https://golang.org/doc/install#extra_versions
 unset GOROOT
 
+# Path to LLVM build directory
+export LLVM=$HOME/Dev/llvm-project/build/bin
+
 # PATH
-export PATH=$PATH:$HOME/.local/bin/:$HOME/.cargo/bin:/usr/local/go/bin:$GOPATH/bin/:$HOME/.dotnet/
+export PATH=$PATH:$HOME/.local/bin/
+export PATH=$PATH:$HOME/.cargo/bin
+export PATH=$PATH:$HOME/.luarocks/bin
+export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:$GOPATH/bin/
+export PATH=$PATH:$LLVM/
 
 # Default username for https://hub.docker.com
 export DOCKER_ID_USER="jubnzv1"
 
 # Shortcuts for most used tools
-export CPPCHECK=$HOME/Dev/cppcheck/_latest/
+export CPPCHECK=$HOME/Dev/cppcheck/
 export TOOLS=$HOME/Dev/tools/
 export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
 export BCC=$HOME/Dev/tools/bcc/
-
-# Path to LLVM build directory
-export LLVM=$HOME/Dev/llvm-project/build/bin
 
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
@@ -84,17 +89,6 @@ export PYTHONSTARTUP=~/.pythonrc
 
 # OCaml environment
 eval "$(opam config env)"
-# }}}
-
-# {{{ Detect Linux distribution
-export OSTYPE=unknown
-if [ -f /etc/debian_version ]; then
-    OSTYPE=debian
-elif [[ ! -x "$(command -v nixos-version)" ]]; then
-    OSTYPE=nixos
-elif [[ ! -x "$(command -v termux-info)" ]]; then
-    OSTYPE=termux
-fi
 # }}}
 
 # {{{ Prompt & colors
@@ -163,16 +157,6 @@ export MAILCHECK=0
 # Disable flow control
 stty -ixon
 
-# {{{ Help command
-# Cred.: https://wiki.archlinux.org/index.php/Zsh_(%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9)#%D0%9A%D0%BE%D0%BC%D0%B0%D0%BD%D0%B4%D0%B0_Help
-# autoload -U run-help
-# autoload run-help-git
-# autoload run-help-svn
-# autoload run-help-svk
-# unalias run-help
-# alias help=run-help
-# }}}
-
 # {{{ History configuration
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000
@@ -195,33 +179,28 @@ alias history='history -i'
 # {{{ Aliases
 # Common
 alias q='exit'
-alias :bd='exit'
 alias :q='exit'
 alias pd='pushd'
 alias pdd='popd'
-alias pl='dirs -v'
-alias pc='dirs -c'
-alias svim='sudoedit'
 alias s='sudo'
 alias less='less -Q' # Turn off beeps
 alias rp='realpath'
-alias mkb='mkdir -p ./build; cd build'
 alias ag='ag --path-to-ignore ~/.ignore'
 alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 zt() { zathura $1 2>&1 >/dev/null & }
+alias ff='firefox'
 alias mrg='mirage'
 alias j='z'
+alias tm='tmux'
 jj() { z "$@"; [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}" }
 alias du1="du --max-depth=1"
 alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
-alias processing='java -jar ~/.local/processing.py-3056-linux64/processing-py.jar'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
 lfind() { find . -iname $@ 2>/dev/null }
-rtfm() { man $@ || firefox "https://www.google.com/search?q=$@"; }
 
 # vim
 alias :e='nvim'
@@ -230,37 +209,13 @@ alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
 alias vo='nvim -o' # Open in horizontal splits
 alias vc='nvim -u NONE'
-alias vj="nvim +'cd ~/Org/Notes' +WikiJournal"
-
-# tmux
-alias tm='tmux'
-alias tmkill='tmux kill-session -t'
-alias tma='tmux attach -t'
 
 # copy working directory to clipboard
 alias cpwd='pwd | tr -d "\n" | xsel -ib'
 
-# mkdir + cd
 mkcd() {
     [[ $# -gt 1 ]] && return 1
     mkdir -p "$1" && cd "$1" || return 1
-}
-
-# Edit configs
-alias vz='nvim ~/.zshrc; source ~/.zshrc'
-alias vi3='nvim ~/.config/i3/config; i3-msg restart'
-alias vp='nvim ~/.config/polybar/config'
-alias vv='nvim ~/.config/nvim/init.vim'
-alias vt='nvim ~/.tmux.conf; if [[ -z "$TMUX" ]]; then tmux source-file ~/.tmux.conf; fi'
-alias vnu='nvim ~/.newsboat/urls'
-
-# Notekeeping in markdown with vim
-alias vns='nvim ~/Org/scratch.md'
-vnn() {
-    nvim ~/Org/Notes/$1
-}
-vnf() {
-    nvim $(find ~/Org/Notes/ -type f | fzf)
 }
 
 # rsync
@@ -291,10 +246,6 @@ alias d='docker'
 alias drmrunning='docker container rm -f $(docker container ls -q)'
 # }}}
 
-# zsh
-alias _up source ~/.zshrc
-
-# Global aliases
 alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
@@ -326,9 +277,6 @@ alias ipy3='ipython3'
 alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
 alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
 
-# ctags
-alias cR='ctags -R'
-alias cte='ctags -R -e --extra=+fq --exclude=.git -f TAGS'
 alias ctags='/usr/bin/ctags-universal'
 
 # ls
@@ -354,12 +302,6 @@ alias cpd='cpdiff'
 if [[ -x "$(command -v task)" ]]; then
     alias t="task"                        # Default `task next` report
     alias tt="t recent"                   # Recently added tasks
-    alias tb="t -redmine -gitlab"         # Filter bugwarrior-imported tasks
-    alias tw="t waiting -redmine -gitlab" # Waiting tasks without bugwarrior noise
-    alias tc="t context"                  # Select context
-    alias tcn="t c none"                  # Unset context
-    alias tactive="date; t active"
-    alias tstart="date; t start"
     alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no rc.bulk=yes stop"
     alias tschedd='task sched.before:today+1d -COMPLETED -DELETED -DUETODAY +PENDING'
     alias tdued='task due.before:today+1d -COMPLETED -DELETED +PENDING'
@@ -377,20 +319,7 @@ if [[ -x "$(command -v task)" ]]; then
         fi
         task add +event "$1" due:"$2" until:due+1d
     }
-
-    # {{{ M-t: Select id one of taskwarrior tasks with fzf
-    fzf_show_task() {
-	task_id=$(t minimal 2> /dev/null                      \
-	| sed -e '/^\s*$/d' -e '1,3d; $ d' -e '/^\ *[0-9]/!d' \
-	| fzf --tac --no-sort                                 \
-	| awk '{print $1}') &&
-	    t $task_id
-    }
-    zle -N fzf_show_task
-    bindkey '^[t' fzf_show_task
-    # }}}
 fi
-
 
 if [[ -x "$(command -v task)" ]]; then
     cal() {
@@ -401,31 +330,7 @@ else
 fi
 # }}}
 
-# {{{ ledger
-export LEDGER_FILE=/home/jubnzv/Org/ledger.dat
-# alias led="gpg --batch -d -q $LEDGER_FILE | ledger -f - "
-alias led="ledger"
-alias vl="$EDITOR $LEDGER_FILE"
-# }}}
-
-# {{{ systemd
 alias sc='systemctl --user'
-alias scR='systemctl --user daemon-reload'
-alias scls='systemctl --user list-unit-files'
-alias sclt='systemctl --user list-timers'
-sce() {
-    systemctl --user enable ${1}.timer ${1}.service
-}
-scd() {
-    systemctl --user disable ${1}.timer ${1}.service
-}
-scn() {
-    $EDITOR ~/.config/systemd/user/${1}.{service,timer}
-}
-
-alias jc='journalctl'
-alias ju='journalctl -u'
-# }}}
 
 alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
 
@@ -450,33 +355,10 @@ mount_iso() {
     sudo mount -o loop $1 /mnt/iso/ 2>/dev/null
 }
 
-# {{{ Find snippets
-touch_each_dir() {
-    # Create file in each directory
-    find . -maxdepth 1 -type d -exec touch {}/$1 \;
-}
-# }}}
-
 # Try to establish ssh connection for every second
 sssh() {
   while true; do command ssh "$@"; [ $? -ne 255 ] && break || sleep 1; done
 }
-
-# {{{ Dirty way to kill cquery instances
-pkill_cq() {
-    local pid
-    if [ "$UID" != "0" ]; then
-        pid=$(ps -f -u $UID | ps aux | grep cquery | grep -v grep | sed 1d | fzf -m | awk '{print $2}')
-    else
-        pid=$(ps -ef | sed 1d | fzf -m | awk '{print $2}')
-    fi
-
-    if [ "x$pid" != "x" ]
-    then
-        echo $pid | xargs kill -${1:-9}
-    fi
-}
-# }}}
 # }}}
 
 # {{{ Keybindings
@@ -503,7 +385,6 @@ bindkey '^H' backward-kill-dir
 
 bindkey -s "\ep"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
 bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
-bindkey -s "\e\\"  "^Qfzf-tmux-session^J"   # Select tmux session using fzf and attach it.
 bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # }}}
 
@@ -548,11 +429,6 @@ if [[ "$(command -v fd)" ]]; then
     export FZF_CTRL_T_COMMAND='fd --type file --follow'
 fi
 
-# Choose one of APT repositories with fzf and show all packages.
-function fzf-list-repo-packages() {
-    find /var/lib/apt/lists/ -maxdepth 1 -type f | fzf | xargs grep ^Package:
-}
-
 # Search ctags.
 # Creds: https://github.com/vbauerster/dotfiles/blob/master/.functions.zsh
 function fzf-ctags() {
@@ -592,7 +468,8 @@ export AUTO_NOTIFY_THRESHOLD=60
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
 export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "git"
-                              "cmake" "ocamlbuild" "make"
+                              "cmake" "ocamlbuild" "make" "ninja" "dune"
+                              "cabal"
                               "borg-linux64" "aria2" "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 export AUTO_NOTIFY_IGNORE=("docker exec" "docker-compose")

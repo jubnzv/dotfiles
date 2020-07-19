@@ -31,7 +31,7 @@ ${0:${VISUAL}}
 #endif
 endsnippet
 
-snippet clangfmt_off
+snippet fmt
 // clang-format off
 ${0:${VISUAL}}
 // clang-format on
@@ -45,7 +45,7 @@ snippet prdt
 printf("%s:%d: trace\n", __func__, __LINE__); fflush(stdout); // prdbg
 endsnippet
 
-snippet gccdiag
+snippet gdiag
 #if defined(__GNUC__)
 #    pragma GCC diagnostic ignored "$1"
 #    pragma GCC diagnostic push
@@ -54,4 +54,8 @@ ${0:${VISUAL}}
 #if defined(__GNUC__)
 #    pragma GCC diagnostic pop
 #endif // __GNUC__
+endsnippet
+
+snippet gattr
+__attribute__ ((${1:noinline}))${0}
 endsnippet

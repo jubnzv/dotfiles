@@ -33,6 +33,7 @@ Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
+Plug 'cohama/agit.vim'                " Git log viewer
 " TODO: Consider mhinz/vim-signify as replacement
 " Plug 'mhinz/vim-signify'              " Shows diff on a gutter column
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
@@ -84,7 +85,6 @@ Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'cespare/vim-toml'
 Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
-Plug 'lervag/wiki.vim'
 Plug 'aklt/plantuml-syntax'
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
@@ -138,6 +138,7 @@ set nojoinspaces                            " Don't add two spaces when joining 
 set eol
 set fixeol                                  " <EOL> at the end of file will be restored if missing
 set re=1                                    " Required for vista.vim: https://github.com/liuchengxu/vista.vim/issues/82
+set mouse=a
 
 " Add additional information in popups (VIM 8.0+ only)
 if !has('nvim')
@@ -330,7 +331,9 @@ map <leader>eC :cd ..<cr>
 
 " Tabs managemenent
 nnoremap <A-t> :tabnew<CR>
+inoremap <A-t> <C-O>:tabnew<CR>
 nnoremap <A-Tab> :tabnext<CR>
+inoremap <A-Tab> <C-O>:tabnext<CR>
 nnoremap <A-1>      1gt
 inoremap <A-1> <C-O>1gt
 nnoremap <A-2>      2gt
@@ -361,6 +364,7 @@ nnoremap <leader>B :checktime<CR>
 nnoremap <silent> <leader>rl :set ff=unix<CR> :e ++ff=dos<CR>
 
 cnoreabbrev enc_dos e! ++enc=cp1251
+cnoreabbrev enc_koi e! ++enc=koi8r
 cnoreabbrev rep_n e! %s/\\n/\r/g
 
 " Remove all trailing whitespaces
@@ -492,21 +496,21 @@ let g:openbrowser_search_engines = extend(
 let g:openbrowser_default_search = 'google'
 
 " Search selected visually selected word with appropriate search engine.
-nnoremap <leader>os <Plug>(openbrowser-smart-search)
-nnoremap <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
+nnoremap <silent> <leader>os <Plug>(openbrowser-smart-search)
+nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
 " Translate
-nnoremap <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
+nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
 " Github
-nnoremap <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
-nnoremap <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
-nnoremap <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
-nnoremap <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
-nnoremap <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
-nnoremap <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
+nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
+nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
+nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
+nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
+nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
 " Documentation
-nnoremap <leader>odx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
-nnoremap <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
-nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
+nnoremap <silent> <leader>odx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
+nnoremap <silent> <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
+nnoremap <silent> <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
 " }}}
 
 " {{{ tmux and vim-slime configuration
@@ -514,9 +518,9 @@ nnoremap <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot
 map ` <Nop>
 
 if exists('$TMUX')
-  " Execute previous command in right pane
-  nnoremap <silent> <leader><tab> :silent !tmux send-keys -t right Up Enter<cr>
-  nnoremap <silent> <leader><leader><tab> :silent !tmux clear-history -t right && tmux send-keys -t right C-l Up Enter<cr>
+  " Execute previous command in the last active pane
+  nnoremap <silent> <leader><tab> :silent !tmux send-keys -t \! Up Enter<cr>
+  nnoremap <silent> <leader><leader><tab> :silent !tmux clear-history -t right && tmux send-keys -t \! C-l Up Enter<cr>
 endif
 
 " slime
@@ -662,6 +666,7 @@ au BufWritePre * call LastModified()
 let g:grepper = {}
 let g:grepper.tools = ["ag"]
 let g:grepper.jump = 1
+let g:grepper.side = 1
 nnoremap <leader>\ :GrepperAg<Space>
 nnoremap gs :Grepper -cword -noprompt<CR>
 xmap gs <Plug>(GrepperOperator)
@@ -701,7 +706,6 @@ xmap <A-z> <plug>(fzf-maps-x)
 omap <A-z> <plug>(fzf-maps-o)
 au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
-nnoremap <leader><space> :Commands<CR>
 nnoremap <leader>ft :Tags<CR>
 nnoremap <leader>xf :Files<CR>
 nnoremap <A-p> :Files<CR>
@@ -807,7 +811,7 @@ au InsertLeave * match ExtraWhitespace /\s\+$/
 au BufWinLeave * call clearmatches()
 " }}}
 
-" Avoid syntax highlighting for large files
+" Disable syntax highlighting for large files
 au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
 " {{{ ctags and vista.vim
@@ -917,6 +921,16 @@ let g:neoformat_enabled_html = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocpindent']
+let g:neoformat_enabled_lua = ['luaformatter']
+
+" TODO: Consider ocamlformat (need update CI for projects...)
+" let g:neoformat_ocaml_ocamlformat = {
+"            \ 'exe': 'ocamlformat',
+"            \ 'no_append': 1,
+"            \ 'stdin': 1,
+"            \ 'args': ['--disable-outside-detected-project', '--name', '"%:p"', '-']
+"            \ }
+" let g:neoformat_enabled_ocaml = ['ocamlformat']
 " }}}
 
 " {{{ LSP-client
@@ -978,9 +992,9 @@ nmap <leader>ve :Gedit
 nmap <leader>vd :Gdiff HEAD
 nmap <leader>vD :Git! diff<cr>
 nmap <leader>vb :Gblame<cr>
-nmap <leader>vl :Glog<cr>:copen<cr>
 nmap <leader>vB :Twiggy<cr>
 nmap <leader>vf :GFiles<cr>
+nmap <leader>vl :Agit<cr>
 nmap <leader>m <Plug>(git-messenger)
 
 " {{{ Copy git link
@@ -1062,6 +1076,13 @@ augroup c_cxx_group
 augroup END
 " }}}
 
+" {{{ Lua
+augroup lua_group
+  au!
+  au FileType lua RainbowToggleOn
+augroup END
+" }}}
+
 " {{{ Python
 " Enable extended Python syntax highlighting provided by vim-python/python-syntax.
 let g:python_highlight_all = 1
@@ -1135,12 +1156,14 @@ augroup END
 " {{{ vimscript
 let g:vim_indent_cont = 2
 
-augroup vimscript_group
+augroup vim_group
   au!
   au FileType vim setlocal sw=4 ts=4 expandtab
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
+  au Filetype help <buffer> wincmd L
+  au Filetype help <buffer> vert resize 80
 augroup END
 " }}}
 
@@ -1263,23 +1286,6 @@ augroup org_mode_group
     au!
     au BufNewFile,BufReadPost *.org set filetype=org
 augroup END
-" }}}
-
-" {{{ wiki.vim
-let g:wiki_root = '~/Org/Notes/'
-let g:wiki_filetypes = ['md']
-let g:wiki_link_extension = 'md'
-let g:wiki_link_target_type = 'md'
-let g:wiki_mappings_use_defaults = 0
-let g:wiki_mappings_global = {
-  \ '<plug>(wiki-index)'            : ',wi',
-  \ '<plug>(wiki-journal)'          : ',wj',
-  \ '<plug>(wiki-fzf-toc)'          : ',wc',
-  \ '<plug>(wiki-list-toggle)'      : '<c-s>',
-  \ 'i_<plug>(wiki-list-toggle)'    : '<c-s>',
-  \ '<plug>(wiki-link-open)'        : '<cr>',
-  \ '<plug>(wiki-link-open-split)'  : '<c-cr>',
-  \ }
 " }}}
 
 " {{{ Highligth TODO and DONE entries in the documents
