@@ -1,31 +1,45 @@
 [commit]
 gpgsign = true
+
 [core]
 filemode = false
 editor = nvim
 pager = diff-so-fancy | less --tabs=4 -RFX
 quotePath = false
+
 [diff]
 tool = kitty
+
 [difftool]
 prompt = false
 trustExitCode = true
+
 [difftool "kitty"]
 cmd = kitty +kitten diff $LOCAL $REMOTE
+
 [alias]
-open = !nvim `git-open.sh`
-# Gitlab
-# git glmr origin 5
-glmr = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+undo = reset --soft HEAD~1
+amend = !git log -n 1 --pretty=tformat:%s%n%n%b | git commit -F - --amend
+tree = log --graph --pretty=format:'%C(yellow)%h%C(cyan)%d%Creset %s %C(white)- %an, %ar%Creset'
+# Github review
+# git review 4
+review= "!f() { git fetch origin pull/$1/head:pr/$1 && git checkout pr/$1; }; f"
+# Gitlab review
+# git review-gitlab origin 5
+review-gitlab = !sh -c 'git fetch $1 merge-requests/$2/head:mr-$1-$2 && git checkout mr-$1-$2' -
+
 [filter "lfs"]
 required = true
 clean = git-lfs clean -- %f
 smudge = git-lfs smudge -- %f
 process = git-lfs filter-process
+
 [github]
 user = jubnzv
+
 [user]
 name = Georgy Komarov
 email = jubnzv@gmail.com
+
 [includeIf "gitdir:~/Work/*"]
 path = ~/.gitconfig.work

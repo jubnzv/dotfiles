@@ -1,0 +1,6 @@
+snippet exectime
+local __dbg_t = os.clock()
+${0:${VISUAL}}
+print(string.format("elapsed time1: %.2f\n", os.clock() - __dbg_t))
+endsnippet
+

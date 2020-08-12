@@ -10,6 +10,7 @@ configs=(
     "$HOME/.zshrc"
     "$HOME/.config/nvim/init.vim"
     "$HOME/.tmux.conf"
+    "$HOME/.ideavimrc"
     "$HOME/.config/i3/config"
     "$HOME/.config/polybar/config"
     "$HOME/.config/ranger/rc.conf"

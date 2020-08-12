@@ -9,7 +9,6 @@ let g:python3_host_prog  = '/usr/bin/python3.8'
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'scrooloose/nerdtree'            " A tree explorer plugin for vim
 Plug 'kshenoy/vim-signature'          " Extended marks support
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
@@ -34,8 +33,12 @@ Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'cohama/agit.vim'                " Git log viewer
-" TODO: Consider mhinz/vim-signify as replacement
-" Plug 'mhinz/vim-signify'              " Shows diff on a gutter column
+" A tree explorer plugin for vim
+Plug 'ms-jpq/chadtree', {
+  \ 'branch': 'chad',
+  \ 'do': ':UpdateRemotePlugins'
+  \ }
+Plug 'mbbill/undotree'
 Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'mhinz/vim-grepper'              " Ag wrapper that works with quickfix window. Useful in large codebases.
@@ -56,7 +59,8 @@ Plug 'Shougo/deoplete.nvim', {
   \ }
 Plug 'Shougo/deoplete-lsp'             " Neovim's LSP Completion source for deoplete
 Plug 'copy/deoplete-ocaml'             " Asynchronous completion for OCaml based on merlin
-Plug 'sbdchd/neoformat'
+Plug 'ocaml/vim-ocaml'                 " Vim runtime files for OCaml
+Plug 'jubnzv/virtual-types.nvim'       " Shows type annotations in virtual text
 " Native neovim LSP client
 if has('nvim-0.5')
   Plug 'neovim/nvim-lsp'
@@ -67,10 +71,10 @@ endif
 if has('nvim-0.5')
   Plug 'nvim-treesitter/nvim-treesitter'
 endif
-Plug 'jubnzv/DoxygenToolkit.vim'
+Plug 'sbdchd/neoformat'               " Integration with code formatters
+Plug 'jubnzv/DoxygenToolkit.vim'      " Doxygen utilities
 Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
-Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
-Plug 'jpalardy/vim-slime'
+Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
@@ -91,8 +95,7 @@ Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'jubnzv/IEC.vim'
-" Plug '~/Dev/IEC.vim/'
+Plug 'jubnzv/IEC.vim'             " IEC61131-3 plugin
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -145,6 +148,11 @@ if !has('nvim')
   set completeopt+=popup
   set completepopup=height:10,width:60,highlight:Pmenu,border:off
 endif
+
+" Live Substitution
+" if has('nvim')
+"   set inccommand=split
+" endif
 
 if has('nvim-0.4')
   set termguicolors
@@ -610,29 +618,12 @@ set foldtext=CustomFoldText()
 " }}}
 " }}}
 
-" {{{ NerdTREE
-"" Check if NERDTree is open or active
-function! IsNERDTreeOpen()
-  return exists("t:NERDTreeBufName") && (bufwinnr(t:NERDTreeBufName) != -1)
-endfunction
+" {{{ CHADTree
+nnoremap <A-0> <cmd>CHADopen<cr>
+" }}}
 
-function! NERDTreeOpen()
-  if IsNERDTreeOpen()
-    :NERDTreeToggle
-  else
-    :NERDTreeFind
-  endif
-endfunction
-
-map <silent> <A-0> :call NERDTreeOpen()<CR>
-let NERDTreeQuitOnOpen=1
-let NERDTreeIgnore=[
-  \ ".*\\.class$",
-  \ ".*\\.o$",
-  \ ".*\\.pyc$",
-  \ "depcomp$",
-  \ "install-sh$",
-  \ ]
+" {{{ UndoTree
+nnoremap <A-9> :UndotreeToggle<cr>
 " }}}
 
 " {{{ DirDiff
@@ -919,6 +910,7 @@ nnoremap <leader>lf :Neoformat<CR>
 
 let g:neoformat_enabled_html = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
+let g:neoformat_enabled_java = ['astyle']
 let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocpindent']
 let g:neoformat_enabled_lua = ['luaformatter']
@@ -982,7 +974,7 @@ let g:gitgutter_map_keys = 0
 
 nmap [v <Plug>(GitGutterPrevHunk)
 nmap ]v <Plug>(GitGutterNextHunk)
-nmap <leader>vv <Plug>(GitGutterPreviewHunk)
+nmap <localleader>v <Plug>(GitGutterPreviewHunk)
 nmap <leader>v- <Plug>(GitGutterStageHunk)
 nmap <leader>v_ <Plug>(GitGutterUndoHunk)
 nmap <leader>vs :Gstatus<cr>
@@ -1050,8 +1042,6 @@ augroup c_cxx_group
   au FileType c,cpp setlocal tw=80
   " Remove debug prints created with snippets
   au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
-  " Renaming with clang-rename
-  au FileType c,cpp nnoremap <buffer><leader>lr :py3f ~/.config/nvim/clang-rename.py<CR>
   " Autoformatting with clang-format
   au FileType c,cpp nnoremap <buffer><leader>lf :<C-u>JbzClangFormat<CR>
   au FileType c,cpp vnoremap <buffer><leader>lf :JbzMyClangFormat<CR>
@@ -1111,7 +1101,7 @@ augroup python_group
 augroup END
 " }}}
 
-" {{{ OCaml
+" {{{ OCaml and other MLs
 " Merlin
 " See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
 let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
@@ -1122,6 +1112,7 @@ augroup ocaml_group
   au FileType ocaml inoremap <A-1> `
   au FileType dune setlocal foldmethod=marker
   au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "utop"<CR>
+  au FileType ocaml setlocal tabstop=2 shiftwidth=2
   au FileType ocaml,dune RainbowToggleOn
 
   " Print types from .annot files.
@@ -1135,9 +1126,19 @@ augroup ocaml_group
   " FSwitch associations
   " au BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
   " au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
-  au BufEnter *.mly let b:fswitchdst = 'lexer.mll'  | let b:fswitchlocs = 'ifrel:/././'
-  au BufEnter *.mll let b:fswitchdst = 'parser.mly'  | let b:fswitchlocs = 'ifrel:/././'
 augroup END
+
+" PolyML sources
+au BufNewFile,BufRead *.ML set ft=sml
+
+" ML-Yacc & ML-Lex
+au BufNewFile,BufRead *.grm set ft=sml
+au BufNewFile,BufRead *.lex set ft=sml
+
+" SML interfaces
+au BufNewFile,BufRead *.sig set ft=sml
+au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
+au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
 " {{{ Racket
@@ -1155,15 +1156,12 @@ augroup END
 
 " {{{ vimscript
 let g:vim_indent_cont = 2
-
 augroup vim_group
   au!
   au FileType vim setlocal sw=4 ts=4 expandtab
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
-  au Filetype help <buffer> wincmd L
-  au Filetype help <buffer> vert resize 80
 augroup END
 " }}}
 
@@ -1235,9 +1233,9 @@ au FileType json syntax match Comment +\/\/.\+$+
 
 " {{{ Markdown
 let g:markdown_fenced_languages = [
-  \'python', 'bash=sh', 'c', 'cpp', 'asm', 'go', 'ocaml',
-  \'cmake', 'diff', 'yaml', 'haskell', 'json', 'tex',
-  \'plantuml', 'html', 'sql', 'nix'
+  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
+  \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
+  \'json', 'tex', 'plantuml', 'html', 'sql', 'nix'
   \]
 augroup markdown_group
   au!

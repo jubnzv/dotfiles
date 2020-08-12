@@ -1,23 +1,29 @@
 local api = vim.api
+local diagnostic = require "diagnostic"
+local virtualtypes = require "virtualtypes"
 local M = {}
+
+function on_attach_ocaml()
+  diagnostic.on_attach()
+  virtualtypes.on_attach()
+end
 
 function M.setup()
   require'nvim_lsp'.clangd.setup{
-      on_attach=require'diagnostic'.on_attach,
-      cmd = { "clangd-10", "--background-index" }
-      --cmd = { "clangd-11", "--background-index" } -- TODO: latest clang-11 is not compatible with nvim-lsp
+    on_attach=diagnostic.on_attach,
+    cmd = { "clangd-10", "--background-index" }
   }
   require'nvim_lsp'.pyls.setup{
-      on_attach=require'diagnostic'.on_attach
+    on_attach=diagnostic.on_attach
   }
   require'nvim_lsp'.gopls.setup{
-      on_attach=require'diagnostic'.on_attach
-  }
-  require'nvim_lsp'.ocamllsp.setup{
-      on_attach=require'diagnostic'.on_attach
+    on_attach=diagnostic.on_attach
   }
 
-  -- LSP keymap
+  require'nvim_lsp'.ocamllsp.setup{
+    on_attach=on_attach_ocaml
+  }
+
   vim.api.nvim_exec([[
     nnoremap <silent> gl             <cmd>lua vim.lsp.buf.declaration()<CR>
     nnoremap <silent> gd             <cmd>lua vim.lsp.buf.definition()<CR>

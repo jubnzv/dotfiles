@@ -51,6 +51,9 @@ unset GOROOT
 # Path to LLVM build directory
 export LLVM=$HOME/Dev/llvm-project/build/bin
 
+# Disable dotnet telemetry
+export DOTNET_CLI_TELEMETRY_OPTOUT=1
+
 # PATH
 export PATH=$PATH:$HOME/.local/bin/
 export PATH=$PATH:$HOME/.cargo/bin

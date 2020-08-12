@@ -1,3 +1,5 @@
+" See :actionlist for the available IDE mappings.
+"
 let mapleader = " "
 
 set scrolloff=3  " 3 lines above/below cursor when scrolling
@@ -14,16 +16,15 @@ inoremap jj <Esc>
 inoremap <C-n> <down:>
 inoremap <C-p> <up>
 
-" switch between current and last buffer (not work)
-" nmap <A-r> <C-^>
-
 " Insert newline without entering insert mode
 nmap zj o<Esc>k
 nmap zk O<Esc>j
 
-nmap <leader>s :action SaveAll<CR>
+vnoremap gcc :action CommentByBlockComment<cr>
 
-""" Keep selected text selected when fixing indentation
+nmap <leader>w :action SaveAll<CR>
+
+" Keep selected text selected when fixing indentation
 vnoremap < <gv
 vnoremap > >gv
 
@@ -37,26 +38,30 @@ nnoremap zR :action ExpandAll<cr>
 nnoremap zM :action CollapsAll<cr>
 
 " Reload .ideavimrc
-nnoremap <F1>c :source ~/.ideavimrc<cr>
+nnoremap ,R :source ~/.ideavimrc<cr>
 
 " Search routines
 nnoremap <leader>fs :action FindInPath<cr>
 nnoremap <leader>h :noh<cr>
 
+nnoremap <A-p> :action GotoFile<cr>
+
 " Source navigation
 nnoremap <leader>gu :action FindUsages<cr>
 nnoremap <leader>gc :action GotoClass<cr>
 nnoremap <leader>gd :action GotoDeclaration<cr>
-nnoremap <leader>ff :action GotoFile<cr>
 nnoremap <leader>gs :action GotoSymbol<cr>
 nnoremap <leader>gr :action GotoRelated<cr>
 
 " Debugging && errors actions
 nnoremap <leader>bb :action ToggleLineBreakpoint<cr>
 nnoremap <leader>bs :action ViewBreakpoints<cr>
-nmap <leader>ed :action ShowErrorDescription<cr>
 nnoremap ]e :action GotoNextError<cr>
 nnoremap [e :action GotoPreviousError<cr>
+
+" Same as LSP actions in nvim
+nmap ,d :action ShowErrorDescription<cr>
+nmap <leader>lf :action ReformatCode<cr>
 
 " VCS / local history
 nnoremap [v :action VcsShowPrevChangeMarker<cr>
