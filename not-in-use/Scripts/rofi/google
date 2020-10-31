@@ -1,3 +1,0 @@
-#!/bin/bash
-echo "" | rofi -p 'google' -dmenu | xargs -I{} xdg-open https://www.google.com/search?q={}
-

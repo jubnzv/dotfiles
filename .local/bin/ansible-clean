@@ -1,2 +1,0 @@
-#!/bin/bash
-find . -name "*.retry" -exec rm -rf {} +

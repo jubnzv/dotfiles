@@ -19,6 +19,10 @@ ${VISUAL}$0
 #endif // $1
 endsnippet
 
+snippet rbg
+#define rgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
+endsnippet
+
 snippet extern_c
 #ifdef __cplusplus
 extern "C" {

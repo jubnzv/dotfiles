@@ -4,7 +4,11 @@ if __name__ == '__main__':
 endsnippet
 
 snippet     pdb
-import pdb; pdb.set_trace()  # noqa
+import pdb; pdb.set_trace()
+endsnippet
+
+snippet		pdbq
+import pdb; from PyQt5.QtCore import pyqtRemoveInputHook as _pr; _pr(); pdb.set_trace()
 endsnippet
 
 snippet check_file

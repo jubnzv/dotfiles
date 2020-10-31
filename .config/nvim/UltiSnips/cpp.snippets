@@ -15,6 +15,12 @@ snippet pre
 std::cerr << $1 << std::endl;
 endsnippet
 
+snippet prv
+for (auto const &vv : ${1:v})
+  std::cout << vv << " ";
+std::cout << std::endl;
+endsnippet
+
 snippet inc
 #include <${1:iostream}>
 endsnippet

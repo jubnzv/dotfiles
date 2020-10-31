@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-export BORG_BIN=/home/jubnzv/.local/bin/borg-linux64
-export BORG_REPO=/media/jubnzv/10F9B9AE49B661FF/_backup/$(hostname)
+export BORG_BIN=borg
+export BORG_REPO=/media/jubnzv/10F9B9AE49B661FF/_backup/remilia/
 export BORG_UNKNOWN_UNENCRYPTED_REPO_ACCESS_IS_OK=yes
 
 info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
@@ -26,6 +26,7 @@ ${BORG_BIN} create                            \
     /home/jubnzv/VMs/Share/ \
     /home/jubnzv/VPN/       \
     /home/jubnzv/.config/   \
+    /home/jubnzv/.mozilla/  \
     /home/jubnzv/.gnupg/    \
     /home/jubnzv/.ssh/
 

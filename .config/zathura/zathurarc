@@ -5,7 +5,7 @@ set selection-clipboard clipboard
 set adjust-open width
 set recolor-reverse-video false
 set incremental-search false
-set font "Iosevka 10"
+set font "JetBrains Mono 10"
 
 # Keybinds
 map \< goto top

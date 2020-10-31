@@ -71,6 +71,9 @@ export TOOLS=$HOME/Dev/tools/
 export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
 export BCC=$HOME/Dev/tools/bcc/
 
+# Debian tools
+export QUILT_PATCHES=debian/patches
+
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
 # export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true
@@ -81,6 +84,7 @@ export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export EDITOR="nvim"
+export DEBEMAIL="jubnzv@gmail.com"
 export ALTERNATE_EDITOR="nvim"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
 export TERMCMD="kitty"
@@ -91,7 +95,9 @@ export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
 export PYTHONSTARTUP=~/.pythonrc
 
 # OCaml environment
-eval "$(opam config env)"
+if [[ -x "$(command -v opam)" ]]; then
+  eval "$(opam config env)"
+fi
 # }}}
 
 # {{{ Prompt & colors
@@ -100,9 +106,9 @@ export CLICOLORS=1
 
 # Setup LS_COLORS https://github.com/trapd00r/LS_COLORS
 if [ -f $HOME/.zsh/dircolors ]; then
-    eval $( dircolors -b $HOME/.zsh/dircolors )
+  eval $( dircolors -b $HOME/.zsh/dircolors )
 else
-    export LS_COLORS="di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;3 2"
+  export LS_COLORS="di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=01;05;37;41:mi=01;05;37;41:su=37;41:sg=30;43:tw=30;42:ow=34;42:st=37;44:ex=01;3 2"
 fi
 
 # Use same colors for autocompletion
@@ -188,7 +194,7 @@ alias pdd='popd'
 alias s='sudo'
 alias less='less -Q' # Turn off beeps
 alias rp='realpath'
-alias ag='ag --path-to-ignore ~/.ignore'
+alias ag='rg'
 alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
@@ -204,6 +210,10 @@ alias tree='tree -C'
 alias r='ranger'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
 lfind() { find . -iname $@ 2>/dev/null }
+
+# {{{ Debian tools
+alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
+# }}}
 
 # vim
 alias :e='nvim'
@@ -253,7 +263,7 @@ alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
 alias -g O="> output.txt"
-alias -g G='| ag'
+alias -g G='| rg'
 alias -g L="|& less"
 alias -g V="| nvim -"
 alias -g ND="notify-send 'Done' ''"
@@ -466,7 +476,6 @@ compdef g=git
 # }}}
 
 # {{{ auto-notify plugin configuration
-# Set threshold to 20seconds
 export AUTO_NOTIFY_THRESHOLD=60
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
@@ -476,6 +485,7 @@ export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "g
                               "borg-linux64" "aria2" "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 export AUTO_NOTIFY_IGNORE=("docker exec" "docker-compose")
+export AUTO_NOTIFY_EXPIRE_TIME=20
 # }}}
 
 # {{{ Show current directory in X window title
@@ -542,3 +552,5 @@ if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
 # trap "~/.local/bin/cleanup-history ~/.history" EXIT
 #
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
+
+if [ -e /home/jubnzv/.nix-profile/etc/profile.d/nix.sh ]; then . /home/jubnzv/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer

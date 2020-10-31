@@ -1,6 +1,0 @@
-#!/bin/bash
-for f in *; do
-    if [[ $f == *.tar.gz ]]; then
-        tar xf $f
-    fi
-done

@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# $1 - the connection type (wireless/wired).
-# $2 - the ESSID (network name).
-# $3 - the BSSID (gateway MAC).
-su -c "DISPLAY=:0 notify-send 'wicd' 'Connected to $2' -i network-wireless-connected" jubnzv
-

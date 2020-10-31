@@ -23,25 +23,22 @@ Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quote
 Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
 Plug 'osyo-manga/vim-over'            " :substitute preview
 Plug 'christoomey/vim-tmux-navigator' " tmux integration
-Plug 'tyru/open-browser.vim'          " Open links in browser
-Plug 'itchyny/lightline.vim'
+Plug 'tyru/open-browser.vim'          " Plugin for openning links in the browser
+Plug 'itchyny/lightline.vim'          " Statusline plugin
 Plug 'jubnzv/gruvbox'                 " Color scheme
 Plug 'norcalli/nvim-colorizer.lua'    " Colorize color names and codes
 Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
-Plug 'jubnzv/vim-cursorword'          " Highlight word under cursor
+Plug 'jubnzv/vim-cursorword'          " Plugin to highlight the word under the cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
-Plug 'cohama/agit.vim'                " Git log viewer
 " A tree explorer plugin for vim
 Plug 'ms-jpq/chadtree', {
   \ 'branch': 'chad',
   \ 'do': ':UpdateRemotePlugins'
   \ }
 Plug 'mbbill/undotree'
-Plug 'sodapopcan/vim-twiggy'          " Git branch management
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
-Plug 'mhinz/vim-grepper'              " Ag wrapper that works with quickfix window. Useful in large codebases.
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -61,21 +58,18 @@ Plug 'Shougo/deoplete-lsp'             " Neovim's LSP Completion source for deop
 Plug 'copy/deoplete-ocaml'             " Asynchronous completion for OCaml based on merlin
 Plug 'ocaml/vim-ocaml'                 " Vim runtime files for OCaml
 Plug 'jubnzv/virtual-types.nvim'       " Shows type annotations in virtual text
+Plug 'rust-lang/rust.vim'              " Rust support
 " Native neovim LSP client
 if has('nvim-0.5')
-  Plug 'neovim/nvim-lsp'
+  Plug 'neovim/nvim-lspconfig'
   Plug 'haorenW1025/diagnostic-nvim'  " A wrapper for neovim built in LSP diagnosis config
-  " Plug 'weilbith/nvim-lsp-smag'       " Use LSP tags instead of ctags when LSP server is running
-endif
-" Treesitter integration
-if has('nvim-0.5')
-  Plug 'nvim-treesitter/nvim-treesitter'
 endif
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jubnzv/DoxygenToolkit.vim'      " Doxygen utilities
 Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
+Plug 'peterhoeg/vim-qml'              " QML syntax highlighting
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'vim-python/python-syntax'       " Extended python syntax
@@ -89,7 +83,7 @@ Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'cespare/vim-toml'
 Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
-Plug 'aklt/plantuml-syntax'
+Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
@@ -482,22 +476,19 @@ let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
 \   {
 \       'github': 'http://github.com/search?q=fork%3Afalse+{query}',
-\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
-\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+language%3APython+{query}&type=Code',
 \       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+language%3AC+{query}&type=Code',
 \       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+language%3AC%2B%2B+{query}&type=Code',
+\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+language%3APython+{query}&type=Code',
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+language%3AOCaml+{query}&type=Code',
-\       'cplusplus': 'http://www.cplusplus.com/search.do?q={query}',
-\       'gnome': 'https://developer.gnome.org/search?q={query}',
-\       'buildbot': 'https://docs.buildbot.net/current/search.html?q={query}',
+\       'github-rust': 'http://github.com/search?l=Rust&q=fork%3Afalse+language%3APython+{query}&type=Code',
+\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
 \       'google': 'http://google.com/search?q={query}',
-\       'google-code': 'http://code.google.com/intl/en/query/#q={query}',
-\       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
 \       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
-\       'wikipedia': 'http://en.wikipedia.org/wiki/{query}',
-\       'wikipedia-ru': 'http://ru.wikipedia.org/wiki/{query}',
 \       'cppreference': 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search={query}',
+\       'qt': 'https://doc.qt.io/qt-5/search-results.html?q={query}',
+\       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
+\       'rust': 'https://doc.rust-lang.org/std/index.html?search={query}',
 \   },
 \   'keep'
 \)
@@ -512,13 +503,15 @@ nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cword>'), 
 nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
 nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
 nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
-nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
 nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
 nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
+nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cword>'), "github-rust")<CR>
+nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
 " Documentation
-nnoremap <silent> <leader>odx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
-nnoremap <silent> <leader>orx :call openbrowser#smart_search(expand('<cword>'), "cplusplus")<CR>
-nnoremap <silent> <leader>odb :call openbrowser#smart_search(expand('<cword>'), "buildbot")<CR>
+nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
+nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cword>'), "qt")<CR>
+nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cword>'), "python")<CR>
+nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cword>'), "rust")<CR>
 " }}}
 
 " {{{ tmux and vim-slime configuration
@@ -620,6 +613,26 @@ set foldtext=CustomFoldText()
 
 " {{{ CHADTree
 nnoremap <A-0> <cmd>CHADopen<cr>
+
+let g:chadtree_colours = {
+      \ "8_bit": {
+      \   "Black":         { "hl24": "#07242c", "hl8": "Black"},
+      \   "Red":           { "hl24": "#cc24d1", "hl8": "DarkRed" },
+      \   "Green":         { "hl24": "#689d6a", "hl8": "DarkGreen" },
+      \   "Yellow":        { "hl24": "#fabd2f", "hl8": "DarkYellow" },
+      \   "Blue":          { "hl24": "#83a598", "hl8": "DarkBlue" },
+      \   "Magenta":       { "hl24": "#b16286", "hl8": "DarkMagenta" },
+      \   "Cyan":          { "hl24": "#04a7a7", "hl8": "DarkCyan" },
+      \   "White":         { "hl24": "#a89984", "hl8": "LightGray" },
+      \   "BrightBlack":   { "hl24": "#7c6f64", "hl8": "Grey" },
+      \   "BrightRed":     { "hl24": "#fb4934", "hl8": "LightRed" },
+      \   "BrightGreen":   { "hl24": "#8ec07c", "hl8": "LightGreen" },
+      \   "BrightYellow":  { "hl24": "#DF7353", "hl8": "LightYellow" },
+      \   "BrightBlue":    { "hl24": "#6FaEaF", "hl8": "LightBlue" },
+      \   "BrightMagenta": { "hl24": "#d3869b", "hl8": "LightMagenta" },
+      \   "BrightCyan":    { "hl24": "#94e7e7", "hl8": "LightCyan" },
+      \   "BrightWhite":   { "hl24": "#fbf1c7", "hl8": "White" },
+      \ }}
 " }}}
 
 " {{{ UndoTree
@@ -666,8 +679,8 @@ xmap gs <Plug>(GrepperOperator)
 " {{{ FZF
 let g:fzf_history_dir = '~/.local/share/fzf-history'
 
-" Pass raw arguments directly to ag command
-command! -bang -nargs=+ -complete=dir Rag call fzf#vim#ag_raw(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
+" Pass raw arguments directly to rg command
+command! -bang -nargs=+ -complete=dir Rrg call fzf#vim#rg_raw(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 " Recently used files
 command! FZFMru call fzf#run({
@@ -687,7 +700,7 @@ endfunction
 " :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
 " :Ag! - Start fzf in fullscreen and display the preview window above
 command! -bang -nargs=* Ag
-\ call fzf#vim#ag(<q-args>, '--path-to-ignore ~/.ignore',
+\ call fzf#vim#ripgrep#rg(<q-args>, '--path-to-ignore ~/.ignore',
 \                 <bang>0 ? fzf#vim#with_preview('up:60%')
 \                         : fzf#vim#with_preview('right:50%', '?'),
 \                 <bang>0)
@@ -703,22 +716,7 @@ nnoremap <A-p> :Files<CR>
 nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>xr :FZFMru <CR>
-nnoremap <leader>fc :Cd .<CR>
-nnoremap <leader>fs :Ag<CR>
-nnoremap <leader>/ :Ag<CR>
-nnoremap <leader>fw :Ag<Space><C-r><C-w><CR>
-
-" Search in specific file types
-command! -bang -nargs=* AgC call fzf#vim#ag(<q-args>, '-G \.c$', {'down': '~40%'})
-command! -bang -nargs=* AgH call fzf#vim#ag(<q-args>, '-G \.h$', {'down': '~40%'})
-command! -bang -nargs=* AgCC call fzf#vim#ag(<q-args>, '--cc', {'down': '~40%'})
-command! -bang -nargs=* AgCxx call fzf#vim#ag(<q-args>, '--cpp', {'down': '~40%'})
-command! -bang -nargs=* AgPython call fzf#vim#ag(<q-args>, '--python', {'down': '~40%'})
-nnoremap <leader>fac :AgC<CR>
-nnoremap <leader>faC :AgCC<CR>
-nnoremap <leader>fah :AgH<CR>
-nnoremap <leader>fax :AgCxx<CR>
-nnoremap <leader>fap :AgPython<CR>
+nnoremap <leader>fs :Rg<CR>
 
 " Using the custom window creation function
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
@@ -984,7 +982,6 @@ nmap <leader>ve :Gedit
 nmap <leader>vd :Gdiff HEAD
 nmap <leader>vD :Git! diff<cr>
 nmap <leader>vb :Gblame<cr>
-nmap <leader>vB :Twiggy<cr>
 nmap <leader>vf :GFiles<cr>
 nmap <leader>vl :Agit<cr>
 nmap <leader>m <Plug>(git-messenger)
@@ -1141,6 +1138,23 @@ au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' |
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
+" {{{ Rust
+augroup rust_group
+  au!
+  au FileType rust RainbowToggleOn
+augroup END
+" }}}
+
+" {{{ F#
+augroup fsharp_group
+  au!
+  au BufNewFile,BufReadPost *.fs set filetype=fsharp
+  au FileType fsharp nnoremap <buffer><leader>sC :JbzOpenSlimeREPL dotnet fsi<CR>
+  au BufNewFile,BufRead *.sln      set filetype=xml
+  au BufNewFile,BufRead *.fsproj   set filetype=xml
+augroup END
+" }}}
+
 " {{{ Racket
 augroup rkt_group
   au!
@@ -1254,6 +1268,8 @@ augroup markdown_group
   au FileType markdown inoremap <buffer> --<space> –<space>
   au FileType markdown inoremap <buffer> -><space> →<space>
   au FileType markdown inoremap <buffer> =><space> ⇒<space>
+  au FileType markdown inoremap <buffer> \E<space> ∃<space>
+  au FileType markdown inoremap <buffer> \A<space> ∀<space>
   " Paste links to URL from clipboard
   au FileType markdown nnoremap <buffer> <leader>L i()<Esc>hpl%i[]<C-o>h
   au FileType markdown nnoremap <buffer> <leader>Д i()<Esc>hpl%i[]<C-o>h
@@ -1269,10 +1285,10 @@ augroup end
 " Markdown preview in web-browser
 let g:mkdp_auto_start = 0
 let g:mkdp_auto_close = 0
-" Open preview in a new firefox window
+" Open preview in the new firefox window
 " [1]: https://github.com/iamcco/markdown-preview.nvim/issues/19#issuecomment-464338238
 function! g:OpenBrowser(url)
-  silent exec "!/home/jubnzv/.local/bin/firefox -new-window " . a:url " &"
+  silent exec "!/opt/firefox/firefox-bin -new-window " . a:url " &"
 endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev mp MarkdownPreview
@@ -1331,6 +1347,8 @@ au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenab
 " cppcheck dumps
 au BufNewFile,BufRead *.c.dump      set filetype=xml tw=120
 au BufNewFile,BufRead *.cpp.dump    set filetype=xml tw=120
+" cppcheck configuration files
+au BufRead,BufNewFile *cppcheck*/cfg/*.cfg set filetype=xml
 
 " Taskwarrior tasks (`task <id> edit`)
 au BufRead *.task /Description:

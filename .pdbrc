@@ -1,4 +1,0 @@
-import os
-execfile(os.path.expanduser("~/.pdbrc.py"))
-
-#  vim: set ft=python:
