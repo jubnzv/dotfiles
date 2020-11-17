@@ -1,35 +1,28 @@
 local api = vim.api
-local lsp = require "nvim_lsp"
-local lsp_configs = require "nvim_lsp/configs"
-local diagnostic = require "diagnostic"
+local lsp = require "lspconfig"
 local virtualtypes = require "virtualtypes"
 
 local M = {}
 
--- F# configuration
-lsp_configs.fsharp = {
-  default_config = {
-    cmd = {"/home/jubnzv/Sources/fsharp-language-server/src/FSharpLanguageServer/bin/Release/netcoreapp3.0/FSharpLanguageServer"};
-    filetypes = {"fsharp"};
-    root_dir = lsp.util.root_pattern("*.fsproj", ".git");
-  };
-}
-
 function M.setup()
   lsp.clangd.setup {
-    on_attach=diagnostic.on_attach,
     cmd = { "clangd-11", "--background-index" }
   }
-  lsp.pyls.setup     { on_attach=diagnostic.on_attach }
-  lsp.gopls.setup    { on_attach=diagnostic.on_attach }
-  lsp.rls.setup      { on_attach=diagnostic.on_attach }
-  lsp.fsharp.setup   { on_attach=diagnostic.on_attach }
-  lsp.ocamllsp.setup {
-      on_attach=(function()
-          diagnostic.on_attach()
-          virtualtypes.on_attach()
-      end)
-  }
+  lsp.pyls.setup     { }
+  -- lsp.gopls.setup    { }
+  lsp.rls.setup      { }
+  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+
+  vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+      -- Enable underline, use default values
+      underline = true,
+      -- Disable virtual text
+      virtual_text=false,
+      -- Don't update while in insert mode
+      update_in_insert = false,
+    }
+  )
 
   vim.api.nvim_exec([[
     nnoremap <silent> gl             <cmd>lua vim.lsp.buf.declaration()<CR>
@@ -42,7 +35,10 @@ function M.setup()
 
     nnoremap <silent> <localleader>a <cmd>lua vim.lsp.buf.code_action()<CR>
     nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
-    nnoremap <silent> <localleader>d <cmd>lua vim.lsp.util.show_line_diagnostics()<CR>
+
+    nnoremap <buffer>]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+    nnoremap <buffer>[e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+    nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
     ]], '')
 end
 

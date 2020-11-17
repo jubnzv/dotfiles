@@ -1,3 +1,19 @@
+snippet hdr
+#include <iostream>
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <utility>
+
+using namespace std;
+
+$1
+endsnippet
+
 snippet exectime
 {
 	auto start__ = std::chrono::high_resolution_clock::now();
@@ -19,6 +35,24 @@ snippet prv
 for (auto const &vv : ${1:v})
   std::cout << vv << " ";
 std::cout << std::endl;
+endsnippet
+
+snippet prm
+for (auto const &m : ${1:M})
+  std::cout << m.first << ":" << m.second << "${2:\n}";
+std::cout << std::endl;
+endsnippet
+
+snippet qpr
+qDebug() << $1;
+endsnippet
+
+snippet qprd
+qDebug() << __LINE__ << $1; // prdbg
+endsnippet
+
+snippet spr
+spdlog::debug("${2:\{\}}", $1);
 endsnippet
 
 snippet inc

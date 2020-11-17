@@ -62,7 +62,6 @@ Plug 'rust-lang/rust.vim'              " Rust support
 " Native neovim LSP client
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
-  Plug 'haorenW1025/diagnostic-nvim'  " A wrapper for neovim built in LSP diagnosis config
 endif
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jubnzv/DoxygenToolkit.vim'      " Doxygen utilities
@@ -71,7 +70,6 @@ Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'peterhoeg/vim-qml'              " QML syntax highlighting
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
-Plug 'rhysd/vim-clang-format'         " Vim plugin for clang-format
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'pearofducks/ansible-vim'        " Ansible configuration files
@@ -232,6 +230,10 @@ nnoremap <leader>w :w<CR>
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
+
+" Replace-paste without yanking deleted lines
+nnoremap <leader>y "0y
+nnoremap <leader>p "0p
 
 " Insert newline without entering insert mode
 " nmap zj o<Esc>k
@@ -559,6 +561,7 @@ function! s:JbzOpenSlimeREPL(repl_exe, ...)
 
   call system("tmux split-window -h \"" . cmd . "\"")
   call system("tmux last-pane")
+  echoerr "cmd=" . cmd
   call s:JbzSlimeRight()
 endfunction
 command! -nargs=+ JbzOpenSlimeREPL call s:JbzOpenSlimeREPL(<f-args>)
@@ -923,23 +926,6 @@ let g:neoformat_enabled_lua = ['luaformatter']
 " let g:neoformat_enabled_ocaml = ['ocamlformat']
 " }}}
 
-" {{{ LSP-client
-" Auxiliary configuration for haorenW1025/diagnostic-nvim
-let g:diagnostic_enable_virtual_text = 0
-call sign_define("LspDiagnosticsErrorSign", {"text" : "E", "texthl" : "LspDiagnosticsError"})
-call sign_define("LspDiagnosticsWarningSign", {"text" : "W", "texthl" : "LspDiagnosticsWarning"})
-call sign_define("LspDiagnosticInformationSign", {"text" : "I", "texthl" : "LspDiagnosticsInformation"})
-call sign_define("LspDiagnosticHintSign", {"text" : "H", "texthl" : "LspDiagnosticsHint"})
-" Neovim's built-in LSP support will keep sending diagnostic messages when you're in insert mode.
-let g:diagnostic_insert_delay = 1
-let g:diagnostic_enable_underline = 1
-
-function! LSPKeymap()
-  nnoremap <buffer>]e :NextDiagnosticCycle<CR>
-  nnoremap <buffer>[e :PrevDiagnosticCycle<CR>
-endfunction
-" }}}
-
 " {{{ EditorConfig
 let g:EditorConfig_exclude_patterns = ['fugitive://.\*', 'scp://.\*']
 " }}}
@@ -1007,20 +993,13 @@ let g:table_mode_delete_column_map = ',tdc'
 let g:clang_include_fixer_path = "clang-include-fixer-8"
 let g:clang_rename_path = "clang-rename-8"
 
-" {{{ Custom :ClangFormat with aware of my debug prints
-function! s:JbzClangFormat()
-  let save_cursor = getcurpos()
-
-  if search("prdbg")
-      echo "Remove debug prints before running clang-format"
-  else
-      :ClangFormat
-  endif
-
-  call setpos('.', save_cursor)
+" {{{ Clang-format function
+function! s:JbzClangFormat(first, last)
+  let l:winview = winsaveview()
+  execute a:first . "," . a:last . "!clang-format"
+  call winrestview(l:winview)
 endfunction
-
-command! -range=% -nargs=0 JbzClangFormat call s:JbzClangFormat()
+command! -range=% JbzClangFormat call <sid>JbzClangFormat (<line1>, <line2>)
 " }}}
 
 " {{{ Function to remove my debug prints
@@ -1041,14 +1020,12 @@ augroup c_cxx_group
   au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
   " Autoformatting with clang-format
   au FileType c,cpp nnoremap <buffer><leader>lf :<C-u>JbzClangFormat<CR>
-  au FileType c,cpp vnoremap <buffer><leader>lf :JbzMyClangFormat<CR>
-  au FileType c,cpp nnoremap <leader>tf :ClangFormatAutoToggle<CR>
+  au FileType c,cpp vnoremap <buffer><leader>lf :JbzClangFormat<CR>
   " Align statements relative to case label
   au FileType c,cpp setlocal cinoptions+=l1
   " Include fixer
   au FileType c,cpp nnoremap <buffer><leader>l# :pyf /usr/lib/llvm-8/share/clang/clang-include-fixer.py<cr>
   " Set LSP keybindings
-  au FileType c,cpp call LSPKeymap()
   au FileType c,cpp RainbowToggleOn
   au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
   au BufEnter *.cc let b:fswitchdst = "h,hpp"

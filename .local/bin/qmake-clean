@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+make clean
+fd '\.o$' | xargs rm -v

@@ -21,7 +21,6 @@ Xft.rgba: rgb
 ! Fix font spacing
 URxvt.letterSpace: -1
 
-Xcursor.theme: Breeze
 Xcursor.size: 16
 ! }}}1
 
@@ -117,3 +116,5 @@ URxvt.color248: #bdae93
 URxvt.color250: #d5c4a1
 
 ! vim: foldmethod=marker sw=4
+
+Xcursor.theme: breeze_cursors

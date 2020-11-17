@@ -168,8 +168,8 @@ stty -ixon
 
 # {{{ History configuration
 export HISTFILE="$HOME/.zsh_history"
-export HISTSIZE=10000
-export SAVEHIST=100000
+export HISTSIZE=100000
+export SAVEHIST=1000000
 setopt incappendhistory
 setopt sharehistory
 # Write to the history file immediately, not when the shell exits.
@@ -467,6 +467,22 @@ function fzf-fasd-dir() {
 }
 zle -N fzf-fasd-dir
 bindkey "^[c" fzf-fasd-dir
+
+function fzf-rga() {
+	RG_PREFIX="rga --files-with-matches"
+	local file
+	file="$(
+		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
+			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
+				--phony -q "$1" \
+				--bind "change:reload:$RG_PREFIX {q}" \
+				--preview-window="70%:wrap"
+	)" &&
+	echo "opening $file" &&
+	xdg-open "$file"
+}
+zle -N fzf-rga
+bindkey "^[r" fzf-rga
 # }}}
 
 # {{{ Autocompletion
