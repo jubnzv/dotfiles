@@ -1,25 +1,28 @@
 local api = vim.api
 local lsp = require "lspconfig"
 local virtualtypes = require "virtualtypes"
+-- local lsp_status = require('lsp-status')
 
 local M = {}
 
 function M.setup()
+  -- lsp_status.register_progress()
+
   lsp.clangd.setup {
-    cmd = { "clangd-11", "--background-index" }
+    cmd = { "clangd-11", "--background-index" },
+    -- Connect lsp-status:
+    -- handlers = lsp_status.extensions.clangd.setup(),
+    -- init_options = { clangdFileStatus = true },
+    -- on_attach = lsp_status.on_attach,
+    -- capabilities = lsp_status.capabilities
   }
   lsp.pyls.setup     { }
-  -- lsp.gopls.setup    { }
-  lsp.rls.setup      { }
   lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
 
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
-      -- Enable underline, use default values
       underline = true,
-      -- Disable virtual text
       virtual_text=false,
-      -- Don't update while in insert mode
       update_in_insert = false,
     }
   )

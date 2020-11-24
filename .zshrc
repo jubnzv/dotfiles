@@ -81,6 +81,7 @@ export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 
 # Configure Qt theme with qt5ct
+export QT_QPA_PLATFORM='wayland;xcb'
 export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export EDITOR="nvim"
@@ -561,7 +562,7 @@ if [ -f ~/Work/env.sh ]; then
 fi
 
 # Auto start X
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec sway; fi
 
 # ~/.local/bin/cleanup-history ~/.history
 # fc -R # reload history

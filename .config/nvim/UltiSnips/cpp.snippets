@@ -47,8 +47,11 @@ snippet qpr
 qDebug() << $1;
 endsnippet
 
-snippet qprd
-qDebug() << __LINE__ << $1; // prdbg
+snippet qprxe
+QString str;
+QTextStream stream(&str);
+${1:root}.save(stream, 2);
+qDebug() << str;
 endsnippet
 
 snippet spr

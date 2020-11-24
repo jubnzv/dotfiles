@@ -12,7 +12,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 Plug 'kshenoy/vim-signature'          " Extended marks support
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
-Plug 'justinmk/vim-sneak'             " The missing motion for Vim
 Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap into it
 Plug 'will133/vim-dirdiff'            " Diff two directories
 Plug 'andymass/vim-matchup'           " Better %
@@ -27,10 +26,10 @@ Plug 'tyru/open-browser.vim'          " Plugin for openning links in the browser
 Plug 'itchyny/lightline.vim'          " Statusline plugin
 Plug 'jubnzv/gruvbox'                 " Color scheme
 Plug 'norcalli/nvim-colorizer.lua'    " Colorize color names and codes
-Plug 'Yggdroot/indentLine'            " Show indentation as vertical lines
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Plugin to highlight the word under the cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
+Plug 'cohama/agit.vim'                " gitk clone for vim
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 " A tree explorer plugin for vim
 Plug 'ms-jpq/chadtree', {
@@ -54,14 +53,17 @@ Plug 'honza/vim-snippets'
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
-Plug 'Shougo/deoplete-lsp'             " Neovim's LSP Completion source for deoplete
-Plug 'copy/deoplete-ocaml'             " Asynchronous completion for OCaml based on merlin
-Plug 'ocaml/vim-ocaml'                 " Vim runtime files for OCaml
-Plug 'jubnzv/virtual-types.nvim'       " Shows type annotations in virtual text
-Plug 'rust-lang/rust.vim'              " Rust support
+Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deoplete
+Plug 'copy/deoplete-ocaml'            " Asynchronous completion for OCaml based on merlin
+Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
+Plug 'jubnzv/virtual-types.nvim'      " Shows type annotations in virtual text
+Plug 'rust-lang/rust.vim'             " Rust support
 " Native neovim LSP client
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
+  " TODO: Utilities for generating statusline components from the built-in LSP client
+  " Seems good, but not yet usable. Status updates are too slow.
+  " Plug 'nvim-lua/lsp-status.nvim'
 endif
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jubnzv/DoxygenToolkit.vim'      " Doxygen utilities
@@ -152,8 +154,15 @@ if has('nvim-0.4')
   set pumblend=10    " Transparency for popup menus
 endif
 
+" Setup neovim-qt
+" if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
+"   set guifont=JetBrains\ Mono:h11
+"   nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+"   inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
+"   vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+" endif
+
 " Default conceal settings.
-" concealcuror could be overwritten by indentLine plugin in some modes: use g:indentLine_fileTypeExclude as workaround.
 set conceallevel=0
 set concealcursor=nc
 
@@ -253,8 +262,9 @@ nnoremap <localleader>R :so $MYVIMRC<CR>:echo "Config reloaded"<CR>
 nnoremap Q @@
 
 " Navigate to errors list
-nnoremap ]e :cnext <CR>
-nnoremap [e :cprevious<CR>
+" NOTE: Use LSP mappings instead
+" nnoremap ]e :cnext <CR>
+" nnoremap [e :cprevious<CR>
 
 " Search visually selected text
 vnoremap // y/<C-R>"<CR>
@@ -406,15 +416,91 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 
-" {{{ indentLine configuration
-let g:indentLine_fileTypeExclude = ['tex', 'markdown']
+" {{{ quick-scope
+" Trigger a highlight in the appropriate direction when pressing these keys:
+let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
+
+" Trigger a highlight only when pressing f and F.
+let g:qs_highlight_on_keys = ['f', 'F']
+
+highlight QuickScopePrimary guifg='#83a598' gui=underline gui=bold ctermfg=109 cterm=underline cterm=bold
+highlight QuickScopeSecondary guifg='#b8bb26' gui=underline gui=bold ctermfg=142 cterm=underline cterm=bold
 " }}}
 
 " {{{ Lightline
-" {{{ Function to show stripped filepath
-" This is modified version of:
-" https://github.com/itchyny/lightline.vim/issues/87#issuecomment-324988609
-function! LightLineFilename()
+let g:buftabline_indicators=1 " show modified
+
+let g:lightline = {
+  \ 'colorscheme': 'gruvbox',
+  \ 'active': {
+  \   'left':  [ [ 'mode', 'paste' ],
+  \              [ 'readonly', 'filename', 'modified' ],
+  \              [ 'current_function'] ],
+  \   'right': [ [ 'lineinfo' ],
+  \              [ 'percent' ],
+  \              [ 'fileformat', 'fileencoding', 'filetype' ],
+  \              [ 'gitbranch' ] ],
+  \ },
+  \ 'component': {
+  \   'gitbranch': ' %{fugitive#head()}'
+  \ },
+  \ 'component_expand': {
+  \   'lsp_warnings': 'LightlineLspWarnings',
+  \   'lsp_errors': 'LightlineLspErrors',
+  \ },
+  \ 'component_function': {
+  \   'current_function': 'LightlineCurrentFunctionVista',
+  \   'filename': 'LightlineStrippedFilename'
+  \ },
+  \ 'component_type': {
+  \   'lsp_warnings': 'warning',
+  \   'lsp_errors': 'error',
+  \   'readonly': 'error',
+  \ },
+  \ }
+
+function! LightlineLspWarnings() abort
+let sl = ''
+    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+       let warnings = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Warning]])")
+       return warnings.' ◆'
+    else
+        return ''
+    endif
+    return sl
+endfunction
+
+function! LightlineLspErrors() abort
+let sl = ''
+    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
+       let errors = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Error]])")
+       return errors.' ✕'
+    else
+        return ''
+    endif
+    return sl
+endfunction
+
+" TODO: https://github.com/nvim-lua/lsp-status.nvim is too slow. Need to revisit later.
+function! LightlineCurrentFunctionLspStatus() abort
+  let l:method = get(b:, 'lsp_current_function', '')
+  if l:method != ''
+    let l:method = '[' . l:method . ']'
+  endif
+  return l:method
+endfunction
+" autocmd User LspDiagnosticsChanged call lightline#update()
+
+function! LightlineCurrentFunctionVista() abort
+  let l:method = get(b:, 'vista_nearest_method_or_function', '')
+  if l:method != ''
+    let l:method = '[' . l:method . ']'
+  endif
+  return l:method
+endfunction
+au VimEnter * call vista#RunForNearestMethodOrFunction()
+
+function! LightlineStrippedFilename() abort
 	let subs = split(expand('%'), "/")
 
     " Handle './filename' and 'filename' cases
@@ -443,34 +529,6 @@ function! LightLineFilename()
 	endfor
   return name
 endfunction
-" }}}
-
-let g:lightline = {
-  \ 'colorscheme': 'gruvbox',
-  \ 'active': {
-  \   'left':  [ [ 'mode', 'paste' ],
-  \              [ 'readonly', 'filename', 'modified' ],
-  \              [ 'lsp_status'], ['method'] ],
-  \   'right': [ [ 'lineinfo' ],
-  \              [ 'percent' ],
-  \              [ 'fileformat', 'fileencoding', 'filetype' ],
-  \              [ 'gitbranch' ] ],
-  \ },
-  \ 'component': {
-  \   'gitbranch': ' %{fugitive#head()}'
-  \ },
-  \ 'component_function': {
-  \   'method': 'NearestMethodOrFunction',
-  \   'filename': 'LightLineFilename'
-  \ },
-  \ 'component_type': {
-  \   'lsp_warnings': 'warning',
-  \   'lsp_errors': 'error',
-  \   'readonly': 'error',
-  \ },
-  \ }
-
-let g:buftabline_indicators=1 " show modified
 " }}}
 
 " {{{ Integration with web-browser
@@ -810,22 +868,12 @@ au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 set tags=./tags;
 let g:gutentags_ctags_exclude = [
   \'node_modules', '_build', 'build', 'CMakeFiles', '.mypy_cache', 'venv',
-  \'*.md', '*.tex', '*.css', '*.html', '*.json', '*.xml', '*.xmls']
+  \'*.md', '*.tex', '*.css', '*.html', '*.json', '*.xml', '*.xmls', '*.ui']
 " Guttentags will exclude files from wildignore settings
 let g:gutentags_ctags_exclude_wildignore = 1
 
 let g:vista_default_executive = 'ctags'
 let g:vista_fzf_preview = ['right:50%']
-
-" Show current method name in lightline
-function! NearestMethodOrFunction() abort
-  let l:method = get(b:, 'vista_nearest_method_or_function', '')
-  if l:method != ''
-    let l:method = '[' . l:method . ']'
-  endif
-  return l:method
-endfunction
-au VimEnter * call vista#RunForNearestMethodOrFunction()
 
 " Copy current function name to system clipboard.
 function! FunctionNameToClipboard() abort
@@ -836,7 +884,7 @@ function! FunctionNameToClipboard() abort
 endfunction
 nnoremap <leader>yf :call FunctionNameToClipboard()<cr>
 
-nnoremap <silent> <C-7> :Vista!!<CR>
+nnoremap <silent> <A-6> :Vista!!<CR>
 " }}}
 
 " {{{ vim-signature
@@ -1011,6 +1059,12 @@ endfunction
 
 command! JbzRemoveDebugPrints call s:JbzRemoveDebugPrints()
 " }}}
+
+augroup qt_group
+  au!
+  au BufNewFile,BufReadPost *.ui set filetype=xml
+  au FileType xml nnoremap <buffer><leader>qd :!designer %:p<cr>
+augroup END
 
 augroup c_cxx_group
   au!
