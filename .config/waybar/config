@@ -5,7 +5,7 @@
     // Choose the order of the modules
     "modules-left": ["sway/workspaces", "sway/mode", "sway/window"],
     "modules-center": ["custom/clock"],
-    "modules-right": ["pulseaudio", "cpu", "memory", "network",  "battery", "tray", "custom/language"],
+    "modules-right": ["custom/language", "pulseaudio", "cpu", "memory", "network",  "battery", "tray"],
     // Modules configuration
      "sway/workspaces": {
          "disable-scroll": true,
@@ -50,12 +50,10 @@
         "interval": 1,
         "exec": "date +'%Y-%m-%d | %H:%M'"
     },
-    //"custom/language": {
-    //    "format": "{}",
-    //    "max-length": 50,
-    //    "interval": 1,
-    //    "exec": "~/.config/waybar/scripts/layout.sh"
-    //},
+    "custom/language": {
+        "toolip": false,
+        "exec": "swaymsg -mrt subscribe '[\"input\"]' | jq -r --unbuffered \"select(.change == \\\"xkb_layout\\\") | .input | select(.identifier == \\\"1:1:AT_Translated_Set_2_keyboard\\\" and .type == \\\"keyboard\\\") | .xkb_active_layout_name | .[0:2] | ascii_upcase\""
+    },
     "cpu": {
         "format": "{usage}% "
     },

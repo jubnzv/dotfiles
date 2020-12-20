@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+PACKAGES_WAYLAND="kanshi"
+
 create_symlinks() {
     for f in "$1"/* "$1"/.[^.]*; do
         if echo "$f" | egrep '.*\/?((\.){1,2}|.git|assets|README.md|install.sh|tags)$' >/dev/null; then

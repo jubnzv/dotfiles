@@ -1,0 +1,8 @@
+profile {
+    output "Seiko Epson Corporation 0x3047 0x00000000" mode 1366x768 position 0,0
+    output "Hewlett Packard HP 22xi 3CM4320NLH" mode 1920x1080 position 1366,0
+}
+
+profile {
+    output "Seiko Epson Corporation 0x3047 0x00000000" mode 1366x768 position 0,0
+}

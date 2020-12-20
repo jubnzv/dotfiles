@@ -2,22 +2,56 @@ local api = vim.api
 local lsp = require "lspconfig"
 local virtualtypes = require "virtualtypes"
 -- local lsp_status = require('lsp-status')
+local lspfuzzy = require('lspfuzzy')
 
 local M = {}
 
 function M.setup()
   -- lsp_status.register_progress()
 
+  lspfuzzy.setup {}
+
   lsp.clangd.setup {
-    cmd = { "clangd-11", "--background-index" },
+    cmd = { "clangd-11",
+            "--background-index",
+            "--header-insertion=iwyu",
+            "--header-insertion-decorators",
+           },
+
+    -- cmd = {
+    --     "/home/jubnzv/Dev/llvm-project/build/bin/clangd",
+    --     "--header-insertion=iwyu",
+    --     "--header-insertion-decorators",
+    --     "--suggest-missing-includes",
+    --     "-j=1",
+    --     "--log=verbose",
+    --     "--completion-style=detailed",
+    --     "--background-index",
+    --     "--clang-tidy"
+    -- },
+
     -- Connect lsp-status:
     -- handlers = lsp_status.extensions.clangd.setup(),
     -- init_options = { clangdFileStatus = true },
     -- on_attach = lsp_status.on_attach,
     -- capabilities = lsp_status.capabilities
   }
-  lsp.pyls.setup     { }
-  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+
+  if vim.fn.executable('pyls') then
+    lsp.pyls.setup { }
+  end
+
+  if vim.fn.executable('rls') then
+    lsp.rls.setup { }
+  end
+
+  if vim.fn.executable('ocamllsp') then
+    lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+  end
+
+  if vim.fn.executable('gopls') then
+    lsp.gopls.setup { }
+  end
 
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {

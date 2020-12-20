@@ -43,6 +43,23 @@ for (auto const &m : ${1:M})
 std::cout << std::endl;
 endsnippet
 
+snippet inc
+#include <${1:iostream}>
+endsnippet
+
+snippet td
+template <typename T> struct TD;
+endsnippet
+
+snippet tdu
+auto ${2:t} = ${1:var};
+TD<decltype($2)> t_type;
+endsnippet
+
+# -----------------------------------------------------------------------------
+# Qt
+# -----------------------------------------------------------------------------
+
 snippet qpr
 qDebug() << $1;
 endsnippet
@@ -54,10 +71,32 @@ ${1:root}.save(stream, 2);
 qDebug() << str;
 endsnippet
 
+snippet qprmetamethods
+for (int i = 0; i < ${1:metaObject()}->methodCount(); ++i) {
+    const QMetaMethod m = $1->method(i);
+    if (m.methodType() != QMetaMethod::Slot)
+        qDebug() << "slot: " << m.methodSignature();
+    if (m.methodType() != QMetaMethod::Signal)
+        qDebug() << "signal: " << m.methodSignature();
+}
+endsnippet
+
+# -----------------------------------------------------------------------------
+# LLVM
+# -----------------------------------------------------------------------------
+
+snippet llprty
+    std::string type_str;
+    llvm::raw_string_ostream rso(type_str);
+    ${1:ty}->print(rso);
+    std::cout << "Type=" << rso.str();
+endsnippet
+
+# -----------------------------------------------------------------------------
+# Misc.
+# -----------------------------------------------------------------------------
+
 snippet spr
 spdlog::debug("${2:\{\}}", $1);
 endsnippet
 
-snippet inc
-#include <${1:iostream}>
-endsnippet

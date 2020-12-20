@@ -12,18 +12,15 @@ ${BORG_BIN} create                            \
     --warning                                 \
     --show-rc                                 \
     --compression lz4                         \
-    --exclude '/home/jubnzv/Sources/llvm-project' \
+    --exclude '/home/jubnzv/Dev/llvm-project' \
     --exclude-caches                          \
     ::'{hostname}-{now}'                      \
     /home/jubnzv/Work       \
-    /home/jubnzv/Uni        \
     /home/jubnzv/Org        \
     /home/jubnzv/Dev        \
     /home/jubnzv/Documents  \
     /home/jubnzv/Pictures   \
     /home/jubnzv/dotfiles   \
-    /home/jubnzv/Ops        \
-    /home/jubnzv/VMs/Share/ \
     /home/jubnzv/VPN/       \
     /home/jubnzv/.config/   \
     /home/jubnzv/.local/         \

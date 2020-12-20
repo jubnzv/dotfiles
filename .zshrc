@@ -562,7 +562,7 @@ if [ -f ~/Work/env.sh ]; then
 fi
 
 # Auto start X
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec sway; fi
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
 
 # ~/.local/bin/cleanup-history ~/.history
 # fc -R # reload history

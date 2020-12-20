@@ -53,20 +53,27 @@ Plug 'honza/vim-snippets'
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
-Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deoplete
 Plug 'copy/deoplete-ocaml'            " Asynchronous completion for OCaml based on merlin
 Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
-Plug 'jubnzv/virtual-types.nvim'      " Shows type annotations in virtual text
 Plug 'rust-lang/rust.vim'             " Rust support
-" Native neovim LSP client
+" Native neovim LSP client and friends
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
-  " TODO: Utilities for generating statusline components from the built-in LSP client
+  " Plugin that makes the Neovim LSP client use FZF to display results and jump around the code
+  Plug 'ojroques/nvim-lspfuzzy'
+  " Shows type annotations in virtual text
+  Plug 'jubnzv/virtual-types.nvim'
+  " Neovim's LSP Completion source for deoplete
+  Plug 'Shougo/deoplete-lsp'
+  " Utilities for generating statusline components from the built-in LSP client
   " Seems good, but not yet usable. Status updates are too slow.
   " Plug 'nvim-lua/lsp-status.nvim'
 endif
+" DAP integration
+Plug 'puremourning/vimspector', {
+  \ 'do': 'python3 install_gadget.py --enable-vscode-cpptools'
+  \ }
 Plug 'sbdchd/neoformat'               " Integration with code formatters
-Plug 'jubnzv/DoxygenToolkit.vim'      " Doxygen utilities
 Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
@@ -90,6 +97,8 @@ Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'jubnzv/IEC.vim'             " IEC61131-3 plugin
+" Extended SMT-LIB2 support
+Plug 'bohlender/vim-smt2', {'for': ['z3']}
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -414,17 +423,9 @@ cnoreabbrev Tab EasyAlign
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-" }}}
 
-" {{{ quick-scope
-" Trigger a highlight in the appropriate direction when pressing these keys:
-let g:qs_highlight_on_keys = ['f', 'F', 't', 'T']
-
-" Trigger a highlight only when pressing f and F.
-let g:qs_highlight_on_keys = ['f', 'F']
-
-highlight QuickScopePrimary guifg='#83a598' gui=underline gui=bold ctermfg=109 cterm=underline cterm=bold
-highlight QuickScopeSecondary guifg='#b8bb26' gui=underline gui=bold ctermfg=142 cterm=underline cterm=bold
+" 'Zoom' the current window
+nnoremap <silent> <leader>z :Maximizer<cr>
 " }}}
 
 " {{{ Lightline
@@ -542,6 +543,7 @@ let g:openbrowser_search_engines = extend(
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+language%3AOCaml+{query}&type=Code',
 \       'github-rust': 'http://github.com/search?l=Rust&q=fork%3Afalse+language%3APython+{query}&type=Code',
 \       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
+\       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
 \       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
@@ -567,6 +569,8 @@ nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), 
 nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
 nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cword>'), "github-rust")<CR>
 nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
+" grep.app
+nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cword>'), "grep-app")<CR>
 " Documentation
 nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
 nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cword>'), "qt")<CR>
@@ -739,6 +743,7 @@ xmap gs <Plug>(GrepperOperator)
 
 " {{{ FZF
 let g:fzf_history_dir = '~/.local/share/fzf-history'
+au FileType fzf set nonu nornu
 
 " Pass raw arguments directly to rg command
 command! -bang -nargs=+ -complete=dir Rrg call fzf#vim#rg_raw(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
@@ -963,6 +968,7 @@ let g:neoformat_enabled_java = ['astyle']
 let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocpindent']
 let g:neoformat_enabled_lua = ['luaformatter']
+let g:neoformat_enabled_rust = ['rustfmt']
 
 " TODO: Consider ocamlformat (need update CI for projects...)
 " let g:neoformat_ocaml_ocamlformat = {
@@ -986,29 +992,17 @@ nnoremap <silent> <localleader>ok :FSSplitAbove<cr>
 nnoremap <silent> <localleader>ol :FSSplitRight<cr>
 " }}}
 
-" {{{ Doxygen
-" Reference: http://www.doxygen.nl/manual/docblocks.html
-
-" Enable syntax highlighting provided by default plugin
-let g:load_doxygen_syntax=1
-
-" Configure DoxygenToolchain
-let g:DoxygenToolkit_commentType = "C"
-let g:DoxygenToolkit_compactOneLineDoc = "no"
-let g:DoxygenToolkit_compactDoc = "yes"
-let g:DoxygenToolkit_keepEmptyLineAfterComment = "yes"
-let g:DoxygenToolkit_authorName="Georgy Komarov <jubnzv@gmail.com>"
-"}}}
-
 " {{{ Git workflow
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
 nmap [v <Plug>(GitGutterPrevHunk)
 nmap ]v <Plug>(GitGutterNextHunk)
-nmap <localleader>v <Plug>(GitGutterPreviewHunk)
 nmap <leader>v- <Plug>(GitGutterStageHunk)
 nmap <leader>v_ <Plug>(GitGutterUndoHunk)
+nmap <leader>vr <Plug>(GitGutterRefresh)
+nmap <localleader>v <Plug>(GitGutterPreviewHunk)
+nmap <localleader>b <Plug>(git-messenger)
 nmap <leader>vs :Gstatus<cr>
 nmap <leader>vp :Gpull<cr>
 nmap <leader>vP :Gpush 
@@ -1018,7 +1012,6 @@ nmap <leader>vD :Git! diff<cr>
 nmap <leader>vb :Gblame<cr>
 nmap <leader>vf :GFiles<cr>
 nmap <leader>vl :Agit<cr>
-nmap <leader>m <Plug>(git-messenger)
 
 " {{{ Copy git link
 function! CopyGitLink(...) range
@@ -1035,6 +1028,22 @@ vmap <silent> <leader>vy :call CopyGitLink(1)<CR>
 let g:table_mode_map_prefix = ',t'
 let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
+" }}}
+
+" {{{ Debug Adapter Protocol support
+command! -nargs=+ Vfb call vimspector#AddFunctionBreakpoint(<f-args>)
+
+nnoremap <localleader>gd :call vimspector#Launch()<cr>
+nnoremap <localleader>gc :call vimspector#Continue()<cr>
+nnoremap <localleader>gs :call vimspector#Stop()<cr>
+nnoremap <localleader>gR :call vimspector#Restart()<cr>
+nnoremap <localleader>gp :call vimspector#Pause()<cr>
+nnoremap <localleader>gb :call vimspector#ToggleBreakpoint()<cr>
+nnoremap <localleader>gB :call vimspector#ToggleConditionalBreakpoint()<cr>
+nnoremap <localleader>gn :call vimspector#StepOver()<cr>
+nnoremap <localleader>gi :call vimspector#StepInto()<cr>
+nnoremap <localleader>go :call vimspector#StepOut()<cr>
+nnoremap <localleader>gr :call vimspector#RunToCursor()<cr>
 " }}}
 
 " {{{ C/C++
@@ -1230,6 +1239,14 @@ augroup iec_group
 augroup END
 " }}}
 
+" {{{ z3 and smt-lib2
+augroup smt_group
+  au!
+  au! BufNewFile,BufReadPost *.{z3,smt2} set filetype=smt2
+  " au FileType smt2 RainbowToggleOn
+augroup END
+" }}}
+
 " {{{ LaTeX
 " References:
 " [0] https://castel.dev/post/lecture-notes-1/
@@ -1380,6 +1397,8 @@ au BufNewFile,BufRead *.c.dump      set filetype=xml tw=120
 au BufNewFile,BufRead *.cpp.dump    set filetype=xml tw=120
 " cppcheck configuration files
 au BufRead,BufNewFile *cppcheck*/cfg/*.cfg set filetype=xml
+
+autocmd FileType xml let b:did_indent = 0
 
 " Taskwarrior tasks (`task <id> edit`)
 au BufRead *.task /Description:
