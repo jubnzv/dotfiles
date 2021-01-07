@@ -1,8 +1,8 @@
 local api = vim.api
 local lsp = require "lspconfig"
 local virtualtypes = require "virtualtypes"
--- local lsp_status = require('lsp-status')
 local lspfuzzy = require('lspfuzzy')
+-- local lsp_status = require('lsp-status')
 
 local M = {}
 
@@ -16,19 +16,9 @@ function M.setup()
             "--background-index",
             "--header-insertion=iwyu",
             "--header-insertion-decorators",
+            "--suggest-missing-includes",
+            "--completion-style=detailed",
            },
-
-    -- cmd = {
-    --     "/home/jubnzv/Dev/llvm-project/build/bin/clangd",
-    --     "--header-insertion=iwyu",
-    --     "--header-insertion-decorators",
-    --     "--suggest-missing-includes",
-    --     "-j=1",
-    --     "--log=verbose",
-    --     "--completion-style=detailed",
-    --     "--background-index",
-    --     "--clang-tidy"
-    -- },
 
     -- Connect lsp-status:
     -- handlers = lsp_status.extensions.clangd.setup(),
@@ -73,8 +63,8 @@ function M.setup()
     nnoremap <silent> <localleader>a <cmd>lua vim.lsp.buf.code_action()<CR>
     nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
 
-    nnoremap <buffer>]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-    nnoremap <buffer>[e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+    nnoremap ]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+    nnoremap [e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
     nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
     ]], '')
 end

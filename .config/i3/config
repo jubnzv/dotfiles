@@ -28,6 +28,7 @@ focus_follows_mouse no
 exec --no-startup-id autorandr --change home
 exec $APP_THUNDERBIRD
 exec $APP_TELEGRAM
+exec hexchat
 exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
 # exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
@@ -115,7 +116,7 @@ set $mod Mod4
 # Windows control
 bindsym $mod+Shift+C kill
 bindsym $mod+Shift+less kill
-bindsym $mod+F9 fullscreen
+bindsym $mod+z fullscreen
 bindsym $mod+Escape layout toggle tabbed splith
 bindsym $mod+Shift+space floating toggle
 bindsym $mod+Shift+B border toggle
@@ -194,7 +195,7 @@ bindsym $mod+Shift+0 move container to workspace $ws_0
 # Application startup hotkeys
 bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh
 bindsym $mod+c exec $SCRIPTS_PATH/rofi-configs.sh
-bindsym $mod+Control+n exec $TERMINAL -e nvim "+cd ~/Org/Notes" ~/Org/Notes/index.md
+bindsym $mod+Control+n exec $TERMINAL -d ~/Org/Notes/ -e python3 -m http.server 8000 & /opt/firefox/firefox-bin http://localhost:8000
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
 bindsym $mod+Control+2 workspace $ws_w; exec /opt/firefox/firefox-bin
@@ -202,7 +203,6 @@ bindsym $mod+Control+3 workspace $ws_w; exec /opt/firefox/firefox-bin -p local
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Shift+R exec pcmanfm
 bindsym $mod+Control+q exec code
-bindsym $mod+Control+w exec $TERMINAL -e wicd-curses
 bindsym $mod+Control+k exec keepassxc # focus keepassxc window
 bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py                              \
                             && sleep 0.2                                             \

@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
-# Make taskwarrior tasks for "work" project waiting to start of work week.
+#
+# Make taskwarrior tasks for "work" project waiting to the start of the next work week.
+#
+period='soww'
+if [[ ! -z "$1" ]]; then
+    period="$1"
+fi
+
 if [[ ! -x "$(command -v task)" ]]; then
     echo "task: command not found"
     exit 1
@@ -19,5 +26,5 @@ if [[ $REPLY =~ ^[Nn]$ ]]; then
 fi
 
 for i in $ids; do
-    task $i m rc.gc:off wait:soww 2>/dev/null
+    task $i m wait:"$period" 2>/dev/null
 done

@@ -1,0 +1,15 @@
+snippet tmpl_binaries
+SRC_DIR := ./src
+OBJ_DIR := ./out
+SRC_FILES := $(wildcard $(SRC_DIR)/*.cpp)
+OUT_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%,$(SRC_FILES))
+LDFLAGS := -pthread
+CPPFLAGS := 
+CXXFLAGS := -O2 -pthread
+CXX=g++
+
+main: $(OUT_FILES)
+
+$(OBJ_DIR)/%: $(SRC_DIR)/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -o $@ $<
+endsnippet

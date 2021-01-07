@@ -46,7 +46,7 @@ font-1 = "Iosevka NF:size=10"
 
 modules-left = i3
 modules-center = date
-modules-right = pulseaudio xbacklight filesystem memory cpu wlan eth vpn-openvpn-isrunning docker battery mouse-battery notifications-status
+modules-right = pulseaudio xbacklight filesystem-root filesystem-home memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery notifications-status
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
@@ -58,10 +58,32 @@ tray-position = right
 tray-padding = 2
 tray-background = ${colors.background}
 
+[module/filesystem-root]
+type = internal/fs
+interval = 30
+mount-0 = /
+warn-percentage=90
+
+format-mounted-prefix-foreground = ${colors.foreground-alt}
+format-mounted-prefix-underline = ${colors.purple1}
+format-mounted-prefix = " "
+
+; label-mounted = %percentage_used%%
+label-mounted =
+label-mounted-underline = ${colors.purple1}
+label-unmounted = %mountpoint% not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+
+format-warn = <label-warn>
+format-warn-prefix = " "
+format-warn-foreground = ${colors.yellow1}
+label-warn = %percentage_used%%
+
 [module/filesystem]
 type = internal/fs
-interval = 25
+interval = 30
 mount-0 = /home
+warn-percentage=90
 
 format-mounted-prefix-foreground = ${colors.foreground-alt}
 format-mounted-prefix-underline = ${colors.purple1}
@@ -254,7 +276,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 type = internal/battery
 battery = BAT0
 adapter = AC
-full-at = 98
+full-at = 100
 format-charging = <animation-charging> <label-charging>
 format-charging-underline = ${colors.yellow1}
 format-discharging = <animation-discharging> <label-discharging>

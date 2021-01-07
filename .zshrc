@@ -81,7 +81,7 @@ export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # -Dswing.crossplatformlaf=com.sun.java.swing.plaf.gtk.GTKLookAndFeel'
 
 # Configure Qt theme with qt5ct
-export QT_QPA_PLATFORM='wayland;xcb'
+# export QT_QPA_PLATFORM='wayland;xcb'
 export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export EDITOR="nvim"
@@ -200,8 +200,6 @@ alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 zt() { zathura $1 2>&1 >/dev/null & }
-alias ff='firefox'
-alias mrg='mirage'
 alias j='z'
 alias tm='tmux'
 jj() { z "$@"; [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}" }
@@ -212,12 +210,10 @@ alias r='ranger'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
 lfind() { find . -iname $@ 2>/dev/null }
 
-# {{{ Debian tools
+# Debian tools
 alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
-# }}}
 
 # vim
-alias :e='nvim'
 alias v='nvim'
 alias vim='nvim'
 alias vO='nvim -O' # Open in vertical splits
@@ -232,10 +228,7 @@ mkcd() {
     mkdir -p "$1" && cd "$1" || return 1
 }
 
-# rsync
-alias rs='rsync -ah --progress'
-
-# {{{ git
+# git
 alias g='git'
 alias gh='git help'
 alias gb='git branch'
@@ -253,12 +246,10 @@ alias gsmi='git submodule init'
 alias gsmu='git submodule update'
 alias gsmui='git submodule update --init --recursive'
 alias gsmy='git submodule sync'
-#  }}}
 
-# {{{ docker
+# docker
 alias d='docker'
 alias drmrunning='docker container rm -f $(docker container ls -q)'
-# }}}
 
 alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
@@ -297,10 +288,6 @@ alias ctags='/usr/bin/ctags-universal'
 alias ls='ls --color=auto'
 alias ll='ls -oh'
 alias l1='ls -1'
-alias lla='ls -oha'
-alias lt='ls -ouht'
-alias lta='ls -lthua'
-alias lZ='ls -Zh'
 if [[ -x "$(command -v tree)" ]]; then
     alias lT='tree'
 else
@@ -344,9 +331,7 @@ else
 fi
 # }}}
 
-alias sc='systemctl --user'
-
-alias exrm="exim4 -bp| grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
+alias exrm="exim4 -bp | grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
 
 # Sequence that disables cursor blinking
 alias stopblink="printf '\033[?12l'"
@@ -493,7 +478,7 @@ compdef g=git
 # }}}
 
 # {{{ auto-notify plugin configuration
-export AUTO_NOTIFY_THRESHOLD=60
+export AUTO_NOTIFY_THRESHOLD=600
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
 export AUTO_NOTIFY_BODY="Elapsed time: %elapsed seconds"
 export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "git"
@@ -502,7 +487,7 @@ export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "g
                               "borg-linux64" "aria2" "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 export AUTO_NOTIFY_IGNORE=("docker exec" "docker-compose")
-export AUTO_NOTIFY_EXPIRE_TIME=20
+export AUTO_NOTIFY_EXPIRE_TIME=200
 # }}}
 
 # {{{ Show current directory in X window title

@@ -4,7 +4,7 @@ let maplocalleader = ","
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
-let g:python3_host_prog  = '/usr/bin/python3.8'
+let g:python3_host_prog  = '/usr/bin/python3.9'
 
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
@@ -30,6 +30,7 @@ Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Plugin to highlight the word under the cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'cohama/agit.vim'                " gitk clone for vim
+" TODO: Consider https://github.com/lewis6991/gitsigns.nvim as replacement
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 " A tree explorer plugin for vim
 Plug 'ms-jpq/chadtree', {
@@ -558,24 +559,24 @@ let g:openbrowser_default_search = 'google'
 
 " Search selected visually selected word with appropriate search engine.
 nnoremap <silent> <leader>os <Plug>(openbrowser-smart-search)
-nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
+nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cWORD>'), "google")<CR>
 " Translate
-nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
+nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cWORD>'), "yandex-translate-en-ru")<CR>
 " Github
-nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
-nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
-nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
-nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
-nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
-nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cword>'), "github-rust")<CR>
-nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
+nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cWORD>'), "github")<CR>
+nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cWORD>'), "github-c")<CR>
+nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cWORD>'), "github-cpp")<CR>
+nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cWORD>'), "github-python")<CR>
+nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cWORD>'), "github-ocaml")<CR>
+nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cWORD>'), "github-rust")<CR>
+nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cWORD>'), "github-vimscript")<CR>
 " grep.app
-nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cword>'), "grep-app")<CR>
+nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cWORD>'), "grep-app")<CR>
 " Documentation
-nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
-nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cword>'), "qt")<CR>
-nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cword>'), "python")<CR>
-nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cword>'), "rust")<CR>
+nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cWORD>'), "cppreference")<CR>
+nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cWORD>'), "qt")<CR>
+nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cWORD>'), "python")<CR>
+nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cWORD>'), "rust")<CR>
 " }}}
 
 " {{{ tmux and vim-slime configuration
@@ -1047,9 +1048,6 @@ nnoremap <localleader>gr :call vimspector#RunToCursor()<cr>
 " }}}
 
 " {{{ C/C++
-let g:clang_include_fixer_path = "clang-include-fixer-8"
-let g:clang_rename_path = "clang-rename-8"
-
 " {{{ Clang-format function
 function! s:JbzClangFormat(first, last)
   let l:winview = winsaveview()
@@ -1059,14 +1057,33 @@ endfunction
 command! -range=% JbzClangFormat call <sid>JbzClangFormat (<line1>, <line2>)
 " }}}
 
+" {{{ Clang include fixer
+function! s:JbzClangIncludeFixer(first, last)
+  let l:winview = winsaveview()
+  execute a:first . "," . a:last . "!clang-include-fixer"
+  call winrestview(l:winview)
+endfunction
+command! -range=% JbzClangIncludeFixer call <sid>JbzClangIncludeFixer (<line1>, <line2>)
+" }}}
+
 " {{{ Function to remove my debug prints
 function! s:JbzRemoveDebugPrints()
   let save_cursor = getcurpos()
   :g/\/\/\ prdbg$/d
   call setpos('.', save_cursor)
 endfunction
-
 command! JbzRemoveDebugPrints call s:JbzRemoveDebugPrints()
+" }}}
+
+" {{{ Open stdman manpage for the word over cursor
+function! s:JbzCppMan()
+    let old_isk = &iskeyword
+    setl iskeyword+=:
+    let str = expand("<cword>")
+    let &l:iskeyword = old_isk
+    execute 'Man ' . str
+endfunction
+command! JbzCppMan :call s:JbzCppMan()
 " }}}
 
 augroup qt_group
@@ -1079,6 +1096,7 @@ augroup c_cxx_group
   au!
   au FileType c,cpp setlocal commentstring=//\ %s
   au FileType c,cpp setlocal tw=80
+  au FileType cpp nnoremap <buffer>K :JbzCppMan<CR>
   " Remove debug prints created with snippets
   au FileType c,cpp nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
   " Autoformatting with clang-format
@@ -1087,7 +1105,8 @@ augroup c_cxx_group
   " Align statements relative to case label
   au FileType c,cpp setlocal cinoptions+=l1
   " Include fixer
-  au FileType c,cpp nnoremap <buffer><leader>l# :pyf /usr/lib/llvm-8/share/clang/clang-include-fixer.py<cr>
+  au FileType c,cpp nnoremap <buffer><leader>li :<C-u>JbzClangIncludeFixer<CR>
+  au FileType c,cpp vnoremap <buffer><leader>li :JbzClangIncludeFixer<CR>
   " Set LSP keybindings
   au FileType c,cpp RainbowToggleOn
   au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
@@ -1182,16 +1201,6 @@ au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' |
 augroup rust_group
   au!
   au FileType rust RainbowToggleOn
-augroup END
-" }}}
-
-" {{{ F#
-augroup fsharp_group
-  au!
-  au BufNewFile,BufReadPost *.fs set filetype=fsharp
-  au FileType fsharp nnoremap <buffer><leader>sC :JbzOpenSlimeREPL dotnet fsi<CR>
-  au BufNewFile,BufRead *.sln      set filetype=xml
-  au BufNewFile,BufRead *.fsproj   set filetype=xml
 augroup END
 " }}}
 

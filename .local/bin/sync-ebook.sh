@@ -17,6 +17,7 @@ rsync --update -aurP -L   \
     --delete              \
     --exclude '*tar.gz'   \
     --exclude '*tar.xz'   \
+    --exclude 'cv'        \
     --exclude '*tar.bz2'  \
     --exclude '*.rar'     \
     --exclude 'websites'  \
