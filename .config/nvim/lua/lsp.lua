@@ -18,6 +18,7 @@ function M.setup()
             "--header-insertion-decorators",
             "--suggest-missing-includes",
             "--completion-style=detailed",
+            "--clang-tidy",
            },
 
     -- Connect lsp-status:
@@ -41,6 +42,10 @@ function M.setup()
 
   if vim.fn.executable('gopls') then
     lsp.gopls.setup { }
+  end
+
+  if vim.fn.executable('typescript-language-server') then
+    lsp.tsserver.setup { }
   end
 
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(

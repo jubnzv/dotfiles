@@ -79,6 +79,7 @@ Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'peterhoeg/vim-qml'              " QML syntax highlighting
+Plug 'wlangstroth/vim-racket'         " Vim bundle for Racket
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
@@ -92,6 +93,7 @@ Plug 'cespare/vim-toml'
 Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
 Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
+Plug 'rhysd/vim-grammarous'           " LanguageTool (https://languagetool.org/) integration
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
@@ -397,6 +399,9 @@ nnoremap <silent> <leader>rs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar
 " ё -> е
 nnoremap <silent> <leader>r` :%s/ё/е/g<cr>
 
+" Find all cyrillic characters
+nnoremap <silent> <leader>/c /[\d1040-\d1103]<cr>
+
 " Switch to recent buffer
 nnoremap <A-r> <C-^>
 
@@ -546,7 +551,9 @@ let g:openbrowser_search_engines = extend(
 \       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
 \       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
+\       'baidu': 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd={query}',
 \       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
+\       'ludwig-en': 'https://ludwig.guru/ru/s/{query}',
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
 \       'cppreference': 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search={query}',
 \       'qt': 'https://doc.qt.io/qt-5/search-results.html?q={query}',
@@ -557,26 +564,54 @@ let g:openbrowser_search_engines = extend(
 \)
 let g:openbrowser_default_search = 'google'
 
+function! s:JbzGetVisual()
+  let l:old_reg = getreg('"')
+  let l:old_regtype = getregtype('"')
+  norm gvy
+  let l:ret = getreg('"')
+  call setreg('"', l:old_reg, l:old_regtype)
+  exe "norm \<Esc>"
+  return substitute(l:ret, '\n\+$', '', '') " chomp
+endfunction
+
 " Search selected visually selected word with appropriate search engine.
 nnoremap <silent> <leader>os <Plug>(openbrowser-smart-search)
-nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cWORD>'), "google")<CR>
+nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
+vnoremap <silent> <Leader>osg :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"google\")"<CR>
+nnoremap <silent> <leader>osb :call openbrowser#smart_search(expand('<cword>'), "baidu")<CR>
+vnoremap <silent> <Leader>osb :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"baidu\")"<CR>
 " Translate
-nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cWORD>'), "yandex-translate-en-ru")<CR>
+nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
+vnoremap <silent> <Leader>otr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"yandex-translate-en-ru\")"<CR>
+nnoremap <silent> <leader>otl :call openbrowser#smart_search(expand('<cword>'), "ludwig-en")<CR>
+vnoremap <silent> <Leader>otl :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"ludwig-en\")"<CR>
 " Github
-nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cWORD>'), "github")<CR>
-nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cWORD>'), "github-c")<CR>
-nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cWORD>'), "github-cpp")<CR>
-nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cWORD>'), "github-python")<CR>
-nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cWORD>'), "github-ocaml")<CR>
-nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cWORD>'), "github-rust")<CR>
-nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cWORD>'), "github-vimscript")<CR>
+nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
+vnoremap <silent> <Leader>ogg :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github\")"<CR>
+nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
+vnoremap <silent> <Leader>ogc :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-c\")"<CR>
+nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
+vnoremap <silent> <Leader>ogx :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-cpp\")"<CR>
+nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
+vnoremap <silent> <Leader>ogp :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-python\")"<CR>
+nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
+vnoremap <silent> <Leader>ogo :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-ocaml\")"<CR>
+nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cword>'), "github-rust")<CR>
+vnoremap <silent> <Leader>ogr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-rust\")"<CR>
+nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
+vnoremap <silent> <Leader>ogv :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-vimscript\")"<CR>
 " grep.app
-nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cWORD>'), "grep-app")<CR>
+nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cword>'), "grep-app")<CR>
+vnoremap <silent> <Leader>osa :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"grep-app\")"<CR>
 " Documentation
-nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cWORD>'), "cppreference")<CR>
-nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cWORD>'), "qt")<CR>
-nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cWORD>'), "python")<CR>
-nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cWORD>'), "rust")<CR>
+nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
+vnoremap <silent> <Leader>osx :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"cppreference\")"<CR>
+nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cword>'), "qt")<CR>
+vnoremap <silent> <Leader>osq :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"qt\")"<CR>
+nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cword>'), "python")<CR>
+vnoremap <silent> <Leader>osp :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"python\")"<CR>
+nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cword>'), "rust")<CR>
+vnoremap <silent> <Leader>osr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"rust\")"<CR>
 " }}}
 
 " {{{ tmux and vim-slime configuration
@@ -1060,7 +1095,7 @@ command! -range=% JbzClangFormat call <sid>JbzClangFormat (<line1>, <line2>)
 " {{{ Clang include fixer
 function! s:JbzClangIncludeFixer(first, last)
   let l:winview = winsaveview()
-  execute a:first . "," . a:last . "!clang-include-fixer"
+  " execute pyf clang-include-fixer
   call winrestview(l:winview)
 endfunction
 command! -range=% JbzClangIncludeFixer call <sid>JbzClangIncludeFixer (<line1>, <line2>)
@@ -1107,7 +1142,6 @@ augroup c_cxx_group
   " Include fixer
   au FileType c,cpp nnoremap <buffer><leader>li :<C-u>JbzClangIncludeFixer<CR>
   au FileType c,cpp vnoremap <buffer><leader>li :JbzClangIncludeFixer<CR>
-  " Set LSP keybindings
   au FileType c,cpp RainbowToggleOn
   au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
   au BufEnter *.cc let b:fswitchdst = "h,hpp"
@@ -1126,6 +1160,14 @@ augroup END
 augroup lua_group
   au!
   au FileType lua RainbowToggleOn
+augroup END
+" }}}
+
+" {{{ Javascript
+augroup js_group
+  au!
+  au FileType javascript setlocal sw=2 ts=2 expandtab
+  au FileType javascript RainbowToggleOn
 augroup END
 " }}}
 
@@ -1210,6 +1252,7 @@ augroup rkt_group
   " au FileType racket inoremap <A-1> `()<Esc>i
   au FileType racket inoremap <A-1> `
   au FileType racket inoremap <A-2> '
+  au FileType racket inoremap <A-3> λ
   au FileType racket setlocal foldmethod=marker
   au FileType racket setlocal commentstring=;\ %s
   au FileType racket nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "racket"<CR>
@@ -1244,7 +1287,7 @@ augroup iec_group
   au! BufNewFile,BufReadPost *.{il,st} set filetype=iec
   au FileType iec setlocal sw=2 ts=2 expandtab
   au FileType iec let Comment="(*" | let EndComment="*)"
-  au FileType iec RainbowToggleOn
+  " au FileType iec RainbowToggleOn
 augroup END
 " }}}
 

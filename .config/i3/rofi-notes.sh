@@ -46,7 +46,7 @@ fi
 
 note=$NOTES_DIR/$select
 if [ ! -f $note ] && [[ ! $note =~ .*.md$ ]]; then
-    note=$NOTES_DIR/${select///}.md
+    note="$NOTES_DIR/${select///}".md
 fi
-$EDITOR $note
+$EDITOR "$note"
 

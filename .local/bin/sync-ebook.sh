@@ -12,17 +12,19 @@ if [ ! -d $mount_point ]; then
     exit 127
 fi
 
-echo "[$(date +'%H:%M:%S')] Syncing $HOME/Documents/ with $mount_point ..."
-rsync --update -aurP -L   \
+T="$(date +%s)"
+echo "Syncing $HOME/Documents/ with $mount_point ..."
+rsync --update -aqurP -L  \
     --delete              \
-    --exclude '*tar.gz'   \
-    --exclude '*tar.xz'   \
+    --include '*.pdf'     \
+    --include '*.djvu'    \
+    --include '*.epub'    \
+    --include '*.fb2*'    \
+    --include '*/'        \
+    --exclude '*'         \
     --exclude 'cv'        \
-    --exclude '*tar.bz2'  \
-    --exclude '*.rar'     \
     --exclude 'websites'  \
     --exclude '_Archive'  \
-    --exclude '*.html'    \
-    --exclude '*.7z'      \
     $HOME/Documents/ "$mount_point"/Documents
-echo "[$(date +'%H:%M:%S')] Done"
+T="$(($(date +%s)-T))"
+printf "Sync time: %dd %02d:%02d:%02d\n" "$((T/86400))" "$((T/3600%24))" "$((T/60%60))" "$((T%60))"

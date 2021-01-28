@@ -5,6 +5,8 @@ let mapleader = " "
 set scrolloff=3  " 3 lines above/below cursor when scrolling
 set incsearch hlsearch
 set relativenumber
+set visualbell
+set noerrorbells
 set surround
 set showmode
 
