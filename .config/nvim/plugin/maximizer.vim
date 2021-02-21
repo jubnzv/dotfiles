@@ -35,6 +35,10 @@ if !exists('g:maximizer_restore_on_winleave')
     let g:maximizer_restore_on_winleave = 0
 endif
 
+if !exists('g:maximizer_handle_window_resize')
+    let g:maximizer_handle_window_resize = 0
+endif
+
 if !exists('g:maximizer_default_mapping_key')
     let g:maximizer_default_mapping_key = '<F3>'
 endif
@@ -79,9 +83,22 @@ fun! s:toggle(force)
     endif
 endfun
 
+fun! s:handle_window_resize()
+    if exists('t:maximizer_sizes')
+        call s:maximize()
+    endif
+endfun
+
 if g:maximizer_restore_on_winleave
-    augroup maximizer
+    augroup maximizer_win_leave
         au!
         au WinLeave * call s:restore()
+    augroup END
+endif
+
+if g:maximizer_handle_window_resize
+    augroup maximizer_win_resize
+        au!
+        au VimResized * call s:handle_window_resize()
     augroup END
 endif

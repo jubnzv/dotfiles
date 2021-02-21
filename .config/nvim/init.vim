@@ -614,6 +614,12 @@ nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cword>'), 
 vnoremap <silent> <Leader>osr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"rust\")"<CR>
 " }}}
 
+" {{{ vim-maximizer
+let g:maximizer_default_mapping_key = '<leader>z'
+let g:maximizer_restore_on_winleave = 0
+let g:maximizer_handle_window_resize = 1
+" }}}
+
 " {{{ tmux and vim-slime configuration
 " Free my prefix key
 map ` <Nop>
