@@ -65,12 +65,41 @@ snippet tmpl
 template <typename T>
 endsnippet
 
+snippet del
+if (${1})
+	delete $1;
+$1 = nullptr;
+endsnippet
+
 # -----------------------------------------------------------------------------
 # Qt
 # -----------------------------------------------------------------------------
 
 snippet qpr
-qDebug() << $1;
+qDebug() << $1; // prdbg
+endsnippet
+
+snippet qpr1
+qWarning() << __FILE__ << __LINE__; // prdbg
+endsnippet
+
+snippet qpr2
+qWarning() << __FILE__ << __LINE__; // prdbg
+${VISUAL}
+qWarning() << __FILE__ << __LINE__; // prdbg
+endsnippet
+
+snippet qmname
+metaObject()->className()
+endsnippet
+
+snippet qtid
+QThread::currentThreadId()
+endsnippet
+
+# Print hex
+snippet qph
+QString::number($1, 16)
 endsnippet
 
 snippet qprxe

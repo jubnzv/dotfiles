@@ -44,6 +44,7 @@ exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id keepassxc
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 exec --no-startup-id syncthing-gtk
+exec --no-startup-id solaar
 exec --no-startup-id "eval `ssh-agent -s`"
 # exec --no-startup-id sleep 10; anki
 exec_always --no-startup-id ~/.config/polybar/launch.sh
@@ -133,8 +134,7 @@ bindsym $mod+Shift+Down move workspace prev
 bindsym $mod+Shift+Up move workspace next
 
 # Move workspaces through monitors
-bindsym $mod+Shift+underscore move workspace to output left
-bindsym $mod+Shift+plus move workspace to output right
+bindsym $mod+Shift+Tab move workspace to output left
 
 # Change windows layout
 # bindsym $mod+Control+Left move left

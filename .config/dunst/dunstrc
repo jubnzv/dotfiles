@@ -29,8 +29,8 @@
     dmenu = /usr/bin/dmenu -p dunst:
     browser = /home/jubnzv/.local/bin/firefox
     icon_position = left
-    max_icon_size = 16
-    icon_folders = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/:/usr/share/icons/breeze/status/16/:/usr/share/icons/breeze/actions/16
+    max_icon_size = 32
+    icon_folders = /usr/share/icons/gnome/32x32/status/:/usr/share/icons/gnome/32x32/devices/:/usr/share/icons/breeze/status/32/:/usr/share/icons/breeze/actions/32
 
 [frame]
     width = 1

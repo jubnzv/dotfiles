@@ -50,3 +50,5 @@ define printqs5dynamic
   printf "\"\n"
 end
 # }}}
+
+# source ~/Dev/tools/peda/peda.py

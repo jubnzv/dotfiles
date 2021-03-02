@@ -32,11 +32,8 @@ Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'cohama/agit.vim'                " gitk clone for vim
 " TODO: Consider https://github.com/lewis6991/gitsigns.nvim as replacement
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
-" A tree explorer plugin for vim
-Plug 'ms-jpq/chadtree', {
-  \ 'branch': 'chad',
-  \ 'do': ':UpdateRemotePlugins'
-  \ }
+Plug 'kyazdani42/nvim-tree.lua'       " A tree explorer plugin for vim
+Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
 Plug 'mbbill/undotree'
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'junegunn/fzf.vim'
@@ -51,6 +48,7 @@ Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>`
 Plug 'tyru/caw.vim'                   " Comment plugin
 Plug 'sirver/ultisnips'               " Snippets plugin
 Plug 'honza/vim-snippets'
+Plug 'Yggdroot/indentLine'            " A Vim plugin for visually displaying indent levels in code
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
@@ -94,12 +92,12 @@ Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
 Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
 Plug 'rhysd/vim-grammarous'           " LanguageTool (https://languagetool.org/) integration
+Plug 'MTDL9/vim-log-highlighting'     " Syntax highlighting for generic log files in VIM
+Plug 'jubnzv/IEC.vim'                 " IEC61131-3 plugin
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
-Plug 'MTDL9/vim-log-highlighting' " Syntax highlighting for generic log files in VIM
 Plug 'Matt-Deacalion/vim-systemd-syntax'
-Plug 'jubnzv/IEC.vim'             " IEC61131-3 plugin
 " Extended SMT-LIB2 support
 Plug 'bohlender/vim-smt2', {'for': ['z3']}
 
@@ -174,11 +172,11 @@ endif
 "   vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
 " endif
 
-" Default conceal settings.
+" Default conceal settings
 set conceallevel=0
 set concealcursor=nc
 
-" Cyrillic layout in normal mode
+" Cyrillic layout in the normal mode
 set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
 set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
 set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
@@ -211,6 +209,7 @@ set t_ZR=^[[23m
 let g:gruvbox_sign_column='bg0'
 let g:gruvbox_color_column='bg1'
 let g:gruvbox_number_column='bg0'
+let g:gruvbox_italic=0
 colorscheme gruvbox
 
 " Highlighting
@@ -322,12 +321,9 @@ augroup END
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <leader>rm mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
-" Spellchecking
+" Spellchecking (see also fzf section bellow)
 map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
-" Fix previous error
-noremap <A-u> [s1z=``
-inoremap <A-u> <c-g>u<Esc>[s1z=`]a<c-g>u
 " }}}
 
 " {{{ Toggle quickfix window
@@ -429,9 +425,6 @@ cnoreabbrev Tab EasyAlign
 xmap ga <Plug>(EasyAlign)
 " Start interactive EasyAlign for a motion/text object (e.g. gaip)
 nmap ga <Plug>(EasyAlign)
-
-" 'Zoom' the current window
-nnoremap <silent> <leader>z :Maximizer<cr>
 " }}}
 
 " {{{ Lightline
@@ -546,6 +539,7 @@ let g:openbrowser_search_engines = extend(
 \       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+language%3AC+{query}&type=Code',
 \       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+language%3AC%2B%2B+{query}&type=Code',
 \       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+language%3APython+{query}&type=Code',
+\       'github-go': 'http://github.com/search?l=Go&q=fork%3Afalse+language%3AGo+{query}&type=Code',
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+language%3AOCaml+{query}&type=Code',
 \       'github-rust': 'http://github.com/search?l=Rust&q=fork%3Afalse+language%3APython+{query}&type=Code',
 \       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
@@ -556,6 +550,7 @@ let g:openbrowser_search_engines = extend(
 \       'ludwig-en': 'https://ludwig.guru/ru/s/{query}',
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
 \       'cppreference': 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search={query}',
+\       'hotexamples': 'https://cpp.hotexamples.com/search/{query}',
 \       'qt': 'https://doc.qt.io/qt-5/search-results.html?q={query}',
 \       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
 \       'rust': 'https://doc.rust-lang.org/std/index.html?search={query}',
@@ -574,44 +569,30 @@ function! s:JbzGetVisual()
   return substitute(l:ret, '\n\+$', '', '') " chomp
 endfunction
 
-" Search selected visually selected word with appropriate search engine.
+function! s:JbzSetOpenbrowserBindings(keybind, name)
+  silent! exe 'nnoremap <silent> ' . a:keybind . " :call openbrowser#smart_search(expand('<cword>'), " . '"' . a:name . '")<CR>'
+  silent! exe 'vnoremap <silent> ' . a:keybind . ' :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"' . a:name . '\")"<CR>'
+endfunction
+
 nnoremap <silent> <leader>os <Plug>(openbrowser-smart-search)
-nnoremap <silent> <leader>osg :call openbrowser#smart_search(expand('<cword>'), "google")<CR>
-vnoremap <silent> <Leader>osg :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"google\")"<CR>
-nnoremap <silent> <leader>osb :call openbrowser#smart_search(expand('<cword>'), "baidu")<CR>
-vnoremap <silent> <Leader>osb :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"baidu\")"<CR>
-" Translate
-nnoremap <silent> <leader>otr :call openbrowser#smart_search(expand('<cword>'), "yandex-translate-en-ru")<CR>
-vnoremap <silent> <Leader>otr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"yandex-translate-en-ru\")"<CR>
-nnoremap <silent> <leader>otl :call openbrowser#smart_search(expand('<cword>'), "ludwig-en")<CR>
-vnoremap <silent> <Leader>otl :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"ludwig-en\")"<CR>
-" Github
-nnoremap <silent> <leader>ogg :call openbrowser#smart_search(expand('<cword>'), "github")<CR>
-vnoremap <silent> <Leader>ogg :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github\")"<CR>
-nnoremap <silent> <leader>ogc :call openbrowser#smart_search(expand('<cword>'), "github-c")<CR>
-vnoremap <silent> <Leader>ogc :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-c\")"<CR>
-nnoremap <silent> <leader>ogx :call openbrowser#smart_search(expand('<cword>'), "github-cpp")<CR>
-vnoremap <silent> <Leader>ogx :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-cpp\")"<CR>
-nnoremap <silent> <leader>ogp :call openbrowser#smart_search(expand('<cword>'), "github-python")<CR>
-vnoremap <silent> <Leader>ogp :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-python\")"<CR>
-nnoremap <silent> <leader>ogo :call openbrowser#smart_search(expand('<cword>'), "github-ocaml")<CR>
-vnoremap <silent> <Leader>ogo :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-ocaml\")"<CR>
-nnoremap <silent> <leader>ogr :call openbrowser#smart_search(expand('<cword>'), "github-rust")<CR>
-vnoremap <silent> <Leader>ogr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-rust\")"<CR>
-nnoremap <silent> <leader>ogv :call openbrowser#smart_search(expand('<cword>'), "github-vimscript")<CR>
-vnoremap <silent> <Leader>ogv :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"github-vimscript\")"<CR>
-" grep.app
-nnoremap <silent> <leader>osa :call openbrowser#smart_search(expand('<cword>'), "grep-app")<CR>
-vnoremap <silent> <Leader>osa :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"grep-app\")"<CR>
-" Documentation
-nnoremap <silent> <leader>osx :call openbrowser#smart_search(expand('<cword>'), "cppreference")<CR>
-vnoremap <silent> <Leader>osx :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"cppreference\")"<CR>
-nnoremap <silent> <leader>osq :call openbrowser#smart_search(expand('<cword>'), "qt")<CR>
-vnoremap <silent> <Leader>osq :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"qt\")"<CR>
-nnoremap <silent> <leader>osp :call openbrowser#smart_search(expand('<cword>'), "python")<CR>
-vnoremap <silent> <Leader>osp :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"python\")"<CR>
-nnoremap <silent> <leader>osr :call openbrowser#smart_search(expand('<cword>'), "rust")<CR>
-vnoremap <silent> <Leader>osr :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"rust\")"<CR>
+call s:JbzSetOpenbrowserBindings("<leader>osg", "google")
+call s:JbzSetOpenbrowserBindings("<leader>osb", "baidu")
+call s:JbzSetOpenbrowserBindings("<leader>otr", "yandex-translate-en-ru")
+call s:JbzSetOpenbrowserBindings("<leader>otl", "ludwig-en")
+call s:JbzSetOpenbrowserBindings("<leader>ogs", "github")
+call s:JbzSetOpenbrowserBindings("<leader>ogc", "github-c")
+call s:JbzSetOpenbrowserBindings("<leader>ogx", "github-cpp")
+call s:JbzSetOpenbrowserBindings("<leader>ogp", "github-python")
+call s:JbzSetOpenbrowserBindings("<leader>ogg", "github-go")
+call s:JbzSetOpenbrowserBindings("<leader>ogo", "github-ocaml")
+call s:JbzSetOpenbrowserBindings("<leader>ogr", "github-rust")
+call s:JbzSetOpenbrowserBindings("<leader>ogv", "github-vimscript")
+call s:JbzSetOpenbrowserBindings("<leader>osa", "grep-app")
+call s:JbzSetOpenbrowserBindings("<leader>osh", "hotexamples")
+call s:JbzSetOpenbrowserBindings("<leader>osx", "cppreference")
+call s:JbzSetOpenbrowserBindings("<leader>osq", "qt")
+call s:JbzSetOpenbrowserBindings("<leader>osp", "python")
+call s:JbzSetOpenbrowserBindings("<leader>osr", "rust")
 " }}}
 
 " {{{ vim-maximizer
@@ -718,28 +699,12 @@ set foldtext=CustomFoldText()
 " }}}
 " }}}
 
-" {{{ CHADTree
-nnoremap <A-0> <cmd>CHADopen<cr>
+" {{{ nvim-tree
+nnoremap <A-0> :NvimTreeToggle<cr>
 
-let g:chadtree_colours = {
-      \ "8_bit": {
-      \   "Black":         { "hl24": "#07242c", "hl8": "Black"},
-      \   "Red":           { "hl24": "#cc24d1", "hl8": "DarkRed" },
-      \   "Green":         { "hl24": "#689d6a", "hl8": "DarkGreen" },
-      \   "Yellow":        { "hl24": "#fabd2f", "hl8": "DarkYellow" },
-      \   "Blue":          { "hl24": "#83a598", "hl8": "DarkBlue" },
-      \   "Magenta":       { "hl24": "#b16286", "hl8": "DarkMagenta" },
-      \   "Cyan":          { "hl24": "#04a7a7", "hl8": "DarkCyan" },
-      \   "White":         { "hl24": "#a89984", "hl8": "LightGray" },
-      \   "BrightBlack":   { "hl24": "#7c6f64", "hl8": "Grey" },
-      \   "BrightRed":     { "hl24": "#fb4934", "hl8": "LightRed" },
-      \   "BrightGreen":   { "hl24": "#8ec07c", "hl8": "LightGreen" },
-      \   "BrightYellow":  { "hl24": "#DF7353", "hl8": "LightYellow" },
-      \   "BrightBlue":    { "hl24": "#6FaEaF", "hl8": "LightBlue" },
-      \   "BrightMagenta": { "hl24": "#d3869b", "hl8": "LightMagenta" },
-      \   "BrightCyan":    { "hl24": "#94e7e7", "hl8": "LightCyan" },
-      \   "BrightWhite":   { "hl24": "#fbf1c7", "hl8": "White" },
-      \ }}
+let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '__pycache__', '.clangd' ]
+let g:nvim_tree_indent_markers = 1
+let g:nvim_tree_follow = 1
 " }}}
 
 " {{{ UndoTree
@@ -803,6 +768,17 @@ return extend(
 \        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/'"),
 \ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
 endfunction
+
+" Use fzf for spelling suggestions
+function! FzfSpellSink(word)
+  exe 'normal! "_ciw'.a:word
+endfunction
+function! FzfSpell()
+  let suggestions = spellsuggest(expand("<cword>"))
+  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
+endfunction
+nnoremap <A-u> :call FzfSpell()<CR>
+inoremap <A-u> <c-g>u<Esc>:call FzfSpell()<CR><c-g>u
 
 " Augmenting Ag command using fzf#vim#with_preview function
 " :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
@@ -990,6 +966,10 @@ call deoplete#custom#source('_',
   \ 'matchers', ['matcher_full_fuzzy'])
 
 set completeopt-=preview
+
+" Add Icons for LSP_KINDS.
+" See: https://github.com/deoplete-plugins/deoplete-lsp/pull/46/files
+let g:deoplete#lsp#use_icons_for_candidates = 1
 " }}}
 
 " {{{ UltiSnips
@@ -1149,7 +1129,7 @@ augroup c_cxx_group
   au FileType c,cpp nnoremap <buffer><leader>li :<C-u>JbzClangIncludeFixer<CR>
   au FileType c,cpp vnoremap <buffer><leader>li :JbzClangIncludeFixer<CR>
   au FileType c,cpp RainbowToggleOn
-  au BufEnter *.h  let b:fswitchdst = "c,cpp,cc,m"
+  au BufEnter *.h let b:fswitchdst = "c,cpp,m,cc" | let b:fswitchlocs = 'reg:|include.*|src/**|'
   au BufEnter *.cc let b:fswitchdst = "h,hpp"
   " Use C filetype for headers by default
   " au BufReadPre,BufRead,BufNewFile *.h set filetype=c
@@ -1159,6 +1139,13 @@ augroup c_cxx_group
   " Note: Too slow. Disabled for now.
   " command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
   " au FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
+augroup END
+" }}}
+
+" {{{ Go
+augroup go_group
+  au!
+  au FileType go RainbowToggleOn
 augroup END
 " }}}
 
@@ -1355,7 +1342,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 let g:markdown_fenced_languages = [
   \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
   \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
-  \'json', 'tex', 'plantuml', 'html', 'sql', 'nix'
+  \'json', 'tex', 'plantuml', 'html', 'sql', 'nix', 'javascript'
   \]
 augroup markdown_group
   au!
@@ -1374,6 +1361,7 @@ augroup markdown_group
   au FileType markdown inoremap <buffer> --<space> –<space>
   au FileType markdown inoremap <buffer> -><space> →<space>
   au FileType markdown inoremap <buffer> =><space> ⇒<space>
+  au FileType markdown inoremap <buffer> <-<space> ←<space>
   au FileType markdown inoremap <buffer> \E<space> ∃<space>
   au FileType markdown inoremap <buffer> \A<space> ∀<space>
   " Paste links to URL from clipboard

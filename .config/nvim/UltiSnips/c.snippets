@@ -63,3 +63,9 @@ endsnippet
 snippet gattr
 __attribute__ ((${1:noinline}))${0}
 endsnippet
+
+snippet ifdef
+#ifdef ${1:_WIN32}
+	$0
+#endif // $1
+endsnippet

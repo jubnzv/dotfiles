@@ -10,6 +10,8 @@ configs=(
     "$HOME/.zshrc"
     "$HOME/.config/nvim/init.vim"
     "$HOME/.tmux.conf"
+    "$HOME/.gdbinit"
+    "$HOME/.ssh/config"
     "$HOME/.ideavimrc"
     "$HOME/.config/i3/config"
     "$HOME/.config/polybar/config"

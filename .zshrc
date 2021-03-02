@@ -11,6 +11,7 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
 
     # Syntax highlighting
     zplug "zdharma/fast-syntax-highlighting", defer:3
+
     # Color parens and highlight matching paren
     export ZSH_HIGHLIGHT_HIGHLIGHTERS=(main brackets)
 
@@ -25,7 +26,7 @@ if [[ -f ~/.zplug/init.zsh ]] ; then
         zplug install
     fi
 
-    # source plugins and add commands to $PATH
+    # Source plugins and add commands to $PATH
     zplug load
 fi
 # }}}
@@ -211,6 +212,8 @@ alias r='ranger'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
 lfind() { find . -iname $@ 2>/dev/null }
 
+alias gdb='gdb -q'
+
 # Debian tools
 alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
 
@@ -227,6 +230,7 @@ alias cpwd='pwd | tr -d "\n" | xsel -ib'
 mkcd() {
     [[ $# -gt 1 ]] && return 1
     mkdir -p "$1" && cd "$1" || return 1
+    [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}"
 }
 
 # git
