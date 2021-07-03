@@ -9,6 +9,7 @@ _rofi () {
 configs=(
     "$HOME/.zshrc"
     "$HOME/.config/nvim/init.vim"
+    "$HOME/.config/nvim/lua/init.lua"
     "$HOME/.tmux.conf"
     "$HOME/.gdbinit"
     "$HOME/.ssh/config"

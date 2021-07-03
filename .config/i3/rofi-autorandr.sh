@@ -19,3 +19,4 @@ function main()
 }
 
 main
+i3-msg "restart"

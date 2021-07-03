@@ -1,6 +1,18 @@
+snippet pr
+print($1)
+endsnippet
+
 snippet exectime
 local __dbg_t = os.clock()
 ${0:${VISUAL}}
 print(string.format("elapsed time1: %.2f\n", os.clock() - __dbg_t))
 endsnippet
 
+snippet prt
+for idx, data in ipairs($1) do
+	print(idx)
+	for key, value in pairs(data) do
+		print('\t', key, value)
+	end
+end
+endsnippet

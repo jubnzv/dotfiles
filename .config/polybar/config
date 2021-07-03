@@ -23,7 +23,7 @@ secondary = #ff6200
 alert = #fb4934
 
 [bar/example]
-monitor = ${env:MONITOR:HDMI3}
+monitor = ${env:MONITOR:VGA1}
 width = 100%
 height = 20
 radius = 0
@@ -46,7 +46,7 @@ font-1 = "Iosevka NF:size=10"
 
 modules-left = i3
 modules-center = date
-modules-right = pulseaudio xbacklight filesystem-root filesystem-home memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery notifications-status
+modules-right = pulseaudio microphone xbacklight timer notifications-status filesystem-root filesystem-home memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
@@ -79,7 +79,7 @@ format-warn-prefix = " "
 format-warn-foreground = ${colors.yellow1}
 label-warn = %percentage_used%%
 
-[module/filesystem]
+[module/filesystem-home]
 type = internal/fs
 interval = 30
 mount-0 = /home
@@ -228,7 +228,7 @@ type = internal/network
 interface = enp0s25
 interval = 3.0
 format-connected-underline = ${colors.aqua2}
-format-connected-prefix = " "
+format-connected-prefix = " "
 format-connected-prefix-foreground = ${colors.foreground-alt}
 label-connected = %local_ip%
 format-disconnected =
@@ -272,6 +272,12 @@ bar-volume-empty = ─
 bar-volume-empty-font = 2
 bar-volume-empty-foreground = ${colors.foreground-alt}
 
+[module/microphone]
+type = custom/script
+exec = ~/.config/polybar/mic.sh tail 5
+click-left = ~/.config/polybar/mic.sh toggle; ~/.config/polybar/mic.sh update %pid%
+tail = true
+
 [module/battery]
 type = internal/battery
 battery = BAT0
@@ -302,8 +308,9 @@ animation-discharging-framerate = 750
 [module/mouse-battery]
 type = custom/script
 exec = ~/.config/polybar/mouse-battery.sh
-interval = 1
-label =  %output%%
+interval = 60
+label =  %output%%
+format-background = ${colors.alert}
 
 [module/temperature]
 type = internal/temperature
@@ -329,6 +336,16 @@ exec = ~/.config/polybar/vpn-openvpn-isrunning.sh
 interval = 5
 format-foreground = ${colors.blue2}
 format-underline = ${colors.blue2}
+
+[module/timer]
+type = custom/script
+exec = ~/.config/polybar/polybar-timer.sh tail '%{F#585858}%{F-}' 5
+tail = true
+click-left = ~/.config/polybar/polybar-timer.sh new 60 '' 'notify-send "Session finished"' ; ~/.config/polybar/polybar-timer.sh update %pid%
+click-middle = ~/.config/polybar/polybar-timer.sh cancel ; ~/.config/polybar/polybar-timer.sh update %pid%
+click-right = ~/.config/polybar/polybar-timer.sh new 10 '' 'notify-send "Break finished"' ; ~/.config/polybar/polybar-timer.sh update %pid%
+scroll-up = ~/.config/polybar/polybar-timer.sh increase 60 || ~/.config/polybar/polybar-timer.sh new 1 'TIMER:' 'notify-send -u critical "Timer expired."' ; ~/.config/polybar/polybar-timer.sh update %pid%
+scroll-down = ~/.config/polybar/polybar-timer.sh increase -60 ; ~/.config/polybar/polybar-timer.sh update %pid%
 
 [module/notifications-status]
 type = custom/script

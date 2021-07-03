@@ -30,7 +30,6 @@ Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
 Plug 'jubnzv/vim-cursorword'          " Plugin to highlight the word under the cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'cohama/agit.vim'                " gitk clone for vim
-" TODO: Consider https://github.com/lewis6991/gitsigns.nvim as replacement
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
 Plug 'kyazdani42/nvim-tree.lua'       " A tree explorer plugin for vim
 Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
@@ -103,8 +102,16 @@ Plug 'bohlender/vim-smt2', {'for': ['z3']}
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
-if isdirectory('~/Dev/llvm-project/llvm/utils/vim/')
-  Plug '~/Dev/llvm-project/llvm/utils/vim/'
+if isdirectory('/home/jubnzv/Dev/llvm-project/llvm/utils/vim/')
+  Plug '/home/jubnzv//Dev/llvm-project/llvm/utils/vim/'
+endif
+
+if isdirectory('/home/jubnzv/.local/share/nvim/plugged/notes.nvim')
+  Plug '~/.local/share/nvim/plugged/notes.nvim'
+endif
+
+if isdirectory('/home/jubnzv/.local/share/nvim/plugged/mdeval.nvim/')
+  Plug '~/.local/share/nvim/plugged/mdeval.nvim'
 endif
 
 call plug#end()
@@ -379,15 +386,30 @@ inoremap <A-9> <C-O>9gt
 map <leader>rs :%s///g<left><left><left>
 map <leader>rl :s///g<left><left><left>
 
-" Refresh current buffer content
-nnoremap <leader>B :checktime<CR>
+" Refresh content of the current buffer
+nnoremap <silent> <leader>B :checktime<CR>
 
-" Convert the ^M linebreak to 'normal' linebreaks
+" Convert the ^M linebreaks to the normal linebreaks
 nnoremap <silent> <leader>rl :set ff=unix<CR> :e ++ff=dos<CR>
 
-cnoreabbrev enc_dos e! ++enc=cp1251
-cnoreabbrev enc_koi e! ++enc=koi8r
-cnoreabbrev rep_n e! %s/\\n/\r/g
+" EOL format
+menu EOL.unix :set fileformat=unix<CR>
+menu EOL.dos  :set fileformat=dos<CR>
+menu EOL.mac  :set fileformat=mac<CR>
+
+" Change encoding
+menu EEnc.cp1251     :e ++enc=cp1251<CR>
+menu EEnc.koi8-r     :e ++enc=koi8-r<CR>
+menu EEnc.cp866      :e ++enc=ibm866<CR>
+menu EEnc.utf-8      :e ++enc=utf-8<CR>
+menu EEnc.ucs-2le    :e ++enc=ucs-2le<CR>
+
+" Convert file encoding
+menu FEnc.cp1251    :set fenc=cp1251<CR>
+menu FEnc.koi8-r    :set fenc=koi8-r<CR>
+menu FEnc.cp866     :set fenc=ibm866<CR>
+menu FEnc.utf-8     :set fenc=utf-8<CR>
+menu FEnc.ucs-2le   :set fenc=ucs-2le<CR>
 
 " Remove all trailing whitespaces
 nnoremap <silent> <leader>rs :let _s=@/ <Bar> :%s/\s\+$//e <Bar> :let @/=_s <Bar> :nohl <Bar> :unlet _s <CR>
@@ -535,14 +557,14 @@ endfunction
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
 \   {
-\       'github': 'http://github.com/search?q=fork%3Afalse+{query}',
-\       'github-c': 'http://github.com/search?l=C&q=fork%3Afalse+language%3AC+{query}&type=Code',
-\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=fork%3Afalse+language%3AC%2B%2B+{query}&type=Code',
-\       'github-python': 'http://github.com/search?l=Python&q=fork%3Afalse+language%3APython+{query}&type=Code',
-\       'github-go': 'http://github.com/search?l=Go&q=fork%3Afalse+language%3AGo+{query}&type=Code',
-\       'github-ocaml': 'http://github.com/search?l=OCaml&q=fork%3Afalse+language%3AOCaml+{query}&type=Code',
-\       'github-rust': 'http://github.com/search?l=Rust&q=fork%3Afalse+language%3APython+{query}&type=Code',
-\       'github-vimscript': 'http://github.com/search?l=Vim+script&q=fork%3Afalse+language%3Avimscript+{query}&type=Code',
+\       'github': 'http://github.com/search?q={query}',
+\       'github-c': 'http://github.com/search?l=C&q=language%3AC+{query}&type=Code',
+\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=language%3AC%2B%2B+{query}&type=Code',
+\       'github-python': 'http://github.com/search?l=Python&q=language%3APython+{query}&type=Code',
+\       'github-go': 'http://github.com/search?l=Go&q=language%3AGo+{query}&type=Code',
+\       'github-ocaml': 'http://github.com/search?l=OCaml&q=language%3AOCaml+{query}&type=Code',
+\       'github-rust': 'http://github.com/search?l=Rust&q=language%3APython+{query}&type=Code',
+\       'github-vimscript': 'http://github.com/search?l=Vim+script&language%3Avimscript+{query}&type=Code',
 \       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
 \       'baidu': 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd={query}',
@@ -596,7 +618,7 @@ call s:JbzSetOpenbrowserBindings("<leader>osr", "rust")
 " }}}
 
 " {{{ vim-maximizer
-let g:maximizer_default_mapping_key = '<leader>z'
+let g:maximizer_default_mapping_key = '<localleader>z'
 let g:maximizer_restore_on_winleave = 0
 let g:maximizer_handle_window_resize = 1
 " }}}
@@ -699,12 +721,56 @@ set foldtext=CustomFoldText()
 " }}}
 " }}}
 
+" {{{ Highlight specific lines
+highlight LineHighlight ctermbg=darkgray guibg=#458588
+nnoremap <silent><leader>m :call matchadd('LineHighlight', '\%'.line('.').'l')<cr>
+nnoremap <silent><leader>M :call clearmatches()<cr>
+" }}}
+
+" {{{ indentLine configuration
+let g:indentLine_fileTypeExclude = ['tex', 'markdown']
+" }}}
+
+" {{{ Grammarous
+nnoremap <leader>rr <Plug>(grammarous-move-to-info-window)
+nnoremap <leader>ro <Plug>(grammarous-open-info-window)
+nnoremap <leader>rc <Plug>(grammarous-close-info-window)
+nnoremap <leader>rf <Plug>(grammarous-fixit)
+nnoremap <leader>rn <Plug>(grammarous-move-to-next-error)
+nnoremap <leader>rp <Plug>(grammarous-move-to-previous-error)
+cnoreabbrev GC GrammarousCheck
+cnoreabbrev GR GrammarousReset
+" }}}
+
 " {{{ nvim-tree
-nnoremap <A-0> :NvimTreeToggle<cr>
+nnoremap <silent><A-0> :NvimTreeToggle<cr>
 
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '__pycache__', '.clangd' ]
 let g:nvim_tree_indent_markers = 1
 let g:nvim_tree_follow = 1
+
+hi NvimTreeIndentMarker guifg=#3c3836
+hi NvimTreeFolderIcon guifg=#7c6f64
+hi NvimTreeGitDirty guifg=#689d6a
+
+let g:nvim_tree_icons = {
+     \ 'default':      '',
+     \ 'symlink':      '',
+     \ 'git': {
+     \   'unstaged':   "~",
+     \   'staged':     "✓",
+     \   'unmerged':   "",
+     \   'renamed':    "➜",
+     \   'untracked':  "★"
+     \   },
+     \ 'folder': {
+     \   'default':    "",
+     \   'open':       "",
+     \   'empty':      "",
+     \   'empty_open': "",
+     \   'symlink':    "",
+     \  }
+     \ }
 " }}}
 
 " {{{ UndoTree
@@ -795,11 +861,8 @@ omap <A-z> <plug>(fzf-maps-o)
 au FileType fzf tnoremap <buffer> <Esc> <c-g>
 
 nnoremap <leader>ft :Tags<CR>
-nnoremap <leader>xf :Files<CR>
 nnoremap <A-p> :Files<CR>
-nnoremap <leader>fm :Marks<CR>
 nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>xr :FZFMru <CR>
 nnoremap <leader>fs :Rg<CR>
 
 " Using the custom window creation function
@@ -1025,15 +1088,15 @@ nmap <leader>v_ <Plug>(GitGutterUndoHunk)
 nmap <leader>vr <Plug>(GitGutterRefresh)
 nmap <localleader>v <Plug>(GitGutterPreviewHunk)
 nmap <localleader>b <Plug>(git-messenger)
-nmap <leader>vs :Gstatus<cr>
-nmap <leader>vp :Gpull<cr>
-nmap <leader>vP :Gpush 
-nmap <leader>ve :Gedit 
-nmap <leader>vd :Gdiff HEAD
-nmap <leader>vD :Git! diff<cr>
-nmap <leader>vb :Gblame<cr>
-nmap <leader>vf :GFiles<cr>
-nmap <leader>vl :Agit<cr>
+nmap <localleader>vs :Git<cr>
+nmap <localleader>vp :Gpull<cr>
+nmap <localleader>vP :Gpush 
+nmap <localleader>ve :Gedit 
+nmap <localleader>vd :Gdiff HEAD
+nmap <localleader>vD :Git! diff<cr>
+nmap <localleader>vb :Git blame<cr>
+nmap <localleader>vf :GFiles<cr>
+nmap <localleader>vl :Agit<cr>
 
 " {{{ Copy git link
 function! CopyGitLink(...) range
@@ -1107,6 +1170,18 @@ endfunction
 command! JbzCppMan :call s:JbzCppMan()
 " }}}
 
+" {{{ Set GNU coding style: https://gcc.gnu.org/wiki/FormattingCodeForGCC
+function! s:SetGNUStyle()
+  setlocal cindent
+  setlocal cinoptions=>4,n-2,{2,^-2,:2,=2,g0,h2,p5,t0,+2,(0,u0,w1,m1
+  setlocal shiftwidth=2
+  setlocal softtabstop=2
+  setlocal textwidth=79
+  setlocal fo-=ro fo+=cql
+endfunction
+command! SetGNUStyle call s:SetGNUStyle()
+" }}}
+
 augroup qt_group
   au!
   au BufNewFile,BufReadPost *.ui set filetype=xml
@@ -1146,6 +1221,7 @@ augroup END
 augroup go_group
   au!
   au FileType go RainbowToggleOn
+  au FileType go nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
 
@@ -1153,6 +1229,7 @@ augroup END
 augroup lua_group
   au!
   au FileType lua RainbowToggleOn
+  au FileType lua nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
 
@@ -1161,6 +1238,7 @@ augroup js_group
   au!
   au FileType javascript setlocal sw=2 ts=2 expandtab
   au FileType javascript RainbowToggleOn
+  au FileType javascript nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
 
@@ -1189,6 +1267,7 @@ augroup python_group
   au FileType python nnoremap <buffer><leader>rd :g/pdb\.set_trace()/d<CR>
   au FileType python nnoremap <buffer><leader>sC :JbzOpenSlimeREPL ipython3 [[\ -d\ ./venv/\ ]]\ &&\ source\ venv/bin/activate<CR>
   au FileType python RainbowToggleOn
+  au FileType python nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
 
@@ -1200,11 +1279,12 @@ execute "set rtp+=" . g:opamshare . "/merlin/vim"
 
 augroup ocaml_group
   au!
-  au FileType ocaml inoremap <A-1> `
-  au FileType dune setlocal foldmethod=marker
-  au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "utop"<CR>
   au FileType ocaml setlocal tabstop=2 shiftwidth=2
   au FileType ocaml,dune RainbowToggleOn
+  au FileType dune setlocal foldmethod=marker
+  au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "utop"<CR>
+  au FileType ocaml inoremap <A-1> `
+  au FileType ocaml nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
 
   " Print types from .annot files.
   " au FileType ocaml nmap <buffer> <A-t> <Plug>OCamlPrintType
@@ -1232,10 +1312,11 @@ au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' |
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
-" {{{ Rust
-augroup rust_group
+" {{{ Haskell
+augroup haskell_group
   au!
-  au FileType rust RainbowToggleOn
+  au FileType haskell setlocal foldmethod=marker
+  au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "ghci"<CR>
 augroup END
 " }}}
 
@@ -1340,10 +1421,10 @@ au FileType json syntax match Comment +\/\/.\+$+
 
 " {{{ Markdown
 let g:markdown_fenced_languages = [
-  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
-  \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
-  \'json', 'tex', 'plantuml', 'html', 'sql', 'nix', 'javascript'
-  \]
+ \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
+ \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
+ \'json', 'plantuml', 'html', 'sql', 'nix', 'lua', 'racket',
+ \]
 augroup markdown_group
   au!
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1385,7 +1466,7 @@ function! g:OpenBrowser(url)
   silent exec "!/opt/firefox/firefox-bin -new-window " . a:url " &"
 endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
-cnoreabbrev mp MarkdownPreview
+cnoreabbrev MP MarkdownPreview
 au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
 " }}}
 

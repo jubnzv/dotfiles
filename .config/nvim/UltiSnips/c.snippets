@@ -6,6 +6,10 @@ snippet exf
 exit(EXIT_FAILURE);
 endsnippet
 
+snippet segfault
+++*(int*)0;
+endsnippet
+
 snippet cmrete
 @return 0 if success, -1 and sets errno otherwise
 endsnippet
@@ -19,7 +23,7 @@ ${VISUAL}$0
 #endif // $1
 endsnippet
 
-snippet rbg
+snippet rgb
 #define rgb(r,g,b) (0xff000000 | (r << 16) |  (g << 8) | b)
 endsnippet
 
@@ -39,6 +43,10 @@ snippet fmt
 // clang-format off
 ${0:${VISUAL}}
 // clang-format on
+endsnippet
+
+snippet pre
+fprintf(stderr, "${1}");
 endsnippet
 
 snippet prd
@@ -69,3 +77,9 @@ snippet ifdef
 	$0
 #endif // $1
 endsnippet
+
+# {{{ Kernel
+snippet prk
+printk(KERN_ERR "%s:%d: ${1}\n", __func__, __LINE__); // prdbg
+endsnippet
+# }}}

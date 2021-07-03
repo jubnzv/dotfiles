@@ -44,11 +44,13 @@ exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id keepassxc
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
 exec --no-startup-id syncthing-gtk
-exec --no-startup-id solaar
+exec --no-startup-id /home/jubnzv/.local/bin/diff-notes.sh
+# exec --no-startup-id solaar
 exec --no-startup-id "eval `ssh-agent -s`"
-# exec --no-startup-id sleep 10; anki
+exec --no-startup-id sleep 10; anki
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id xset b off
+exec --no-startup-id flameshot
 # }}}
 
 # {{{ UI and appearance
@@ -101,7 +103,9 @@ for_window [class="Hexchat"] move container to workspace $ws_0
 for_window [class="^Thunderbird$"] move container to workspace $ws_0
 for_window [class="^Anki$" title="^1-й пользователь - Anki$"] move container to workspace $ws_a
 for_window [class="^Anki$" title="^Добавить$"] floating enable, mark anki_add
-# for_window [class="^QTask$"] move container to workspace $ws_j, focus, layout floating
+for_window [class="^Anki$" title="^Add$"] floating enable, mark anki_add
+for_window [class="^QTask$"] move container to workspace $ws_j, focus, layout floating
+for_window [class="^t-engine$"] fullscreen
 for_window [title="^Beremiz$"] move container to workspace $ws_o, focus, layout floating
 for_window [title="^PLCOpenEditor$"] move container to workspace $ws_o, focus, layout floating
 for_window [title="^xev$"] floating enable
@@ -230,7 +234,7 @@ bindsym $mod+Control+0 exec $SCRIPTS_PATH/toggle-notifications.sh
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
-bindsym Print exec screengrab -r
+bindsym Control+Print exec flameshot gui
 # bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym $mod+XF86ScreenSaver exec xset s activate
 
@@ -239,6 +243,7 @@ bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
+bindsym $mod+Control+m exec amixer set Capture toggle
 
 # i3bar control
 bindsym $mod+Control+8 bar mode toggle bar-main

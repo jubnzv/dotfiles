@@ -12,6 +12,12 @@ function M.setup()
       'conf',
       'plantuml',
     }
+
+    require 'colorizer'.setup {
+      '*';
+      markdown = { names = false };
+      css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
+    }
 end
 
 return M

@@ -1,13 +1,16 @@
 snippet hdr
+#include <algorithm>
+#include <cassert>
+#include <cstring>
 #include <iostream>
 #include <map>
-#include <unordered_map>
+#include <numeric>
 #include <set>
-#include <unordered_set>
-#include <vector>
 #include <string>
-#include <algorithm>
+#include <unordered_map>
+#include <unordered_set>
 #include <utility>
+#include <vector>
 
 using namespace std;
 
@@ -33,18 +36,29 @@ endsnippet
 
 snippet prv
 for (auto const &vv : ${1:v})
-  std::cout << vv << " ";
+	std::cout << vv << " ";
 std::cout << std::endl;
 endsnippet
 
 snippet prm
 for (auto const &m : ${1:M})
-  std::cout << m.first << ":" << m.second << "${2:\n}";
+	std::cout << m.first << ":" << m.second << "${2:\n}";
 std::cout << std::endl;
 endsnippet
 
 snippet inc
 #include <${1:iostream}>
+endsnippet
+
+snippet oout1
+friend std::ostream &operator<<(std::ostream &, const ${1:T} &);
+endsnippet
+
+snippet oout2
+std::ostream &operator<<(std::ostream &os, const ${1:T} obj) {
+  os << ${2:obj};
+  return os;
+}
 endsnippet
 
 snippet td
@@ -61,7 +75,7 @@ std::ostringstream ss;
 ss << $0;
 endsnippet
 
-snippet tmpl
+snippet tt
 template <typename T>
 endsnippet
 
@@ -89,6 +103,14 @@ ${VISUAL}
 qWarning() << __FILE__ << __LINE__; // prdbg
 endsnippet
 
+snippet qprt
+qWarning() << __FILE__ << __LINE__ << QDateTime::currentMSecsSinceEpoch() ; // prdbg
+endsnippet
+
+snippet qsp
+QString{"%1 %2"}.arg(__FILE__, QString::number(__LINE__))
+endsnippet
+
 snippet qmname
 metaObject()->className()
 endsnippet
@@ -111,11 +133,28 @@ endsnippet
 
 snippet qprmetamethods
 for (int i = 0; i < ${1:metaObject()}->methodCount(); ++i) {
-    const QMetaMethod m = $1->method(i);
-    if (m.methodType() != QMetaMethod::Slot)
-        qDebug() << "slot: " << m.methodSignature();
-    if (m.methodType() != QMetaMethod::Signal)
-        qDebug() << "signal: " << m.methodSignature();
+	const QMetaMethod m = $1->method(i);
+	if (m.methodType() != QMetaMethod::Slot)
+		qDebug() << "slot: " << m.methodSignature();
+	if (m.methodType() != QMetaMethod::Signal)
+		qDebug() << "signal: " << m.methodSignature();
+}
+endsnippet
+
+snippet qexectime
+{
+	QElapsedTimer timer;
+	timer.start();
+	${0:${VISUAL}}
+	qDebug() << "The operation took" << timer.elapsed() << "ms";
+}
+endsnippet
+
+snippet qoout
+friend QDebug operator<<(QDebug dbg, const ${1:T} &obj)
+{
+	dbg.nospace() << ${2:obj};
+	return dbg;
 }
 endsnippet
 
@@ -123,18 +162,26 @@ endsnippet
 # LLVM
 # -----------------------------------------------------------------------------
 
-snippet llprty
-    std::string type_str;
-    llvm::raw_string_ostream rso(type_str);
-    ${1:ty}->print(rso);
-    std::cout << "Type=" << rso.str();
+snippet lpr
+llvm::outs() << $1 << "\n";
+endsnippet
+
+snippet lpre
+llvm::err() << $1 << "\n";
+endsnippet
+
+snippet lprty
+std::string type_str;
+llvm::raw_string_ostream rso(type_str);
+${1:ty}->print(rso);
+llvm::outs << "Type=" << rso.str() << "\n";
 endsnippet
 
 # -----------------------------------------------------------------------------
 # Cppcheck
 # -----------------------------------------------------------------------------
 
-snippet ckpos
+snippet cprp
 std::cout << ${1:tok}->linenr() << ":" << $1->column() << std::endl;
 endsnippet
 

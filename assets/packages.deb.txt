@@ -1,0 +1,13 @@
+arandr
+autoconf
+bear
+cmake
+clang
+clangd
+dos2unix
+flameshot
+git
+nmap
+tmux
+zsh
+zathura

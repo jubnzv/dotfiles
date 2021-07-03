@@ -1,6 +1,6 @@
 local api = vim.api
-local lsp = require "lspconfig"
-local virtualtypes = require "virtualtypes"
+local lsp = require('lspconfig')
+local virtualtypes = require('virtualtypes')
 local lspfuzzy = require('lspfuzzy')
 -- local lsp_status = require('lsp-status')
 
@@ -41,7 +41,17 @@ function M.setup()
   end
 
   if vim.fn.executable('gopls') then
-    lsp.gopls.setup { }
+      lsp.gopls.setup {
+        cmd = {"gopls", "serve"},
+        settings = {
+          gopls = {
+            analyses = {
+              unusedparams = true,
+            },
+            staticcheck = true,
+          },
+        },
+      }
   end
 
   if vim.fn.executable('typescript-language-server') then

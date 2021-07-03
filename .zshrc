@@ -192,6 +192,7 @@ alias history='history -i'
 # Common
 alias q='exit'
 alias :q='exit'
+alias :qa='exit'
 alias pd='pushd'
 alias pdd='popd'
 alias s='sudo'
@@ -235,22 +236,29 @@ mkcd() {
 
 # git
 alias g='git'
-alias gh='git help'
 alias gb='git branch'
-alias gbd='git branch --delete'
-alias gbdd='git branch --delete --force'
 alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
 alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
 alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-alias gdl="git diff --unified=0 | grep -Po '(?<=^\+)(?!\+\+).*'"
 alias gf='git fetch --prune'
 alias gfa='git fetch --prune --all'
 alias gsm='git submodule'
-alias gsma='git submodule add'
-alias gsmi='git submodule init'
-alias gsmu='git submodule update'
-alias gsmui='git submodule update --init --recursive'
+alias gsmi='git submodule update --init --recursive'
 alias gsmy='git submodule sync'
+gcd() {
+    [[ $# -ne 1 ]] && return 1
+    url=`echo $1 | grep -P 'https?://[a-zA-Z.-]+/[a-zA-Z-]+/[a-zA-Z-]+' -o`
+    [[ "${url}" == "" ]] && return 1
+    git clone "$url" && cd "${url##*/}" || return 1
+    [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}"
+}
+
+# go
+gget() {
+    [[ $# -ne 1 ]] && return 1
+    url=${1#*//}
+    go get -v "${url}"
+}
 
 # docker
 alias d='docker'
@@ -267,6 +275,9 @@ alias -g ND="notify-send 'Done' ''"
 alias -g U="echo -e '\a'"
 alias -g CP="xclip -selection clipboard"
 alias -g IR="i3-msg 'workspace back_and_forth' >/dev/null"
+
+# Emscripten
+alias ema="source /home/jubnzv/Sources/emsdk/emsdk_env.sh"
 
 # Perform operation using fzf. Examples:
 #   find /usr/include -name "test.h" F nvim
@@ -447,6 +458,14 @@ function fzf-ctags() {
 zle -N fzf-ctags
 bindkey "^[t" fzf-ctags
 
+function fzf-delete-branches() {
+  git branch |
+    grep --invert-match '\*' |
+    cut -c 3- |
+    fzf --multi --preview="git log {} --" |
+    xargs --no-run-if-empty git branch --delete --force
+}
+
 # Disable <TAB> completion
 bindkey '^I' $fzf_default_completion
 
@@ -554,10 +573,11 @@ fi
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
 
+# Activate nix package manager
+if [ -e /home/jubnzv/.nix-profile/etc/profile.d/nix.sh ]; then . /home/jubnzv/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+
 # ~/.local/bin/cleanup-history ~/.history
 # fc -R # reload history
 # trap "~/.local/bin/cleanup-history ~/.history" EXIT
-#
-# vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
 
-if [ -e /home/jubnzv/.nix-profile/etc/profile.d/nix.sh ]; then . /home/jubnzv/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
+# vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120

@@ -1,11 +1,17 @@
-[commit]
-gpgsign = true
-
 [core]
 filemode = false
 editor = nvim
 pager = diff-so-fancy | less --tabs=4 -RFX
 quotePath = false
+
+[init]
+defaultBranch = master
+
+[commit]
+gpgsign = true
+
+[pull]
+rebase = true
 
 [diff]
 tool = kitty
