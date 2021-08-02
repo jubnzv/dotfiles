@@ -43,7 +43,7 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id keepassxc
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
-exec --no-startup-id syncthing-gtk
+# exec --no-startup-id syncthing-gtk
 exec --no-startup-id /home/jubnzv/.local/bin/diff-notes.sh
 # exec --no-startup-id solaar
 exec --no-startup-id "eval `ssh-agent -s`"
@@ -51,6 +51,7 @@ exec --no-startup-id sleep 10; anki
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id xset b off
 exec --no-startup-id flameshot
+exec --no-startup-id nm-tray
 # }}}
 
 # {{{ UI and appearance
@@ -238,9 +239,12 @@ bindsym Control+Print exec flameshot gui
 # bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym $mod+XF86ScreenSaver exec xset s activate
 
-# Volume control
-bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+# Audio control
+bindsym XF86AudioPlay exec --no-startup-id playerctl play-pause
 bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioPrev exec --no-startup-id playerctl previous
+bindsym XF86AudioNext exec --no-startup-id playerctl next
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 bindsym XF86AudioMicMute exec amixer -c 0 -q set Capture toggle
 bindsym $mod+Control+m exec amixer set Capture toggle

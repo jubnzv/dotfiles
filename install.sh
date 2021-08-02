@@ -28,6 +28,7 @@ install_neovim() {
     cd ~/Sources/
     git clone https://github.com/neovim/neovim
     cd neovim
+    git checkout v0.5.0
     make distclean && make CMAKE_BUILD_TYPE=RelWithDebInfo -j4 && sudo make install
 }
 
@@ -38,6 +39,7 @@ install_firefox() {
 }
 
 install_thunderbird() {
+    # TODO: Install firetray
     cd /tmp
     wget https://releases.mozilla.org/pub/thunderbird/releases/89.0b4/linux-x86_64/en-US/thunderbird-89.0b4.tar.bz2
     sudo tar xf thunderbird-89.0b4.tar.bz2 -C /opt/

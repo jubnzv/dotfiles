@@ -245,6 +245,7 @@ alias gfa='git fetch --prune --all'
 alias gsm='git submodule'
 alias gsmi='git submodule update --init --recursive'
 alias gsmy='git submodule sync'
+alias gclean='git clean -fidx'
 gcd() {
     [[ $# -ne 1 ]] && return 1
     url=`echo $1 | grep -P 'https?://[a-zA-Z.-]+/[a-zA-Z-]+/[a-zA-Z-]+' -o`

@@ -61,6 +61,9 @@ cmap('<Alt-k>', '<Shift-Tab>');
 addSearchAliasX('te', 'yandex.translate (ru → en)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
 addSearchAliasX('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
 
+// Baidu
+addSearchAliasX('sb', 'baidu', 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=', 'o');
+
 // Oxford dictionaries
 addSearchAliasX('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
 
@@ -107,7 +110,6 @@ settings.theme = `
 .collapseRichHints {
     animation: 0s ease-in-out 1 forwards collapseRichHints;
 }
-
 .sk_theme {
     font-family: Input Sans Condensed, Charcoal, sans-serif;
     font-size: 10pt;

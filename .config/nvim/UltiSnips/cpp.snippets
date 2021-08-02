@@ -30,6 +30,10 @@ snippet pr
 std::cout << $1 << std::endl;
 endsnippet
 
+snippet prd
+std::cout << __func__ << ":" << __LINE__ << " " << $1 << std::endl; // prdbg
+endsnippet
+
 snippet pre
 std::cerr << $1 << std::endl;
 endsnippet
@@ -83,6 +87,10 @@ snippet del
 if (${1})
 	delete $1;
 $1 = nullptr;
+endsnippet
+
+snippet rr
+const ${1:std::string} &
 endsnippet
 
 # -----------------------------------------------------------------------------

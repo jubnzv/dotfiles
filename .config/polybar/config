@@ -276,6 +276,7 @@ bar-volume-empty-foreground = ${colors.foreground-alt}
 type = custom/script
 exec = ~/.config/polybar/mic.sh tail 5
 click-left = ~/.config/polybar/mic.sh toggle; ~/.config/polybar/mic.sh update %pid%
+click-right = ~/.config/polybar/mic.sh toggle; ~/.config/polybar/mic.sh update %pid%
 tail = true
 
 [module/battery]

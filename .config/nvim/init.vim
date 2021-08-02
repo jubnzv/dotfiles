@@ -4,7 +4,12 @@ let maplocalleader = ","
 if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
-let g:python3_host_prog  = '/usr/bin/python3.9'
+
+if has('win32')
+  let g:python3_host_prog  = expand('~/AppData/Local/Microsoft/WindowsApps/python3.9.exe')
+else
+  let g:python3_host_prog  = '/usr/bin/python3.9'
+endif
 
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
@@ -19,7 +24,7 @@ Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
-Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
+Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in the command and insert modes
 Plug 'osyo-manga/vim-over'            " :substitute preview
 Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Plugin for openning links in the browser
@@ -35,6 +40,7 @@ Plug 'kyazdani42/nvim-tree.lua'       " A tree explorer plugin for vim
 Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
 Plug 'mbbill/undotree'
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
+Plug 'phaazon/hop.nvim'               " easymotion-like plugin
 Plug 'junegunn/fzf.vim'
 Plug 'junegunn/fzf', {
   \ 'dir': '~/.local/opt/fzf',
@@ -64,7 +70,7 @@ if has('nvim-0.5')
   " Neovim's LSP Completion source for deoplete
   Plug 'Shougo/deoplete-lsp'
   " Utilities for generating statusline components from the built-in LSP client
-  " Seems good, but not yet usable. Status updates are too slow.
+  " Seems good, but not yet usable because status updates are too slow.
   " Plug 'nvim-lua/lsp-status.nvim'
 endif
 " DAP integration
@@ -97,6 +103,7 @@ Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'Matt-Deacalion/vim-systemd-syntax'
+Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
 " Extended SMT-LIB2 support
 Plug 'bohlender/vim-smt2', {'for': ['z3']}
 
@@ -110,11 +117,15 @@ if isdirectory('/home/jubnzv/.local/share/nvim/plugged/notes.nvim')
   Plug '~/.local/share/nvim/plugged/notes.nvim'
 endif
 
-if isdirectory('/home/jubnzv/.local/share/nvim/plugged/mdeval.nvim/')
-  Plug '~/.local/share/nvim/plugged/mdeval.nvim'
-endif
-
 call plug#end()
+" }}}
+
+" {{{ Disable some builtin plugins
+let g:loaded_gzip         = 1
+let g:loaded_tar          = 1
+let g:loaded_tarPlugin    = 1
+let g:loaded_zipPlugin    = 1
+let g:loaded_2html_plugin = 1
 " }}}
 
 " {{{ General options
@@ -165,19 +176,13 @@ endif
 "   set inccommand=split
 " endif
 
-if has('nvim-0.4')
-  set termguicolors
-  set winblend=10    " Transparency for floating windows
-  set pumblend=10    " Transparency for popup menus
-endif
-
 " Setup neovim-qt
-" if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
-"   set guifont=JetBrains\ Mono:h11
-"   nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-"   inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-"   vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-" endif
+if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
+  set guifont=JetBrains\ Mono:h11
+  nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+  inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
+  vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+endif
 
 " Default conceal settings
 set conceallevel=0
@@ -193,6 +198,12 @@ let g:netrw_browsex_viewer = "xdg-open"
 " }}}
 
 " {{{ UI options
+if has('nvim-0.4')
+  set termguicolors
+  set winblend=10    " Transparency for floating windows
+  set pumblend=10    " Transparency for popup menus
+endif
+
 set guioptions-=m                           " Remove menu bar
 set guioptions-=T                           " Remove toolbar
 set guioptions-=r                           " Remove right-hand scroll bar
@@ -236,15 +247,6 @@ au! BufReadPost,BufNewFile * call ParseModeline()
 
 " Jump to the last position when reopening a file (see `/etc/vim/vimrc` on Debian)
 au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-
-function! OnBattery()
-  if has('macunix')
-    return match(system('pmset -g batt'), "Now drawing from 'Battery Power'") != -1
-  elsif has('unix')
-    return readfile('/sys/class/power_supply/AC/online') == ['0']
-  endif
-  return 0
-endfunction
 " }}}
 
 " {{{ Keybindings
@@ -382,10 +384,6 @@ inoremap <A-8> <C-O>8gt
 nnoremap <A-9>      9gt
 inoremap <A-9> <C-O>9gt
 
-" Find and Replace
-map <leader>rs :%s///g<left><left><left>
-map <leader>rl :s///g<left><left><left>
-
 " Refresh content of the current buffer
 nnoremap <silent> <leader>B :checktime<CR>
 
@@ -420,13 +418,16 @@ nnoremap <silent> <leader>r` :%s/ё/е/g<cr>
 " Find all cyrillic characters
 nnoremap <silent> <leader>/c /[\d1040-\d1103]<cr>
 
-" Switch to recent buffer
+" Reselect the text you just pasted
+nnoremap gp `[v`]
+
+" Switch to the recent buffer
 nnoremap <A-r> <C-^>
 
 " Use Ctrl-W operation in insert mode
 inoremap <C-w> <C-g>u<C-w>
 
-" {{{ Copy file path to system clipboard
+" {{{ Copy file path to the system clipboard
 if has('win32')
   nmap <silent> <leader>cr :let @+=substitute(expand("%"), "/", "\\", "g")<CR>:echo "Copied: " . expand("%")<CR>
   nmap <silent> <leader>ca :let @+=substitute(expand("%:p"), "/", "\\", "g")<CR>:echo "Copied: " . expand("%:p")<CR>
@@ -503,7 +504,7 @@ let sl = ''
     return sl
 endfunction
 
-" TODO: https://github.com/nvim-lua/lsp-status.nvim is too slow. Need to revisit later.
+" TODO: https://github.com/nvim-lua/lsp-status.nvim is too slow. Need to revisit it later.
 function! LightlineCurrentFunctionLspStatus() abort
   let l:method = get(b:, 'lsp_current_function', '')
   if l:method != ''
@@ -553,7 +554,7 @@ function! LightlineStrippedFilename() abort
 endfunction
 " }}}
 
-" {{{ Integration with web-browser
+" {{{ Web-browser integration
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
 \   {
@@ -802,16 +803,6 @@ function! LastModified()
   endif
 endfun
 au BufWritePre * call LastModified()
-" }}}
-
-" {{{ Grepper
-let g:grepper = {}
-let g:grepper.tools = ["ag"]
-let g:grepper.jump = 1
-let g:grepper.side = 1
-nnoremap <leader>\ :GrepperAg<Space>
-nnoremap gs :Grepper -cword -noprompt<CR>
-xmap gs <Plug>(GrepperOperator)
 " }}}
 
 " {{{ FZF
@@ -1115,7 +1106,7 @@ let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
 " }}}
 
-" {{{ Debug Adapter Protocol support
+" {{{ DAP
 command! -nargs=+ Vfb call vimspector#AddFunctionBreakpoint(<f-args>)
 
 nnoremap <localleader>gd :call vimspector#Launch()<cr>
@@ -1131,7 +1122,7 @@ nnoremap <localleader>go :call vimspector#StepOut()<cr>
 nnoremap <localleader>gr :call vimspector#RunToCursor()<cr>
 " }}}
 
-" {{{ C/C++
+" {{{ C and C++
 " {{{ Clang-format function
 function! s:JbzClangFormat(first, last)
   let l:winview = winsaveview()
@@ -1215,6 +1206,12 @@ augroup c_cxx_group
   " command! -nargs=+ Cppman silent! call system("tmux split-window cppman " . expand(<q-args>))
   " au FileType cpp nnoremap <silent><buffer> K <Esc>:Cppman <cword><CR>
 augroup END
+
+augroup cmm_group
+  au!
+  " Set the correct filetype for C-- IR dumps.
+  au BufNewFile,BufReadPost *.cmm set filetype=c
+augroup END
 " }}}
 
 " {{{ Go
@@ -1229,6 +1226,7 @@ augroup END
 augroup lua_group
   au!
   au FileType lua RainbowToggleOn
+  au FileType lua setlocal sw=2 ts=2 expandtab
   au FileType lua nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
@@ -1274,8 +1272,10 @@ augroup END
 " {{{ OCaml and other MLs
 " Merlin
 " See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
-let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-execute "set rtp+=" . g:opamshare . "/merlin/vim"
+if executable("opam")
+  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+  execute "set rtp+=" . g:opamshare . "/merlin/vim"
+endif
 
 augroup ocaml_group
   au!
@@ -1312,14 +1312,6 @@ au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' |
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
-" {{{ Haskell
-augroup haskell_group
-  au!
-  au FileType haskell setlocal foldmethod=marker
-  au FileType ocaml nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "ghci"<CR>
-augroup END
-" }}}
-
 " {{{ Racket
 augroup rkt_group
   au!
@@ -1353,9 +1345,7 @@ augroup nix_group
 augroup END
 " }}}
 
-" {{{ IEC611-31
-let matiec_path = '/home/jubnzv/Work/Beremiz/matiec/'
-let matiec_mkbuilddir = 1
+" {{{ IEC61131-3
 augroup iec_group
   au!
   au! BufNewFile,BufReadPost *.{il,st} set filetype=iec
@@ -1430,9 +1420,9 @@ augroup markdown_group
   au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
   au FileType markdown set spell! spelllang=en_us,ru_yo
   au FileType markdown call Togglegjgk()
-  " Folding by Tab like org-mode
-  au FileType markdown nnoremap <buffer> <Tab> za<CR>k
-  au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
+  " Fold on <Tab> like org-mode does
+  " au FileType markdown nnoremap <buffer> <Tab> za<CR>k
+  " au FileType markdown nnoremap <buffer> <S-Tab> zA<CR>k
   " Insert code blocks
   au FileType markdown nnoremap <buffer> <leader>' i``
   au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
@@ -1445,14 +1435,10 @@ augroup markdown_group
   au FileType markdown inoremap <buffer> <-<space> ←<space>
   au FileType markdown inoremap <buffer> \E<space> ∃<space>
   au FileType markdown inoremap <buffer> \A<space> ∀<space>
-  " Paste links to URL from clipboard
-  au FileType markdown nnoremap <buffer> <leader>L i()<Esc>hpl%i[]<C-o>h
-  au FileType markdown nnoremap <buffer> <leader>Д i()<Esc>hpl%i[]<C-o>h
-  au FileType markdown nnoremap <buffer> <leader>l i<><Esc>hpl
-  au FileType markdown nnoremap <buffer> <leader>д i<><Esc>hpl
   " Paste image from clipboard
   au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
-  au FileType markdown nnoremap <buffer> <silent> <leader>з :call pasteimage#MarkdownClipboardImage()<CR>
+  " Paste URL link from clipboard
+  au FileType markdown nnoremap <buffer> <leader>P a[]()<Esc>hpl%hi
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
 augroup end
