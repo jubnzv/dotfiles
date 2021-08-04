@@ -5,9 +5,9 @@ if &shell =~# 'fish$'
   set shell=/bin/bash
 endif
 
-if has('win32')
-  let g:python3_host_prog  = expand('~/AppData/Local/Microsoft/WindowsApps/python3.9.exe')
-else
+" A path to Python interpreter required for some plugins.
+" On Windows you should add python.exe to your system's PATH to make it work.
+if !has('win32')
   let g:python3_host_prog  = '/usr/bin/python3.9'
 endif
 
@@ -18,7 +18,6 @@ Plug 'kshenoy/vim-signature'          " Extended marks support
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
 Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap into it
-Plug 'will133/vim-dirdiff'            " Diff two directories
 Plug 'andymass/vim-matchup'           " Better %
 Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
 Plug 'tpope/vim-surround'
@@ -73,39 +72,27 @@ if has('nvim-0.5')
   " Seems good, but not yet usable because status updates are too slow.
   " Plug 'nvim-lua/lsp-status.nvim'
 endif
-" DAP integration
-Plug 'puremourning/vimspector', {
-  \ 'do': 'python3 install_gadget.py --enable-vscode-cpptools'
-  \ }
 Plug 'sbdchd/neoformat'               " Integration with code formatters
-Plug 'editorconfig/editorconfig-vim'  " EditorConfig Vim Plugin
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
-Plug 'peterhoeg/vim-qml'              " QML syntax highlighting
 Plug 'wlangstroth/vim-racket'         " Vim bundle for Racket
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
-Plug 'pearofducks/ansible-vim'        " Ansible configuration files
 Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creation
 Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'                  " LaTeX plugin
-Plug 'cespare/vim-toml'
-Plug 'LnL7/vim-nix'                   " Vim plugin for Nix expressions
 Plug 'wlangstroth/vim-racket'         " Racket support
 Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
 Plug 'rhysd/vim-grammarous'           " LanguageTool (https://languagetool.org/) integration
-Plug 'MTDL9/vim-log-highlighting'     " Syntax highlighting for generic log files in VIM
 Plug 'jubnzv/IEC.vim'                 " IEC61131-3 plugin
 Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
-Plug 'Matt-Deacalion/vim-systemd-syntax'
 Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
-" Extended SMT-LIB2 support
-Plug 'bohlender/vim-smt2', {'for': ['z3']}
+Plug 'kassio/neoterm'                 " Wrapper for built-in :terminal
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -1106,20 +1093,13 @@ let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
 " }}}
 
-" {{{ DAP
-command! -nargs=+ Vfb call vimspector#AddFunctionBreakpoint(<f-args>)
-
-nnoremap <localleader>gd :call vimspector#Launch()<cr>
-nnoremap <localleader>gc :call vimspector#Continue()<cr>
-nnoremap <localleader>gs :call vimspector#Stop()<cr>
-nnoremap <localleader>gR :call vimspector#Restart()<cr>
-nnoremap <localleader>gp :call vimspector#Pause()<cr>
-nnoremap <localleader>gb :call vimspector#ToggleBreakpoint()<cr>
-nnoremap <localleader>gB :call vimspector#ToggleConditionalBreakpoint()<cr>
-nnoremap <localleader>gn :call vimspector#StepOver()<cr>
-nnoremap <localleader>gi :call vimspector#StepInto()<cr>
-nnoremap <localleader>go :call vimspector#StepOut()<cr>
-nnoremap <localleader>gr :call vimspector#RunToCursor()<cr>
+" {{{ :terminal
+let g:neoterm_default_mod = 'botright'
+let g:neoterm_autoscroll = 1
+if has('win32')
+  let g:neoterm_eof = "\r"
+  let g:neoterm_shell = "powershell.exe"
+endif
 " }}}
 
 " {{{ C and C++
