@@ -30,7 +30,7 @@ exec --no-startup-id autorandr --change home
 exec $APP_THUNDERBIRD
 exec $APP_TELEGRAM
 # exec hexchat
-exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
+# exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
 # exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
 exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle.sh
@@ -38,15 +38,15 @@ exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle.sh
 # exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
-exec --no-startup-id qtask
+# exec --no-startup-id qtask
 exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
-exec --no-startup-id keepassxc
+exec --no-startup-id bitwarden
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
-# exec --no-startup-id syncthing-gtk
+exec --no-startup-id syncthing-gtk
 exec --no-startup-id /home/jubnzv/.local/bin/diff-notes.sh
 # exec --no-startup-id solaar
-exec --no-startup-id "eval `ssh-agent -s`"
+# exec --no-startup-id "eval `ssh-agent -s`"
 exec --no-startup-id sleep 10; anki
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id xset b off
@@ -98,6 +98,7 @@ workspace $ws_0 output primary
 for_window [window_type="dialog"] floating enable
 for_window [window_type="menu"] floating enable
 for_window [class="^Mattermost$"] move container to workspace $ws_0
+for_window [class="^Bitwarden$"] move container to workspace $ws_j
 for_window [class="^Slack$"] move container to workspace $ws_0
 for_window [class="TelegramDesktop"] move container to workspace $ws_0
 for_window [class="Hexchat"] move container to workspace $ws_0
@@ -210,14 +211,12 @@ bindsym $mod+Control+2 workspace $ws_w; exec /opt/firefox/firefox-bin
 bindsym $mod+Control+3 workspace $ws_w; exec /opt/firefox/firefox-bin -p local
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Shift+R exec pcmanfm
-bindsym $mod+Control+q exec code
-bindsym $mod+Control+1 exec $APP_IDEA
-bindsym $mod+Control+k exec keepassxc # focus keepassxc window
+bindsym $mod+Control+q exec nvim-qt
+bindsym $mod+Control+k exec bitwarden # focus bitwarden window
 bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py                              \
                             && sleep 0.2                                             \
                             && i3-msg '[con_mark="anki_add"] move workspace current' \
                             && i3-msg '[con_mark="anki_add"] focus'
-bindsym $mod+Control+z exec zeal # start or focus
 bindsym $mod+t exec qtask
 
 # Brightness control
@@ -293,13 +292,14 @@ mode "$mode_exec_i3cmd" {
 }
 # }}}
 # {{{ Run selected REPL
-set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop [r] r2
+set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop [r] r2 [l] lua
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
     bindsym i       exec $TERMINAL -e ipython3; mode "default"
     bindsym j       exec $TERMINAL -e jupyter-notebook; mode "default"
     bindsym u       exec $TERMINAL -e utop; mode "default"
     bindsym r       exec $TERMINAL -e r2 -; mode "default"
+    bindsym l       exec $TERMINAL -e lua5.3; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }

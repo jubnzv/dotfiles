@@ -7,8 +7,8 @@ quotePath = false
 [init]
 defaultBranch = master
 
-[commit]
-gpgsign = true
+# [commit]
+# gpgsign = true
 
 [pull]
 rebase = true

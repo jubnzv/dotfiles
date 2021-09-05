@@ -1,12 +1,35 @@
-local lsp = require('lspconfig')
-local virtualtypes = require('virtualtypes')
-local lspfuzzy = require('lspfuzzy')
-
 local M = {}
 
-function M.setup()
+function M.setup_telescope()
+  local telescope = require'telescope'
 
-  -- {{{ mdeval.nvim
+  telescope.load_extension('project')
+
+  vim.api.nvim_exec([[
+    nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
+    nnoremap <leader>fs <cmd>lua require('telescope.builtin').live_grep()<cr>
+    nnoremap <leader>b  <cmd>lua require('telescope.builtin').buffers()<cr>
+    nnoremap <leader>fo <cmd>lua require('telescope.builtin').oldfiles()<cr>
+    nnoremap <leader>fm <cmd>lua require('telescope.builtin').marks()<cr>
+
+    nnoremap <leader>fp <cmd>lua require'telescope'.extensions.project.project{}<cr>
+
+    nnoremap <A-u> <cmd>lua require('telescope.builtin').spell_suggest()<cr>
+
+    nnoremap gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+    nnoremap gs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
+    nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
+    nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
+    nnoremap <localleader>a <cmd>lua require('telescope.builtin').lsp_code_actions()<cr>
+
+    nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
+    nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
+    nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
+    nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
+  ]], '')
+end
+
+function M.setup_mdeval()
   require('mdeval').setup({
     require_confirmation = false,
     exec_timeout = 5,
@@ -30,13 +53,9 @@ using namespace std;
   vim.api.nvim_set_keymap('n', '<localleader>c',
                           "<cmd>lua require 'mdeval'.eval_code_block()<CR>",
                           {silent = true, noremap = true})
-  -- }}}
+end
 
-  -- {{{ hop.nvim
-  vim.api.nvim_set_keymap('n', '<leader>q', "<cmd>lua require'hop'.hint_words()<cr>", {})
-  -- }}}
-
-  -- {{{ nvim-colorizer.nvim
+function M.setup_colorizer()
   -- Attach to certain Filetypes, add special configuration for `html`
   -- Use `background` for everything else.
   require'colorizer'.setup {
@@ -47,15 +66,17 @@ using namespace std;
     'conf',
     'plantuml',
   }
-
   require 'colorizer'.setup {
     '*';
     markdown = { names = false };
     css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
   }
-  -- }}}
+end
 
-  -- {{{ Built-in LSP client
+function M.setup_lsp()
+  local lsp = require('lspconfig')
+  local virtualtypes = require('virtualtypes')
+
   -- General LSP options
   vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -64,9 +85,6 @@ using namespace std;
       update_in_insert = false,
     }
   )
-
-  -- Use fzf to display LSP results and navigate the code.
-  lspfuzzy.setup {}
 
   -- Register lsp-status
   -- lsp_status.register_progress()
@@ -93,30 +111,51 @@ using namespace std;
     lsp.pylsp.setup { }
   end
 
-  if vim.fn.executable('ocamllsp') then
-    lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+  if vim.fn.executable('gopls') then
+    lsp.gopls.setup { }
   end
 
-  -- Keybindings
+  if vim.fn.executable('rust-analyzer') then
+    lsp.rust_analyzer.setup({
+      on_attach=on_attach,
+      settings = {
+        ["rust-analyzer"] = {
+          assist = {
+            importGranularity = "module",
+            importPrefix = "by_self",
+          },
+          cargo = {
+            loadOutDirsFromCheck = true
+          },
+          procMacro = {
+            enable = true
+          },
+        }
+      }
+  })
+  end
+
+  -- Setup jubnzv/virtual-types.nvim
+  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+
   vim.api.nvim_exec([[
-    nnoremap <silent> gl             <cmd>lua vim.lsp.buf.declaration()<CR>
-    nnoremap <silent> gd             <cmd>lua vim.lsp.buf.definition()<CR>
-    nnoremap <silent> gr             <cmd>lua vim.lsp.buf.references()<CR>
-    nnoremap <silent> gi             <cmd>lua vim.lsp.buf.implementation()<CR>
-    nnoremap <silent> gy             <cmd>lua vim.lsp.buf.type_definition()<CR>
-
+    nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
     nnoremap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
-
-    nnoremap <silent> <localleader>a <cmd>lua vim.lsp.buf.code_action()<CR>
     nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
-
     nnoremap ]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
     nnoremap [e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
     nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
     ]], '')
-  -- }}}
+end
+
+function M.setup()
+  M.setup_telescope()
+  M.setup_mdeval()
+  M.setup_colorizer()
+  M.setup_lsp()
+  vim.api.nvim_set_keymap('n', '<leader>q', "<cmd>lua require'hop'.hint_words()<cr>", {})
 end
 
 return M
 
--- vim:fdm=marker:fen:sw=2:tw=120
+-- vim:fen:sw=2:tw=120

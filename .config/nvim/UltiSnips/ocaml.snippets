@@ -23,6 +23,9 @@ List.fold_left
   ~f:(fun acc ${3:v} -> ${0})
 endsnippet
 
-snippet ll
-(List.length ${0})
+snippet uniq
+let ${1:uniq} =
+  let r = ref 0 in
+  fun () -> incr r;
+    !r
 endsnippet

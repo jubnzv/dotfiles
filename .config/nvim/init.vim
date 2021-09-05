@@ -16,7 +16,6 @@ call plug#begin('~/.local/share/nvim/plugged')
 
 Plug 'kshenoy/vim-signature'          " Extended marks support
 Plug 'tpope/vim-eunuch'               " Helpers for Shell
-Plug 'tpope/vim-speeddating'          " <C-a>/<C-x> for dates and timestamps
 Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap into it
 Plug 'andymass/vim-matchup'           " Better %
 Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
@@ -40,11 +39,6 @@ Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
 Plug 'mbbill/undotree'
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
 Plug 'phaazon/hop.nvim'               " easymotion-like plugin
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', {
-  \ 'dir': '~/.local/opt/fzf',
-  \ 'do': './install --all'
-  \ }
 Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
@@ -62,8 +56,6 @@ Plug 'rust-lang/rust.vim'             " Rust support
 " Native neovim LSP client and friends
 if has('nvim-0.5')
   Plug 'neovim/nvim-lspconfig'
-  " Plugin that makes the Neovim LSP client use FZF to display results and jump around the code
-  Plug 'ojroques/nvim-lspfuzzy'
   " Shows type annotations in virtual text
   Plug 'jubnzv/virtual-types.nvim'
   " Neovim's LSP Completion source for deoplete
@@ -92,7 +84,12 @@ Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
-Plug 'kassio/neoterm'                 " Wrapper for built-in :terminal
+
+Plug 'akinsho/toggleterm.nvim' " Wrapper for built-in :terminal
+
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'nvim-telescope/telescope.nvim'
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -187,8 +184,8 @@ let g:netrw_browsex_viewer = "xdg-open"
 " {{{ UI options
 if has('nvim-0.4')
   set termguicolors
-  set winblend=10    " Transparency for floating windows
-  set pumblend=10    " Transparency for popup menus
+  set winblend=5    " Transparency for floating windows
+  set pumblend=5    " Transparency for popup menus
 endif
 
 set guioptions-=m                           " Remove menu bar
@@ -317,7 +314,7 @@ augroup END
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <leader>rm mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
 
-" Spellchecking (see also fzf section bellow)
+" Spellchecking
 map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
 imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
 " }}}
@@ -792,103 +789,6 @@ endfun
 au BufWritePre * call LastModified()
 " }}}
 
-" {{{ FZF
-let g:fzf_history_dir = '~/.local/share/fzf-history'
-au FileType fzf set nonu nornu
-
-" Pass raw arguments directly to rg command
-command! -bang -nargs=+ -complete=dir Rrg call fzf#vim#rg_raw(<q-args>, {'options': '--delimiter : --nth 4..'}, <bang>0)
-
-" Recently used files
-command! FZFMru call fzf#run({
-\  'source':  v:oldfiles,
-\  'sink':    'e',
-\  'options': '-m -x +s',
-\  'down':    '40%'})
-
-function! s:all_files()
-return extend(
-\ filter(copy(v:oldfiles),
-\        "v:val !~ 'fugitive:\\|NERD_tree\\|^/tmp/\\|.git/'"),
-\ map(filter(range(1, bufnr('$')), 'buflisted(v:val)'), 'bufname(v:val)'))
-endfunction
-
-" Use fzf for spelling suggestions
-function! FzfSpellSink(word)
-  exe 'normal! "_ciw'.a:word
-endfunction
-function! FzfSpell()
-  let suggestions = spellsuggest(expand("<cword>"))
-  return fzf#run({'source': suggestions, 'sink': function("FzfSpellSink"), 'down': 10 })
-endfunction
-nnoremap <A-u> :call FzfSpell()<CR>
-inoremap <A-u> <c-g>u<Esc>:call FzfSpell()<CR><c-g>u
-
-" Augmenting Ag command using fzf#vim#with_preview function
-" :Ag  - Start fzf with hidden preview window that can be enabled with "?" key
-" :Ag! - Start fzf in fullscreen and display the preview window above
-command! -bang -nargs=* Ag
-\ call fzf#vim#ripgrep#rg(<q-args>, '--path-to-ignore ~/.ignore',
-\                 <bang>0 ? fzf#vim#with_preview('up:60%')
-\                         : fzf#vim#with_preview('right:50%', '?'),
-\                 <bang>0)
-
-nmap <A-z> <plug>(fzf-maps-n)
-xmap <A-z> <plug>(fzf-maps-x)
-omap <A-z> <plug>(fzf-maps-o)
-au FileType fzf tnoremap <buffer> <Esc> <c-g>
-
-nnoremap <leader>ft :Tags<CR>
-nnoremap <A-p> :Files<CR>
-nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>fs :Rg<CR>
-
-" Using the custom window creation function
-let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-
-" Function to create the custom floating window
-function! FloatingFZF()
-  " creates a scratch, unlisted, new, empty, unnamed buffer
-  " to be used in the floating window
-  let buf = nvim_create_buf(v:false, v:true)
-
-  " 50% of the height
-  let height = float2nr(&lines * 0.5)
-  " 75% of the width
-  let width = float2nr(&columns * 0.75)
-  " horizontal position (centralized)
-  let horizontal = float2nr((&columns - width) / 2)
-  " vertical position (on the top)
-  let vertical = 0
-
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': vertical,
-        \ 'col': horizontal,
-        \ 'width': width,
-        \ 'height': height
-        \ }
-
-  " open the new window, floating, and enter to it
-  call nvim_open_win(buf, v:true, opts)
-endfunction
-
-let g:fzf_colors =
-\ { 'fg':      ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg':      ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl':      ['fg', 'Comment'],
-  \ 'fg+':     ['fg', 'CursorLine', 'CursorColumn', 'Normal'],
-  \ 'bg+':     ['bg', 'CursorLine', 'CursorColumn'],
-  \ 'hl+':     ['fg', 'Statement'],
-  \ 'info':    ['fg', 'PreProc'],
-  \ 'border':  ['fg', 'CursorLine', 'CursorColumn'],
-  \ 'prompt':  ['fg', 'Conditional'],
-  \ 'pointer': ['fg', 'Exception'],
-  \ 'marker':  ['fg', 'Keyword'],
-  \ 'spinner': ['fg', 'Label'],
-  \ 'header':  ['fg', 'Comment'] }
-" }}}
-
 " {{{ caw.vim
 if has('win32')
   nmap <C-/> gcc<Space>
@@ -1030,17 +930,9 @@ let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_java = ['astyle']
 let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocpindent']
+" let g:neoformat_enabled_ocaml = ['ocamlformat']
 let g:neoformat_enabled_lua = ['luaformatter']
 let g:neoformat_enabled_rust = ['rustfmt']
-
-" TODO: Consider ocamlformat (need update CI for projects...)
-" let g:neoformat_ocaml_ocamlformat = {
-"            \ 'exe': 'ocamlformat',
-"            \ 'no_append': 1,
-"            \ 'stdin': 1,
-"            \ 'args': ['--disable-outside-detected-project', '--name', '"%:p"', '-']
-"            \ }
-" let g:neoformat_enabled_ocaml = ['ocamlformat']
 " }}}
 
 " {{{ EditorConfig
@@ -1393,7 +1285,7 @@ au FileType json syntax match Comment +\/\/.\+$+
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
- \'json', 'plantuml', 'html', 'sql', 'nix', 'lua', 'racket',
+ \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim'
  \]
 augroup markdown_group
   au!

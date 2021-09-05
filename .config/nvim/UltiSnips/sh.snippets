@@ -23,6 +23,13 @@ if [[ -f "$1" ]]; then
 fi
 endsnippet
 
+snippet ch_args
+if [ "$#" -ne $1 ]; then
+	echo "Usage: $0"
+	exit 1
+fi
+endsnippet
+
 snippet ch_var
 [[ "\$${1:var}" ]] && ${0:printf "%s\n" "$var"}
 endsnippet

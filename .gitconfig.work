@@ -1,6 +1,0 @@
-[commit]
-gpgsign = false
-[user]
-email = komarov_g@ineum.ru
-
-# vim:ft=gitconfig
