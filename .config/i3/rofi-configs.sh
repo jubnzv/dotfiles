@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-EDITOR="kitty -e nvim"
+EDITOR="$TERMINAL -e nvim"
+if command -v "nvim-qt" &> /dev/null; then
+    EDITOR=nvim-qt
+fi
 
 # Default settings
 _rofi () {
@@ -11,12 +14,10 @@ configs=(
     "$HOME/.config/nvim/init.vim"
     "$HOME/.config/nvim/lua/init.lua"
     "$HOME/.tmux.conf"
-    "$HOME/.gdbinit"
     "$HOME/.ssh/config"
-    "$HOME/.ideavimrc"
     "$HOME/.config/i3/config"
     "$HOME/.config/polybar/config"
-    "$HOME/.config/ranger/rc.conf"
+    "$HOME/.alacritty.yml"
 )
 
 select=$(echo ${configs[@]} | tr ' ' '\n'  | _rofi -dmenu -mesg "Config" -p "> ")

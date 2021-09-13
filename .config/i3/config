@@ -1,6 +1,6 @@
 # {{{ General
 # Global variables
-set $TERMINAL     kitty
+set $TERMINAL     alacritty
 set $HOME 		  /home/jubnzv/
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
@@ -11,14 +11,6 @@ set $display1 LVDS1
 set $display2 VGA1
 set $display3 HDMI3
 
-# Applications from ~/.local/
-set $APP_JBTOOLBOX      $HOME/.local/share/JetBrains/Toolbox/bin/jetbrains-toolbox
-set $APP_IDEA           $HOME/.local/ideaIC-2020.2.3/idea-IC-202.7660.26/bin/idea.sh
-set $APP_TELEGRAM       $HOME/.local/bin/Telegram
-set $APP_MATTERMOST     $HOME/.local/bin/mattermost-wrapper.sh
-set $APP_THUNDERBIRD    $HOME/.local/bin/birdtray
-set $APP_DISCORD        $HOME/.local/Discord/Discord
-
 # Windows behavior
 floating_modifier $mod
 workspace_layout default
@@ -27,13 +19,13 @@ focus_follows_mouse no
 
 # {{{ Autostart
 exec --no-startup-id autorandr --change home
-exec $APP_THUNDERBIRD
-exec $APP_TELEGRAM
+exec --no-startup-id birdtray
+exec --no-startup-id telegram-desktop
 # exec hexchat
 # exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
 # exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
-exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle.sh
+# exec --no-startup-id $SCRIPTS_PATH/touchpad-toggle.sh
 # exec --no-startup-id amixer -c 0 -q set Master mute
 # exec --no-startup-id amixer -c 0 -q set Capture nocap
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
@@ -43,15 +35,16 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id bitwarden
 exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
-exec --no-startup-id syncthing-gtk
+exec --no-startup-id syncthingtray
 exec --no-startup-id /home/jubnzv/.local/bin/diff-notes.sh
 # exec --no-startup-id solaar
 # exec --no-startup-id "eval `ssh-agent -s`"
-exec --no-startup-id sleep 10; anki
+# exec --no-startup-id sleep 10; anki
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 exec --no-startup-id xset b off
 exec --no-startup-id flameshot
-exec --no-startup-id nm-tray
+exec --no-startup-id nm-applet
+exec --no-startup-id setxkbmap -layout "us,ru" -option "grp:alt_shift_toggle"
 # }}}
 
 # {{{ UI and appearance
@@ -204,11 +197,9 @@ bindsym $mod+Shift+0 move container to workspace $ws_0
 bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh
 bindsym $mod+c exec $SCRIPTS_PATH/rofi-configs.sh
 bindsym $mod+x exec $SCRIPTS_PATH/rofi-autorandr.sh
-bindsym $mod+Control+n exec $TERMINAL -d ~/Org/Notes/ -e python3 -m http.server 8000 & /opt/firefox/firefox-bin http://localhost:8000
 bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
-bindsym $mod+Control+2 workspace $ws_w; exec /opt/firefox/firefox-bin
-bindsym $mod+Control+3 workspace $ws_w; exec /opt/firefox/firefox-bin -p local
+bindsym $mod+Control+2 workspace $ws_w; exec firefox
 bindsym $mod+Control+r exec $TERMINAL -e ranger
 bindsym $mod+Shift+R exec pcmanfm
 bindsym $mod+Control+q exec nvim-qt

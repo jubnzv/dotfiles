@@ -76,6 +76,8 @@ export BCC=$HOME/Dev/tools/bcc/
 # Debian tools
 export QUILT_PATCHES=debian/patches
 
+export LC_ALL=C
+
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
 # export _JAVA_OPTIONS='-Dawt.useSystemAAFontSettings=on -Dswing.aatext=true
@@ -88,10 +90,10 @@ export QT_QPA_PLATFORMTHEME='qt5ct'
 
 export EDITOR="nvim"
 export DEBEMAIL="jubnzv@gmail.com"
-export ALTERNATE_EDITOR="nvim"
+export ALTERNATE_EDITOR="nvim-qt"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
-export TERMCMD="kitty"
-export TERMINAL="kitty -e"
+export TERMCMD="alacritty"
+export TERMINAL="alacritty -e"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
@@ -312,7 +314,6 @@ else
 fi
 
 # diffs
-alias kdiff="kitty +kitten diff"
 alias diffdir='diff -ENwbur'
 alias cpd='cpdiff'
 
@@ -434,8 +435,7 @@ export FZF_DEFAULT_OPTS="
 "
 }
 
-# Defaults already looks nice when kitty colors are loaded
-# _gen_fzf_default_opts
+_gen_fzf_default_opts
 # }}}
 
 export FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS}" --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel,esc:cancel"
@@ -545,16 +545,16 @@ function start_ssh_agent() {
 	ssh-add $HOME/.ssh/${^identities}
 }
 
-ssh_environment="$HOME/.ssh/environment-$HOST"
-
-if [[ -f "$ssh_environment" ]]; then
-	source $ssh_environment > /dev/null
-	ps x | grep ssh-agent | grep -q $SSH_AGENT_PID || {
-		start_ssh_agent
-	}
-else
-	start_ssh_agent
-fi
+# ssh_environment="$HOME/.ssh/environment-$HOST"
+# 
+# if [[ -f "$ssh_environment" ]]; then
+# 	source $ssh_environment > /dev/null
+# 	ps x | grep ssh-agent | grep -q $SSH_AGENT_PID || {
+# 		start_ssh_agent
+# 	}
+# else
+# 	start_ssh_agent
+# fi
 # }}}
 
 # {{{ Utilities
@@ -566,19 +566,7 @@ function zsh_stats() {
 }
 # }}}
 
-# Load private settings
-if [ -f ~/Work/env.sh ]; then
-    source ~/Work/env.sh
-fi
-
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
-
-# Activate nix package manager
-if [ -e /home/jubnzv/.nix-profile/etc/profile.d/nix.sh ]; then . /home/jubnzv/.nix-profile/etc/profile.d/nix.sh; fi # added by Nix installer
-
-# ~/.local/bin/cleanup-history ~/.history
-# fc -R # reload history
-# trap "~/.local/bin/cleanup-history ~/.history" EXIT
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120

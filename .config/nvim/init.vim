@@ -84,21 +84,15 @@ Plug 'weirongxu/plantuml-previewer.vim'
 Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
-
-Plug 'akinsho/toggleterm.nvim' " Wrapper for built-in :terminal
-
-Plug 'nvim-lua/plenary.nvim'
-Plug 'nvim-telescope/telescope-project.nvim'
-Plug 'nvim-telescope/telescope.nvim'
+Plug 'akinsho/toggleterm.nvim'        " Wrapper for built-in :terminal
+Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
+Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
+Plug 'nvim-telescope/telescope-project.nvim' " Plugin that implements some projectile functions
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
 if isdirectory('/home/jubnzv/Dev/llvm-project/llvm/utils/vim/')
   Plug '/home/jubnzv//Dev/llvm-project/llvm/utils/vim/'
-endif
-
-if isdirectory('/home/jubnzv/.local/share/nvim/plugged/notes.nvim')
-  Plug '~/.local/share/nvim/plugged/notes.nvim'
 endif
 
 call plug#end()
@@ -160,14 +154,6 @@ endif
 "   set inccommand=split
 " endif
 
-" Setup neovim-qt
-if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
-  set guifont=JetBrains\ Mono:h11
-  nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-  inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
-  vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
-endif
-
 " Default conceal settings
 set conceallevel=0
 set concealcursor=nc
@@ -216,6 +202,20 @@ colorscheme gruvbox
 
 " Highlighting
 highlight Todo ctermfg=130 guibg=#af3a03
+" }}}
+
+" {{{ Setup neovim-qt
+if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
+  set guifont=JetBrainsMono\ Nerd\ Font:h11
+  nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+  inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
+  vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
+
+  " toggleterm
+  nnoremap <silent>`" <Cmd>exe v:count1 . "ToggleTerm"<CR>
+  nnoremap <silent>`% <Cmd>exe v:count1 . "ToggleTerm direction=vertical size=50"<CR>
+  nnoremap <silent>`t :call system('alacritty --working-directory '.shellescape(getcwd()).' &')<CR>
+endif
 " }}}
 
 " {{{ Common functions and commands
@@ -903,6 +903,9 @@ inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 inoremap <expr><A-l> pumvisible() ? "\<CR>" : ""
 inoremap <expr><A-o> deoplete#mappings#manual_complete()
 
+" Otherwise autocompletion in Telescope writes to files when typing <Enter>.
+autocmd FileType TelescopePrompt call deoplete#custom#buffer_option('auto_complete', v:false)
+
 call deoplete#custom#source('_',
   \ 'matchers', ['matcher_full_fuzzy'])
 
@@ -1094,6 +1097,15 @@ augroup go_group
 augroup END
 " }}}
 
+" {{{ Rust
+augroup rust_group
+  au!
+  au FileType rust RainbowToggleOn
+  au FileType rust nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
+  au FileType rust nmap <buffer> <silent><A-o> <Nop>
+augroup END
+" }}}
+
 " {{{ Lua
 augroup lua_group
   au!
@@ -1144,10 +1156,10 @@ augroup END
 " {{{ OCaml and other MLs
 " Merlin
 " See: https://github.com/ocaml/merlin/wiki/vim-from-scratch
-if executable("opam")
-  let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
-  execute "set rtp+=" . g:opamshare . "/merlin/vim"
-endif
+" if executable("opam")
+"   let g:opamshare = substitute(system('opam config var share'),'\n$','','''')
+"   execute "set rtp+=" . g:opamshare . "/merlin/vim"
+" endif
 
 augroup ocaml_group
   au!

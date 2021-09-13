@@ -3,7 +3,10 @@
 # Rofi script to view and create notes in ~/Org/Notes/ directory.
 # Note files represented in markdown (.md) format.
 #
-EDITOR="kitty -e nvim"
+EDITOR="$TERMINAL -e nvim"
+if command -v "nvim-qt" &> /dev/null; then
+    EDITOR=nvim-qt
+fi
 NOTES_DIR=~/Org/Notes/
 
 # Default settings

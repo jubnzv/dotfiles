@@ -56,9 +56,8 @@ using namespace std;
 end
 
 function M.setup_colorizer()
-  -- Attach to certain Filetypes, add special configuration for `html`
-  -- Use `background` for everything else.
   require'colorizer'.setup {
+    'yml',
     'css',
     'javascript',
     'html',
@@ -89,9 +88,9 @@ function M.setup_lsp()
   -- Register lsp-status
   -- lsp_status.register_progress()
 
-  if vim.fn.executable('clangd-11') then
+  if vim.fn.executable('clangd') then
     lsp.clangd.setup {
-      cmd = { "clangd-11",
+      cmd = { "clangd",
               "--background-index",
               "--header-insertion=iwyu",
               "--header-insertion-decorators",
