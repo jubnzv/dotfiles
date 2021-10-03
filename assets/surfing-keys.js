@@ -1,12 +1,11 @@
-// General options
 settings.smoothScroll = false;
 settings.hintAlign = "left";
 
-// Unmap undesired defaults
 var unmaps = [ "sb" ,  "sw", "ob"
          , "ow" ,  "cp", ";cp"
          , "od", "og"
          , "]]", "[["
+         , "yp", "ym", "yo"
          , ";ap", "spa", "spb"
          , "spd", "sps", "spc"
          , "spi", "sfr", "zQ"
@@ -18,6 +17,35 @@ unmaps.forEach(function(u) {
   unmap(u);
 });
 
+// Helper functions used in mappings.
+// Mostly stolen from: // https://github.com/b0o/surfingkeys-conf/
+getCurrentLocation = (prop = "href") => {
+  if (typeof window === "undefined") {
+    return ""
+  }
+  return window.location[prop]
+}
+getURLPath = ({ count = 0, domain = false } = {}) => {
+  let path = getCurrentLocation("pathname").slice(1)
+  if (count) {
+    path = path.split("/").slice(0, count).join("/")
+  }
+  if (domain) {
+    path = `${getCurrentLocation("hostname")}/${path}`
+  }
+  return path
+}
+copyURLPath = ({ count, domain } = {}) => () =>
+  Clipboard.write(getURLPath({ count, domain }))
+copyOrgLink = () =>
+  Clipboard.write(`[[${getCurrentLocation("href")}][${document.title}]]`)
+copyMarkdownLink = () =>
+  Clipboard.write(`[${document.title}](${getCurrentLocation("href")})`)
+
+mapkey("yp", "Copy URL path of current page", copyURLPath());
+mapkey("ym", "Copy page URL/Title as Markdown link", copyMarkdownLink);
+mapkey("yo", "Copy page URL/Title as Org-mode link", copyOrgLink);
+
 // Switch tabs
 map('`[', 'E');
 map('ёх', 'E');
@@ -28,27 +56,12 @@ map('ёъ', 'R');
 map('t', 'on');
 map('`t', 'on');
 
-// Restore closed tab
-unmap('T');
-map('T', '<Ctrl-T>');
-
 // Open link in new tab
 map('F', 'gf');
-map('А', 'gf');
 
 // Switch to recent tab
 map('`r', '<Ctrl-6>');
 map('ёк', '<Ctrl-6>');
-
-mapkey('p', "Open the clipboard's URL in the current tab", function() {
-    Front.getContentFromClipboard(function(response) {
-        window.location.href = response.data;
-    });
-});
-
-mapkey(';w', "Lookup whois information for domain", whois, {
-    repeatIgnore: true
-});
 
 // Pin tab
 map('gp', '<Alt-p>')
@@ -60,9 +73,6 @@ cmap('<Alt-k>', '<Shift-Tab>');
 // Yandex.Translate
 addSearchAliasX('te', 'yandex.translate (ru → en)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
 addSearchAliasX('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
-
-// Baidu
-addSearchAliasX('sb', 'baidu', 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd=', 'o');
 
 // Oxford dictionaries
 addSearchAliasX('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
@@ -92,16 +102,8 @@ addSearchAliasX('go', 'github: OCaml', 'https://github.com/search?q=language%3AO
 // Documentation and language references
 addSearchAliasX('dx', 'doc: cppreference', 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=', 'o');
 addSearchAliasX('dX', 'doc: isocpp', 'https://isocpp.org/search/google?q=', 'o');
-addSearchAliasX('dg', 'doc: gnome', 'https://developer.gnome.org/search?q=', 'o');
 addSearchAliasX('dp', 'doc: docs.python', 'https://docs.python.org/3/search.html?q=', 'o');
-addSearchAliasX('dl', 'LWN', 'https://lwn.net/Search/DoSearch?words=', 'o');
 
-function whois() {
-    var url = "https://who.is/whois/" + window.location.hostname;
-    window.open(url, '_blank').focus();
-}
-
-// Set theme
 settings.theme = `
 /* Disable RichHints CSS animation */
 .expandRichHints {

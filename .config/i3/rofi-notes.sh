@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
-# Rofi script to view and create notes in ~/Org/Notes/ directory.
-# Note files represented in markdown (.md) format.
+# A script that runs rofi to view and create notes in ~/Org/Notes/ directory.
+# Note files are presented in the markdown (.md) format.
 #
 EDITOR="$TERMINAL -e nvim"
 if command -v "nvim-qt" &> /dev/null; then
@@ -9,20 +9,15 @@ if command -v "nvim-qt" &> /dev/null; then
 fi
 NOTES_DIR=~/Org/Notes/
 
-# Default settings
 _rofi () {
     rofi -regex -tokenize -i -lines 30 -width 1500 -no-levenshtein-sort "$@"
 }
 
-# Handle argument
-if [ -n "$@" ]
-then
+if [ -n "$@" ]; then
     NOTES_DIR="${NOTES_DIR}/$@"
 fi
 
-# If argument is not directory
-if [ ! -d "${NOTES_DIR}" ]
-then
+if [ ! -d "${NOTES_DIR}" ]; then
     if [ -x "${NOTES_DIR}" ]
     then
         coproc ( "${NOTES_DIR}" &  > /dev/null 2>&1 )
@@ -36,8 +31,7 @@ then
     exit;
 fi
 
-if [ -n "${NOTES_DIR}" ]
-then
+if [ -n "${NOTES_DIR}" ]; then
     NOTES_DIR=$(readlink -e "${NOTES_DIR}")
     pushd "${NOTES_DIR}" >/dev/null
 fi

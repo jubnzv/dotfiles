@@ -46,7 +46,7 @@ font-1 = Iosevka Nerd Font:style=Regular:size=10
 
 modules-left = i3
 modules-center = date
-modules-right = pulseaudio microphone xbacklight timer notifications-status filesystem-root memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery
+modules-right = pulseaudio microphone xbacklight notifications-status filesystem-root memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
@@ -316,16 +316,6 @@ exec = ~/.config/polybar/vpn-openvpn-isrunning.sh
 interval = 5
 format-foreground = ${colors.blue2}
 format-underline = ${colors.blue2}
-
-[module/timer]
-type = custom/script
-exec = ~/.config/polybar/polybar-timer.sh tail '%{F#585858}%{F-}' 5
-tail = true
-click-left = ~/.config/polybar/polybar-timer.sh new 60 '' 'notify-send "Session finished"' ; ~/.config/polybar/polybar-timer.sh update %pid%
-click-middle = ~/.config/polybar/polybar-timer.sh cancel ; ~/.config/polybar/polybar-timer.sh update %pid%
-click-right = ~/.config/polybar/polybar-timer.sh new 10 '' 'notify-send "Break finished"' ; ~/.config/polybar/polybar-timer.sh update %pid%
-scroll-up = ~/.config/polybar/polybar-timer.sh increase 60 || ~/.config/polybar/polybar-timer.sh new 1 'TIMER:' 'notify-send -u critical "Timer expired."' ; ~/.config/polybar/polybar-timer.sh update %pid%
-scroll-down = ~/.config/polybar/polybar-timer.sh increase -60 ; ~/.config/polybar/polybar-timer.sh update %pid%
 
 [module/notifications-status]
 type = custom/script

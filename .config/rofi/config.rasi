@@ -1,0 +1,18 @@
+configuration {
+	font: "Iosevka 13";
+	show-icons: true;
+	terminal: "kitty";
+	theme: "~/.config/rofi/gruvbox-jubnzv.rasi";
+	kb-accept-entry: "Alt+m,Control+m,Return";
+	kb-row-up: "Alt+k,Up,Control+p";
+	kb-row-down: "Alt+j,Down,Control+n";
+	kb-cancel: "Escape,Control+g,Alt+q";
+  timeout {
+      action: "kb-cancel";
+      delay:  0;
+  }
+  filebrowser {
+      directories-first: true;
+      sorting-method:    "name";
+  }
+}

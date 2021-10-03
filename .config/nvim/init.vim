@@ -11,6 +11,11 @@ if !has('win32')
   let g:python3_host_prog  = '/usr/bin/python3.9'
 endif
 
+" We should tweak PATH on Windows to make *nix tools work.
+if has('win32')
+  let $PATH = "C:\\Program Files\\Git\\usr\\bin;" . $PATH
+endif
+
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
@@ -50,7 +55,6 @@ Plug 'Yggdroot/indentLine'            " A Vim plugin for visually displaying ind
 Plug 'Shougo/deoplete.nvim', {
   \ 'do': ':UpdateRemotePlugins'
   \ }
-Plug 'copy/deoplete-ocaml'            " Asynchronous completion for OCaml based on merlin
 Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
 Plug 'rust-lang/rust.vim'             " Rust support
 " Native neovim LSP client and friends
@@ -88,6 +92,7 @@ Plug 'akinsho/toggleterm.nvim'        " Wrapper for built-in :terminal
 Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
 Plug 'nvim-telescope/telescope-project.nvim' " Plugin that implements some projectile functions
+Plug 'kristijanhusak/orgmode.nvim'    " org-mode clone
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -677,7 +682,7 @@ let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commen
 " {{{ Folding settings
 set foldmethod=syntax
 set foldnestmax=6
-set nofoldenable       " Disable folding when open file
+set nofoldenable " Disable folding when openning a file
 set foldlevel=2
 set foldcolumn=0
 set fillchars=fold:\ 
@@ -732,7 +737,6 @@ nnoremap <silent><A-0> :NvimTreeToggle<cr>
 
 let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '__pycache__', '.clangd' ]
 let g:nvim_tree_indent_markers = 1
-let g:nvim_tree_follow = 1
 
 hi NvimTreeIndentMarker guifg=#3c3836
 hi NvimTreeFolderIcon guifg=#7c6f64
@@ -756,6 +760,13 @@ let g:nvim_tree_icons = {
      \   'symlink':    "",
      \  }
      \ }
+
+lua << EOF
+require 'nvim-tree'.setup{
+  disable_netrw       = true,
+  update_focused_file = { enable = true }
+}
+EOF
 " }}}
 
 " {{{ UndoTree
@@ -1368,7 +1379,7 @@ augroup END
 " }}}
 
 " {{{ Other ft-specific autocommands
-au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml foldmethod=indent
+au! BufNewFile,BufReadPost *.{yaml,yml,sublime-syntax} set filetype=yaml foldmethod=indent
 au FileType yaml setlocal ts=2 sts=2 sw=2
 
 au FileType conf set foldmethod=marker foldenable

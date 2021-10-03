@@ -9,6 +9,7 @@ Install the addons:
 * [OctoTree](https://addons.mozilla.org/en-US/firefox/addon/octotree/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
 * [SurfingKeys](https://addons.mozilla.org/en-US/firefox/addon/surfingkeys_ff/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
 * [uBlackList](https://addons.mozilla.org/en-US/firefox/addon/ublacklist/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
+* [Want My RSS](https://addons.mozilla.org/en-US/firefox/addon/want-my-rss/)
 
 Go to [about:config](about:config) and set:
 * `ui.key.menuAccessKeyFocuses = false`

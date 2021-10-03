@@ -1,6 +1,6 @@
 # {{{ General
 # Global variables
-set $TERMINAL     alacritty
+set $TERMINAL     kitty
 set $HOME 		  /home/jubnzv/
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
@@ -33,9 +33,9 @@ exec --no-startup-id dunst
 # exec --no-startup-id qtask
 exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
-exec --no-startup-id bitwarden
-exec --no-startup-id xss-lock -- ~/.config/i3/lock.sh
-exec --no-startup-id syncthingtray
+exec --no-startup-id bitwarden-desktop
+exec --no-startup-id xss-lock -- ~/.config/i3/i3lock-wrapper.sh
+exec --no-startup-id syncthing-gtk
 exec --no-startup-id /home/jubnzv/.local/bin/diff-notes.sh
 # exec --no-startup-id solaar
 # exec --no-startup-id "eval `ssh-agent -s`"
@@ -57,7 +57,7 @@ client.urgent           #d65d0e #282828 #000000 #586e75
 
 # Window appearance
 new_window 1pixel
-font xft:JetBrains Mono, FontAwesome 9
+font xft:JetBrainsMono Nerd Font, FontAwesome 9
 hide_edge_borders both
 # }}}
 
@@ -125,6 +125,10 @@ bindsym $mod+Shift+B border toggle
 
 # Change split orientation
 bindsym $mod+Shift+ampersand layout toggle split
+
+# Set split orientation
+bindsym $mod+h split h
+bindsym $mod+v split v
 
 # Workspaces
 bindsym $mod+Down workspace prev
@@ -283,11 +287,10 @@ mode "$mode_exec_i3cmd" {
 }
 # }}}
 # {{{ Run selected REPL
-set $mode_run_repl  REPL\t [i] ipython [j] jupyter [u] utop [r] r2 [l] lua
+set $mode_run_repl  REPL\t [i] ipython [u] utop [r] r2 [l] lua
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
     bindsym i       exec $TERMINAL -e ipython3; mode "default"
-    bindsym j       exec $TERMINAL -e jupyter-notebook; mode "default"
     bindsym u       exec $TERMINAL -e utop; mode "default"
     bindsym r       exec $TERMINAL -e r2 -; mode "default"
     bindsym l       exec $TERMINAL -e lua5.3; mode "default"

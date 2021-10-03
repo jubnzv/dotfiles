@@ -1,5 +1,6 @@
 local M = {}
 
+-- Configures nvim-telescope/telescope.nvim and related plugins.
 function M.setup_telescope()
   local telescope = require'telescope'
 
@@ -29,6 +30,7 @@ function M.setup_telescope()
   ]], '')
 end
 
+-- Configures jubnzv/mdeval.nvim.
 function M.setup_mdeval()
   require('mdeval').setup({
     require_confirmation = false,
@@ -55,6 +57,7 @@ using namespace std;
                           {silent = true, noremap = true})
 end
 
+-- Configures norcalli/nvim-colorizer.lua.
 function M.setup_colorizer()
   require'colorizer'.setup {
     'yml',
@@ -72,6 +75,7 @@ function M.setup_colorizer()
   }
 end
 
+-- Configures all things related to built-in LSP server, including keybinginds, helper plugins, etc.
 function M.setup_lsp()
   local lsp = require('lspconfig')
   local virtualtypes = require('virtualtypes')
@@ -147,12 +151,22 @@ function M.setup_lsp()
     ]], '')
 end
 
+-- Setups kristijanhusak/orgmode.nvim.
+function M.setup_org_mode()
+  require('orgmode').setup({
+    org_agenda_files = {'~/Org/org-mode/Notes.org'},
+    -- Refile is useless in my workflow now.
+    org_default_notes_file = '~/Org/org-mode/refile.org',
+  })
+end
+
 function M.setup()
   M.setup_telescope()
   M.setup_mdeval()
   M.setup_colorizer()
   M.setup_lsp()
-  vim.api.nvim_set_keymap('n', '<leader>q', "<cmd>lua require'hop'.hint_words()<cr>", {})
+  M.setup_org_mode()
+  -- vim.api.nvim_set_keymap('n', '<leader>q', "<cmd>lua require'hop'.hint_words()<cr>", {})
 end
 
 return M

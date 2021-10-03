@@ -64,19 +64,19 @@ export PATH=$PATH:$GOPATH/bin/
 export PATH=$PATH:$LLVM/
 # export PATH=$PATH:$HOME/.dotnet
 
+if [ -f /etc/arch-release ]; then
+    export LC_ALL=C
+fi
+
 # Default username for https://hub.docker.com
 export DOCKER_ID_USER="jubnzv1"
 
-# Shortcuts for most used tools
+# Shortcuts for common tools
 export CPPCHECK=$HOME/Dev/cppcheck/
-export TOOLS=$HOME/Dev/tools/
 export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
-export BCC=$HOME/Dev/tools/bcc/
 
 # Debian tools
 export QUILT_PATCHES=debian/patches
-
-export LC_ALL=C
 
 export JAVA_HOME=$(readlink -f /usr/bin/java | sed "s:bin/java::")
 # Make Java UI not so ugly.
@@ -92,8 +92,8 @@ export EDITOR="nvim"
 export DEBEMAIL="jubnzv@gmail.com"
 export ALTERNATE_EDITOR="nvim-qt"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
-export TERMCMD="alacritty"
-export TERMINAL="alacritty -e"
+export TERMCMD="kitty"
+export TERMINAL="kitty -e"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
@@ -200,16 +200,12 @@ alias pdd='popd'
 alias s='sudo'
 alias less='less -Q' # Turn off beeps
 alias rp='realpath'
-alias ag='rg'
 alias grep='grep --color=auto'
 alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
 alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 zt() { zathura $1 2>&1 >/dev/null & }
 alias j='z'
-alias tm='tmux'
 jj() { z "$@"; [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}" }
-alias du1="du --max-depth=1"
-alias du2="du --max-depth=2"
 alias tree='tree -C'
 alias r='ranger'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
@@ -256,17 +252,6 @@ gcd() {
     [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}"
 }
 
-# go
-gget() {
-    [[ $# -ne 1 ]] && return 1
-    url=${1#*//}
-    go get -v "${url}"
-}
-
-# docker
-alias d='docker'
-alias drmrunning='docker container rm -f $(docker container ls -q)'
-
 alias -g KE="2>&1"
 alias -g NE="2>/dev/null"
 alias -g NUL=">/dev/null 2>&1"
@@ -278,9 +263,6 @@ alias -g ND="notify-send 'Done' ''"
 alias -g U="echo -e '\a'"
 alias -g CP="xclip -selection clipboard"
 alias -g IR="i3-msg 'workspace back_and_forth' >/dev/null"
-
-# Emscripten
-alias ema="source /home/jubnzv/Sources/emsdk/emsdk_env.sh"
 
 # Perform operation using fzf. Examples:
 #   find /usr/include -name "test.h" F nvim
@@ -301,17 +283,9 @@ alias ipy3='ipython3'
 alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
 alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
 
-alias ctags='/usr/bin/ctags-universal'
-
 # ls
 alias ls='ls --color=auto'
 alias ll='ls -oh'
-alias l1='ls -1'
-if [[ -x "$(command -v tree)" ]]; then
-    alias lT='tree'
-else
-    alias lT='ls -lhR'
-fi
 
 # diffs
 alias diffdir='diff -ENwbur'
@@ -406,7 +380,7 @@ bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # }}}
 
 # {{{ fzf
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
 
 # {{{ Gruvbox color scheme
 # https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-gruvbox-dark-soft.config
@@ -467,9 +441,6 @@ function fzf-delete-branches() {
     xargs --no-run-if-empty git branch --delete --force
 }
 
-# Disable <TAB> completion
-bindkey '^I' $fzf_default_completion
-
 function fzf-fasd-dir() {
 	# otherwise will end up as a cdable var
 	local dir
@@ -496,12 +467,6 @@ zle -N fzf-rga
 bindkey "^[r" fzf-rga
 # }}}
 
-# {{{ Autocompletion
-compdef sshrc=ssh
-compdef scp-speed-test=scp
-compdef g=git
-# }}}
-
 # {{{ auto-notify plugin configuration
 export AUTO_NOTIFY_THRESHOLD=600
 export AUTO_NOTIFY_TITLE="%command: done with %exit_code"
@@ -512,10 +477,10 @@ export AUTO_NOTIFY_WHITELIST=("apt-get" "docker" "rsync" "scp" "cp" "mv" "rm" "g
                               "borg-linux64" "aria2" "frama-c"
                               "chk1" "cppcheck" "perf" "mprof" "svn" "opam" "sync-ebook.sh")
 export AUTO_NOTIFY_IGNORE=("docker exec" "docker-compose")
-export AUTO_NOTIFY_EXPIRE_TIME=200
+export AUTO_NOTIFY_EXPIRE_TIME=2000
 # }}}
 
-# {{{ Show current directory in X window title
+# {{{ Show current directory in the X window title
 function set-title-precmd() {
   printf "\e]2;%s\a" "${PWD/#$HOME/~} - zsh"
 }
