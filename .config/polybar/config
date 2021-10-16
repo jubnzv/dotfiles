@@ -288,7 +288,7 @@ animation-discharging-framerate = 750
 [module/mouse-battery]
 type = custom/script
 exec = ~/.config/polybar/mouse-battery.sh
-interval = 60
+interval = 30
 label =  %output%%
 format-background = ${colors.alert}
 

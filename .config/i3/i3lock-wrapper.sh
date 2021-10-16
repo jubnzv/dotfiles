@@ -20,14 +20,14 @@ enable_sound() {
 enable_notifications() {
     if [[ "$N_DISABLED" -eq 0 ]]; then
         rm $TMP_FILE
-        notify-send "DUNST_COMMAND_RESUME"
+        dunstctl set-paused false
     fi
 }
 
 disable_notifications() {
     if [[ "$N_DISABLED" -eq 0 ]]; then
         touch $TMP_FILE
-        notify-send "DUNST_COMMAND_PAUSE"
+        dunstctl set-paused true
     fi
 }
 

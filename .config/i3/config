@@ -1,6 +1,6 @@
 # {{{ General
 # Global variables
-set $TERMINAL     kitty
+set $TERMINAL     alacritty
 set $HOME 		  /home/jubnzv/
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
@@ -101,8 +101,6 @@ for_window [class="^Anki$" title="^Добавить$"] floating enable, mark ank
 for_window [class="^Anki$" title="^Add$"] floating enable, mark anki_add
 for_window [class="^QTask$"] move container to workspace $ws_j, focus, layout floating
 for_window [class="^t-engine$"] fullscreen
-for_window [title="^Beremiz$"] move container to workspace $ws_o, focus, layout floating
-for_window [title="^PLCOpenEditor$"] move container to workspace $ws_o, focus, layout floating
 for_window [title="^xev$"] floating enable
 for_window [title="^Debug" class="jetbrains-pycharm"] floating disable
 for_window [title="^Run" class="jetbrains-pycharm"] floating disable

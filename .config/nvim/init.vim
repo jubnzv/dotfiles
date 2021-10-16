@@ -72,6 +72,7 @@ Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
 Plug 'wlangstroth/vim-racket'         " Vim bundle for Racket
+Plug 'neovimhaskell/haskell-vim'      " Haskell plugin
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
@@ -1276,7 +1277,7 @@ augroup tex_group
   au!
   au FileType tex set sw=2
   au FileType tex call Togglegjgk()
-  au FileType tex set spell! spelllang=en_us,ru_yo
+  au FileType tex setlocal spell! spelllang=en_us,ru_yo
   au FileType tex nnoremap <buffer> <silent> <leader>p :call pasteimage#LatexClipboardImage()<CR>
   au FileType tex nnoremap <buffer> <silent> <leader>з :call pasteimage#LatexClipboardImage()<CR>
 augroup end
@@ -1294,7 +1295,7 @@ augroup rst_group
   au FileType rst setlocal sw=4 ts=4 expandtab
   au FileType rst setlocal textwidth=80
   au Filetype rst setlocal foldmethod=expr
-  au FileType rst set spell! spelllang=en_us,ru_ru
+  au FileType rst setlocal spell! spelllang=en_us,ru_ru
   au FileType rst call Togglegjgk()
 augroup END
 " }}}
@@ -1312,8 +1313,8 @@ let g:markdown_fenced_languages = [
  \]
 augroup markdown_group
   au!
-  au FileType markdown set nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
-  au FileType markdown set spell! spelllang=en_us,ru_yo
+  au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+  au FileType markdown setlocal spell! spelllang=en_us,ru_yo
   au FileType markdown call Togglegjgk()
   " Fold on <Tab> like org-mode does
   " au FileType markdown nnoremap <buffer> <Tab> za<CR>k
@@ -1324,12 +1325,12 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
   au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
   " Abbrevations
-  au FileType markdown inoremap <buffer> --<space> –<space>
-  au FileType markdown inoremap <buffer> -><space> →<space>
-  au FileType markdown inoremap <buffer> =><space> ⇒<space>
-  au FileType markdown inoremap <buffer> <-<space> ←<space>
-  au FileType markdown inoremap <buffer> \E<space> ∃<space>
-  au FileType markdown inoremap <buffer> \A<space> ∀<space>
+  " au FileType markdown inoremap <buffer> --<space> –<space>
+  " au FileType markdown inoremap <buffer> -><space> →<space>
+  " au FileType markdown inoremap <buffer> =><space> ⇒<space>
+  " au FileType markdown inoremap <buffer> <-<space> ←<space>
+  " au FileType markdown inoremap <buffer> \E<space> ∃<space>
+  " au FileType markdown inoremap <buffer> \A<space> ∀<space>
   " Paste image from clipboard
   au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
   " Paste URL link from clipboard
@@ -1374,7 +1375,7 @@ augroup END
 au! BufNewFile,BufReadPost *.{uml,puml} set filetype=plantuml
 augroup plantuml_group
     au!
-    au FileType plantuml set spell! spelllang=en_us,ru_yo
+    au FileType plantuml setlocal spell! spelllang=en_us,ru_yo
 augroup END
 " }}}
 

@@ -33,10 +33,8 @@ fi
 
 fpath=( ~/.zfunc ~/.zsh/zsh-completions/src/ "${fpath[@]}" )
 
-# fasd setup
-# have a (any), s (show), z (cd), etc.
-if [[ -x "$(command -v fasd)" ]]; then
-    eval "$(fasd --init posix-alias zsh-hook zsh-ccomp zsh-ccomp-install)"
+if [[ -x "$(command -v zoxide)" ]]; then
+    eval "$(zoxide init zsh)"
 fi
 
 # {{{ Global variables
@@ -92,8 +90,8 @@ export EDITOR="nvim"
 export DEBEMAIL="jubnzv@gmail.com"
 export ALTERNATE_EDITOR="nvim-qt"
 export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
-export TERMCMD="kitty"
-export TERMINAL="kitty -e"
+export TERMCMD="alacritty"
+export TERMINAL="alacritty -e"
 export USE_EDITOR=$EDITOR
 export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
@@ -440,15 +438,6 @@ function fzf-delete-branches() {
     fzf --multi --preview="git log {} --" |
     xargs --no-run-if-empty git branch --delete --force
 }
-
-function fzf-fasd-dir() {
-	# otherwise will end up as a cdable var
-	local dir
-	dir="$(fasd -ds | fzf --tac | awk '{print $2}')" && \
-	cd "$dir"
-}
-zle -N fzf-fasd-dir
-bindkey "^[c" fzf-fasd-dir
 
 function fzf-rga() {
 	RG_PREFIX="rga --files-with-matches"
