@@ -155,6 +155,8 @@ bindsym $mod+Tab focus output right
 # Switch between windows on workspace
 bindsym $mod+bracketleft focus left
 bindsym $mod+bracketright focus right
+bindsym $mod+Control+bracketleft focus up
+bindsym $mod+Control+bracketright focus down
 
 # Goto last workspace
 bindsym $mod+r workspace back_and_forth
@@ -210,7 +212,6 @@ bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py                         
                             && sleep 0.2                                             \
                             && i3-msg '[con_mark="anki_add"] move workspace current' \
                             && i3-msg '[con_mark="anki_add"] focus'
-bindsym $mod+t exec qtask
 
 # Brightness control
 bindsym XF86MonBrightnessUp exec xbacklight -inc 5
@@ -247,7 +248,6 @@ bindsym $mod+Control+8 bar mode toggle bar-main
 # Highlight focused window
 bindsym Shift+F4 [class=".*"] border pixel 5
 bindsym Shift+F4 --release [class=".*"] border none
-
 # }}}
 
 # {{{ Custom modes
@@ -285,13 +285,14 @@ mode "$mode_exec_i3cmd" {
 }
 # }}}
 # {{{ Run selected REPL
-set $mode_run_repl  REPL\t [i] ipython [u] utop [r] r2 [l] lua
+set $mode_run_repl  REPL\t [i] ipython [u] utop [r] r2 [l] lua [h] ghci
 bindsym $mod+Control+i mode "$mode_run_repl"
 mode "$mode_run_repl" {
     bindsym i       exec $TERMINAL -e ipython3; mode "default"
     bindsym u       exec $TERMINAL -e utop; mode "default"
     bindsym r       exec $TERMINAL -e r2 -; mode "default"
     bindsym l       exec $TERMINAL -e lua5.3; mode "default"
+    bindsym h       exec $TERMINAL -e ghci; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
 }

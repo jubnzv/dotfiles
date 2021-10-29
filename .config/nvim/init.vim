@@ -50,24 +50,17 @@ Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regi
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
 Plug 'tyru/caw.vim'                   " Comment plugin
 Plug 'sirver/ultisnips'               " Snippets plugin
-Plug 'honza/vim-snippets'
-Plug 'Yggdroot/indentLine'            " A Vim plugin for visually displaying indent levels in code
-Plug 'Shougo/deoplete.nvim', {
-  \ 'do': ':UpdateRemotePlugins'
-  \ }
+Plug 'honza/vim-snippets'             " A collection of snippets
+Plug 'lukas-reineke/indent-blankline.nvim' " A Vim plugin for visually displaying indent levels in code
 Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
 Plug 'rust-lang/rust.vim'             " Rust support
 " Native neovim LSP client and friends
-if has('nvim-0.5')
-  Plug 'neovim/nvim-lspconfig'
-  " Shows type annotations in virtual text
-  Plug 'jubnzv/virtual-types.nvim'
-  " Neovim's LSP Completion source for deoplete
-  Plug 'Shougo/deoplete-lsp'
-  " Utilities for generating statusline components from the built-in LSP client
-  " Seems good, but not yet usable because status updates are too slow.
-  " Plug 'nvim-lua/lsp-status.nvim'
-endif
+Plug 'neovim/nvim-lspconfig'
+" Shows type annotations in virtual text
+Plug 'jubnzv/virtual-types.nvim'
+" Utilities for generating statusline components from the built-in LSP client
+" Seems good, but not yet usable because status updates are too slow.
+" Plug 'nvim-lua/lsp-status.nvim'
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
@@ -82,6 +75,7 @@ Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex'                  " LaTeX plugin
 Plug 'wlangstroth/vim-racket'         " Racket support
+Plug 'PyGamer0/vim-apl/'              " APL plugin
 Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
 Plug 'rhysd/vim-grammarous'           " LanguageTool (https://languagetool.org/) integration
 Plug 'jubnzv/IEC.vim'                 " IEC61131-3 plugin
@@ -94,6 +88,16 @@ Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
 Plug 'nvim-telescope/telescope-project.nvim' " Plugin that implements some projectile functions
 Plug 'kristijanhusak/orgmode.nvim'    " org-mode clone
+
+" {{{ nvim-cmp
+Plug 'neovim/nvim-lspconfig'
+Plug 'hrsh7th/cmp-nvim-lsp'
+Plug 'hrsh7th/cmp-buffer'
+Plug 'hrsh7th/cmp-path'
+Plug 'hrsh7th/cmp-cmdline'
+Plug 'hrsh7th/nvim-cmp'
+Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+" }}}
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -148,6 +152,7 @@ set eol
 set fixeol                                  " <EOL> at the end of file will be restored if missing
 set re=1                                    " Required for vista.vim: https://github.com/liuchengxu/vista.vim/issues/82
 set mouse=a
+set completeopt=menu,menuone,noselect
 
 " Add additional information in popups (VIM 8.0+ only)
 if !has('nvim')
@@ -907,28 +912,7 @@ nnoremap <silent> [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
 nnoremap <silent> ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
 " }}}
 
-" {{{ deoplete
-let g:deoplete#enable_at_startup = 1
-inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
-inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr><A-l> pumvisible() ? "\<CR>" : ""
-inoremap <expr><A-o> deoplete#mappings#manual_complete()
-
-" Otherwise autocompletion in Telescope writes to files when typing <Enter>.
-autocmd FileType TelescopePrompt call deoplete#custom#buffer_option('auto_complete', v:false)
-
-call deoplete#custom#source('_',
-  \ 'matchers', ['matcher_full_fuzzy'])
-
-set completeopt-=preview
-
-" Add Icons for LSP_KINDS.
-" See: https://github.com/deoplete-plugins/deoplete-lsp/pull/46/files
-let g:deoplete#lsp#use_icons_for_candidates = 1
-" }}}
-
-" {{{ UltiSnips
+" " {{{ UltiSnips
 let g:UltiSnipsExpandTrigger='<A-l>'
 let g:UltiSnipsJumpForwardTrigger='<A-l>'
 let g:UltiSnipsJumpBackwardTrigger='<A-h>'
@@ -948,6 +932,7 @@ let g:neoformat_enabled_ocaml = ['ocpindent']
 " let g:neoformat_enabled_ocaml = ['ocamlformat']
 let g:neoformat_enabled_lua = ['luaformatter']
 let g:neoformat_enabled_rust = ['rustfmt']
+let g:neoformat_enabled_haskell = ['ormolu']
 " }}}
 
 " {{{ EditorConfig
@@ -1267,11 +1252,6 @@ let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
 let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
-
-" Configure deoplete source
-call deoplete#custom#var('omni', 'input_patterns', {
-      \ 'tex': g:vimtex#re#deoplete
-      \})
 
 augroup tex_group
   au!

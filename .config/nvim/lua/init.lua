@@ -1,6 +1,6 @@
 local M = {}
 
--- Configures nvim-telescope/telescope.nvim and related plugins.
+-- {{{ Setup nvim-telescope/telescope.nvim and related plugins.
 function M.setup_telescope()
   local telescope = require'telescope'
 
@@ -29,8 +29,71 @@ function M.setup_telescope()
     nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
   ]], '')
 end
+-- }}}
 
--- Configures jubnzv/mdeval.nvim.
+-- {{{ Setup hrsh7th/nvim-cmp
+function M.setup_nvim_cmp()
+  local cmp = require'cmp'
+
+  cmp.setup({
+    snippet = {
+      expand = function(args)
+        -- vim.fn["vsnip#anonymous"](args.body)
+        vim.fn["UltiSnips#Anon"](args.body)
+      end,
+    },
+    mapping = {
+      ['<A-j>'] = cmp.mapping(
+        cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
+        { 'i', 'c' }
+      ),
+      ['<A-k>'] = cmp.mapping(
+        cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
+        { 'i', 'c' }
+      ),
+      ['<A-q>'] = cmp.mapping({
+        i = cmp.mapping.abort(),
+        c = cmp.mapping.close(),
+      }),
+      ['<A-l>'] = cmp.mapping.complete(),
+    },
+    sources = cmp.config.sources({
+      { name = 'nvim_lsp' },
+      -- { name = 'vsnip' },
+      { name = 'ultisnips' },
+    }, {
+      { name = 'buffer' },
+    })
+  })
+
+  -- Use buffer source for `/`.
+  cmp.setup.cmdline('/', {
+    sources = {
+      { name = 'buffer' }
+    }
+  })
+
+  -- Use cmdline & path source for ':'.
+  cmp.setup.cmdline(':', {
+    sources = cmp.config.sources({
+      { name = 'path' }
+    }, {
+      { name = 'cmdline' }
+    })
+  })
+
+  -- Setup lspconfig.
+  local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+  local lsp_servers = {'clangd', 'pylsp', 'ocamllsp', 'rust_analyzer', 'gopls', 'hls'}
+  for _, lsp in pairs(lsp_servers) do
+    require('lspconfig')[lsp].setup {
+      capabilities = capabilities
+    }
+  end
+end
+-- }}}
+
+-- {{{ Setup jubnzv/mdeval.nvim.
 function M.setup_mdeval()
   require('mdeval').setup({
     require_confirmation = false,
@@ -56,8 +119,9 @@ using namespace std;
                           "<cmd>lua require 'mdeval'.eval_code_block()<CR>",
                           {silent = true, noremap = true})
 end
+-- }}}
 
--- Configures norcalli/nvim-colorizer.lua.
+-- {{{ Setup norcalli/nvim-colorizer.lua.
 function M.setup_colorizer()
   require'colorizer'.setup {
     'yml',
@@ -74,8 +138,9 @@ function M.setup_colorizer()
     css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
   }
 end
+-- }}}
 
--- Configures all things related to built-in LSP server, including keybinginds, helper plugins, etc.
+-- {{{ Setup all things related to built-in LSP server, including keybinginds, helper plugins, etc.
 function M.setup_lsp()
   local lsp = require('lspconfig')
   local virtualtypes = require('virtualtypes')
@@ -118,6 +183,16 @@ function M.setup_lsp()
     lsp.gopls.setup { }
   end
 
+  -- ghcup-env is installed in the configuration file of the current shell.
+  -- We want to explicitly specify path to the hls binary here.
+  local hls_bin = "/home/jubnzv/.ghcup/bin/haskell-language-server-wrapper"
+  if vim.fn.executable(hls_bin) then
+    lsp.hls.setup {
+      cmd = { hls_bin, "--lsp" },
+      on_attach=virtualtypes.on_attach
+    }
+  end
+
   if vim.fn.executable('rust-analyzer') then
     lsp.rust_analyzer.setup({
       on_attach=on_attach,
@@ -138,8 +213,9 @@ function M.setup_lsp()
   })
   end
 
-  -- Setup jubnzv/virtual-types.nvim
-  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+  if vim.fn.executable('ocamllsp') then
+    lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+  end
 
   vim.api.nvim_exec([[
     nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
@@ -150,8 +226,9 @@ function M.setup_lsp()
     nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
     ]], '')
 end
+-- }}}
 
--- Setups kristijanhusak/orgmode.nvim.
+-- {{{ Setup kristijanhusak/orgmode.nvim.
 function M.setup_org_mode()
   require('orgmode').setup({
     org_agenda_files = {'~/Org/org-mode/Notes.org'},
@@ -159,9 +236,11 @@ function M.setup_org_mode()
     org_default_notes_file = '~/Org/org-mode/refile.org',
   })
 end
+-- }}}
 
 function M.setup()
   M.setup_telescope()
+  M.setup_nvim_cmp()
   M.setup_mdeval()
   M.setup_colorizer()
   M.setup_lsp()
@@ -171,4 +250,4 @@ end
 
 return M
 
--- vim:fen:sw=2:tw=120
+-- vim:fdm=marker:fen:sw=2:tw=120
