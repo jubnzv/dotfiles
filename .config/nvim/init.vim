@@ -86,11 +86,12 @@ Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown 
 Plug 'akinsho/toggleterm.nvim'        " Wrapper for built-in :terminal
 Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
-Plug 'nvim-telescope/telescope-project.nvim' " Plugin that implements some projectile functions
-Plug 'kristijanhusak/orgmode.nvim'    " org-mode clone
+" Plugin that implements some of Emacs's Projectile functions
+Plug 'nvim-telescope/telescope-project.nvim'
+Plug 'nvim-treesitter/nvim-treesitter'
+Plug 'kristijanhusak/orgmode.nvim', { 'branch' : 'tree-sitter' } " org-mode clone
 
 " {{{ nvim-cmp
-Plug 'neovim/nvim-lspconfig'
 Plug 'hrsh7th/cmp-nvim-lsp'
 Plug 'hrsh7th/cmp-buffer'
 Plug 'hrsh7th/cmp-path'
@@ -738,43 +739,6 @@ cnoreabbrev GC GrammarousCheck
 cnoreabbrev GR GrammarousReset
 " }}}
 
-" {{{ nvim-tree
-nnoremap <silent><A-0> :NvimTreeToggle<cr>
-
-let g:nvim_tree_ignore = [ '.git', 'node_modules', '.cache', '__pycache__', '.clangd' ]
-let g:nvim_tree_indent_markers = 1
-
-hi NvimTreeIndentMarker guifg=#3c3836
-hi NvimTreeFolderIcon guifg=#7c6f64
-hi NvimTreeGitDirty guifg=#689d6a
-
-let g:nvim_tree_icons = {
-     \ 'default':      '',
-     \ 'symlink':      '',
-     \ 'git': {
-     \   'unstaged':   "~",
-     \   'staged':     "✓",
-     \   'unmerged':   "",
-     \   'renamed':    "➜",
-     \   'untracked':  "★"
-     \   },
-     \ 'folder': {
-     \   'default':    "",
-     \   'open':       "",
-     \   'empty':      "",
-     \   'empty_open': "",
-     \   'symlink':    "",
-     \  }
-     \ }
-
-lua << EOF
-require 'nvim-tree'.setup{
-  disable_netrw       = true,
-  update_focused_file = { enable = true }
-}
-EOF
-" }}}
-
 " {{{ UndoTree
 nnoremap <A-9> :UndotreeToggle<cr>
 " }}}
@@ -912,7 +876,7 @@ nnoremap <silent> [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
 nnoremap <silent> ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
 " }}}
 
-" " {{{ UltiSnips
+" {{{ UltiSnips
 let g:UltiSnipsExpandTrigger='<A-l>'
 let g:UltiSnipsJumpForwardTrigger='<A-l>'
 let g:UltiSnipsJumpBackwardTrigger='<A-h>'
@@ -1291,6 +1255,8 @@ let g:markdown_fenced_languages = [
  \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
  \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim'
  \]
+highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
+highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
 augroup markdown_group
   au!
   au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
@@ -1305,7 +1271,7 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
   au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
   " Abbrevations
-  " au FileType markdown inoremap <buffer> --<space> –<space>
+  au FileType markdown inoremap <buffer> --<space> –<space>
   " au FileType markdown inoremap <buffer> -><space> →<space>
   " au FileType markdown inoremap <buffer> =><space> ⇒<space>
   " au FileType markdown inoremap <buffer> <-<space> ←<space>
@@ -1317,6 +1283,12 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>P a[]()<Esc>hpl%hi
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
+
+  " Highligth TODO and DONE entries
+  au WinEnter,VimEnter,FileType markdown syntax match todoCheckbox "\[\ \]" conceal cchar=
+  au WinEnter,VimEnter,FileType markdown syntax match todoCheckbox "\[x\]" conceal cchar=
+  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
+  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
 augroup end
 
 " Markdown preview in web-browser
@@ -1330,25 +1302,6 @@ endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev MP MarkdownPreview
 au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
-" }}}
-
-" {{{ org-mode
-augroup org_mode_group
-    au!
-    au BufNewFile,BufReadPost *.org set filetype=org
-augroup END
-" }}}
-
-" {{{ Highligth TODO and DONE entries in the documents
-highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
-highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
-augroup HiglightTODO
-    autocmd!
-    au WinEnter,VimEnter,FileType {markdown,org} syntax match todoCheckbox "\[\ \]" conceal cchar=
-    au WinEnter,VimEnter,FileType {markdown,org} syntax match todoCheckbox "\[x\]" conceal cchar=
-    au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdTodo', 'TODO', -1)
-    au WinEnter,VimEnter,FileType {markdown,org} :silent! call matchadd('MdDone', 'DONE', -1)
-augroup END
 " }}}
 
 " {{{ Plant UML

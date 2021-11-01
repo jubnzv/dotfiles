@@ -1,35 +1,22 @@
 #!/usr/bin/env bash
 #
-# A script that runs rofi to view and create notes in ~/Org/Notes/ directory.
-# Note files are presented in the markdown (.md) format.
+# A script that runs rofi to view and create text notes in the given directory.
+# Its main purpose is quick access to notes in markdown and org format.
+#
+# Usage examples:
+#  ./rofi-notes.sh ~/Org/Notes '.md'        # access .md files in ~/Org/Notes
+#  ./rofi-notes.sh ~/Org/org-mode '.org'    # access .org files in ~/Org/org-mode
 #
 EDITOR="$TERMINAL -e nvim"
 if command -v "nvim-qt" &> /dev/null; then
     EDITOR=nvim-qt
 fi
-NOTES_DIR=~/Org/Notes/
+NOTES_DIR=~/Org/Notes/; [ ! -z "$1" ] && NOTES_DIR=$1
+EXT='.md'; [ ! -z "$2" ] && EXT=$2
 
 _rofi () {
     rofi -regex -tokenize -i -lines 30 -width 1500 -no-levenshtein-sort "$@"
 }
-
-if [ -n "$@" ]; then
-    NOTES_DIR="${NOTES_DIR}/$@"
-fi
-
-if [ ! -d "${NOTES_DIR}" ]; then
-    if [ -x "${NOTES_DIR}" ]
-    then
-        coproc ( "${NOTES_DIR}" &  > /dev/null 2>&1 )
-        exec 1>&-
-        exit;
-    elif [ -f "${NOTES_DIR}" ]
-    then
-        coproc ( ${EDITOR} "${NOTES_DIR}" & > /dev/null  2>&1 )
-        exit;
-    fi
-    exit;
-fi
 
 if [ -n "${NOTES_DIR}" ]; then
     NOTES_DIR=$(readlink -e "${NOTES_DIR}")
@@ -42,8 +29,7 @@ if [ ! $select ]; then
 fi
 
 note=$NOTES_DIR/$select
-if [ ! -f $note ] && [[ ! $note =~ .*.md$ ]]; then
+if [ ! -f $note ] && [[ ! $note =~ .*."${EXT}"$ ]]; then
     note="$NOTES_DIR/${select///}".md
 fi
 $EDITOR "$note"
-

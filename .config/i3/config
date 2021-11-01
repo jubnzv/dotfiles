@@ -198,7 +198,8 @@ bindsym $mod+Shift+A move container to workspace $ws_a
 bindsym $mod+Shift+0 move container to workspace $ws_0
 
 # Application startup hotkeys
-bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh
+bindsym $mod+n exec $SCRIPTS_PATH/rofi-notes.sh '/home/jubnzv/Org/Notes' '.md'
+bindsym $mod+m exec $SCRIPTS_PATH/rofi-notes.sh '/home/jubnzv/Org/org-mode' '.org'
 bindsym $mod+c exec $SCRIPTS_PATH/rofi-configs.sh
 bindsym $mod+x exec $SCRIPTS_PATH/rofi-autorandr.sh
 bindsym $mod+Return exec $TERMINAL
