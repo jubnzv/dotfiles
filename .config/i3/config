@@ -1,6 +1,6 @@
 # {{{ General
 # Global variables
-set $TERMINAL     alacritty
+set $TERMINAL     kitty
 set $HOME 		  /home/jubnzv/
 set $SCR_DIR      /home/jubnzv/Pictures/Screenshots
 set $SCRC_DIR     /home/jubnzv/Pictures/Screencasts
@@ -21,6 +21,7 @@ focus_follows_mouse no
 exec --no-startup-id autorandr --change home
 exec --no-startup-id birdtray
 exec --no-startup-id telegram-desktop
+exec --no-startup-id discord
 # exec hexchat
 # exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
@@ -94,9 +95,11 @@ for_window [class="^Mattermost$"] move container to workspace $ws_0
 for_window [class="^Bitwarden$"] move container to workspace $ws_j
 for_window [class="^Slack$"] move container to workspace $ws_0
 for_window [class="TelegramDesktop"] move container to workspace $ws_0
+for_window [class="discord"] move container to workspace $ws_0
 for_window [class="Hexchat"] move container to workspace $ws_0
 for_window [class="^Thunderbird$"] move container to workspace $ws_0
 for_window [class="^Anki$" title="^1-й пользователь - Anki$"] move container to workspace $ws_a
+for_window [class="^Anki$" title="^User 1 - Anki$"] move container to workspace $ws_a
 for_window [class="^Anki$" title="^Добавить$"] floating enable, mark anki_add
 for_window [class="^Anki$" title="^Add$"] floating enable, mark anki_add
 for_window [class="^QTask$"] move container to workspace $ws_j, focus, layout floating
@@ -249,6 +252,11 @@ bindsym $mod+Control+8 bar mode toggle bar-main
 # Highlight focused window
 bindsym Shift+F4 [class=".*"] border pixel 5
 bindsym Shift+F4 --release [class=".*"] border none
+
+# dunst control
+bindsym $mod+d         exec --no-startup-id dunstctl close
+bindsym $mod+Control+d exec --no-startup-id dunstctl closeall
+bindsym $mod+Shift+D   exec --no-startup-id dunstctl history
 # }}}
 
 # {{{ Custom modes

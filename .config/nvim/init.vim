@@ -6,7 +6,7 @@ if &shell =~# 'fish$'
 endif
 
 " A path to Python interpreter required for some plugins.
-" On Windows you should add python.exe to your system's PATH to make it work.
+" On Windows you should add python.exe to your system-level PATH to make it work.
 if !has('win32')
   let g:python3_host_prog  = '/usr/bin/python3.9'
 endif
@@ -49,18 +49,17 @@ Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
 Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
 Plug 'tyru/caw.vim'                   " Comment plugin
+Plug 'Shougo/deoplete.nvim', {
+  \ 'do': ':UpdateRemotePlugins'
+  \ }
 Plug 'sirver/ultisnips'               " Snippets plugin
 Plug 'honza/vim-snippets'             " A collection of snippets
-Plug 'lukas-reineke/indent-blankline.nvim' " A Vim plugin for visually displaying indent levels in code
+" A neovim plugin for visually displaying indent levels in code
+Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
-Plug 'rust-lang/rust.vim'             " Rust support
-" Native neovim LSP client and friends
-Plug 'neovim/nvim-lspconfig'
-" Shows type annotations in virtual text
-Plug 'jubnzv/virtual-types.nvim'
-" Utilities for generating statusline components from the built-in LSP client
-" Seems good, but not yet usable because status updates are too slow.
-" Plug 'nvim-lua/lsp-status.nvim'
+Plug 'neovim/nvim-lspconfig'          " Native neovim LSP client and friends
+Plug 'jubnzv/virtual-types.nvim'      " Plugin that shows type annotations in virtual text
+Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deoplete
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
@@ -88,17 +87,8 @@ Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
 " Plugin that implements some of Emacs's Projectile functions
 Plug 'nvim-telescope/telescope-project.nvim'
-Plug 'nvim-treesitter/nvim-treesitter'
-Plug 'kristijanhusak/orgmode.nvim', { 'branch' : 'tree-sitter' } " org-mode clone
-
-" {{{ nvim-cmp
-Plug 'hrsh7th/cmp-nvim-lsp'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'hrsh7th/cmp-path'
-Plug 'hrsh7th/cmp-cmdline'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-" }}}
+" org-mode clone (old version without tree-sitter)
+Plug 'kristijanhusak/orgmode.nvim', { 'tag': '0.1' }
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -153,7 +143,9 @@ set eol
 set fixeol                                  " <EOL> at the end of file will be restored if missing
 set re=1                                    " Required for vista.vim: https://github.com/liuchengxu/vista.vim/issues/82
 set mouse=a
-set completeopt=menu,menuone,noselect
+
+" Disable syntax highlighting for large files
+au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
 " Add additional information in popups (VIM 8.0+ only)
 if !has('nvim')
@@ -500,16 +492,6 @@ let sl = ''
     return sl
 endfunction
 
-" TODO: https://github.com/nvim-lua/lsp-status.nvim is too slow. Need to revisit it later.
-function! LightlineCurrentFunctionLspStatus() abort
-  let l:method = get(b:, 'lsp_current_function', '')
-  if l:method != ''
-    let l:method = '[' . l:method . ']'
-  endif
-  return l:method
-endfunction
-" autocmd User LspDiagnosticsChanged call lightline#update()
-
 function! LightlineCurrentFunctionVista() abort
   let l:method = get(b:, 'vista_nearest_method_or_function', '')
   if l:method != ''
@@ -550,7 +532,7 @@ function! LightlineStrippedFilename() abort
 endfunction
 " }}}
 
-" {{{ Web-browser integration
+" {{{ Web-browser integration (tyru/open-browser.vim)
 let g:openbrowser_search_engines = extend(
 \   get(g:, 'openbrowser_search_engines', {}),
 \   {
@@ -560,7 +542,6 @@ let g:openbrowser_search_engines = extend(
 \       'github-python': 'http://github.com/search?l=Python&q=language%3APython+{query}&type=Code',
 \       'github-go': 'http://github.com/search?l=Go&q=language%3AGo+{query}&type=Code',
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=language%3AOCaml+{query}&type=Code',
-\       'github-rust': 'http://github.com/search?l=Rust&q=language%3APython+{query}&type=Code',
 \       'github-vimscript': 'http://github.com/search?l=Vim+script&language%3Avimscript+{query}&type=Code',
 \       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
@@ -806,9 +787,6 @@ au InsertLeave * match ExtraWhitespace /\s\+$/
 au BufWinLeave * call clearmatches()
 " }}}
 
-" Disable syntax highlighting for large files
-au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
-
 " {{{ ctags and vista.vim
 set tags=./tags;
 let g:gutentags_ctags_exclude = [
@@ -874,6 +852,27 @@ nnoremap <silent> [8 :call signature#marker#Goto('prev', 8, v:count)<cr>
 nnoremap <silent> ]8 :call signature#marker#Goto('next', 8, v:count)<cr>
 nnoremap <silent> [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
 nnoremap <silent> ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
+" }}}
+
+" {{{ deoplete
+let g:deoplete#enable_at_startup = 1
+inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
+inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+inoremap <expr><A-l> pumvisible() ? "\<CR>" : ""
+inoremap <expr><A-o> deoplete#mappings#manual_complete()
+
+" Otherwise autocompletion in Telescope writes to files when typing <Enter>.
+autocmd FileType TelescopePrompt call deoplete#custom#buffer_option('auto_complete', v:false)
+
+call deoplete#custom#source('_',
+  \ 'matchers', ['matcher_full_fuzzy'])
+
+set completeopt-=preview
+
+" Add Icons for LSP_KINDS.
+" See: https://github.com/deoplete-plugins/deoplete-lsp/pull/46/files
+let g:deoplete#lsp#use_icons_for_candidates = 1
 " }}}
 
 " {{{ UltiSnips
@@ -956,6 +955,203 @@ if has('win32')
   let g:neoterm_eof = "\r"
   let g:neoterm_shell = "powershell.exe"
 endif
+" }}}
+
+" {{{ nvim-tree.lua
+nnoremap <silent><A-0> :NvimTreeToggle<CR>
+hi NvimTreeIndentMarker guifg=#3c3836
+hi NvimTreeFolderIcon guifg=#7c6f64
+hi NvimTreeGitDirty guifg=#689d6a
+lua << EOF
+vim.g.nvim_tree_indent_markers = 1
+vim.g.nvim_tree_gitignore = 1
+vim.g.nvim_tree_icons = {
+  default =      '',
+  symlink =      '',
+  git = {
+    unstaged =   "~",
+    staged =     "✓",
+    unmerged =   "",
+    renamed =    "➜",
+    untracked =  "★"
+  },
+  folder = {
+    default =    "",
+    open =       "",
+    empty =      "",
+    empty_open = "",
+    symlink =    "",
+  }
+}
+require 'nvim-tree'.setup{
+  disable_netrw       = true,
+  update_focused_file = { enable = true },
+  update_cwd = true,
+  filters = { custom = { '.git', 'node_modules', '.cache', '__pycache__', '.clangd' } }
+}
+EOF
+" }}}
+
+" {{{ telescope.nvim and related plugins
+lua << EOF
+local telescope = require'telescope'
+telescope.load_extension('project')
+EOF
+nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
+nnoremap <leader>fs <cmd>lua require('telescope.builtin').live_grep()<cr>
+nnoremap <leader>b  <cmd>lua require('telescope.builtin').buffers()<cr>
+nnoremap <leader>fo <cmd>lua require('telescope.builtin').oldfiles()<cr>
+nnoremap <leader>fm <cmd>lua require('telescope.builtin').marks()<cr>
+
+nnoremap <leader>fp <cmd>lua require'telescope'.extensions.project.project{}<cr>
+
+nnoremap <A-u> <cmd>lua require('telescope.builtin').spell_suggest()<cr>
+
+nnoremap gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
+nnoremap gs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
+nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
+nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
+nnoremap <localleader>a <cmd>lua require('telescope.builtin').lsp_code_actions()<cr>
+
+nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
+nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
+nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
+nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
+" }}}
+
+" {{{ mdeval.nvim
+lua << EOF
+require('mdeval').setup({
+  require_confirmation = false,
+  exec_timeout = 5,
+  eval_options = {
+    cpp = {
+      default_header = [[
+#include <iostream>
+#include <vector>
+using namespace std;
+      ]],
+      command = {"clang++", "-std=c++20", "-O0"},
+    },
+    racket = {
+      command = {"racket"},
+      language_code = "racket",
+      exec_type = "interpreted",
+      extension = "rkt",
+    },
+  }
+})
+vim.api.nvim_set_keymap('n', '<localleader>c',
+                        "<cmd>lua require 'mdeval'.eval_code_block()<CR>",
+                        {silent = true, noremap = true})
+EOF
+" }}}
+
+" {{{ nvim-colorizer.lua
+lua << EOF
+require'colorizer'.setup {
+  'yml',
+  'css',
+  'javascript',
+  'html',
+  'markdown',
+  'conf',
+  'plantuml',
+}
+require 'colorizer'.setup {
+  '*';
+  markdown = { names = false };
+  css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
+}
+EOF
+" }}}
+
+" {{{ Built-in LSP server and related settings: keybinginds, helper plugins, etc.
+lua << EOF
+local lsp = require('lspconfig')
+local virtualtypes = require('virtualtypes')
+
+-- General LSP options
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    underline = true,
+    virtual_text=false,
+    update_in_insert = false,
+  }
+)
+
+if vim.fn.executable('clangd') then
+  lsp.clangd.setup {
+    cmd = { "clangd",
+            "--background-index",
+            "--header-insertion=iwyu",
+            "--header-insertion-decorators",
+            "--suggest-missing-includes",
+            "--completion-style=detailed",
+            "--clang-tidy",
+           },
+  }
+end
+
+if vim.fn.executable('pylsp') then
+  lsp.pylsp.setup { }
+end
+
+if vim.fn.executable('gopls') then
+  lsp.gopls.setup { }
+end
+
+-- ghcup-env is installed in the configuration file of the current shell.
+-- We want to explicitly specify path to the hls binary here.
+local hls_bin = "/home/jubnzv/.ghcup/bin/haskell-language-server-wrapper"
+if vim.fn.executable(hls_bin) then
+  lsp.hls.setup {
+    cmd = { hls_bin, "--lsp" },
+    on_attach=virtualtypes.on_attach
+  }
+end
+
+if vim.fn.executable('rust-analyzer') then
+  lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    settings = {
+      ["rust-analyzer"] = {
+        assist = {
+          importGranularity = "module",
+          importPrefix = "by_self",
+        },
+        cargo = {
+          loadOutDirsFromCheck = true
+        },
+        procMacro = {
+          enable = true
+        },
+      }
+    }
+})
+end
+
+if vim.fn.executable('ocamllsp') then
+  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
+end
+EOF
+
+nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
+nnoremap ]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
+nnoremap [e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
+nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+" }}}
+
+" {{{ orgmode.nvim
+lua << EOF
+require('orgmode').setup({
+  org_agenda_files = {'~/Org/org-mode/Notes.org'},
+  -- Refile is useless in my workflow now.
+  org_default_notes_file = '~/Org/org-mode/refile.org',
+})
+EOF
 " }}}
 
 " {{{ C and C++
@@ -1144,6 +1340,14 @@ augroup ocaml_group
   " au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
 augroup END
 
+" A few hacks for the menhir parser generator.
+augroup menhir_group
+  au!
+  au BufNewFile,BufRead *.mly setlocal comments+=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/
+  au BufNewFile,BufRead *.mly setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
+  au BufNewFile,BufRead *.mly syn region   ocamlComment start="/\*" end="\*/" contains=@Spell,ocamlComment,ocamlTodo
+augroup END
+
 " PolyML sources
 au BufNewFile,BufRead *.ML set ft=sml
 
@@ -1216,6 +1420,11 @@ let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
 let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
+
+" Configure deoplete source
+call deoplete#custom#var('omni', 'input_patterns', {
+      \ 'tex': g:vimtex#re#deoplete
+      \})
 
 augroup tex_group
   au!
@@ -1440,9 +1649,5 @@ nnoremap <leader>tm :NeomakeToggle<cr>
 nnoremap <leader>tt :TableModeToggle<cr>
 nnoremap <leader>ti :IndentLinesToggle<cr>
 " }}}
-
-if has('nvim')
-lua require'init'.setup()
-endif
 
 " vim:fdm=marker:fen:sw=2:tw=120

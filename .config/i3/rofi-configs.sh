@@ -17,7 +17,7 @@ configs=(
     "$HOME/.ssh/config"
     "$HOME/.config/i3/config"
     "$HOME/.config/polybar/config"
-    "$HOME/.alacritty.yml"
+    "$HOME/.config/kitty/kitty.conf"
 )
 
 select=$(echo ${configs[@]} | tr ' ' '\n'  | _rofi -dmenu -mesg "Config" -p "> ")
