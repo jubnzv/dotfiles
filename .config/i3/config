@@ -21,7 +21,7 @@ focus_follows_mouse no
 exec --no-startup-id autorandr --change home
 exec --no-startup-id birdtray
 exec --no-startup-id telegram-desktop
-exec --no-startup-id discord
+# exec --no-startup-id discord
 # exec hexchat
 # exec --no-startup-id rm $HOME/Org/taskwarrior/bugwarrior.lockfile
 exec --no-startup-id /usr/bin/fbxkb
@@ -232,7 +232,7 @@ bindsym $mod+Control+0 exec $SCRIPTS_PATH/toggle-notifications.sh
 bindsym $mod+Shift+Esc exec xdotool set_window --name `zenity --entry --title='Change window title' --text='Change window title to:'` `xdotool getactivewindow`
 bindsym $mod+XF86Launch1 exec scrot 's-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/s-$(date +%Y%m%d-%H%M%S).png"
 bindsym XF86Launch1 exec scrot -u 'sw-%Y%m%d-%H%M%S.png' -e 'mv "$f" "$SCR_DIR"/' && notify-send "scrot" "screenshot saved as $SCR_DIR/sw-$(date +%Y%m%d-%H%M%S).png"
-bindsym Control+Print exec flameshot gui
+bindsym Print exec flameshot gui
 # bindsym Shift+XF86Launch1 exec notify-send -t 2800 " byzanz" "record will be started in 3 seconds..."  && byzanz-record --duration=5 --delay=3 $SCRC_DIR/Screencast-"$(date +%Y%m%d-%H%M%S)".gif && notify-send " byzanz" "record saved as $SCRC_DIR/Screencast-$(date +%Y%m%d-%I%M%S).gif"
 bindsym $mod+XF86ScreenSaver exec xset s activate
 
@@ -256,7 +256,7 @@ bindsym Shift+F4 --release [class=".*"] border none
 # dunst control
 bindsym $mod+d         exec --no-startup-id dunstctl close
 bindsym $mod+Control+d exec --no-startup-id dunstctl closeall
-bindsym $mod+Shift+D   exec --no-startup-id dunstctl history
+bindsym $mod+Shift+D   exec --no-startup-id dunstctl history-pop
 # }}}
 
 # {{{ Custom modes

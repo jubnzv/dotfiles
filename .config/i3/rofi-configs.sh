@@ -12,7 +12,6 @@ _rofi () {
 configs=(
     "$HOME/.zshrc"
     "$HOME/.config/nvim/init.vim"
-    "$HOME/.config/nvim/lua/init.lua"
     "$HOME/.tmux.conf"
     "$HOME/.ssh/config"
     "$HOME/.config/i3/config"

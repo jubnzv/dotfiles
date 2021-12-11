@@ -1,9 +1,9 @@
 snippet pr
-Printf.printf "${0}\n";
+Caml.Printf.printf "${0}\n"; (* // prdbg *)
 endsnippet
 
 snippet prd
-Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__; (* // prdbg *)
+Caml.Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__; (* // prdbg *)
 endsnippet
 
 snippet prl

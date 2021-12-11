@@ -7,8 +7,11 @@ endif
 
 " A path to Python interpreter required for some plugins.
 " On Windows you should add python.exe to your system-level PATH to make it work.
+" And do: pip install neovim.
 if !has('win32')
   let g:python3_host_prog  = '/usr/bin/python3.9'
+" else
+" let g:python3_host_prog  = '\Users\<>\AppData\Local\Programs\Python\Python39\python.exe'
 endif
 
 " We should tweak PATH on Windows to make *nix tools work.
@@ -27,7 +30,7 @@ Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
 Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
-Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in the command and insert modes
+Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
 Plug 'osyo-manga/vim-over'            " :substitute preview
 Plug 'christoomey/vim-tmux-navigator' " tmux integration
 Plug 'tyru/open-browser.vim'          " Plugin for openning links in the browser
@@ -43,7 +46,6 @@ Plug 'kyazdani42/nvim-tree.lua'       " A tree explorer plugin for vim
 Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
 Plug 'mbbill/undotree'
 Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
-Plug 'phaazon/hop.nvim'               " easymotion-like plugin
 Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
 Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
 Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
@@ -57,13 +59,12 @@ Plug 'honza/vim-snippets'             " A collection of snippets
 " A neovim plugin for visually displaying indent levels in code
 Plug 'lukas-reineke/indent-blankline.nvim'
 Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
-Plug 'neovim/nvim-lspconfig'          " Native neovim LSP client and friends
+Plug 'neovim/nvim-lspconfig'          " Configuration for native Neovim LSP client
 Plug 'jubnzv/virtual-types.nvim'      " Plugin that shows type annotations in virtual text
 Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deoplete
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
-Plug 'wlangstroth/vim-racket'         " Vim bundle for Racket
 Plug 'neovimhaskell/haskell-vim'      " Haskell plugin
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'vim-python/python-syntax'       " Extended python syntax
@@ -72,20 +73,22 @@ Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creatio
 Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-Plug 'lervag/vimtex'                  " LaTeX plugin
-Plug 'wlangstroth/vim-racket'         " Racket support
-Plug 'PyGamer0/vim-apl/'              " APL plugin
-Plug 'aklt/plantuml-syntax'           " Syntax highlight for PlantUML
-Plug 'rhysd/vim-grammarous'           " LanguageTool (https://languagetool.org/) integration
-Plug 'jubnzv/IEC.vim'                 " IEC61131-3 plugin
+Plug 'lervag/vimtex', { 'for': ['tex'] }
+Plug 'wlangstroth/vim-racket', { 'for': ['rkt'] }
+" APL plugin
+Plug 'PyGamer0/vim-apl/', { 'for': ['apl'] }
+" Syntax highlight for PlantUML
+Plug 'aklt/plantuml-syntax', { 'for': ['uml', 'puml'] }
+" A plugin for IEC61131-3 languages
+Plug 'jubnzv/IEC.vim', { 'for': ['st', 'il'] }
 Plug 'weirongxu/plantuml-previewer.vim'
-Plug 'othree/xml.vim', { 'for': [ 'xml', 'html' ] }
+Plug 'othree/xml.vim', { 'for': ['xml', 'html'] }
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
-Plug 'akinsho/toggleterm.nvim'        " Wrapper for built-in :terminal
+Plug 'akinsho/toggleterm.nvim'        " Wrapper for Neovim's built-in :terminal
 Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
-" Plugin that implements some of Emacs's Projectile functions
+" Plugin that works like projectile
 Plug 'nvim-telescope/telescope-project.nvim'
 " org-mode clone (old version without tree-sitter)
 Plug 'kristijanhusak/orgmode.nvim', { 'tag': '0.1' }
@@ -137,7 +140,6 @@ set tabstop=4
 set shiftwidth=4
 set expandtab                               " On pressing tab insert 4 spaces
 set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
-set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
 set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
 set eol
 set fixeol                                  " <EOL> at the end of file will be restored if missing
@@ -210,7 +212,11 @@ highlight Todo ctermfg=130 guibg=#af3a03
 
 " {{{ Setup neovim-qt
 if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
-  set guifont=JetBrainsMono\ Nerd\ Font:h11
+  if has('win32')
+    set guifont=JetBrainsMono\ NF:h11
+  else
+    set guifont=JetBrainsMono\ Nerd\ Font:h11
+  endif
   nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
   inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
   vnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
@@ -218,12 +224,11 @@ if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
   " toggleterm
   nnoremap <silent>`" <Cmd>exe v:count1 . "ToggleTerm"<CR>
   nnoremap <silent>`% <Cmd>exe v:count1 . "ToggleTerm direction=vertical size=50"<CR>
-  nnoremap <silent>`t :call system('alacritty --working-directory '.shellescape(getcwd()).' &')<CR>
+  nnoremap <silent>`t :call system('kitty -e '.shellescape(getcwd()).' &')<CR>
 endif
 " }}}
 
 " {{{ Common functions and commands
-
 " Don't parse modelines on temporary paths (google: "vim modeline vulnerability").
 function! ParseModeline()
   let l:path = expand('%:p')
@@ -553,7 +558,6 @@ let g:openbrowser_search_engines = extend(
 \       'hotexamples': 'https://cpp.hotexamples.com/search/{query}',
 \       'qt': 'https://doc.qt.io/qt-5/search-results.html?q={query}',
 \       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
-\       'rust': 'https://doc.rust-lang.org/std/index.html?search={query}',
 \   },
 \   'keep'
 \)
@@ -585,14 +589,12 @@ call s:JbzSetOpenbrowserBindings("<leader>ogx", "github-cpp")
 call s:JbzSetOpenbrowserBindings("<leader>ogp", "github-python")
 call s:JbzSetOpenbrowserBindings("<leader>ogg", "github-go")
 call s:JbzSetOpenbrowserBindings("<leader>ogo", "github-ocaml")
-call s:JbzSetOpenbrowserBindings("<leader>ogr", "github-rust")
 call s:JbzSetOpenbrowserBindings("<leader>ogv", "github-vimscript")
 call s:JbzSetOpenbrowserBindings("<leader>osa", "grep-app")
 call s:JbzSetOpenbrowserBindings("<leader>osh", "hotexamples")
 call s:JbzSetOpenbrowserBindings("<leader>osx", "cppreference")
 call s:JbzSetOpenbrowserBindings("<leader>osq", "qt")
 call s:JbzSetOpenbrowserBindings("<leader>osp", "python")
-call s:JbzSetOpenbrowserBindings("<leader>osr", "rust")
 " }}}
 
 " {{{ vim-maximizer
@@ -705,23 +707,8 @@ nnoremap <silent><leader>m :call matchadd('LineHighlight', '\%'.line('.').'l')<c
 nnoremap <silent><leader>M :call clearmatches()<cr>
 " }}}
 
-" {{{ indentLine configuration
-let g:indentLine_fileTypeExclude = ['tex', 'markdown']
-" }}}
-
-" {{{ Grammarous
-nnoremap <leader>rr <Plug>(grammarous-move-to-info-window)
-nnoremap <leader>ro <Plug>(grammarous-open-info-window)
-nnoremap <leader>rc <Plug>(grammarous-close-info-window)
-nnoremap <leader>rf <Plug>(grammarous-fixit)
-nnoremap <leader>rn <Plug>(grammarous-move-to-next-error)
-nnoremap <leader>rp <Plug>(grammarous-move-to-previous-error)
-cnoreabbrev GC GrammarousCheck
-cnoreabbrev GR GrammarousReset
-" }}}
-
 " {{{ UndoTree
-nnoremap <A-9> :UndotreeToggle<cr>
+nnoremap <A-U> :UndotreeToggle<cr>
 " }}}
 
 " {{{ DirDiff
@@ -894,7 +881,6 @@ let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocpindent']
 " let g:neoformat_enabled_ocaml = ['ocamlformat']
 let g:neoformat_enabled_lua = ['luaformatter']
-let g:neoformat_enabled_rust = ['rustfmt']
 let g:neoformat_enabled_haskell = ['ormolu']
 " }}}
 
@@ -964,7 +950,6 @@ hi NvimTreeFolderIcon guifg=#7c6f64
 hi NvimTreeGitDirty guifg=#689d6a
 lua << EOF
 vim.g.nvim_tree_indent_markers = 1
-vim.g.nvim_tree_gitignore = 1
 vim.g.nvim_tree_icons = {
   default =      '',
   symlink =      '',
@@ -984,6 +969,7 @@ vim.g.nvim_tree_icons = {
   }
 }
 require 'nvim-tree'.setup{
+  git = { ignore = true },
   disable_netrw       = true,
   update_focused_file = { enable = true },
   update_cwd = true,
@@ -1001,22 +987,20 @@ nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').live_grep()<cr>
 nnoremap <leader>b  <cmd>lua require('telescope.builtin').buffers()<cr>
 nnoremap <leader>fo <cmd>lua require('telescope.builtin').oldfiles()<cr>
-nnoremap <leader>fm <cmd>lua require('telescope.builtin').marks()<cr>
-
 nnoremap <leader>fp <cmd>lua require'telescope'.extensions.project.project{}<cr>
-
 nnoremap <A-u> <cmd>lua require('telescope.builtin').spell_suggest()<cr>
-
 nnoremap gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
 nnoremap gs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
 nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
 nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
 nnoremap <localleader>a <cmd>lua require('telescope.builtin').lsp_code_actions()<cr>
-
 nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
 nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
 nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
 nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
+
+nnoremap <leader>pn <cmd>lua require('telescope.builtin').find_files({prompt_title = "Notes", cwd = "~/Org/Notes/"})<cr>
+nnoremap <leader>pm <cmd>lua require('telescope.builtin').find_files({prompt_title = "org-mode", cwd = "~/Org/org-mode"})<cr>
 " }}}
 
 " {{{ mdeval.nvim
@@ -1103,33 +1087,13 @@ end
 
 -- ghcup-env is installed in the configuration file of the current shell.
 -- We want to explicitly specify path to the hls binary here.
-local hls_bin = "/home/jubnzv/.ghcup/bin/haskell-language-server-wrapper"
-if vim.fn.executable(hls_bin) then
-  lsp.hls.setup {
-    cmd = { hls_bin, "--lsp" },
-    on_attach=virtualtypes.on_attach
-  }
-end
-
-if vim.fn.executable('rust-analyzer') then
-  lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-      ["rust-analyzer"] = {
-        assist = {
-          importGranularity = "module",
-          importPrefix = "by_self",
-        },
-        cargo = {
-          loadOutDirsFromCheck = true
-        },
-        procMacro = {
-          enable = true
-        },
-      }
-    }
-})
-end
+-- local hls_bin = "/home/jubnzv/.ghcup/bin/haskell-language-server-wrapper"
+-- if vim.fn.executable(hls_bin) then
+--   lsp.hls.setup {
+--     cmd = { hls_bin, "--lsp" },
+--     on_attach=virtualtypes.on_attach
+--   }
+-- end
 
 if vim.fn.executable('ocamllsp') then
   lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
@@ -1142,16 +1106,6 @@ nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap ]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
 nnoremap [e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
 nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-" }}}
-
-" {{{ orgmode.nvim
-lua << EOF
-require('orgmode').setup({
-  org_agenda_files = {'~/Org/org-mode/Notes.org'},
-  -- Refile is useless in my workflow now.
-  org_default_notes_file = '~/Org/org-mode/refile.org',
-})
-EOF
 " }}}
 
 " {{{ C and C++
@@ -1251,15 +1205,7 @@ augroup go_group
   au!
   au FileType go RainbowToggleOn
   au FileType go nmap <buffer> <silent><A-o> <Nop>
-augroup END
-" }}}
-
-" {{{ Rust
-augroup rust_group
-  au!
-  au FileType rust RainbowToggleOn
-  au FileType rust nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
-  au FileType rust nmap <buffer> <silent><A-o> <Nop>
+  au FileType go nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
 augroup END
 " }}}
 
@@ -1340,12 +1286,12 @@ augroup ocaml_group
   " au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
 augroup END
 
-" A few hacks for the menhir parser generator.
+" A few hacks for menhir parser generator.
 augroup menhir_group
   au!
   au BufNewFile,BufRead *.mly setlocal comments+=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/
   au BufNewFile,BufRead *.mly setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
-  au BufNewFile,BufRead *.mly syn region   ocamlComment start="/\*" end="\*/" contains=@Spell,ocamlComment,ocamlTodo
+  au BufNewFile,BufRead *.mly syn region ocamlComment start="/\*" end="\*/" contains=@Spell,ocamlComment,ocamlTodo
 augroup END
 
 " PolyML sources
@@ -1379,7 +1325,7 @@ augroup END
 let g:vim_indent_cont = 2
 augroup vim_group
   au!
-  au FileType vim setlocal sw=4 ts=4 expandtab
+  au FileType vim setlocal sw=2 ts=2 expandtab
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
@@ -1422,9 +1368,9 @@ let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
 
 " Configure deoplete source
-call deoplete#custom#var('omni', 'input_patterns', {
-      \ 'tex': g:vimtex#re#deoplete
-      \})
+" call deoplete#custom#var('omni', 'input_patterns', {
+"      \ 'tex': g:vimtex#re#deoplete
+"      \})
 
 augroup tex_group
   au!
@@ -1458,7 +1404,17 @@ let g:vim_json_syntax_conceal = 0
 au FileType json syntax match Comment +\/\/.\+$+
 " }}}
 
-" {{{ Markdown
+" {{{ orgmode.nvim
+lua << EOF
+require('orgmode').setup({
+  org_agenda_files = {'~/Org/org-mode/Notes.org'},
+  -- Refile is useless in my current workflow.
+  org_default_notes_file = '~/Org/org-mode/refile.org',
+})
+EOF
+" }}}
+
+" {{{ Markdown & org-mode
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
@@ -1492,12 +1448,6 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>P a[]()<Esc>hpl%hi
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
-
-  " Highligth TODO and DONE entries
-  au WinEnter,VimEnter,FileType markdown syntax match todoCheckbox "\[\ \]" conceal cchar=
-  au WinEnter,VimEnter,FileType markdown syntax match todoCheckbox "\[x\]" conceal cchar=
-  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
-  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
 augroup end
 
 " Markdown preview in web-browser
@@ -1510,7 +1460,15 @@ function! g:OpenBrowser(url)
 endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev MP MarkdownPreview
-au FileType markdown nmap <silent> <leader>M :MarkdownPreview<CR>
+
+" Highligth TODO and DONE entries.
+augroup todo_group
+  au!
+  au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[\ \]" conceal cchar=
+  au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[x\]" conceal cchar=
+  au WinEnter,VimEnter,FileType markdown,org :silent! call matchadd('MdTodo', 'TODO', -1)
+  au WinEnter,VimEnter,FileType markdown,org :silent! call matchadd('MdDone', 'DONE', -1)
+augroup end
 " }}}
 
 " {{{ Plant UML

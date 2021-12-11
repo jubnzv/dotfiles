@@ -2,6 +2,10 @@ snippet pr
 print($1)
 endsnippet
 
+snippet prl
+print("`!p snip.rv='L%d:'%snip._end[0]`", $1)
+endsnippet
+
 snippet exectime
 local __dbg_t = os.clock()
 ${0:${VISUAL}}
