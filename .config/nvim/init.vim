@@ -8,11 +8,11 @@ endif
 " A path to Python interpreter required for some plugins.
 " On Windows you should add python.exe to your system-level PATH to make it work.
 " And do: pip install neovim.
-if !has('win32')
-  let g:python3_host_prog  = '/usr/bin/python3.9'
+" if !has('win32')
+"   let g:python3_host_prog  = '/usr/bin/python3.10'
 " else
-" let g:python3_host_prog  = '\Users\<>\AppData\Local\Programs\Python\Python39\python.exe'
-endif
+"   let g:python3_host_prog  = '\Users\<>\AppData\Local\Programs\Python\Python39\python.exe'
+" endif
 
 " We should tweak PATH on Windows to make *nix tools work.
 if has('win32')
@@ -38,7 +38,7 @@ Plug 'itchyny/lightline.vim'          " Statusline plugin
 Plug 'jubnzv/gruvbox'                 " Color scheme
 Plug 'norcalli/nvim-colorizer.lua'    " Colorize color names and codes
 Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
-Plug 'jubnzv/vim-cursorword'          " Plugin to highlight the word under the cursor
+Plug 'itchyny/vim-cursorword'         " Plugin to highlight the word under the cursor
 Plug 'tpope/vim-fugitive'             " Git wrapper
 Plug 'cohama/agit.vim'                " gitk clone for vim
 Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
@@ -90,6 +90,8 @@ Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
 " Plugin that works like projectile
 Plug 'nvim-telescope/telescope-project.nvim'
+" Plugin that shows list of diagnostics and persistent telescope results.
+Plug 'folke/trouble.nvim'
 " org-mode clone (old version without tree-sitter)
 Plug 'kristijanhusak/orgmode.nvim', { 'tag': '0.1' }
 
@@ -981,6 +983,15 @@ EOF
 " {{{ telescope.nvim and related plugins
 lua << EOF
 local telescope = require'telescope'
+local trouble = require("trouble.providers.telescope")
+telescope.setup {
+  defaults = {
+    mappings = {
+      i = { ["<c-t>"] = trouble.open_with_trouble },
+      n = { ["<c-t>"] = trouble.open_with_trouble },
+    },
+  },
+}
 telescope.load_extension('project')
 EOF
 nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
@@ -1048,6 +1059,11 @@ require 'colorizer'.setup {
   css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
 }
 EOF
+" }}}
+
+" {{{ vim-cursorword
+let g:cursorword_highlight = 0
+highlight CursorWord0 ctermbg=237 guibg=#3c3836
 " }}}
 
 " {{{ Built-in LSP server and related settings: keybinginds, helper plugins, etc.
@@ -1307,7 +1323,7 @@ au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' |
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
-" {{{ Racket
+" {{{ Racket and other Lisps/Schemes
 augroup rkt_group
   au!
   " au FileType racket inoremap <A-1> `()<Esc>i
@@ -1318,6 +1334,11 @@ augroup rkt_group
   au FileType racket setlocal commentstring=;\ %s
   au FileType racket nnoremap <buffer><leader>sC :JbzOpenSlimeREPL "racket"<CR>
   au FileType racket RainbowToggleOn
+augroup END
+
+augroup rkt_group
+  au!
+  au FileType scheme RainbowToggleOn
 augroup END
 " }}}
 

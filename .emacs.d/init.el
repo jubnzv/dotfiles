@@ -121,8 +121,9 @@
 
 (defun jbz/setup-gui ()
   "GUI options."
-  ;; Start Emacs in fullscreen mode on MS-Windows
-  (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
+  ;; Start Emacs in fullscreen mode on MS-Windows.
+  ;; Unfortunately, this doesn't remove borders and just "expands" the window.
+  ; (add-hook 'emacs-startup-hook 'toggle-frame-maximized)
   ;; Show file name in window title
   (setq-default frame-title-format '("%b — Emacs"))
   ;; Disable cursor blinking
@@ -190,7 +191,8 @@
      (define-key evil-visual-state-map (kbd "C-u") 'evil-scroll-up)
      (define-key evil-motion-state-map (kbd "C-u") 'evil-scroll-up))
   (use-package evil-collection
-    :after (evil))
+    :after (evil)
+    :init (evil-collection-init))
   (use-package evil-surround
     :init (global-evil-surround-mode 1))
   ;; (use-package evil-numbers
@@ -290,11 +292,22 @@
   (setq org-directory (expand-file-name "~/Org/org-mode/")
         org-agenda-files (list org-directory)
         org-roam-directory (concat org-directory "/z/")
-        references-directory '("~/Org/references.bib")
+        org-ref-default-bibliography "~/Org/references.bib"
+        org-ref-pdf-directory "~/Downloads/pdfs/" ; a temporary directory for unsorted pdfs
         org-default-notes-file (concat org-directory "/Notes.org"))
   (setq org-capture-templates
         '(("t" "Todo" entry (file org-default-notes-file)
-           "* TODO %?\n  %i\n  %a")))
+           "* TODO %?\n")))
+  ;; Keybind to quickly access frequent org files.
+  (defun jbz/open-agenda-file ()
+	"Open org-agenda file."
+	(interactive)
+	(find-file org-directory))
+  (defun jbz/open-bib-file ()
+	"Open references.bib file."
+	(interactive)
+	(find-file org-ref-default-bibliography))
+  (jbz/define-evil-key "o b" #'jbz/open-bib-file)
   (use-package org
     :hook
     ;; Fix extra indentation provided by evil-mode
@@ -302,8 +315,7 @@
     :config
     (setq org-startup-truncated nil
 	  org-startup-with-inline-images t)
-    (jbz/define-evil-key "o c" #'org-capture)
-    (jbz/define-evil-key "o f" #'counsel-find-file))
+    (jbz/define-evil-key "o c" #'org-capture))
   (use-package org-alert
     :commands
     (org-alert-enable)
@@ -333,8 +345,8 @@
   ;; Paste pictures from clipboard.
   (use-package org-download
     :config
-    (jbz/define-evil-key "p y" #'org-download-yank)      ;; Paste from URL
-    (jbz/define-evil-key "p c" #'org-download-clipboard) ;; Paste from clipboard
+    (jbz/define-evil-key "p y" #'org-download-yank)      ; Paste from URL
+    (jbz/define-evil-key "p c" #'org-download-clipboard) ; Paste from clipboard
     :custom
     (org-download-method 'directory)
     (org-download-image-dir "img"))
@@ -344,6 +356,7 @@
     (jbz/define-evil-key "P" #'org-cliplink))
   (use-package org-roam-ui
     :after (org-roam)
+    :diminish org-roam-ui-mode
     :config
     (setq org-roam-ui-sync-theme t
 	  ;org-roam-ui-follow t
@@ -351,12 +364,12 @@
     (jbz/define-evil-key "n u" #'org-roam-ui-open))
   (use-package org-ref
     :config
-    (setq org-ref-default-bibliography references-directory
-  	bibtex-completion-bibliography references-directory
+    (jbz/define-evil-key "o r" #'org-ref-insert-cite-link)
+    (setq bibtex-completion-bibliography org-ref-default-bibliography
           bibtex-completion-pdf-field "file"
           org-ref-completion-library 'org-ref-ivy-cite
           org-ref-notes-function 'orb-edit-notes
-          org-ref-default-citation-link "parencite"))
+          org-ref-default-citation-link "cite"))
   (use-package org-roam-bibtex
     :ensure ivy-bibtex
     :after (org-roam org-ref)
