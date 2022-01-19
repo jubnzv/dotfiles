@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 export BORG_BIN=borg
-export BORG_REPO=/media/jubnzv/10F9B9AE49B661FF/_backup/$(hostname)/
+export BORG_REPO=/run/media/jubnzv/10F9B9AE49B661FF/_backup/hijiri/
 export BORG_UNKNOWN_UNENCRYPTED_REPO_ACCESS_IS_OK=yes
 
 info() { printf "\n%s %s\n\n" "$( date )" "$*" >&2; }
@@ -15,7 +15,6 @@ ${BORG_BIN} create                            \
     --exclude '/home/jubnzv/Dev/llvm-project' \
     --exclude-caches                          \
     ::'{hostname}-{now}'                      \
-    /home/jubnzv/Work       \
     /home/jubnzv/Org        \
     /home/jubnzv/Dev        \
     /home/jubnzv/Documents  \
@@ -25,7 +24,6 @@ ${BORG_BIN} create                            \
     /home/jubnzv/.config/   \
     /home/jubnzv/.local/         \
     /home/jubnzv/.thunderbird/   \
-    /home/jubnzv/.gnome/   \
     /home/jubnzv/.mozilla/  \
     /home/jubnzv/.gnupg/    \
     /home/jubnzv/.ssh/

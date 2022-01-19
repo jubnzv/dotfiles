@@ -14,6 +14,7 @@ Install the addons:
 Go to [about:config](about:config) and set:
 * `ui.key.menuAccessKeyFocuses = false`
 * `browser.tabs.closeWindowWithLastTab = false`
+* `browser.fullscreen.autohide = false`
 
 Set the [surfing keys settings](https://github.com/jubnzv/dotfiles/blob/master/assets/surfing-keys.js).
 
@@ -23,5 +24,5 @@ Set the [surfing keys settings](https://github.com/jubnzv/dotfiles/blob/master/a
 
 ### Previous configurations
 
-* Emacs: [7ddeb6c4](https://github.com/jubnzv/dotfiles/tree/7ddeb6c466070b74c465f4004d8481476d7bb71d/.emacs.d) (2015-2017), [8ea29553](https://github.com/jubnzv/dotfiles/tree/8ea29553c64d1ec1a58ad719afa23c5570f3553e/emacs) (2019)
 * i3wm, rofi, polybar, etc.: [f978ac1](https://github.com/jubnzv/dotfiles/tree/f978ac1aaa460db4c509b69462bf533ecd98004a) (2013-2020)
+* Emacs: [7ddeb6c4](https://github.com/jubnzv/dotfiles/tree/7ddeb6c466070b74c465f4004d8481476d7bb71d/.emacs.d) (2015-2017), [8ea29553](https://github.com/jubnzv/dotfiles/tree/8ea29553c64d1ec1a58ad719afa23c5570f3553e/emacs) (2019), [0447794](https://github.com/jubnzv/dotfiles/blob/0447794b92bf15bff130eadd59f250c393b5798e/.emacs.d/) (2021)

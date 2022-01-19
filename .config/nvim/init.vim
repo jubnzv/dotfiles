@@ -14,7 +14,7 @@ endif
 "   let g:python3_host_prog  = '\Users\<>\AppData\Local\Programs\Python\Python39\python.exe'
 " endif
 
-" We should tweak PATH on Windows to make *nix tools work.
+" We have to tweak PATH on Windows to make *nix tools from git-bash work.
 if has('win32')
   let $PATH = "C:\\Program Files\\Git\\usr\\bin;" . $PATH
 endif
@@ -65,18 +65,16 @@ Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deopl
 Plug 'sbdchd/neoformat'               " Integration with code formatters
 Plug 'jpalardy/vim-slime'             " REPL integraion
 Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
-Plug 'neovimhaskell/haskell-vim'      " Haskell plugin
 Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
 Plug 'vim-python/python-syntax'       " Extended python syntax
 Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
 Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creation
-Plug 'jubnzv/vim-markdown'            " Fork of tpope's vim-markdown with patches
+Plug 'tpope/vim-markdown'             " Extra settings for markdown
 Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex', { 'for': ['tex'] }
 Plug 'wlangstroth/vim-racket', { 'for': ['rkt'] }
-" APL plugin
-Plug 'PyGamer0/vim-apl/', { 'for': ['apl'] }
+Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 " Syntax highlight for PlantUML
 Plug 'aklt/plantuml-syntax', { 'for': ['uml', 'puml'] }
 " A plugin for IEC61131-3 languages
@@ -549,7 +547,7 @@ let g:openbrowser_search_engines = extend(
 \       'github-python': 'http://github.com/search?l=Python&q=language%3APython+{query}&type=Code',
 \       'github-go': 'http://github.com/search?l=Go&q=language%3AGo+{query}&type=Code',
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=language%3AOCaml+{query}&type=Code',
-\       'github-vimscript': 'http://github.com/search?l=Vim+script&language%3Avimscript+{query}&type=Code',
+\       'github-vimscript': 'http://github.com/search?l=Vim+Script&language%3Avimscript+{query}&type=Code',
 \       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
 \       'baidu': 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd={query}',
@@ -1101,15 +1099,25 @@ if vim.fn.executable('gopls') then
   lsp.gopls.setup { }
 end
 
--- ghcup-env is installed in the configuration file of the current shell.
--- We want to explicitly specify path to the hls binary here.
--- local hls_bin = "/home/jubnzv/.ghcup/bin/haskell-language-server-wrapper"
--- if vim.fn.executable(hls_bin) then
---   lsp.hls.setup {
---     cmd = { hls_bin, "--lsp" },
---     on_attach=virtualtypes.on_attach
---   }
--- end
+if vim.fn.executable('rust-analyzer') then
+  lsp.rust_analyzer.setup({
+    on_attach=on_attach,
+    settings = {
+      ["rust-analyzer"] = {
+        assist = {
+          importGranularity = "module",
+          importPrefix = "by_self",
+        },
+        cargo = {
+          loadOutDirsFromCheck = true
+        },
+        procMacro = {
+          enable = true
+        },
+      }
+    }
+})
+end
 
 if vim.fn.executable('ocamllsp') then
   lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
@@ -1119,9 +1127,9 @@ EOF
 nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
 nnoremap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap ]e <cmd>lua vim.lsp.diagnostic.goto_next()<CR>
-nnoremap [e <cmd>lua vim.lsp.diagnostic.goto_prev()<CR>
-nnoremap <silent> <localleader>d <cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+nnoremap ]e <cmd>lua vim.diagnostic.goto_next()<CR>
+nnoremap [e <cmd>lua vim.diagnostic.goto_prev()<CR>
+nnoremap <silent> <localleader>d <cmd>lua vim.diagnostic.open_float()<CR>
 " }}}
 
 " {{{ C and C++
@@ -1225,6 +1233,15 @@ augroup go_group
 augroup END
 " }}}
 
+" {{{ Rust
+augroup go_group
+  au!
+  au FileType rust RainbowToggleOn
+  au FileType rust nmap <buffer> <silent><A-o> <Nop>
+  au FileType rust nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
+augroup END
+" }}}
+
 " {{{ Lua
 augroup lua_group
   au!
@@ -1311,14 +1328,14 @@ augroup menhir_group
 augroup END
 
 " PolyML sources
-au BufNewFile,BufRead *.ML set ft=sml
+au BufNewFile,BufRead *.ML setlocal ft=sml
 
 " ML-Yacc & ML-Lex
-au BufNewFile,BufRead *.grm set ft=sml
-au BufNewFile,BufRead *.lex set ft=sml
+au BufNewFile,BufRead *.grm setlocal ft=sml
+au BufNewFile,BufRead *.lex setlocal ft=sml
 
 " SML interfaces
-au BufNewFile,BufRead *.sig set ft=sml
+au BufNewFile,BufRead *.sig setlocal ft=sml
 au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
@@ -1438,7 +1455,7 @@ EOF
 " {{{ Markdown & org-mode
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
- \'asm', 'go', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
+ \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
  \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim'
  \]
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
@@ -1508,19 +1525,19 @@ au FileType conf set foldmethod=marker foldenable
 au Filetype css setlocal ts=4
 au Filetype html setlocal ts=4
 
-au BufNewFile,BufRead .clang-format set ft=config
-au BufNewFile,BufRead .pdbrc set ft=python
+au BufNewFile,BufRead .clang-format setlocal ft=config
+au BufNewFile,BufRead .pdbrc setlocal ft=python
 
 " neosnippet snippets
-au BufNewFile,BufRead *.snip set ft=neosnippet fdm=marker foldlevel=0 fen tw=120 ts=4 noexpandtab
+au BufNewFile,BufRead *.snip setlocal ft=neosnippet fdm=marker foldlevel=0 fen tw=120 ts=4 noexpandtab
 
 " ansible playbooks
 au BufRead,BufNewFile */playbooks/*.yml set filetype=yaml.ansible
 au BufRead,BufNewFile */ops/ansible/*.yml set filetype=yaml.ansible
 
 " buildbot configuration files
-au BufNewFile,BufRead   master.cfg      set ft=python foldmethod=marker foldenable tw=120
-au BufNewFile,BufRead   buildbot.tac    set ft=python foldmethod=marker foldenable tw=120
+au BufNewFile,BufRead   master.cfg      setlocal ft=python foldmethod=marker foldenable tw=120
+au BufNewFile,BufRead   buildbot.tac    setlocal ft=python foldmethod=marker foldenable tw=120
 
 " cppcheck dumps
 au BufNewFile,BufRead *.c.dump      set filetype=xml tw=120

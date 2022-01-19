@@ -46,7 +46,7 @@ font-1 = Iosevka Nerd Font:style=Regular:size=10
 
 modules-left = i3
 modules-center = date
-modules-right = pulseaudio microphone xbacklight notifications-status filesystem-root memory cpu wlan eth vpn-openvpn-isrunning battery mouse-battery
+modules-right = pulseaudio microphone xbacklight notifications-status filesystem-root wlan eth vpn-openvpn-isrunning battery mouse-battery
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
