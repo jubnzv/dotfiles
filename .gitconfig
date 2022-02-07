@@ -44,7 +44,7 @@ process = git-lfs filter-process
 user = jubnzv
 
 [user]
-name = Georgy Komarov
+name = Georgiy Komarov
 email = jubnzv@gmail.com
 
 [includeIf "gitdir:~/Work/*"]

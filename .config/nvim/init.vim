@@ -215,7 +215,7 @@ if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
   if has('win32')
     set guifont=JetBrainsMono\ NF:h11
   else
-    set guifont=JetBrainsMono\ Nerd\ Font:h11
+    " set guifont=JetBrainsMono\ NF\ \[JB\]:h11
   endif
   nnoremap <silent><RightMouse> :call GuiShowContextMenu()<CR>
   inoremap <silent><RightMouse> <Esc>:call GuiShowContextMenu()<CR>
@@ -545,12 +545,12 @@ let g:openbrowser_search_engines = extend(
 \       'github-c': 'http://github.com/search?l=C&q=language%3AC+{query}&type=Code',
 \       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=language%3AC%2B%2B+{query}&type=Code',
 \       'github-python': 'http://github.com/search?l=Python&q=language%3APython+{query}&type=Code',
+\       'github-rust': 'http://github.com/search?l=Rust&q=language%3ARust+{query}&type=Code',
 \       'github-go': 'http://github.com/search?l=Go&q=language%3AGo+{query}&type=Code',
 \       'github-ocaml': 'http://github.com/search?l=OCaml&q=language%3AOCaml+{query}&type=Code',
 \       'github-vimscript': 'http://github.com/search?l=Vim+Script&language%3Avimscript+{query}&type=Code',
 \       'grep-app': 'https://grep.app/search?q={query}&case=true',
 \       'google': 'http://google.com/search?q={query}',
-\       'baidu': 'https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&rsv_idx=1&tn=baidu&wd={query}',
 \       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
 \       'ludwig-en': 'https://ludwig.guru/ru/s/{query}',
 \       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
@@ -580,13 +580,13 @@ endfunction
 
 nnoremap <silent> <leader>os <Plug>(openbrowser-smart-search)
 call s:JbzSetOpenbrowserBindings("<leader>osg", "google")
-call s:JbzSetOpenbrowserBindings("<leader>osb", "baidu")
 call s:JbzSetOpenbrowserBindings("<leader>otr", "yandex-translate-en-ru")
 call s:JbzSetOpenbrowserBindings("<leader>otl", "ludwig-en")
 call s:JbzSetOpenbrowserBindings("<leader>ogs", "github")
 call s:JbzSetOpenbrowserBindings("<leader>ogc", "github-c")
 call s:JbzSetOpenbrowserBindings("<leader>ogx", "github-cpp")
 call s:JbzSetOpenbrowserBindings("<leader>ogp", "github-python")
+call s:JbzSetOpenbrowserBindings("<leader>ogr", "github-rust")
 call s:JbzSetOpenbrowserBindings("<leader>ogg", "github-go")
 call s:JbzSetOpenbrowserBindings("<leader>ogo", "github-ocaml")
 call s:JbzSetOpenbrowserBindings("<leader>ogv", "github-vimscript")
@@ -1473,6 +1473,8 @@ augroup markdown_group
   au FileType markdown vnoremap <buffer> <leader>' "sc`<C-r>s`<Esc>
   au FileType markdown nnoremap <buffer> <leader>" i```<cr><cr>```<Esc>ki
   au FileType markdown vnoremap <buffer> <leader>" "sc```<C-r>s```<Esc>
+  " Create a new file if not exists.
+  au FileType markdown nmap gf :e <cfile><cr>
   " Abbrevations
   au FileType markdown inoremap <buffer> --<space> –<space>
   " au FileType markdown inoremap <buffer> -><space> →<space>

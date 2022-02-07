@@ -19,5 +19,6 @@ address="${USER}"@"$(hostname)"
 # echo -e "Content-Type: text/plain; charset=\"utf-8\";\nSubject: Notes diff $(date +%Y-%m-%d)\n\n${diff_text}" | /usr/sbin/sendmail "$address"
 
 diff_html=$(git diff @^ | ~/.local/bin/diff2html.py)
+echo "$address"
 echo -e "Content-Type: text/html; charset=\"utf-8\";\nSubject: Notes diff $(date +%Y-%m-%d)\n\n${diff_html}" | /usr/sbin/sendmail "$address"
 
