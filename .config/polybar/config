@@ -46,7 +46,7 @@ font-1 = Iosevka Nerd Font:style=Regular:size=10
 
 modules-left = i3
 modules-center = date
-modules-right = pulseaudio microphone xbacklight notifications-status filesystem-root wlan eth vpn-openvpn-isrunning battery mouse-battery
+modules-right = pulseaudio microphone xbacklight notifications-status filesystem-root wlan eth vpn-openvpn-isrunning mouse-battery battery
 
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
@@ -289,8 +289,16 @@ animation-discharging-framerate = 750
 type = custom/script
 exec = ~/.config/polybar/mouse-battery.sh
 interval = 30
-label =  %output%%
+label = 
 format-background = ${colors.alert}
+
+[module/bluetooth]
+type = custom/script
+exec = ~/.config/polybar/bluetooth.sh
+interval = 2
+click-left = exec blueberry
+click-right = exec ~/.config/polybar/toggle_bluetooth.sh
+format-padding = 1
 
 [module/temperature]
 type = internal/temperature

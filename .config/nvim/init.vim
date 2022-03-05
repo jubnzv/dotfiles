@@ -88,6 +88,8 @@ Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
 Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
 " Plugin that works like projectile
 Plug 'nvim-telescope/telescope-project.nvim'
+" An extension for telescope.nvim that allows you to search symbols
+Plug 'nvim-telescope/telescope-symbols.nvim'
 " Plugin that shows list of diagnostics and persistent telescope results.
 Plug 'folke/trouble.nvim'
 " org-mode clone (old version without tree-sitter)
@@ -980,7 +982,7 @@ EOF
 
 " {{{ telescope.nvim and related plugins
 lua << EOF
-local telescope = require'telescope'
+local telescope = require("telescope")
 local trouble = require("trouble.providers.telescope")
 telescope.setup {
   defaults = {
@@ -990,7 +992,7 @@ telescope.setup {
     },
   },
 }
-telescope.load_extension('project')
+telescope.load_extension("project")
 EOF
 nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
 nnoremap <leader>fs <cmd>lua require('telescope.builtin').live_grep()<cr>
@@ -1007,6 +1009,8 @@ nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
 nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
 nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
 nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
+
+nnoremap <A-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji'} }<cr>
 
 nnoremap <leader>pn <cmd>lua require('telescope.builtin').find_files({prompt_title = "Notes", cwd = "~/Org/Notes/"})<cr>
 nnoremap <leader>pm <cmd>lua require('telescope.builtin').find_files({prompt_title = "org-mode", cwd = "~/Org/org-mode"})<cr>
@@ -1104,6 +1108,9 @@ if vim.fn.executable('rust-analyzer') then
     on_attach=on_attach,
     settings = {
       ["rust-analyzer"] = {
+        checkOnSave = {
+          command = "clippy",
+        },
         assist = {
           importGranularity = "module",
           importPrefix = "by_self",

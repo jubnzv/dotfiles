@@ -3,4 +3,3 @@ p="$(upower -i /org/freedesktop/UPower/devices/mouse_hidpp_battery_0 | grep perc
 if [[ "$(( $p ))" -ne 0 && "$(( $p ))" -lt 33 ]]; then
     echo $p
 fi
-

@@ -15,17 +15,18 @@ ${BORG_BIN} create                            \
     --exclude '/home/jubnzv/Dev/llvm-project' \
     --exclude-caches                          \
     ::'{hostname}-{now}'                      \
-    /home/jubnzv/Org        \
-    /home/jubnzv/Dev        \
-    /home/jubnzv/Documents  \
-    /home/jubnzv/Pictures   \
-    /home/jubnzv/dotfiles   \
-    /home/jubnzv/VPN/       \
-    /home/jubnzv/.config/   \
-    /home/jubnzv/.local/         \
-    /home/jubnzv/.thunderbird/   \
-    /home/jubnzv/.mozilla/  \
-    /home/jubnzv/.gnupg/    \
+    /home/jubnzv/Org                \
+    /home/jubnzv/Dev                \
+    /home/jubnzv/Documents          \
+    /home/jubnzv/Pictures           \
+    /home/jubnzv/dotfiles           \
+    /home/jubnzv/VPN/               \
+    /home/jubnzv/.config/           \
+    /home/jubnzv/.local/            \
+    /home/jubnzv/.thunderbird/      \
+    /home/jubnzv/.mozilla/          \
+    /home/jubnzv/.config/chromium/  \
+    /home/jubnzv/.gnupg/            \
     /home/jubnzv/.ssh/
 
 backup_exit=$?
