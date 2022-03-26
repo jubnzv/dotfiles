@@ -75,6 +75,8 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
 Plug 'lervag/vimtex', { 'for': ['tex'] }
 Plug 'wlangstroth/vim-racket', { 'for': ['rkt'] }
 Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
+Plug 'fatih/vim-go', { 'for': ['go'] }
+Plug 'tomlion/vim-solidity', { 'for': ['sol'] }
 " Syntax highlight for PlantUML
 Plug 'aklt/plantuml-syntax', { 'for': ['uml', 'puml'] }
 " A plugin for IEC61131-3 languages
@@ -256,8 +258,8 @@ nnoremap <leader>w :w<CR>
 nnoremap Y y$
 
 " Replace-paste without yanking deleted lines
-nnoremap <leader>y "0y
-nnoremap <leader>p "0p
+" nnoremap <leader>y "0y
+" nnoremap <leader>p "0p
 
 " Insert newline without entering insert mode
 " nmap zj o<Esc>k
@@ -1010,7 +1012,8 @@ nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr
 nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
 nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
 
-nnoremap <A-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji'} }<cr>
+nnoremap <A-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji', 'math', 'latex'} }<cr>
+inoremap <A-e> <C-O>:lua require'telescope.builtin'.symbols{ sources = {'emoji', 'math', 'latex'} }<cr>
 
 nnoremap <leader>pn <cmd>lua require('telescope.builtin').find_files({prompt_title = "Notes", cwd = "~/Org/Notes/"})<cr>
 nnoremap <leader>pm <cmd>lua require('telescope.builtin').find_files({prompt_title = "org-mode", cwd = "~/Org/org-mode"})<cr>
@@ -1238,6 +1241,18 @@ augroup go_group
   au FileType go nmap <buffer> <silent><A-o> <Nop>
   au FileType go nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
 augroup END
+
+" fatih/vim-go settings
+let g:go_fmt_autosave = 0
+" }}}
+
+" {{{ Solidity
+augroup sol_group
+  au!
+  au FileType sol RainbowToggleOn
+  au FileType sol nmap <buffer> <silent><A-o> <Nop>
+  au FileType sol nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
+augroup END
 " }}}
 
 " {{{ Rust
@@ -1422,8 +1437,8 @@ augroup tex_group
   au FileType tex set sw=2
   au FileType tex call Togglegjgk()
   au FileType tex setlocal spell! spelllang=en_us,ru_yo
-  au FileType tex nnoremap <buffer> <silent> <leader>p :call pasteimage#LatexClipboardImage()<CR>
-  au FileType tex nnoremap <buffer> <silent> <leader>з :call pasteimage#LatexClipboardImage()<CR>
+  au FileType tex nnoremap <buffer> <silent> <leader>pi :call pasteimage#LatexClipboardImage()<CR>
+  au FileType tex nnoremap <buffer> <silent> <leader>зш :call pasteimage#LatexClipboardImage()<CR>
 augroup end
 " }}}
 
@@ -1490,9 +1505,11 @@ augroup markdown_group
   " au FileType markdown inoremap <buffer> \E<space> ∃<space>
   " au FileType markdown inoremap <buffer> \A<space> ∀<space>
   " Paste image from clipboard
-  au FileType markdown nnoremap <buffer> <silent> <leader>p :call pasteimage#MarkdownClipboardImage()<CR>
+  au FileType markdown nnoremap <buffer> <silent> <leader>pi :call pasteimage#MarkdownClipboardImage()<CR>
+  au FileType markdown nnoremap <buffer> <silent> <leader>шз :call pasteimage#MarkdownClipboardImage()<CR>
   " Paste URL link from clipboard
-  au FileType markdown nnoremap <buffer> <leader>P a[]()<Esc>hpl%hi
+  au FileType markdown nnoremap <buffer> <leader>pl a[]()<Esc>hpl%hi
+  au FileType markdown nnoremap <buffer> <leader>зд a[]()<Esc>hpl%hi
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
 augroup end
