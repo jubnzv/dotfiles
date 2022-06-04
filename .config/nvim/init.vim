@@ -100,7 +100,7 @@ Plug 'kristijanhusak/orgmode.nvim', { 'tag': '0.1' }
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
 if isdirectory('/home/jubnzv/Dev/llvm-project/llvm/utils/vim/')
-  Plug '/home/jubnzv//Dev/llvm-project/llvm/utils/vim/'
+  Plug '/home/jubnzv/Dev/llvm-project/llvm/utils/vim/'
 endif
 
 call plug#end()
@@ -461,16 +461,14 @@ let g:lightline = {
   \              [ 'fileformat', 'fileencoding', 'filetype' ],
   \              [ 'gitbranch' ] ],
   \ },
-  \ 'component': {
-  \   'gitbranch': ' %{fugitive#head()}'
-  \ },
   \ 'component_expand': {
   \   'lsp_warnings': 'LightlineLspWarnings',
   \   'lsp_errors': 'LightlineLspErrors',
   \ },
   \ 'component_function': {
   \   'current_function': 'LightlineCurrentFunctionVista',
-  \   'filename': 'LightlineStrippedFilename'
+  \   'filename': 'LightlineStrippedFilename',
+  \   'gitbranch': 'FugitiveHead'
   \ },
   \ 'component_type': {
   \   'lsp_warnings': 'warning',
@@ -953,31 +951,48 @@ hi NvimTreeIndentMarker guifg=#3c3836
 hi NvimTreeFolderIcon guifg=#7c6f64
 hi NvimTreeGitDirty guifg=#689d6a
 lua << EOF
-vim.g.nvim_tree_indent_markers = 1
-vim.g.nvim_tree_icons = {
-  default =      '',
-  symlink =      '',
-  git = {
-    unstaged =   "~",
-    staged =     "✓",
-    unmerged =   "",
-    renamed =    "➜",
-    untracked =  "★"
-  },
-  folder = {
-    default =    "",
-    open =       "",
-    empty =      "",
-    empty_open = "",
-    symlink =    "",
-  }
-}
 require 'nvim-tree'.setup{
-  git = { ignore = true },
+  git                 = { ignore = true },
   disable_netrw       = true,
   update_focused_file = { enable = true },
-  update_cwd = true,
-  filters = { custom = { '.git', 'node_modules', '.cache', '__pycache__', '.clangd' } }
+  update_cwd          = true,
+  filters             = { custom = { '.git', 'node_modules', '.cache', '__pycache__', '.clangd' } },
+  tree_indent_markers = true,
+  icons               = {
+    webdev_colors = true,
+    git_placement = "before",
+    padding = " ",
+    symlink_arrow = " ➛ ",
+    show = {
+      file = true,
+      folder = true,
+      folder_arrow = true,
+      git = true,
+    },
+    glyphs = {
+      default = "",
+      symlink = "",
+      folder = {
+        arrow_closed = "",
+        arrow_open = "",
+        default = "",
+        open = "",
+        empty = "",
+        empty_open = "",
+        symlink = "",
+        symlink_open = "",
+      },
+      git = {
+        unstaged = "✗",
+        staged = "✓",
+        unmerged = "",
+        renamed = "➜",
+        untracked = "★",
+        deleted = "",
+        ignored = "◌",
+      },
+    },
+  },
 }
 EOF
 " }}}
@@ -1043,6 +1058,9 @@ using namespace std;
 })
 vim.api.nvim_set_keymap('n', '<localleader>c',
                         "<cmd>lua require 'mdeval'.eval_code_block()<CR>",
+                        {silent = true, noremap = true})
+vim.api.nvim_set_keymap('n', '<localleader>C',
+                        "<cmd>lua require 'mdeval'.eval_clean_results()<CR>",
                         {silent = true, noremap = true})
 EOF
 " }}}
@@ -1249,14 +1267,14 @@ let g:go_fmt_autosave = 0
 " {{{ Solidity
 augroup sol_group
   au!
-  au FileType sol RainbowToggleOn
-  au FileType sol nmap <buffer> <silent><A-o> <Nop>
-  au FileType sol nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
+  au FileType solidity RainbowToggleOn
+  au FileType solidity nmap <buffer> <silent><A-o> <Nop>
+  au FileType solidity nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
 augroup END
 " }}}
 
 " {{{ Rust
-augroup go_group
+augroup rust_group
   au!
   au FileType rust RainbowToggleOn
   au FileType rust nmap <buffer> <silent><A-o> <Nop>
@@ -1550,6 +1568,9 @@ au FileType yaml setlocal ts=2 sts=2 sw=2
 au FileType conf set foldmethod=marker foldenable
 au Filetype css setlocal ts=4
 au Filetype html setlocal ts=4
+
+" gno language: https://gno.land/
+au BufNewFile,BufRead *.gno setlocal syntax=go
 
 au BufNewFile,BufRead .clang-format setlocal ft=config
 au BufNewFile,BufRead .pdbrc setlocal ft=python

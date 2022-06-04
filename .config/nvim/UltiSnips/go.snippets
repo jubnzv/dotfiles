@@ -3,5 +3,5 @@ fmt.Printf($0) // prdbg
 endsnippet
 
 snippet prl
-fmt.Printf("%s$1", "`!p snip.rv='L%d:'%snip._end[0]`"$2) // prdbg
+fmt.Printf("`!p snip.rv = snip.basename`:`!p snip.rv='%d'%snip._end[0]`: $1\n", $2) // prdbg
 endsnippet
