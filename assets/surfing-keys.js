@@ -14,7 +14,7 @@ var unmaps = [ "sb" ,  "sw", "ob"
          , "af", "xx"
          ];
 unmaps.forEach(function(u) {
-  unmap(u);
+  api.unmap(u);
 });
 
 // Helper functions used in mappings.
@@ -42,67 +42,52 @@ copyOrgLink = () =>
 copyMarkdownLink = () =>
   Clipboard.write(`[${document.title}](${getCurrentLocation("href")})`)
 
-mapkey("yp", "Copy URL path of current page", copyURLPath());
-mapkey("ym", "Copy page URL/Title as Markdown link", copyMarkdownLink);
-mapkey("yo", "Copy page URL/Title as Org-mode link", copyOrgLink);
+api.mapkey("yp", "Copy URL path of current page", copyURLPath());
+api.mapkey("ym", "Copy page URL/Title as Markdown link", copyMarkdownLink);
+api.mapkey("yo", "Copy page URL/Title as Org-mode link", copyOrgLink);
 
 // Switch tabs
-map('`[', 'E');
-map('ёх', 'E');
-map('`]', 'R');
-map('ёъ', 'R');
+api.map('`[', 'E');
+api.map('ёх', 'E');
+api.map('`]', 'R');
+api.map('ёъ', 'R');
 
 // Open new tab
-map('t', 'on');
-map('`t', 'on');
+api.map('t', 'on');
+api.map('`t', 'on');
 
 // Open link in new tab
-map('F', 'gf');
+api.map('F', 'gf');
 
 // Switch to recent tab
-map('`r', '<Ctrl-6>');
-map('ёк', '<Ctrl-6>');
+api.map('`r', '<Ctrl-6>');
+api.map('ёк', '<Ctrl-6>');
 
 // Pin tab
-map('gp', '<Alt-p>')
+api.map('gp', '<Alt-p>')
 
 // Navigate in pop-up menus
-cmap('<Alt-j>', '<Tab>');
-cmap('<Alt-k>', '<Shift-Tab>');
+api.cmap('<Alt-j>', '<Tab>');
+api.cmap('<Alt-k>', '<Shift-Tab>');
 
-// Yandex.Translate
-addSearchAliasX('te', 'yandex.translate (ru → en)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
-addSearchAliasX('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
-
-// Oxford dictionaries
-addSearchAliasX('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
-
-// Search books
-addSearchAliasX('bc', 'b-ok.cc', 'https://b-ok.cc/s/?q=', 'o');
-
-// Search on pubmed
-addSearchAliasX('pm', 'pubmed', 'https://www.ncbi.nlm.nih.gov/pmc/?term=', 'o');
-
-// Search in Debian packages sources
-addSearchAliasX('pd', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=', 'o');
-addSearchAliasX('pc', 'Debian codesearch', 'https://codesearch.debian.net/search?q=', 'o');
-
-// Search sources at bootlin
-addSearchAliasX('ll', 'bootlin: linux', 'https://elixir.bootlin.com/linux/latest/ident/', 'o');
-addSearchAliasX('lg', 'bootlin: linux', 'https://elixir.bootlin.com/glibc/latest/ident/', 'o');
-
-// Search sources on GitHub
-addSearchAliasX('gg', 'github', 'https://github.com/search?q=', 'o');
-addSearchAliasX('gv', 'github: vimscript', 'https://github.com/search?q=language%3A%22vimscript%22+', 'o');
-addSearchAliasX('gc', 'github: C', 'https://github.com/search?q=language%3AC+', 'o');
-addSearchAliasX('gx', 'github: C++', 'https://github.com/search?q=language%3AC%2B%2B+', 'o');
-addSearchAliasX('gp', 'github: Python', 'https://github.com/search?q=language%3APython+', 'o');
-addSearchAliasX('go', 'github: OCaml', 'https://github.com/search?q=language%3AOCaml+', 'o');
-
-// Documentation and language references
-addSearchAliasX('dx', 'doc: cppreference', 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=', 'o');
-addSearchAliasX('dX', 'doc: isocpp', 'https://isocpp.org/search/google?q=', 'o');
-addSearchAliasX('dp', 'doc: docs.python', 'https://docs.python.org/3/search.html?q=', 'o');
+api.addSearchAlias('te', 'yandex.translate (ru → en)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
+api.addSearchAlias('tr', 'yandex.translate (en → ru)', 'https://translate.yandex.ru/?lang=en-ru&text=', 'o');
+api.addSearchAlias('to', 'Oxford dictionaries', 'https://en.oxforddictionaries.com/definition/', 'o');
+api.addSearchAlias('bc', 'b-ok.cc', 'https://b-ok.cc/s/?q=', 'o');
+api.addSearchAlias('pm', 'pubmed', 'https://www.ncbi.nlm.nih.gov/pmc/?term=', 'o');
+api.addSearchAlias('pd', 'Debian packages content', 'https://packages.debian.org/search?searchon=contents&keywords=', 'o');
+api.addSearchAlias('pc', 'Debian codesearch', 'https://codesearch.debian.net/search?q=', 'o');
+api.addSearchAlias('ll', 'bootlin: linux', 'https://elixir.bootlin.com/linux/latest/ident/', 'o');
+api.addSearchAlias('lg', 'bootlin: linux', 'https://elixir.bootlin.com/glibc/latest/ident/', 'o');
+api.addSearchAlias('gg', 'github', 'https://github.com/search?q=', 'o');
+api.addSearchAlias('gv', 'github: vimscript', 'https://github.com/search?q=language%3A%22vimscript%22+', 'o');
+api.addSearchAlias('gc', 'github: C', 'https://github.com/search?q=language%3AC+', 'o');
+api.addSearchAlias('gx', 'github: C++', 'https://github.com/search?q=language%3AC%2B%2B+', 'o');
+api.addSearchAlias('gp', 'github: Python', 'https://github.com/search?q=language%3APython+', 'o');
+api.addSearchAlias('go', 'github: OCaml', 'https://github.com/search?q=language%3AOCaml+', 'o');
+api.addSearchAlias('dx', 'doc: cppreference', 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search=', 'o');
+api.addSearchAlias('dX', 'doc: isocpp', 'https://isocpp.org/search/google?q=', 'o');
+api.addSearchAlias('dp', 'doc: docs.python', 'https://docs.python.org/3/search.html?q=', 'o');
 
 settings.theme = `
 /* Disable RichHints CSS animation */

@@ -16,7 +16,7 @@ Go to [about:config](about:config) and set:
 * `browser.tabs.closeWindowWithLastTab = false`
 * `browser.fullscreen.autohide = false`
 
-Set the [surfing keys settings](https://github.com/jubnzv/dotfiles/blob/master/assets/surfing-keys.js).
+Set the [surfing keys settings](https://raw.githubusercontent.com/jubnzv/dotfiles/master/assets/surfing-keys.js).
 
 ### External assets
 
