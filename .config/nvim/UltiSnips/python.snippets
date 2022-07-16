@@ -41,11 +41,11 @@ if os.system('command -v ${1:cmake}') != 0:
 endsnippet
 
 snippet pr
-print(${1})
+print(${1})  # prdbg
 endsnippet
 
-snippet prd
-print(${1})  # prdbg
+snippet prl
+print(f"`!p snip.rv = snip.basename`:`!p snip.rv='%d'%snip._end[0]`: $1")  # prdbg
 endsnippet
 
 snippet prf

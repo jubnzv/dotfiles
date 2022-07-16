@@ -23,9 +23,9 @@ secondary = #ff6200
 alert = #fb4934
 
 [bar/example]
-monitor = ${env:MONITOR:VGA1}
+monitor = ${env:MONITOR:eDP-1}
 width = 100%
-height = 20
+height = 25
 radius = 0
 fixed-center = true
 background = ${colors.background}
@@ -57,6 +57,11 @@ cursor-scroll = ns-resize
 tray-position = right
 tray-padding = 2
 tray-background = ${colors.background}
+tray-scale = 1.0
+tray-maxsize = 21
+
+dpi-x = 140
+dpi-y = 140
 
 [module/filesystem-root]
 type = internal/fs
@@ -189,7 +194,7 @@ label-warn = " %percentage_used%%
 
 [module/wlan]
 type = internal/network
-interface = wlp3s0
+interface = wlp0s20f3
 interval = 3.0
 format-connected = <ramp-signal> <label-connected>
 format-connected-underline = ${colors.blue2}
@@ -204,7 +209,7 @@ ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
 type = internal/network
-interface = enp0s25
+interface = enx606d3cbaac9f
 interval = 3.0
 format-connected-underline = ${colors.aqua2}
 format-connected-prefix = " "

@@ -14,6 +14,6 @@ setxkbmap -option ctrl:nocaps
 /usr/bin/xmodmap -e "keysym Print = Super_L"
 
 # x230 + classic keyboard
-/usr/bin/xmodmap -e "keycode 110=Delete" # Delete
-/usr/bin/xmodmap -e "keycode 118="       # PgDn
-/usr/bin/xmodmap -e "keycode 119="       # PgUp
+# /usr/bin/xmodmap -e "keycode 110=Delete" # Delete
+# /usr/bin/xmodmap -e "keycode 118="       # PgDn
+# /usr/bin/xmodmap -e "keycode 119="       # PgUp

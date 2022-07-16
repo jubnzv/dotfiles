@@ -22,80 +22,88 @@ endif
 " {{{ Plugins
 call plug#begin('~/.local/share/nvim/plugged')
 
-Plug 'kshenoy/vim-signature'          " Extended marks support
-Plug 'tpope/vim-eunuch'               " Helpers for Shell
-Plug 'tpope/vim-repeat'               " Remap . in a way that plugins can tap into it
-Plug 'andymass/vim-matchup'           " Better %
-Plug 'junegunn/vim-easy-align'        " A Vim alignment plugin
-Plug 'tpope/vim-surround'
-Plug 'tpope/vim-abolish'              " Case-sensitive search/substitute/abbreviate
-Plug 'jiangmiao/auto-pairs'           " Insert or delete brackets, parens, quotes in pair
-Plug 'tpope/vim-rsi'                  " Readline (emacs) keybindings in command and insert modes
-Plug 'osyo-manga/vim-over'            " :substitute preview
-Plug 'christoomey/vim-tmux-navigator' " tmux integration
-Plug 'tyru/open-browser.vim'          " Plugin for openning links in the browser
-Plug 'itchyny/lightline.vim'          " Statusline plugin
-Plug 'jubnzv/gruvbox'                 " Color scheme
-Plug 'norcalli/nvim-colorizer.lua'    " Colorize color names and codes
-Plug 'haya14busa/incsearch.vim'       " Incrementally highlight search results
-Plug 'itchyny/vim-cursorword'         " Plugin to highlight the word under the cursor
-Plug 'tpope/vim-fugitive'             " Git wrapper
-Plug 'cohama/agit.vim'                " gitk clone for vim
-Plug 'airblade/vim-gitgutter'         " Shows git status on a gutter column
-Plug 'kyazdani42/nvim-tree.lua'       " A tree explorer plugin for vim
-Plug 'kyazdani42/nvim-web-devicons'   " devicons for nvim-tree.lua
-Plug 'mbbill/undotree'
-Plug 'rhysd/git-messenger.vim'        " Reveal the commit messages under the cursor
-Plug 'liuchengxu/vista.vim'           " Viewer & Finder for LSP symbols and tags
-Plug 'ludovicchabant/vim-gutentags'   " Auto (re)generate tag files
-Plug 'terryma/vim-expand-region'      " Visually select increasingly larger regions of text
-Plug 'machakann/vim-swap'             " Reorder arguments in functions with `g>` and `g<`
-Plug 'tyru/caw.vim'                   " Comment plugin
+Plug 'kshenoy/vim-signature'                 " Extended marks support
+Plug 'tpope/vim-eunuch'                      " Helpers for Shell
+Plug 'tpope/vim-repeat'                      " Remap . in a way that plugins can tap into it
+Plug 'andymass/vim-matchup'                  " Better %
+Plug 'junegunn/vim-easy-align'               " A Vim alignment plugin
+Plug 'tpope/vim-surround'                    " Surround text w/ brackets
+Plug 'tpope/vim-abolish'                     " Case-sensitive search/substitute/abbreviate
+Plug 'jiangmiao/auto-pairs'                  " Insert or delete brackets, parens, quotes in pair
+Plug 'tpope/vim-rsi'                         " Readline (emacs) keybindings in command and insert modes
+Plug 'osyo-manga/vim-over'                   " :substitute preview
+Plug 'christoomey/vim-tmux-navigator'        " tmux integration
+Plug 'tyru/open-browser.vim'                 " Plugin for openning links in the browser
+Plug 'itchyny/lightline.vim'                 " Statusline plugin
+Plug 'jubnzv/gruvbox'                        " Color scheme
+Plug 'norcalli/nvim-colorizer.lua'           " Colorize color names and codes
+Plug 'haya14busa/incsearch.vim'              " Incrementally highlight search results
+Plug 'itchyny/vim-cursorword'                " Plugin to highlight the word under the cursor
+Plug 'tpope/vim-fugitive'                    " Git wrapper
+Plug 'cohama/agit.vim'                       " gitk clone for vim
+Plug 'airblade/vim-gitgutter'                " Shows git status on a gutter column
+Plug 'kyazdani42/nvim-tree.lua'              " A tree explorer plugin for vim
+Plug 'kyazdani42/nvim-web-devicons'          " devicons for nvim-tree.lua
+Plug 'mbbill/undotree'                       " Emacs' undotree
+Plug 'rhysd/git-messenger.vim'               " Reveal the commit messages under the cursor
+Plug 'liuchengxu/vista.vim'                  " Viewer & Finder for LSP symbols and tags
+Plug 'ludovicchabant/vim-gutentags'          " Auto (re)generate tag files
+Plug 'terryma/vim-expand-region'             " Visually select increasingly larger regions of text
+Plug 'machakann/vim-swap'                    " Reorder arguments in functions with `g>` and `g<`
+Plug 'tyru/caw.vim'                          " Comment plugin
 Plug 'Shougo/deoplete.nvim', {
-  \ 'do': ':UpdateRemotePlugins'
-  \ }
-Plug 'sirver/ultisnips'               " Snippets plugin
-Plug 'honza/vim-snippets'             " A collection of snippets
-" A neovim plugin for visually displaying indent levels in code
-Plug 'lukas-reineke/indent-blankline.nvim'
-Plug 'ocaml/vim-ocaml'                " Vim runtime files for OCaml
-Plug 'neovim/nvim-lspconfig'          " Configuration for native Neovim LSP client
-Plug 'jubnzv/virtual-types.nvim'      " Plugin that shows type annotations in virtual text
-Plug 'Shougo/deoplete-lsp'            " Neovim's LSP Completion source for deoplete
-Plug 'sbdchd/neoformat'               " Integration with code formatters
-Plug 'jpalardy/vim-slime'             " REPL integraion
-Plug 'bfrg/vim-cpp-modern'            " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
-Plug 'derekwyatt/vim-fswitch'         " This Vim plugin will help switching between companion files
-Plug 'vim-python/python-syntax'       " Extended python syntax
-Plug 'luochen1990/rainbow'            " Rainbow Parentheses improved
-Plug 'dhruvasagar/vim-table-mode'     " VIM Table Mode for instant table creation
-Plug 'tpope/vim-markdown'             " Extra settings for markdown
-Plug 'masukomi/vim-markdown-folding'  " Markdown folding by sections
-Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() } }
-Plug 'lervag/vimtex', { 'for': ['tex'] }
-Plug 'wlangstroth/vim-racket', { 'for': ['rkt'] }
-Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
-Plug 'fatih/vim-go', { 'for': ['go'] }
-Plug 'tomlion/vim-solidity', { 'for': ['sol'] }
-" Syntax highlight for PlantUML
-Plug 'aklt/plantuml-syntax', { 'for': ['uml', 'puml'] }
-" A plugin for IEC61131-3 languages
-Plug 'jubnzv/IEC.vim', { 'for': ['st', 'il'] }
-Plug 'weirongxu/plantuml-previewer.vim'
-Plug 'othree/xml.vim', { 'for': ['xml', 'html'] }
+  \ 'do': ':UpdateRemotePlugins' }           " Autocomplition
+Plug 'sirver/ultisnips'                      " Snippets plugin
+Plug 'honza/vim-snippets'                    " A collection of snippets
+Plug 'lukas-reineke/indent-blankline.nvim'   " Display indent levels in code
+Plug 'ocaml/vim-ocaml'                       " Vim runtime files for OCaml
+Plug 'neovim/nvim-lspconfig'                 " Configuration for native Neovim LSP client
+Plug 'jubnzv/virtual-types.nvim'             " Plugin that shows type annotations in virtual text
+Plug 'Shougo/deoplete-lsp'                   " Neovim's LSP Completion source for deoplete
+Plug 'sbdchd/neoformat'                      " Integration with code formatters
+Plug 'jpalardy/vim-slime'                    " REPL integraion
+Plug 'bfrg/vim-cpp-modern'                   " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
+Plug 'derekwyatt/vim-fswitch'                " This Vim plugin will help switching between companion files
+Plug 'vim-python/python-syntax'              " Extended python syntax
+Plug 'luochen1990/rainbow'                   " Rainbow Parentheses improved
+Plug 'dhruvasagar/vim-table-mode'            " VIM Table Mode for instant table creation
+Plug 'tpope/vim-markdown'                    " Extra settings for markdown
+Plug 'masukomi/vim-markdown-folding'         " Markdown folding by sections
+Plug 'iamcco/markdown-preview.nvim', {
+  \ 'do': { -> mkdp#util#install() } }       " Live markdown preview in the browser
+Plug 'lervag/vimtex', { 'for': ['tex'] }     " LaTeX plugin
+Plug 'wlangstroth/vim-racket', {
+  \ 'for': ['rkt'] }                         " Racket syntax highlight
+Plug 'rust-lang/rust.vim', {
+  \ 'for': ['rust'] }                        " Rust plugin
+Plug 'fatih/vim-go', { 'for': ['go'] }       " (bloated) golang environment
+Plug 'tomlion/vim-solidity', {
+  \ 'for': ['sol'] }                         " Solidity syntax highlight
+Plug 'aklt/plantuml-syntax', {
+  \ 'for': ['uml', 'puml'] }                 " Syntax highlight for PlantUML
+Plug 'weirongxu/plantuml-previewer.vim', {
+  \ 'for': ['uml', 'puml'] }                 " Show interactive preview for PlantUML diagrams
+Plug 'jubnzv/IEC.vim', {
+  \ 'for': ['st', 'il'] }                    " IEC61131-3 languages
+Plug 'jubnzv/vim-scilla', {
+  \ 'for': ['scilla'] }                      " Scilla language (Zilliqa blockhain)
+Plug 'leafgarland/typescript-vim', {
+  \ 'for': ['typescript'] }                  " Typescript syntax highlight
+Plug 'Cian911/vim-cadence', {
+  \ 'for': ['cdc'] }                         " Cadence plugin (Flow blockhain)
+Plug 'othree/xml.vim', {
+  \ 'for': ['xml', 'html'] }                 " More convient working w/ html and xml tags
+Plug 'whonore/Coqtail', { 'for': ['coq'] }   " Coq plugin
 Plug 'elzr/vim-json', {'for': ['json'] }
-Plug 'jubnzv/mdeval.nvim'             " A plugin that executes code in markdown documents
-Plug 'akinsho/toggleterm.nvim'        " Wrapper for Neovim's built-in :terminal
-Plug 'nvim-lua/plenary.nvim'          " Various utilities used by other plugins
-Plug 'nvim-telescope/telescope.nvim'  " Fuzzy-finder
-" Plugin that works like projectile
-Plug 'nvim-telescope/telescope-project.nvim'
-" An extension for telescope.nvim that allows you to search symbols
-Plug 'nvim-telescope/telescope-symbols.nvim'
-" Plugin that shows list of diagnostics and persistent telescope results.
-Plug 'folke/trouble.nvim'
-" org-mode clone (old version without tree-sitter)
-Plug 'kristijanhusak/orgmode.nvim', { 'tag': '0.1' }
+Plug 'jubnzv/mdeval.nvim'                    " Execute code in markdown documents
+Plug 'akinsho/toggleterm.nvim'               " Wrapper for Neovim's built-in :terminal
+Plug 'nvim-lua/plenary.nvim'                 " Various utilities used by other plugins
+Plug 'nvim-telescope/telescope.nvim'         " Fuzzy-finder
+Plug 'nvim-telescope/telescope-project.nvim' " Emacs' Projectile
+Plug 'nvim-telescope/telescope-symbols.nvim' " Insert unicode symbols w/ telescope
+Plug 'folke/trouble.nvim'                    " Show persistent telescope results
+Plug 'nvim-treesitter/nvim-treesitter'       " tree-sitter integration
+Plug 'nvim-orgmode/orgmode.nvim'             " org-mode clone
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -880,8 +888,8 @@ let g:neoformat_enabled_html = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_java = ['astyle']
 let g:neoformat_enabled_python = ['autopep8']
-let g:neoformat_enabled_ocaml = ['ocpindent']
-" let g:neoformat_enabled_ocaml = ['ocamlformat']
+" let g:neoformat_enabled_ocaml = ['ocpindent']
+let g:neoformat_enabled_ocaml = ['ocamlformat']
 let g:neoformat_enabled_lua = ['luaformatter']
 let g:neoformat_enabled_haskell = ['ormolu']
 " }}}
@@ -957,42 +965,6 @@ require 'nvim-tree'.setup{
   update_focused_file = { enable = true },
   update_cwd          = true,
   filters             = { custom = { '.git', 'node_modules', '.cache', '__pycache__', '.clangd' } },
-  tree_indent_markers = true,
-  icons               = {
-    webdev_colors = true,
-    git_placement = "before",
-    padding = " ",
-    symlink_arrow = " ➛ ",
-    show = {
-      file = true,
-      folder = true,
-      folder_arrow = true,
-      git = true,
-    },
-    glyphs = {
-      default = "",
-      symlink = "",
-      folder = {
-        arrow_closed = "",
-        arrow_open = "",
-        default = "",
-        open = "",
-        empty = "",
-        empty_open = "",
-        symlink = "",
-        symlink_open = "",
-      },
-      git = {
-        unstaged = "✗",
-        staged = "✓",
-        unmerged = "",
-        renamed = "➜",
-        untracked = "★",
-        deleted = "",
-        ignored = "◌",
-      },
-    },
-  },
 }
 EOF
 " }}}
@@ -1291,12 +1263,19 @@ augroup lua_group
 augroup END
 " }}}
 
-" {{{ Javascript
+" {{{ Javascript & others
 augroup js_group
   au!
   au FileType javascript setlocal sw=2 ts=2 expandtab
   au FileType javascript RainbowToggleOn
   au FileType javascript nmap <buffer> <silent><A-o> <Nop>
+augroup END
+
+augroup ts_group
+  au!
+  au FileType typescript setlocal sw=2 ts=2 expandtab
+  au FileType typescript RainbowToggleOn
+  au FileType typescript nmap <buffer> <silent><A-o> <Nop>
 augroup END
 " }}}
 
@@ -1378,6 +1357,14 @@ au BufNewFile,BufRead *.lex setlocal ft=sml
 au BufNewFile,BufRead *.sig setlocal ft=sml
 au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
+" }}}
+
+" {{{ Scilla
+augroup scilla_group
+  au!
+  au FileType scilla setlocal tabstop=2 shiftwidth=2
+  au FileType scilla RainbowToggleOn
+augroup END
 " }}}
 
 " {{{ Racket and other Lisps/Schemes
@@ -1484,9 +1471,21 @@ au FileType json syntax match Comment +\/\/.\+$+
 
 " {{{ orgmode.nvim
 lua << EOF
+-- Load custom tree-sitter grammar for org filetype
+require('orgmode').setup_ts_grammar()
+
+-- Tree-sitter configuration
+require'nvim-treesitter.configs'.setup {
+  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = {'org'}, -- Required for spellcheck, some LaTex highlights and code block highlights that do not have ts grammar
+  },
+  ensure_installed = {'org'}, -- Or run :TSUpdate org
+}
+
 require('orgmode').setup({
-  org_agenda_files = {'~/Org/org-mode/Notes.org'},
-  -- Refile is useless in my current workflow.
+  org_agenda_files = {'~/Org/org-mode/*.org'},
   org_default_notes_file = '~/Org/org-mode/refile.org',
 })
 EOF
@@ -1538,7 +1537,7 @@ let g:mkdp_auto_close = 0
 " Open preview in the new firefox window
 " [1]: https://github.com/iamcco/markdown-preview.nvim/issues/19#issuecomment-464338238
 function! g:OpenBrowser(url)
-  silent exec "!/opt/firefox/firefox-bin -new-window " . a:url " &"
+  silent exec "!/opt/firefox/firefox -new-window " . a:url " &"
 endfunction
 let g:mkdp_browserfunc = 'g:OpenBrowser'
 cnoreabbrev MP MarkdownPreview

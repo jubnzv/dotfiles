@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -eo pipefail
+#set -eo pipefail
 
 # Temp file that exists when notifications are disabled.
 # See: ./toggle-notifications
@@ -41,9 +41,7 @@ fi
 xset dpms force off &
 
 disable_notifications
-amixer -c 0 -q set Master mute
-[[ `systemctl --all --type service | grep -q "arbtt"` ]] && systemctl --user stop arbtt.service
+pactl set-sink-mute 0 true
 i3lock -n --color=282828 -f
 enable_sound $muted
 enable_notifications
-[[ `systemctl --all --type service | grep -q "arbtt"` ]] && systemctl --user start arbtt.service

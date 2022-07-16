@@ -46,6 +46,10 @@ user = jubnzv
 [user]
 name = Georgiy Komarov
 email = jubnzv@gmail.com
+signingkey = 643E1CDB3B49BDB12007F4330A111D0324038877
+
+[commit]
+gpgsign = true
 
 [includeIf "gitdir:~/Work/*"]
 path = ~/.gitconfig.work

@@ -1,0 +1,11 @@
+snippet title
+---
+title: ${1:`!p snip.rv = snip.basename.replace('-', ' ').removesuffix('.md')`}
+date: `!v strftime("%Y-%m-%d")`
+tags: $2
+---
+
+# $1
+$0
+endsnippet
+

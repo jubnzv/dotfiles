@@ -1,1 +1,1 @@
-GuiFont! JetBrainsMono\ NF\ \[JB\]:h11
+GuiFont! JetBrainsMonoNL\ Nerd\ Font\ Mono:h11

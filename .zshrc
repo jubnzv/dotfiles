@@ -58,6 +58,7 @@ export PATH=$PATH:$HOME/.local/bin/
 export PATH=$PATH:$HOME/.cargo/bin
 export PATH=$PATH:$HOME/.luarocks/bin
 export PATH=$PATH:/usr/local/go/bin
+export PATH=$PATH:/usr/local/bin
 export PATH=$PATH:$GOPATH/bin/
 export PATH=$PATH:$LLVM/
 # export PATH=$PATH:$HOME/.dotnet
@@ -522,5 +523,10 @@ function zsh_stats() {
 
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
+
+# Setup nvm (a tool that installs npm)
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
