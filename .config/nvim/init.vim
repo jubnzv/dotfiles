@@ -86,14 +86,16 @@ Plug 'weirongxu/plantuml-previewer.vim', {
 Plug 'jubnzv/IEC.vim', {
   \ 'for': ['st', 'il'] }                    " IEC61131-3 languages
 Plug 'jubnzv/vim-scilla', {
-  \ 'for': ['scilla'] }                      " Scilla language (Zilliqa blockhain)
+  \ 'for': ['scilla'] }                      " Scilla language (Zilliqa blockchain)
 Plug 'leafgarland/typescript-vim', {
   \ 'for': ['typescript'] }                  " Typescript syntax highlight
 Plug 'Cian911/vim-cadence', {
-  \ 'for': ['cdc'] }                         " Cadence plugin (Flow blockhain)
+  \ 'for': ['cdc'] }                         " Cadence plugin (Flow blockchain)
 Plug 'othree/xml.vim', {
   \ 'for': ['xml', 'html'] }                 " More convient working w/ html and xml tags
 Plug 'whonore/Coqtail', { 'for': ['coq'] }   " Coq plugin
+Plug 'florentc/vim-tla', {
+  \ 'for': ['tla'] }                         " TLA+ plugin
 Plug 'elzr/vim-json', {'for': ['json'] }
 Plug 'jubnzv/mdeval.nvim'                    " Execute code in markdown documents
 Plug 'akinsho/toggleterm.nvim'               " Wrapper for Neovim's built-in :terminal
@@ -1363,7 +1365,7 @@ au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' |
 augroup scilla_group
   au!
   au FileType scilla setlocal tabstop=2 shiftwidth=2
-  au FileType scilla RainbowToggleOn
+  " au FileType scilla RainbowToggleOn
 augroup END
 " }}}
 
@@ -1402,6 +1404,13 @@ augroup nix_group
   au!
   au FileType nix setlocal sw=2 ts=2 expandtab
   au FileType nix RainbowToggleOn
+augroup END
+" }}}
+
+" {{{ TLA+
+augroup tla_group
+  au!
+  au FileType tla setlocal sw=2 ts=2 expandtab
 augroup END
 " }}}
 
@@ -1547,8 +1556,8 @@ augroup todo_group
   au!
   au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[\ \]" conceal cchar=
   au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[x\]" conceal cchar=
-  au WinEnter,VimEnter,FileType markdown,org :silent! call matchadd('MdTodo', 'TODO', -1)
-  au WinEnter,VimEnter,FileType markdown,org :silent! call matchadd('MdDone', 'DONE', -1)
+  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
+  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
 augroup end
 " }}}
 

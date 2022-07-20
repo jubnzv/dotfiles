@@ -53,6 +53,8 @@ export LLVM=$HOME/Dev/llvm-project/build/bin
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # export DOTNET_ROOT=$HOME/.dotnet
 
+export CLASSPATH=/usr/local/lib/tla2tools.jar:$CLASSPATH
+
 # PATH
 export PATH=$PATH:$HOME/.local/bin/
 export PATH=$PATH:$HOME/.cargo/bin
