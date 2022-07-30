@@ -225,7 +225,7 @@ highlight Todo ctermfg=130 guibg=#af3a03
 " }}}
 
 " {{{ Setup neovim-qt
-if (has('nvim') && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
+if (has('nvim') && len(nvim_list_uis()) > 0 && (!nvim_list_uis()[0]['ext_termcolors'] == 1))
   if has('win32')
     set guifont=JetBrainsMono\ NF:h11
   else
@@ -444,6 +444,21 @@ else
 endif
 " }}}
 
+" {{{ gF with column support
+function! GoToColumnInFile (fileInfoString)
+  let fileInfo = split(a:fileInfoString, ":")
+  let column = 0
+  normal! gF
+  if len(fileInfo) > 2
+    " Cut trailing `"`
+    let column = split(fileInfo[2], "\"")[0]
+    echo column
+    execute 'normal! ' . column . '|'
+  endif
+endfunction
+nnoremap <localleader>f :call GoToColumnInFile(expand("<cWORD>"))<CR>
+" }}}
+
 " Highlight search results incrementally (haya14busa/incsearch.vim)
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
@@ -516,7 +531,9 @@ function! LightlineCurrentFunctionVista() abort
   endif
   return l:method
 endfunction
-au VimEnter * call vista#RunForNearestMethodOrFunction()
+if &loadplugins
+  au VimEnter * call vista#RunForNearestMethodOrFunction()
+endif
 
 function! LightlineStrippedFilename() abort
 	let subs = split(expand('%'), "/")
@@ -1006,6 +1023,24 @@ inoremap <A-e> <C-O>:lua require'telescope.builtin'.symbols{ sources = {'emoji',
 
 nnoremap <leader>pn <cmd>lua require('telescope.builtin').find_files({prompt_title = "Notes", cwd = "~/Org/Notes/"})<cr>
 nnoremap <leader>pm <cmd>lua require('telescope.builtin').find_files({prompt_title = "org-mode", cwd = "~/Org/org-mode"})<cr>
+
+" {{{ Poor man's Zettelkasten
+lua << END
+local home = vim.fn.expand("~/Org/Notes/")
+local builtin = require("telescope.builtin")
+function backlinks()
+  local filename = vim.fn.expand("%:t")
+  builtin.live_grep({
+    results_title = "Backlinks to " .. filename,
+    prompt_title = "Search",
+    cwd = home,
+    search_dirs = { home },
+    default_text = "\\[.*\\]\\((./)?" .. filename .. "(#.+)*\\)",
+    find_command = { "fd" },
+  })
+end
+END
+" }}}
 " }}}
 
 " {{{ mdeval.nvim
@@ -1361,12 +1396,27 @@ au BufEnter *.sig let b:fswitchdst = 'sml' | let b:fswitchlocs = 'ifrel:/././' |
 au BufEnter *.sml let b:fswitchdst = 'sig' | let b:fswitchlocs = 'ifrel:/././' | let b:fsnonewfiles = 1
 " }}}
 
+" {{{ Coq
+function! g:CoqtailHighlight()
+  hi def CoqtailChecked guibg=#283f28
+  hi def CoqtailSent guibg=#28373f
+endfunction
+
+augroup coq_group
+  au!
+  au FileType coq-goals set nonu nornu
+  au FileType coq-infos set nonu nornu
+  au BufNewFile,BufReadPost *.vy set filetype=ocaml
+augroup END
+" }}}
+
 " {{{ Scilla
 augroup scilla_group
   au!
   au FileType scilla setlocal tabstop=2 shiftwidth=2
   " au FileType scilla RainbowToggleOn
 augroup END
+au BufNewFile,BufRead *.scilexp setlocal syntax=scilla
 " }}}
 
 " {{{ Racket and other Lisps/Schemes
@@ -1476,6 +1526,7 @@ augroup END
 " {{{ JSON
 let g:vim_json_syntax_conceal = 0
 au FileType json syntax match Comment +\/\/.\+$+
+au FileType json setlocal ts=2 sts=2 sw=2
 " }}}
 
 " {{{ orgmode.nvim
@@ -1495,7 +1546,37 @@ require'nvim-treesitter.configs'.setup {
 
 require('orgmode').setup({
   org_agenda_files = {'~/Org/org-mode/*.org'},
-  org_default_notes_file = '~/Org/org-mode/refile.org',
+  org_default_notes_file = '~/Org/org-mode/Notes.org',
+  notifications = {
+    enabled = true,
+    cron_enabled = true,
+    reminder_time = 30,
+    deadline_reminder = true,
+    scheduled_reminder = false,
+    notifier = function(tasks)
+      local result = {}
+      for _, task in ipairs(tasks) do
+        require('orgmode.utils').concat(result, {
+          string.format('# %s (%s)', task.category, task.humanized_duration),
+          string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title),
+          string.format('%s: <%s>', task.type, task.time:to_string())
+        })
+      end
+      if not vim.tbl_isempty(result) then
+        require('orgmode.notifications.notification_popup'):new({ content = result })
+      end
+    end,
+    cron_notifier = function(tasks)
+      for _, task in ipairs(tasks) do
+        local title = string.format('%s (%s)', task.category, task.humanized_duration)
+        local subtitle = string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title)
+        local date = string.format('%s: %s', task.type, task.time:to_string())
+        if vim.fn.executable('notify-send') == 1 then
+          vim.loop.spawn('notify-send', { args = { string.format('%s\n%s\n%s', title, subtitle, date) }})
+        end
+      end
+    end
+  },
 })
 EOF
 " }}}
@@ -1504,7 +1585,8 @@ EOF
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
- \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim'
+ \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim', 'coq',
+ \'scilla'
  \]
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
@@ -1538,6 +1620,9 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>зд a[]()<Esc>hpl%hi
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
+  " Open Zettelkasten prompt
+  au FileType markdown nnoremap <buffer> <localleader>f :lua backlinks()<CR>
+  au FileType markdown nnoremap <buffer> <localleader>а :lua backlinks()<CR>
 augroup end
 
 " Markdown preview in web-browser
