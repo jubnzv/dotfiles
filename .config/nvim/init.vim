@@ -69,6 +69,7 @@ Plug 'luochen1990/rainbow'                   " Rainbow Parentheses improved
 Plug 'dhruvasagar/vim-table-mode'            " VIM Table Mode for instant table creation
 Plug 'tpope/vim-markdown'                    " Extra settings for markdown
 Plug 'masukomi/vim-markdown-folding'         " Markdown folding by sections
+Plug 'jbyuki/nabla.nvim'                     " Previewing LaTeX formulas in popup windows
 Plug 'iamcco/markdown-preview.nvim', {
   \ 'do': { -> mkdp#util#install() } }       " Live markdown preview in the browser
 Plug 'lervag/vimtex', { 'for': ['tex'] }     " LaTeX plugin
@@ -109,8 +110,8 @@ Plug 'nvim-orgmode/orgmode.nvim'             " org-mode clone
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
-if isdirectory('/home/jubnzv/Dev/llvm-project/llvm/utils/vim/')
-  Plug '/home/jubnzv/Dev/llvm-project/llvm/utils/vim/'
+if isdirectory('/home/jubnzv/Sources/llvm-project/llvm/utils/vim/')
+  Plug '/home/jubnzv/Sources/llvm-project/llvm/utils/vim/'
 endif
 
 call plug#end()
@@ -491,7 +492,6 @@ let g:lightline = {
   \   'lsp_errors': 'LightlineLspErrors',
   \ },
   \ 'component_function': {
-  \   'current_function': 'LightlineCurrentFunctionVista',
   \   'filename': 'LightlineStrippedFilename',
   \   'gitbranch': 'FugitiveHead'
   \ },
@@ -929,7 +929,7 @@ nnoremap <silent> <localleader>ol :FSSplitRight<cr>
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
-nmap [v <Plug>(GitGutterPrevHunk)
+nmap [v <Plug>(GitGutTerPrevHunk)
 nmap ]v <Plug>(GitGutterNextHunk)
 nmap <leader>v- <Plug>(GitGutterStageHunk)
 nmap <leader>v_ <Plug>(GitGutterUndoHunk)
@@ -939,8 +939,6 @@ nmap <localleader>b <Plug>(git-messenger)
 nmap <localleader>vs :Git<cr>
 nmap <localleader>vp :Gpull<cr>
 nmap <localleader>vP :Gpush 
-nmap <localleader>ve :Gedit 
-nmap <localleader>vd :Gdiff HEAD
 nmap <localleader>vD :Git! diff<cr>
 nmap <localleader>vb :Git blame<cr>
 nmap <localleader>vf :GFiles<cr>
@@ -1040,6 +1038,9 @@ function backlinks()
   })
 end
 END
+if !empty('/home/jubnzv/.config/nvim/data/telescope-sources/zettel_tags.json')
+  nnoremap <leader>, <cmd>lua require'telescope.builtin'.symbols{ sources = {'zettel_tags'} }<cr>
+endif
 " }}}
 " }}}
 
@@ -1375,13 +1376,17 @@ augroup ocaml_group
   " au BufEnter *.mli let b:fswitchdst = 'ml'  | let b:fswitchlocs = 'ifrel:/././'
 augroup END
 
-" A few hacks for menhir parser generator.
+" A few hacks for the menhir parser generator.
 augroup menhir_group
   au!
   au BufNewFile,BufRead *.mly setlocal comments+=sO:*\ -,mO:*\ \ ,exO:*/,s1:/*,mb:*,ex:*/
   au BufNewFile,BufRead *.mly setlocal indentkeys=0{,0},0),0],:,0#,!^F,o,O,e
   au BufNewFile,BufRead *.mly syn region ocamlComment start="/\*" end="\*/" contains=@Spell,ocamlComment,ocamlTodo
 augroup END
+
+" cppo files are preprocessed OCaml: https://github.com/ocaml-community/cppo
+au BufNewFile,BufRead *.ml.cppo setlocal ft=ocaml
+au BufNewFile,BufRead *.mlg.cppo setlocal ft=ocaml
 
 " PolyML sources
 au BufNewFile,BufRead *.ML setlocal ft=sml
@@ -1408,6 +1413,9 @@ augroup coq_group
   au FileType coq-infos set nonu nornu
   au BufNewFile,BufReadPost *.vy set filetype=ocaml
 augroup END
+
+" Coq files preprocessed with cppo: https://github.com/ocaml-community/cppo
+au BufNewFile,BufRead *.v.cppo setlocal ft=coq
 " }}}
 
 " {{{ Scilla
@@ -1586,7 +1594,7 @@ let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
  \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim', 'coq',
- \'scilla'
+ \'scilla', 'llvm'
  \]
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
@@ -1623,6 +1631,9 @@ augroup markdown_group
   " Open Zettelkasten prompt
   au FileType markdown nnoremap <buffer> <localleader>f :lua backlinks()<CR>
   au FileType markdown nnoremap <buffer> <localleader>а :lua backlinks()<CR>
+  " Preview LaTeX formulas
+  au FileType markdown nnoremap <buffer> <localleader>p :lua require("nabla").popup()<CR>
+  au FileType markdown nnoremap <buffer> <localleader>з :lua require("nabla").popup()<CR>
 augroup end
 
 " Markdown preview in web-browser

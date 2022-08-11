@@ -1,19 +1,25 @@
 snippet pr
-Caml.Printf.printf "${0}\n"; (* // prdbg *)
+Printf.printf "${0}\n"; (* prdbg *)
 endsnippet
 
 snippet prd
-Caml.Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__; (* // prdbg *)
+Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__; (* prdbg *)
 endsnippet
 
 snippet prl
-List.iter ${1:list} ~f:(fun e -> Printf.printf "%${0:d} " ${2:e});
+Printf.printf "`!p snip.rv = snip.basename`:`!p snip.rv='%d'%snip._end[0]`: $1\n" $2; (* prdbg *)
 endsnippet
 
 snippet be
 begin
 	${VISUAL}$0
 end
+endsnippet
+
+snippet li
+List.iter
+  ${1:list}
+  ~f:(fun ${2:e} -> $3);
 endsnippet
 
 snippet lfl

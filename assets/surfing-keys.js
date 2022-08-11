@@ -36,11 +36,11 @@ getURLPath = ({ count = 0, domain = false } = {}) => {
   return path
 }
 copyURLPath = ({ count, domain } = {}) => () =>
-  Clipboard.write(getURLPath({ count, domain }))
+  api.Clipboard.write(getURLPath({ count, domain }))
 copyOrgLink = () =>
-  Clipboard.write(`[[${getCurrentLocation("href")}][${document.title}]]`)
+  api.Clipboard.write(`[[${getCurrentLocation("href")}][${document.title}]]`)
 copyMarkdownLink = () =>
-  Clipboard.write(`[${document.title}](${getCurrentLocation("href")})`)
+  api.Clipboard.write(`[${document.title}](${getCurrentLocation("href")})`)
 
 api.mapkey("yp", "Copy URL path of current page", copyURLPath());
 api.mapkey("ym", "Copy page URL/Title as Markdown link", copyMarkdownLink);

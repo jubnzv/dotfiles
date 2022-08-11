@@ -76,6 +76,9 @@ export DOCKER_ID_USER="jubnzv1"
 export CPPCHECK=$HOME/Dev/cppcheck/
 export FLAMEGRAPH=$HOME/Dev/tools/FlameGraph
 
+# Git hook used to check conventional commits.
+export SAILR_CONFIG=$HOME/.sailr/sailr.json
+
 # Debian tools
 export QUILT_PATCHES=debian/patches
 
@@ -381,7 +384,7 @@ bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # }}}
 
 # {{{ fzf
-[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 
 # {{{ Gruvbox color scheme
 # https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-gruvbox-dark-soft.config
