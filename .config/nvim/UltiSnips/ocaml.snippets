@@ -53,3 +53,54 @@ let endswith s1 s2 =
     let sub = String.sub s1 (len1 - len2) len2 in
     String.equal sub s2
 endsnippet
+
+snippet scid
+(SIdentifier.Name.as_string (SIdentifier.get_id $0))
+endsnippet
+
+snippet scitstmt "Iterate through Scilla statements"
+let rec ${1:iter_stmt} (s, _annot) =
+  match s with
+  | Bind (_id, ea) -> collect_matches_in_expr ea
+  | MatchStmt (_id, arms) ->
+      List.fold_left arms ~init:[] ~f:(fun acc (_pattern, stmts) ->
+          List.fold_left stmts ~init:[] ~f:(fun acc sa ->
+              $1 sa |> List.append acc)
+          |> List.append acc)
+  | Load _
+  | RemoteLoad _
+  | Store _
+  | MapUpdate _
+  | MapGet _
+  | RemoteMapGet _
+  | ReadFromBC _
+  | TypeCast _
+  | AcceptPayment
+  | Iterate _
+  | SendMsgs _
+  | CreateEvnt _
+  | CallProc _
+  | Throw _
+  | GasStmt _ ->
+      []
+endsnippet
+
+snippet scitexpr "Iterate through Scilla expressions"
+let rec ${1:iter_expr} (e, _annot) =
+  match e with
+  | Literal _ -> []
+  | Var (_id) -> []
+  | Let (_id, _ty, lhs, rhs) -> $1 lhs @ $1 rhs
+  | Message _ -> []
+  | Fun (_id, _ty, body) -> $1 body
+  | App (_id, _args) -> []
+  | Constr _ -> []
+  | MatchExpr (_id, arms) ->
+    List.fold_left arms ~init:[] ~f:(fun acc (_pattern, ea) ->
+      $1 ea |> List.append acc)
+  | Builtin _ -> []
+  | TFun (_id, body) -> $1 body
+  | TApp _ -> []
+  | Fixpoint (_id, _ty, ea) -> $1 ea
+  | GasExpr (_, ea) -> $1 ea
+endsnippet

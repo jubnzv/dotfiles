@@ -42,6 +42,7 @@ Plug 'itchyny/vim-cursorword'                " Plugin to highlight the word unde
 Plug 'tpope/vim-fugitive'                    " Git wrapper
 Plug 'cohama/agit.vim'                       " gitk clone for vim
 Plug 'airblade/vim-gitgutter'                " Shows git status on a gutter column
+Plug 'statox/vim-compare-lines'              " Compares symbol in two lines in the buffer
 Plug 'kyazdani42/nvim-tree.lua'              " A tree explorer plugin for vim
 Plug 'kyazdani42/nvim-web-devicons'          " devicons for nvim-tree.lua
 Plug 'mbbill/undotree'                       " Emacs' undotree
@@ -164,16 +165,8 @@ set mouse=a
 " Disable syntax highlighting for large files
 au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
-" Add additional information in popups (VIM 8.0+ only)
-if !has('nvim')
-  set completeopt+=popup
-  set completepopup=height:10,width:60,highlight:Pmenu,border:off
-endif
-
-" Live Substitution
-" if has('nvim')
-"   set inccommand=split
-" endif
+" Enable spellchecking everywhere
+set spell spelllang=en_us,ru_yo
 
 " Default conceal settings
 set conceallevel=0
@@ -189,11 +182,9 @@ let g:netrw_browsex_viewer = "xdg-open"
 " }}}
 
 " {{{ UI options
-if has('nvim-0.4')
-  set termguicolors
-  set winblend=5    " Transparency for floating windows
-  set pumblend=5    " Transparency for popup menus
-endif
+set termguicolors
+set winblend=5    " Transparency for floating windows
+set pumblend=5    " Transparency for popup menus
 
 set guioptions-=m                           " Remove menu bar
 set guioptions-=T                           " Remove toolbar
@@ -337,25 +328,6 @@ augroup END
 
 " Remove the Windows ^M - when the encodings gets messed up
 noremap <leader>rm mmHmt:%s/<C-V><CR>//ge<cr>'tzt'm
-
-" Spellchecking
-map <F10> :setlocal spell! spelllang=en_us,ru_yo<CR>
-imap <F10> <C-o>:setlocal spell! spelllang=en_us,ru_yo<CR>
-" }}}
-
-" {{{ Toggle quickfix window
-function! QuickFix_toggle()
-    for i in range(1, winnr('$'))
-        let bnum = winbufnr(i)
-        if getbufvar(bnum, '&buftype') == 'quickfix'
-            cclose
-            return
-        endif
-    endfor
-    copen
-    " lopen
-  endfunction
-nnoremap <silent> <leader>q :call QuickFix_toggle()<cr>
 " }}}
 
 " Editing neighbors
@@ -368,7 +340,7 @@ map <leader>et :tabe %%
 map <leader>ec :cd %%<cr>
 map <leader>eC :cd ..<cr>
 
-" Tabs managemenent
+" Tabs management
 nnoremap <A-t> :tabnew<CR>
 inoremap <A-t> <C-O>:tabnew<CR>
 nnoremap <A-Tab> :tabnext<CR>
@@ -426,7 +398,7 @@ nnoremap <silent> <leader>r` :%s/ё/е/g<cr>
 " Find all cyrillic characters
 nnoremap <silent> <leader>/c /[\d1040-\d1103]<cr>
 
-" Reselect the text you just pasted
+" Re-select the text you just pasted
 nnoremap gp `[v`]
 
 " Switch to the recent buffer
@@ -1457,14 +1429,6 @@ augroup vim_group
 augroup END
 " }}}
 
-" {{{ nix language
-augroup nix_group
-  au!
-  au FileType nix setlocal sw=2 ts=2 expandtab
-  au FileType nix RainbowToggleOn
-augroup END
-" }}}
-
 " {{{ TLA+
 augroup tla_group
   au!
@@ -1508,7 +1472,7 @@ augroup tex_group
   au!
   au FileType tex set sw=2
   au FileType tex call Togglegjgk()
-  au FileType tex setlocal spell! spelllang=en_us,ru_yo
+  " au FileType tex setlocal spell! spelllang=en_us,ru_yo
   au FileType tex nnoremap <buffer> <silent> <leader>pi :call pasteimage#LatexClipboardImage()<CR>
   au FileType tex nnoremap <buffer> <silent> <leader>зш :call pasteimage#LatexClipboardImage()<CR>
 augroup end
@@ -1526,15 +1490,18 @@ augroup rst_group
   au FileType rst setlocal sw=4 ts=4 expandtab
   au FileType rst setlocal textwidth=80
   au Filetype rst setlocal foldmethod=expr
-  au FileType rst setlocal spell! spelllang=en_us,ru_ru
+  " au FileType rst setlocal spell! spelllang=en_us,ru_ru
   au FileType rst call Togglegjgk()
 augroup END
 " }}}
 
 " {{{ JSON
-let g:vim_json_syntax_conceal = 0
-au FileType json syntax match Comment +\/\/.\+$+
-au FileType json setlocal ts=2 sts=2 sw=2
+augroup json_group
+  au!
+  let g:vim_json_syntax_conceal = 0
+  au FileType json syntax match Comment +\/\/.\+$+
+  au FileType json setlocal ts=2 sts=2 sw=2
+augroup END
 " }}}
 
 " {{{ orgmode.nvim
@@ -1547,7 +1514,7 @@ require'nvim-treesitter.configs'.setup {
   -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
   highlight = {
     enable = true,
-    additional_vim_regex_highlighting = {'org'}, -- Required for spellcheck, some LaTex highlights and code block highlights that do not have ts grammar
+    additional_vim_regex_highlighting = {'org'}, -- Required for spellcheck, some LaTeX highlights and code block highlights that do not have ts grammar
   },
   ensure_installed = {'org'}, -- Or run :TSUpdate org
 }
@@ -1555,6 +1522,12 @@ require'nvim-treesitter.configs'.setup {
 require('orgmode').setup({
   org_agenda_files = {'~/Org/org-mode/*.org'},
   org_default_notes_file = '~/Org/org-mode/Notes.org',
+  -- Statuses adopted from the xit format: https://xit.jotaen.net/:
+  --  <no mark> - todo
+  --  @         - ongoing
+  --  x         - done
+  --  ~         - obsolete
+  org_todo_keywords = { '@', '|', 'x', '~' },
   notifications = {
     enabled = true,
     cron_enabled = true,
@@ -1594,14 +1567,14 @@ let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
  \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim', 'coq',
- \'scilla', 'llvm'
+ \'scilla', 'llvm', 'solidity'
  \]
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
 augroup markdown_group
   au!
   au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
-  au FileType markdown setlocal spell! spelllang=en_us,ru_yo
+  " au FileType markdown setlocal spell! spelllang=en_us,ru_yo
   au FileType markdown call Togglegjgk()
   " Fold on <Tab> like org-mode does
   " au FileType markdown nnoremap <buffer> <Tab> za<CR>k
@@ -1661,7 +1634,7 @@ augroup end
 au! BufNewFile,BufReadPost *.{uml,puml} set filetype=plantuml
 augroup plantuml_group
     au!
-    au FileType plantuml setlocal spell! spelllang=en_us,ru_yo
+    " au FileType plantuml setlocal spell! spelllang=en_us,ru_yo
 augroup END
 " }}}
 
