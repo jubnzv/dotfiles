@@ -100,7 +100,7 @@ for_window [class="^Slack$"] move container to workspace $ws_0
 for_window [class="TelegramDesktop"] move container to workspace $ws_0
 for_window [class="discord"] move container to workspace $ws_0
 for_window [class="Hexchat"] move container to workspace $ws_0
-for_window [class="^[Tt]hunderbird$"] move container to workspace $ws_0
+for_window [class="^[Tt]hunderbird(-default)?$"] move container to workspace $ws_0
 for_window [class="^Anki$" title="^1-й пользователь - Anki$"] move container to workspace $ws_a
 for_window [class="^Anki$" title="^User 1 - Anki$"] move container to workspace $ws_a
 for_window [class="^Anki$" title="^Добавить$"] floating enable, mark anki_add

@@ -1394,7 +1394,7 @@ au BufNewFile,BufRead *.v.cppo setlocal ft=coq
 augroup scilla_group
   au!
   au FileType scilla setlocal tabstop=2 shiftwidth=2
-  " au FileType scilla RainbowToggleOn
+  au FileType scilla setlocal nospell
 augroup END
 au BufNewFile,BufRead *.scilexp setlocal syntax=scilla
 " }}}
@@ -1560,6 +1560,10 @@ require('orgmode').setup({
   },
 })
 EOF
+
+highlight! OrgTSHeadlineLevel1 ctermfg=214 guifg=#fabd2f
+highlight! OrgTSHeadlineLevel3 ctermfg=109 guifg=#83a598
+highlight! OrgTSTag ctermfg=208 cterm=bold guifg=#fe8019 gui=bold
 " }}}
 
 " {{{ Markdown & org-mode
@@ -1602,8 +1606,7 @@ augroup markdown_group
   " Generate TOC using https://github.com/ekalinin/github-markdown-toc.go
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
   " Open Zettelkasten prompt
-  au FileType markdown nnoremap <buffer> <localleader>f :lua backlinks()<CR>
-  au FileType markdown nnoremap <buffer> <localleader>а :lua backlinks()<CR>
+  au FileType markdown nnoremap <buffer> <localleader>zb :lua backlinks()<CR>
   " Preview LaTeX formulas
   au FileType markdown nnoremap <buffer> <localleader>p :lua require("nabla").popup()<CR>
   au FileType markdown nnoremap <buffer> <localleader>з :lua require("nabla").popup()<CR>
