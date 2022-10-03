@@ -875,6 +875,9 @@ nnoremap <localleader>se :UltiSnipsEdit<CR>
 " {{{ neoformat
 nnoremap <leader>lf :Neoformat<CR>
 
+" Enable for debugging
+" let g:neoformat_verbose = 1
+
 let g:neoformat_enabled_html = ['prettier']
 let g:neoformat_enabled_css = ['prettier']
 let g:neoformat_enabled_java = ['astyle']
@@ -883,6 +886,7 @@ let g:neoformat_enabled_python = ['autopep8']
 let g:neoformat_enabled_ocaml = ['ocamlformat']
 let g:neoformat_enabled_lua = ['luaformatter']
 let g:neoformat_enabled_haskell = ['ormolu']
+let g:neoformat_enabled_scilla = ['scilla_fmt']
 " }}}
 
 " {{{ EditorConfig
