@@ -1,13 +1,13 @@
 snippet pr
-Printf.printf "${0}\n"; (* prdbg *)
+Printf.printf "${0}\n";
 endsnippet
 
 snippet prd
-Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__; (* prdbg *)
+Printf.printf "%s:%i: ${0}\n" __FILE__ __LINE__;
 endsnippet
 
 snippet prl
-Printf.printf "`!p snip.rv = snip.basename`:`!p snip.rv='%d'%snip._end[0]`: $1\n" $2; (* prdbg *)
+Printf.printf "`!p snip.rv = snip.basename`:`!p snip.rv='%d'%snip._end[0]`: $1\n" $2;
 endsnippet
 
 snippet be
@@ -80,9 +80,9 @@ $0
 endsnippet
 
 snippet scitstmt "Iterate through Scilla statements"
-let rec ${1:iter_stmt} (s, _annot) =
+let rec ${1:iter_stmt} (s, _ann) =
   match s with
-  | Bind (_id, ea) -> collect_matches_in_expr ea
+  | Bind (_id, ea) -> (* TODO: Handle expr *) ea
   | MatchStmt (_id, arms) ->
       List.fold_left arms ~init:[] ~f:(fun acc (_pattern, stmts) ->
           List.fold_left stmts ~init:[] ~f:(fun acc sa ->
@@ -107,7 +107,7 @@ let rec ${1:iter_stmt} (s, _annot) =
 endsnippet
 
 snippet scitexpr "Iterate through Scilla expressions"
-let rec ${1:iter_expr} (e, _annot) =
+let rec ${1:iter_expr} (e, _ann) =
   match e with
   | Literal _ -> []
   | Var (_id) -> []

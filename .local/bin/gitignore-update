@@ -25,6 +25,9 @@ def main(lang):
 
     gitignore_path = os.path.join(GITIGNORE_PATH, gitignore_name)
     os.system(f"cat {gitignore_path} >> .gitignore")
+    os.system("tags >> .gitignore")
+    if gitignore_name == 'OCaml':
+        os.system("_build >> .gitignore")
     sys.exit(0)
 
 

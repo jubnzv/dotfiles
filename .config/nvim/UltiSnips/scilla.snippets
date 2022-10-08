@@ -24,3 +24,15 @@ match $1 with
 | $0
 end
 endsnippet
+
+snippet one_msg
+let one_msg =
+  fun (msg : Message) =>
+    let nil_msg = Nil {Message} in
+    Cons {Message} msg nil_msg
+endsnippet
+
+snippet event
+e = {_eventname : "$1"; $0};
+event e
+endsnippet

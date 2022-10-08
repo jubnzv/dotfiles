@@ -70,7 +70,6 @@ Plug 'luochen1990/rainbow'                   " Rainbow Parentheses improved
 Plug 'dhruvasagar/vim-table-mode'            " VIM Table Mode for instant table creation
 Plug 'tpope/vim-markdown'                    " Extra settings for markdown
 Plug 'masukomi/vim-markdown-folding'         " Markdown folding by sections
-Plug 'jbyuki/nabla.nvim'                     " Previewing LaTeX formulas in popup windows
 Plug 'iamcco/markdown-preview.nvim', {
   \ 'do': { -> mkdp#util#install() } }       " Live markdown preview in the browser
 Plug 'lervag/vimtex', { 'for': ['tex'] }     " LaTeX plugin
@@ -1529,9 +1528,9 @@ require('orgmode').setup({
   -- Statuses adopted from the xit format: https://xit.jotaen.net/:
   --  <no mark> - todo
   --  @         - ongoing
-  --  x         - done
+  --  X         - done
   --  ~         - obsolete
-  org_todo_keywords = { '@', '|', 'x', '~' },
+  org_todo_keywords = { '@', '|', 'X', '~' },
   notifications = {
     enabled = true,
     cron_enabled = true,
@@ -1611,9 +1610,6 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
   " Open Zettelkasten prompt
   au FileType markdown nnoremap <buffer> <localleader>zb :lua backlinks()<CR>
-  " Preview LaTeX formulas
-  au FileType markdown nnoremap <buffer> <localleader>p :lua require("nabla").popup()<CR>
-  au FileType markdown nnoremap <buffer> <localleader>з :lua require("nabla").popup()<CR>
 augroup end
 
 " Markdown preview in web-browser
