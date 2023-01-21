@@ -37,11 +37,12 @@ if [[ $(pacmd list-sinks | grep mute) == *yes* ]]; then
     muted=1
 fi
 
-# Do lock.
 xset dpms force off &
-
 disable_notifications
 pactl set-sink-mute 0 true
 i3lock -n --color=282828 -f
+
+# After unlock
+~/.config/i3/setup-keys.sh
 enable_sound $muted
 enable_notifications

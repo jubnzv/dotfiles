@@ -53,6 +53,9 @@ export LLVM=$HOME/Dev/llvm-project/build/bin
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 # export DOTNET_ROOT=$HOME/.dotnet
 
+export VCPKG_DISABLE_METRICS=1
+export VCPKG_ROOT=/home/jubnzv/Sources/vcpkg
+
 export CLASSPATH=/usr/local/lib/tla2tools.jar:$CLASSPATH
 
 # PATH

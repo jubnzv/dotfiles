@@ -31,27 +31,14 @@ include ~/.config/taskwarrior/gruvbox-dark-256.theme
 # Bugwarrior configuration
 # include ~/.config/taskwarrior/bugwarrior.rc
 
-# {{{ User Defined Attributes (UDA)
-# Estimated time in hours
-# [1]: https://taskwarrior.org/docs/udas.html
-uda.estimate.type=duration
-uda.estimate.label=Est
-
-# Required "brain power" for a task
-# [1]: https://cs-syd.eu/posts/2015-07-12-gtd-with-taskwarrior-part-5-doing
-uda.brainpower.type=string
-uda.brainpower.label=BP
-uda.brainpower.values=H,M,L
-# }}}
-
 # {{{ Reports
-report.next.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
-report.next.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Est,S,Due,Until,Description,Urg
+report.next.columns=id,start.age,entry.age,depends,priority,project,tags,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.next.labels=ID,Active,Age,Deps,P,Project,Tag,S,Due,Until,Description,Urg
 # report.next.filter=-trac # bugwarrior is messy
 
 # Like "next" report, but show by creation date
-report.recent.columns=id,start.age,entry.age,depends,priority,brainpower,project,tags,estimate,scheduled.countdown,due.relative,until.remaining,description.count,urgency
-report.recent.labels=ID,Active,Age,Deps,P,BP,Project,Tag,Est,S,Due,Until,Description,Urg
+report.recent.columns=id,start.age,entry.age,depends,priority,project,tags,scheduled.countdown,due.relative,until.remaining,description.count,urgency
+report.recent.labels=ID,Active,Age,Deps,P,Project,Tag,S,Due,Until,Description,Urg
 report.recent.description=Recently added tasks
 report.recent.filter=status:pending limit:page
 report.recent.sort=entry-,urgency-
@@ -79,5 +66,3 @@ report.recurring_full.columns=id,entry,modified,start.active,status,recur,wait.r
 report.recurring_full.filter=+PARENT or +CHILD
 report.recurring_full.sort=parent,due
 #}}}
-
-# vim:ft=conf:foldlevel=0:tw=100:

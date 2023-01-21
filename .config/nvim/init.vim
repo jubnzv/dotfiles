@@ -86,8 +86,6 @@ Plug 'weirongxu/plantuml-previewer.vim', {
   \ 'for': ['uml', 'puml'] }                 " Show interactive preview for PlantUML diagrams
 Plug 'jubnzv/IEC.vim', {
   \ 'for': ['st', 'il'] }                    " IEC61131-3 languages
-Plug 'jubnzv/vim-scilla', {
-  \ 'for': ['scilla'] }                      " Scilla language (Zilliqa blockchain)
 Plug 'leafgarland/typescript-vim', {
   \ 'for': ['typescript'] }                  " Typescript syntax highlight
 Plug 'Cian911/vim-cadence', {
@@ -107,11 +105,18 @@ Plug 'nvim-telescope/telescope-symbols.nvim' " Insert unicode symbols w/ telesco
 Plug 'folke/trouble.nvim'                    " Show persistent telescope results
 Plug 'nvim-treesitter/nvim-treesitter'       " tree-sitter integration
 Plug 'nvim-orgmode/orgmode.nvim'             " org-mode clone
+Plug 'stevearc/dressing.nvim'                " A plugin that replaces most of built-in menus with telescope
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
 if isdirectory('/home/jubnzv/Sources/llvm-project/llvm/utils/vim/')
   Plug '/home/jubnzv/Sources/llvm-project/llvm/utils/vim/'
+endif
+
+if isdirectory('/home/jubnzv/Dev/scilla.nvim/')
+  Plug '/home/jubnzv/Dev/scilla.nvim/'
+else
+  Plug 'jubnzv/vim-scilla', { 'for': ['scilla'] }
 endif
 
 call plug#end()
@@ -164,8 +169,8 @@ set mouse=a
 " Disable syntax highlighting for large files
 au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
 
-" Enable spellchecking everywhere
-set spell spelllang=en_us,ru_yo
+" Disable spellchecking globally, because it works incorrectly for the most of filetypes.
+set nospell
 
 " Default conceal settings
 set conceallevel=0
@@ -883,7 +888,7 @@ let g:neoformat_enabled_java = ['astyle']
 let g:neoformat_enabled_python = ['autopep8']
 " let g:neoformat_enabled_ocaml = ['ocpindent']
 let g:neoformat_enabled_ocaml = ['ocamlformat']
-let g:neoformat_enabled_lua = ['luaformatter']
+let g:neoformat_enabled_lua = ['stylua']
 let g:neoformat_enabled_haskell = ['ormolu']
 let g:neoformat_enabled_scilla = ['scilla_fmt']
 " }}}
@@ -985,7 +990,7 @@ nnoremap gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
 nnoremap gs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
 nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
 nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
-nnoremap <localleader>a <cmd>lua require('telescope.builtin').lsp_code_actions()<cr>
+nnoremap <localleader>a <cmd>lua vim.lsp.buf.code_action()<cr>
 nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
 nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
 nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
@@ -1254,6 +1259,7 @@ augroup sol_group
   au!
   au FileType solidity RainbowToggleOn
   au FileType solidity nmap <buffer> <silent><A-o> <Nop>
+  au FileType solidity setlocal nospell
   au FileType solidity nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
 augroup END
 " }}}
@@ -1345,6 +1351,8 @@ augroup ocaml_group
   " Rebind switching keys defined at default ocaml.vim
   au FileType ocaml nmap <buffer> <silent><A-o> <Plug>OCamlSwitchEdit
   au FileType ocaml nmap <buffer> <silent><LocalLeader><A-o> <Plug>OCamlSwitchNewWin
+
+  au FileType ocaml setlocal spell spelllang=en_us
 
   " FSwitch associations
   " au BufEnter *.ml  let b:fswitchdst = 'mli' | let b:fswitchlocs = 'ifrel:/././'
@@ -1490,10 +1498,11 @@ let g:riv_fold_info_pos='left'
 
 augroup rst_group
   au!
+  au FileType rst setlocal syn=off
   au FileType rst setlocal sw=4 ts=4 expandtab
   au FileType rst setlocal textwidth=80
   au Filetype rst setlocal foldmethod=expr
-  " au FileType rst setlocal spell! spelllang=en_us,ru_ru
+  au FileType rst setlocal spell! spelllang=en_us,ru_ru
   au FileType rst call Togglegjgk()
 augroup END
 " }}}
@@ -1581,6 +1590,7 @@ highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
 augroup markdown_group
   au!
   au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+  au FileType markdown nmap <buffer> <silent><A-o> <Nop>
   " au FileType markdown setlocal spell! spelllang=en_us,ru_yo
   au FileType markdown call Togglegjgk()
   " Fold on <Tab> like org-mode does
@@ -1610,6 +1620,7 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
   " Open Zettelkasten prompt
   au FileType markdown nnoremap <buffer> <localleader>zb :lua backlinks()<CR>
+  au FileType markdown setlocal spell spelllang=en_us,ru_yo
 augroup end
 
 " Markdown preview in web-browser
