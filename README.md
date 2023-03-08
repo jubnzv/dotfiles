@@ -1,9 +1,8 @@
 ## dotfiles
 
-### Firefox
+### Post-install steps
 
-Some additional actions required to setup Firefox.
-
+#### Firefox
 Install the addons:
 * [AdNauseam](https://addons.mozilla.org/en-US/firefox/addon/adnauseam/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
 * [OctoTree](https://addons.mozilla.org/en-US/firefox/addon/octotree/?utm_source=addons.mozilla.org&utm_medium=referral&utm_content=search)
@@ -17,10 +16,6 @@ Go to [about:config](about:config) and set:
 * `browser.fullscreen.autohide = false`
 
 Set the [surfing keys settings](https://raw.githubusercontent.com/jubnzv/dotfiles/master/assets/surfing-keys.js).
-
-### External assets
-
-* [Ergodox EZ layout](https://configure.ergodox-ez.com/ergodox-ez/layouts/pjYeR/latest/0)
 
 ### Previous configurations
 

@@ -42,6 +42,7 @@ Plug 'itchyny/vim-cursorword'                " Plugin to highlight the word unde
 Plug 'tpope/vim-fugitive'                    " Git wrapper
 Plug 'cohama/agit.vim'                       " gitk clone for vim
 Plug 'airblade/vim-gitgutter'                " Shows git status on a gutter column
+Plug 'ruifm/gitlinker.nvim'                  " Generate shareable links for git frontends
 Plug 'statox/vim-compare-lines'              " Compares symbol in two lines in the buffer
 Plug 'kyazdani42/nvim-tree.lua'              " A tree explorer plugin for vim
 Plug 'kyazdani42/nvim-web-devicons'          " devicons for nvim-tree.lua
@@ -77,6 +78,7 @@ Plug 'wlangstroth/vim-racket', {
   \ 'for': ['rkt'] }                         " Racket syntax highlight
 Plug 'rust-lang/rust.vim', {
   \ 'for': ['rust'] }                        " Rust plugin
+Plug 'qnighy/lalrpop.vim'                    " Plugin for lalrpop parser generator
 Plug 'fatih/vim-go', { 'for': ['go'] }       " (bloated) golang environment
 Plug 'tomlion/vim-solidity', {
   \ 'for': ['sol'] }                         " Solidity syntax highlight
@@ -905,7 +907,7 @@ nnoremap <silent> <localleader>ok :FSSplitAbove<cr>
 nnoremap <silent> <localleader>ol :FSSplitRight<cr>
 " }}}
 
-" {{{ Git workflow
+" {{{ Git
 let g:gitgutter_override_sign_column_highlight = 0
 let g:gitgutter_map_keys = 0
 
@@ -924,15 +926,14 @@ nmap <localleader>vb :Git blame<cr>
 nmap <localleader>vf :GFiles<cr>
 nmap <localleader>vl :Agit<cr>
 
-" {{{ Copy git link
-function! CopyGitLink(...) range
-  redir @+
-  silent echo gitlink#GitLink(get(a:, 1, 0))
-  redir END
-endfunction
-nmap <silent> <leader>vy :call CopyGitLink()<CR>
-vmap <silent> <leader>vy :call CopyGitLink(1)<CR>
-" }}}
+" Copy a shareable link to git frontend
+lua << EOF
+require"gitlinker".setup()
+vim.api.nvim_set_keymap('n', '<leader>vo',
+  '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>', {})
+vim.api.nvim_set_keymap('v', '<leader>vo',
+  '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>', {})
+EOF
 " }}}
 
 " {{{ table-mode
@@ -1270,6 +1271,7 @@ augroup rust_group
   au FileType rust RainbowToggleOn
   au FileType rust nmap <buffer> <silent><A-o> <Nop>
   au FileType rust nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
+  au FileType rust hi SpecialComment guifg=#689d6a
 augroup END
 " }}}
 
@@ -1534,12 +1536,6 @@ require'nvim-treesitter.configs'.setup {
 require('orgmode').setup({
   org_agenda_files = {'~/Org/org-mode/*.org'},
   org_default_notes_file = '~/Org/org-mode/Notes.org',
-  -- Statuses adopted from the xit format: https://xit.jotaen.net/:
-  --  <no mark> - todo
-  --  @         - ongoing
-  --  X         - done
-  --  ~         - obsolete
-  org_todo_keywords = { '@', '|', 'X', '~' },
   notifications = {
     enabled = true,
     cron_enabled = true,

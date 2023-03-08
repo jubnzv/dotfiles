@@ -15,7 +15,7 @@ print_status() {
 	if amixer get Capture | grep -q '\[off\]'; then
 		echo %{F#ff6200}""%{F-}
 	else
-		echo %{F#585858}""%{F-}
+		echo %{F#689d6a}""%{F-}
 	fi
 }
 

@@ -3,7 +3,7 @@
 
 # Temp file that exists when notifications are disabled.
 # See: ./toggle-notifications
-TMP_FILE=/tmp/dunst-notifications-disabled
+TMP_FILE=/tmp/"$(whoami)-dunst-notifications-disabled"
 
 # Does notifications already disabled?
 N_DISABLED=0
