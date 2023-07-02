@@ -21,7 +21,6 @@ ${BORG_BIN} create                            \
     /home/jubnzv/Pictures           \
     /home/jubnzv/dotfiles           \
     /home/jubnzv/VPN/               \
-    /home/jubnzv/github-backup      \
     /home/jubnzv/.config/           \
     /home/jubnzv/.local/            \
     /home/jubnzv/.thunderbird/      \

@@ -15,3 +15,17 @@ endsnippet
 snippet lline
 ===============================================================================
 endsnippet
+
+# Map update operations
+snippet mu1
+(* ${1}[$2] = $3 *)
+$1' = [ $1 EXCEPT ![$2] = $3 ]
+endsnippet
+snippet mu2
+(* ${1}[$2][$3] = $4 *)
+$1' = [ $1 EXCEPT ![$2] = [ $1[$2] EXCEPT ![$3] = $4 ] ]
+endsnippet
+snippet mu3
+(* ${1}[$2][$3][$4] = $5 *)
+$1' = [ $1 EXCEPT ![$2] = [ $1[$2] EXCEPT ![$3] = [ $1[$2][$3] EXCEPT ![$4] = $5 ] ] ]
+endsnippet

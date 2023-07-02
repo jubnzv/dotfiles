@@ -106,6 +106,9 @@ export VISUAL=$EDITOR
 export PYFLAKES_BUILTINS='_' # Don't treat i18n '_' as error
 export PYTHONSTARTUP=~/.pythonrc
 
+# https://www.lotharschulz.info/2018/10/21/transparent-editing-of-gpg-encrypted-files-with-vim/
+export GPG_TTY=`tty`
+
 # OCaml environment
 if [[ -x "$(command -v opam)" ]]; then
   eval "$(opam config env)"
@@ -530,7 +533,7 @@ function zsh_stats() {
 # }}}
 
 # Auto start X
-if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty1 ]]; then exec startx; fi
+if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty2 ]]; then exec startx; fi
 
 # Setup nvm (a tool that installs npm)
 export NVM_DIR="$HOME/.nvm"

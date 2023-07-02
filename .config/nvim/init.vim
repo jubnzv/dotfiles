@@ -72,7 +72,8 @@ Plug 'dhruvasagar/vim-table-mode'            " VIM Table Mode for instant table 
 Plug 'tpope/vim-markdown'                    " Extra settings for markdown
 Plug 'masukomi/vim-markdown-folding'         " Markdown folding by sections
 Plug 'iamcco/markdown-preview.nvim', {
-  \ 'do': { -> mkdp#util#install() } }       " Live markdown preview in the browser
+  \ 'do': { -> mkdp#util#install() },
+  \ 'tag': 'v0.0.10' }                       " Live markdown preview in the browser
 Plug 'lervag/vimtex', { 'for': ['tex'] }     " LaTeX plugin
 Plug 'wlangstroth/vim-racket', {
   \ 'for': ['rkt'] }                         " Racket syntax highlight
@@ -108,6 +109,7 @@ Plug 'folke/trouble.nvim'                    " Show persistent telescope results
 Plug 'nvim-treesitter/nvim-treesitter'       " tree-sitter integration
 Plug 'nvim-orgmode/orgmode.nvim'             " org-mode clone
 Plug 'stevearc/dressing.nvim'                " A plugin that replaces most of built-in menus with telescope
+Plug 'jamessan/vim-gnupg/'                   " Needed for transparent edit for GPG-encrypted files
 
 " LLVM plugin
 " See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
@@ -673,7 +675,7 @@ let g:AutoPairsShortcutToggle = ''
 let g:matchup_matchparen_status_offscreen=0
 
 " Insert fold block
-let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commentstring, '%s')[0] . " }}}"
+" let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commentstring, '%s')[0] . " }}}"
 " }}}
 
 " {{{ Folding settings
@@ -919,8 +921,6 @@ nmap <leader>vr <Plug>(GitGutterRefresh)
 nmap <localleader>v <Plug>(GitGutterPreviewHunk)
 nmap <localleader>b <Plug>(git-messenger)
 nmap <localleader>vs :Git<cr>
-nmap <localleader>vp :Gpull<cr>
-nmap <localleader>vP :Gpush 
 nmap <localleader>vD :Git! diff<cr>
 nmap <localleader>vb :Git blame<cr>
 nmap <localleader>vf :GFiles<cr>
@@ -1080,6 +1080,11 @@ let g:cursorword_highlight = 0
 highlight CursorWord0 ctermbg=237 guibg=#3c3836
 " }}}
 
+" {{{ GPG
+let g:GPGPreferArmor=1
+let g:GPGDefaultRecipients=["jubnzv@gmail.com"]
+" }}}
+
 " {{{ Built-in LSP server and related settings: keybinginds, helper plugins, etc.
 lua << EOF
 local lsp = require('lspconfig')
@@ -1094,7 +1099,26 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
-if vim.fn.executable('clangd') then
+-- Enables LSP server if its `executable` is present and the current directory not in `forbidden_directories`
+local enable_if = function(executable, forbidden_directories)
+  if not vim.fn.executable(executable) then
+    return false
+  end
+
+  if forbidden_directories then
+    local current_directory = vim.fn.getcwd()
+    local basename = vim.fn.fnamemodify(current_directory, ':t')
+    for _, value in ipairs(forbidden_directories) do
+      if value == basename then
+        return false
+      end
+    end
+  end
+
+  return true
+end
+
+if enable_if('clangd', {"llvm-project"}) then
   lsp.clangd.setup {
     cmd = { "clangd",
             "--background-index",
@@ -1107,15 +1131,15 @@ if vim.fn.executable('clangd') then
   }
 end
 
-if vim.fn.executable('pylsp') then
+if enable_if('pylsp') then
   lsp.pylsp.setup { }
 end
 
-if vim.fn.executable('gopls') then
+if enable_if('gopls') then
   lsp.gopls.setup { }
 end
 
-if vim.fn.executable('rust-analyzer') then
+if enable_if("rust-analyzer", {"rust", "solang"}) then
   lsp.rust_analyzer.setup({
     on_attach=on_attach,
     settings = {
@@ -1138,9 +1162,10 @@ if vim.fn.executable('rust-analyzer') then
 })
 end
 
-if vim.fn.executable('ocamllsp') then
+if enable_if('ocamllsp') then
   lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
 end
+
 EOF
 
 nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
@@ -1271,7 +1296,7 @@ augroup rust_group
   au FileType rust RainbowToggleOn
   au FileType rust nmap <buffer> <silent><A-o> <Nop>
   au FileType rust nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
-  au FileType rust hi SpecialComment guifg=#689d6a
+  " au FileType rust hi SpecialComment guifg=#689d6a
 augroup END
 " }}}
 
@@ -1520,22 +1545,25 @@ augroup END
 
 " {{{ orgmode.nvim
 lua << EOF
--- Load custom tree-sitter grammar for org filetype
-require('orgmode').setup_ts_grammar()
-
 -- Tree-sitter configuration
+require('orgmode').setup_ts_grammar() -- Load custom tree-sitter grammar for org filetype
 require'nvim-treesitter.configs'.setup {
-  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim syntax highlighting
+  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim
+  -- syntax highlighting.
   highlight = {
     enable = true,
-    additional_vim_regex_highlighting = {'org'}, -- Required for spellcheck, some LaTeX highlights and code block highlights that do not have ts grammar
+    -- Required for spellcheck, some LaTeX highlights and code block highlights that do not have TS grammar
+    additional_vim_regex_highlighting = {'org'},
   },
-  ensure_installed = {'org'}, -- Or run :TSUpdate org
+  ensure_installed = {'org'}, -- Or run `:TSUpdate` org manually
 }
 
-require('orgmode').setup({
-  org_agenda_files = {'~/Org/org-mode/*.org'},
-  org_default_notes_file = '~/Org/org-mode/Notes.org',
+local org = require('orgmode')
+
+org.setup({
+  org_agenda_files = {'/home/jubnzv/Org/org-mode/*.org'},
+  org_default_notes_file = '/home/jubnzv/Org/org-mode/Notes.org',
+  org_deadline_warning_days = 2,
   notifications = {
     enabled = true,
     cron_enabled = true,
@@ -1567,6 +1595,42 @@ require('orgmode').setup({
     end
   },
 })
+
+-- Custom functions
+--
+-- These are used in scripts outside vim to integrate org-mode with the desktop environment.
+-- All of them don't use `vim.schedule`, since they are synchronous and must be executed from the shell.
+--
+-- References:
+-- * [Capture from terminal](https://github.com/nvim-orgmode/orgmode/discussions/230)
+
+-- Get the information about the active tasks
+-- It returns the number of TODO tasks that were scheduled for today or in the past and a flag that says if there is an
+-- active task. Output format: `<deadline_num>/<scheduled_num>/<1/0 if there is an active task>`.
+--
+-- Usage: `nvim --headless -c 'lua print(tasks_status() .. "\n")' -c 'qa!'`
+function _G.tasks_status()
+  org.instance():init() -- Normally, it is called when openning agenda view. We have to call it manually.
+  local Files = require('orgmode.parser.files')
+  local scheduled_num, deadline_num, is_active = 0, 0, 0
+  for _, orgfile in ipairs(Files.all()) do
+    for _, section in ipairs(orgfile:get_unfinished_todo_entries()) do
+      local scheduled = section:get_scheduled_date()
+      local deadline = section:get_deadline_date()
+      if deadline ~= nil then
+         deadline_num = deadline_num  + 1
+      elseif scheduled ~= nil then
+         scheduled_num = scheduled_num + 1
+      end
+    end
+  end
+  local active_headline = Files.get_clocked_headline()
+  if active_headline then
+    is_active = 1
+  end
+  return tostring(deadline_num) .. "/" .. tostring(scheduled_num) .. "/" .. tostring(is_active)
+end
+
 EOF
 
 highlight! OrgTSHeadlineLevel1 ctermfg=214 guifg=#fabd2f

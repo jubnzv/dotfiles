@@ -15,7 +15,7 @@ configs=(
     "$HOME/.tmux.conf"
     "$HOME/.ssh/config"
     "$HOME/.config/i3/config"
-    "$HOME/.config/polybar/config"
+    "$HOME/.config/polybar/config.ini"
     "$HOME/.config/kitty/kitty.conf"
 )
 

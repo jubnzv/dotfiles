@@ -7,10 +7,9 @@
 #  ./rofi-notes.sh ~/Org/Notes '.md'        # access .md files in ~/Org/Notes
 #  ./rofi-notes.sh ~/Org/org-mode '.org'    # access .org files in ~/Org/org-mode
 #
-EDITOR="$TERMINAL -e nvim"
-if command -v "nvim-qt" &> /dev/null; then
-    EDITOR=nvim-qt
-fi
+export GPG_TTY='tty'
+# EDITOR="kitty -e nvim"
+EDITOR="nvim-qt"
 NOTES_DIR=~/Org/Notes/; [ ! -z "$1" ] && NOTES_DIR=$1
 EXT='.md'; [ ! -z "$2" ] && EXT=$2
 
@@ -23,13 +22,13 @@ if [ -n "${NOTES_DIR}" ]; then
     pushd "${NOTES_DIR}" >/dev/null
 fi
 
-select=$(ls --group-directories-first --color=never --indicator-style=slash -tu | egrep -v '(img|tags|site_html|templates)' | _rofi -dmenu -mesg "Note" -p "> ")
+select=$(ls --group-directories-first --color=never --indicator-style=slash -tu | egrep -v '(img|tags|site_html|templates|/$|\.:)' | _rofi -dmenu -mesg "Note" -p "> ")
 if [ ! $select ]; then
     exit
 fi
 
 note=$NOTES_DIR/$select
-if [ ! -f $note ] && [[ ! $note =~ .*."${EXT}"$ ]]; then
-    note="$NOTES_DIR/${select///}".md
+if [ ! -f $note ] && [[ ! $note =~ .*."${EXT}"$ ]] && [[ ! $note =~ .*."${EXT}.asc"$ ]]; then
+    note="$NOTES_DIR/${select///}.${EXT}"
 fi
 $EDITOR "$note"

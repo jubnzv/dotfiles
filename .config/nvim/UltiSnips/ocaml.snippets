@@ -84,78 +84,8 @@ let endswith s1 s2 =
     String.equal sub s2
 endsnippet
 
-##########################################
-# 			 	Scilla					 #
-##########################################
-
-snippet scid
-(SIdentifier.Name.as_string (SIdentifier.get_id $0))
-endsnippet
-
-snippet schdr
-(*
-  This file is part of scilla.
-
-  Copyright (c) `!v strftime("%Y")` - present Zilliqa Research Pvt. Ltd.
-
-  scilla is free software: you can redistribute it and/or modify it under the
-  terms of the GNU General Public License as published by the Free Software
-  Foundation, either version 3 of the License, or (at your option) any later
-  version.
-
-  scilla is distributed in the hope that it will be useful, but WITHOUT ANY
-  WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR
-  A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
-
-  You should have received a copy of the GNU General Public License along with
-  scilla.  If not, see <http://www.gnu.org/licenses/>.
-*)
-$0
-endsnippet
-
-snippet scwalk_stmt
-let rec ${1:walk_stmt} (s, _ann) =
-  match s with
-  | Bind (_id, ea) -> (* TODO: Handle expr *) ea
-  | MatchStmt (_id, arms) ->
-      List.fold_left arms ~init:[] ~f:(fun acc (_pattern, stmts) ->
-          List.fold_left stmts ~init:[] ~f:(fun acc sa ->
-              $1 sa |> List.append acc)
-          |> List.append acc)
-  | Load _
-  | RemoteLoad _
-  | Store _
-  | MapUpdate _
-  | MapGet _
-  | RemoteMapGet _
-  | ReadFromBC _
-  | TypeCast _
-  | AcceptPayment
-  | Iterate _
-  | SendMsgs _
-  | CreateEvnt _
-  | CallProc _
-  | Throw _
-  | GasStmt _ ->
-      []
-endsnippet
-
-snippet scwalk_expr
-let rec ${1:walk_expr} (e, _ann) =
-  match e with
-  | Literal _ -> []
-  | Var (_id) -> []
-  | Let (_id, _ty, lhs, rhs) -> $1 lhs @ $1 rhs
-  | Message _ -> []
-  | Fun (_id, _ty, body) -> $1 body
-  | App (_id, _args) -> []
-  | Constr _ -> []
-  | MatchExpr (_id, arms) ->
-    List.fold_left arms ~init:[] ~f:(fun acc (_pattern, ea) ->
-      $1 ea |> List.append acc)
-  | Builtin _ -> []
-  | TFun (_id, body) -> $1 body
-  | TApp _ -> []
-  | Fixpoint (_id, _ty, ea) -> $1 ea
-  | GasExpr (_, ea) -> $1 ea
+snippet nextid
+let next_id =
+  let n = ref (-1) in
+  fun () -> incr n; !n
 endsnippet

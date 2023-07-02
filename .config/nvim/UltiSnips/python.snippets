@@ -82,3 +82,21 @@ endsnippet
 snippet usleep
 time.sleep(${1:100}/1000000.0)
 endsnippet
+
+snippet script
+#!/usr/bin/env python3
+
+def main() -> int:
+    $0
+
+if __name__ == '__main__':
+    exit(main())
+endsnippet
+
+snippet cmd
+p = subprocess.Popen(
+	[$0],
+	stdout=subprocess.PIPE,
+	stderr=subprocess.PIPE)
+out, err = p.communicate()
+endsnippet

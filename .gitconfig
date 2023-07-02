@@ -7,8 +7,8 @@ quotePath = false
 [init]
 defaultBranch = master
 
-# [commit]
-# gpgsign = true
+[commit]
+gpgsign = true
 
 [pull]
 rebase = true
@@ -46,7 +46,7 @@ user = jubnzv
 [user]
 name = Georgiy Komarov
 email = jubnzv@gmail.com
-signingkey = 643E1CDB3B49BDB12007F4330A111D0324038877
+	signingkey = D8DB1944EA4B0252711F77CB1686B04CA054BF02
 
 [commit]
 gpgsign = true
