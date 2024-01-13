@@ -53,3 +53,6 @@ gpgsign = true
 
 [includeIf "gitdir:~/Work/*"]
 path = ~/.gitconfig.work
+
+[safe]
+directory = /usr/local/share/dotfiles

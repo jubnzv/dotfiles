@@ -3,14 +3,12 @@
 
 # General
 xset b off
-setxkbmap -layout "us,ru" -option "grp:alt_shift_toggle"
-#setxkbmap -layout "us,ru" -option "grp:alts_toggle"
+setxkbmap -layout "us,ru" -option "grp:alt_shift_toggle,compose:ralt" -option ctrl:nocaps
 
 if xinput list | grep "ErgoDox" ; then
     exit
 fi
 
-setxkbmap -option ctrl:nocaps
 /usr/bin/xmodmap -e "keysym Print = Super_L"
 
 # x230 + classic keyboard

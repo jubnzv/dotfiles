@@ -13,7 +13,7 @@ focus_follows_mouse no
 # }}}
 
 # {{{ Autostart
-# exec --no-startup-id thunderbird
+exec --no-startup-id birdtray
 # exec --no-startup-id /opt/Telegram/Telegram
 exec --no-startup-id /usr/bin/fbxkb
 exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
@@ -26,7 +26,7 @@ exec --no-startup-id udiskie -t
 exec --no-startup-id bsetroot -solid "#282828"
 exec --no-startup-id bitwarden-desktop
 exec --no-startup-id xss-lock -- ~/.config/i3/i3lock-wrapper.sh
-exec --no-startup-id syncthing-gtk
+# exec --no-startup-id syncthing-gtk
 exec --no-startup-id ~/.local/bin/diff-notes.sh
 # exec --no-startup-id "eval `ssh-agent -s`"
 exec_always --no-startup-id ~/.config/polybar/launch.sh
@@ -34,7 +34,6 @@ exec --no-startup-id xset b off
 exec --no-startup-id flameshot
 exec --no-startup-id nm-tray
 exec --no-startup-id blueman-applet
-exec --no-startup-id setxkbmap -layout "us,ru" -option "grp:alt_shift_toggle"
 exec --no-startup-id xrdb -merge ~/.Xresources
 # }}}
 
@@ -198,8 +197,7 @@ bindsym $mod+Return exec $TERMINAL
 bindsym $mod+Control+Return exec $TERMINAL -e tmux new-session -A -s main
 bindsym $mod+Control+2 workspace $ws_w; exec firefox
 bindsym $mod+Shift+R exec pcmanfm
-bindsym $mod+Control+q exec nvim-qt
-bindsym $mod+Control+k exec bitwarden # focus bitwarden window
+bindsym $mod+Control+k exec bitwarden # focus the bitwarden window
 bindsym $mod+Control+a exec $SCRIPTS_PATH/raise-anki.py                              \
                             && sleep 0.2                                             \
                             && i3-msg '[con_mark="anki_add"] move workspace current' \

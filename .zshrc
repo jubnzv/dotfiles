@@ -283,7 +283,7 @@ else
     alias -g F="| fzf-tmux --multi --tac | tr '\n' '\0' | xargs --no-run-if-empty -0 sh -c '\$0 \"\$@\" </dev/tty' "
 fi
 
-# python
+# Python
 alias vs='source venv/bin/activate'
 alias py2='python2'
 alias py3='python3'
@@ -292,6 +292,14 @@ alias ipy2='ipython'
 alias ipy3='ipython3'
 alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
 alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
+
+# OCaml
+alias d='dune'
+
+# Rust
+alias c='cargo'
+alias ct='cargo t'
+alias cb='cargo b'
 
 # ls
 alias ls='ls --color=auto'

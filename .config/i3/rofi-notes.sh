@@ -8,8 +8,7 @@
 #  ./rofi-notes.sh ~/Org/org-mode '.org'    # access .org files in ~/Org/org-mode
 #
 export GPG_TTY='tty'
-# EDITOR="kitty -e nvim"
-EDITOR="nvim-qt"
+EDITOR="kitty -e nvim"
 NOTES_DIR=~/Org/Notes/; [ ! -z "$1" ] && NOTES_DIR=$1
 EXT='.md'; [ ! -z "$2" ] && EXT=$2
 
