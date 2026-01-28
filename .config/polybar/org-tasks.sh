@@ -17,4 +17,7 @@ sep=""
 if [ -n "$deadline" ] && [ -n "$scheduled" ]; then
     sep="%{F#585858}/%{F-}"
 fi
+#if [ -n "$deadline" ] || [ -n "$scheduled" ]; then
+#    sep="%{u$color}%{+u}%{F$color}0%{F-}"
+#fi
 echo "%{u$color}%{+u}%{F$color}%{F-} $deadline$sep$scheduled%{u-}"

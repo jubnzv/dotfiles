@@ -41,3 +41,7 @@ endsnippet
 snippet strict_mode
 set -eou pipefail
 endsnippet
+
+snippet debug_mode
+trap 'echo "# $BASH_COMMAND";read' DEBUG
+endsnippet

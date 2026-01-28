@@ -40,7 +40,7 @@ fi
 xset dpms force off &
 disable_notifications
 pactl set-sink-mute 0 true
-i3lock -n --color=282828 -f
+i3lock -n --color=282828 -f -e
 
 # After unlock
 ~/.config/i3/setup-keys.sh

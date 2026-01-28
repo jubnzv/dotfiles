@@ -46,10 +46,12 @@ user = jubnzv
 [user]
 name = Georgiy Komarov
 email = jubnzv@gmail.com
-	signingkey = D8DB1944EA4B0252711F77CB1686B04CA054BF02
+	signingkey = A88EB9746F1E426D
 
 [commit]
 gpgsign = true
 
 [includeIf "gitdir:~/Work/*"]
 path = ~/.gitconfig.work
+[safe]
+	directory = /usr/local/share/dotfiles

@@ -1,9 +1,10 @@
-set nocompatible
-let mapleader = "\<Space>"
-let maplocalleader = ","
-if &shell =~# 'fish$'
-  set shell=/bin/bash
-endif
+" [MIGRATED TO LUA: user/options.lua]
+" set nocompatible
+" let mapleader = "\<Space>"
+" let maplocalleader = ","
+" if &shell =~# 'fish$'
+"   set shell=/bin/bash
+" endif
 
 " A path to Python interpreter required for some plugins.
 " On Windows you should add python.exe to your system-level PATH to make it work.
@@ -14,206 +15,106 @@ endif
 "   let g:python3_host_prog  = '\Users\<>\AppData\Local\Programs\Python\Python39\python.exe'
 " endif
 
-" We have to tweak PATH on Windows to make *nix tools from git-bash work.
-if has('win32')
-  let $PATH = "C:\\Program Files\\Git\\usr\\bin;" . $PATH
-endif
+" [MIGRATED TO LUA: user/options.lua]
+" " We have to tweak PATH on Windows to make *nix tools from git-bash work.
+" if has('win32')
+"   let $PATH = "C:\\Program Files\\Git\\usr\\bin;" . $PATH
+" endif
 
-" {{{ Plugins
-call plug#begin('~/.local/share/nvim/plugged')
+" [MIGRATED TO LUA: user/plugins.lua]
+" " {{{ Plugins
+" call plug#begin('~/.local/share/nvim/plugged')
+" ... (all plugins now defined in lua/user/plugins.lua)
+" call plug#end()
+" " }}}
 
-Plug 'kshenoy/vim-signature'                 " Extended marks support
-Plug 'tpope/vim-eunuch'                      " Helpers for Shell
-Plug 'tpope/vim-repeat'                      " Remap . in a way that plugins can tap into it
-Plug 'andymass/vim-matchup'                  " Better %
-Plug 'junegunn/vim-easy-align'               " A Vim alignment plugin
-Plug 'tpope/vim-surround'                    " Surround text w/ brackets
-Plug 'tpope/vim-abolish'                     " Case-sensitive search/substitute/abbreviate
-Plug 'jiangmiao/auto-pairs'                  " Insert or delete brackets, parens, quotes in pair
-Plug 'tpope/vim-rsi'                         " Readline (emacs) keybindings in command and insert modes
-Plug 'osyo-manga/vim-over'                   " :substitute preview
-Plug 'christoomey/vim-tmux-navigator'        " tmux integration
-Plug 'tyru/open-browser.vim'                 " Plugin for openning links in the browser
-Plug 'itchyny/lightline.vim'                 " Statusline plugin
-Plug 'jubnzv/gruvbox'                        " Color scheme
-Plug 'norcalli/nvim-colorizer.lua'           " Colorize color names and codes
-Plug 'haya14busa/incsearch.vim'              " Incrementally highlight search results
-Plug 'itchyny/vim-cursorword'                " Plugin to highlight the word under the cursor
-Plug 'tpope/vim-fugitive'                    " Git wrapper
-Plug 'cohama/agit.vim'                       " gitk clone for vim
-Plug 'airblade/vim-gitgutter'                " Shows git status on a gutter column
-Plug 'ruifm/gitlinker.nvim'                  " Generate shareable links for git frontends
-Plug 'statox/vim-compare-lines'              " Compares symbol in two lines in the buffer
-Plug 'kyazdani42/nvim-tree.lua'              " A tree explorer plugin for vim
-Plug 'kyazdani42/nvim-web-devicons'          " devicons for nvim-tree.lua
-Plug 'mbbill/undotree'                       " Emacs' undotree
-Plug 'rhysd/git-messenger.vim'               " Reveal the commit messages under the cursor
-Plug 'liuchengxu/vista.vim'                  " Viewer & Finder for LSP symbols and tags
-Plug 'ludovicchabant/vim-gutentags'          " Auto (re)generate tag files
-Plug 'terryma/vim-expand-region'             " Visually select increasingly larger regions of text
-Plug 'machakann/vim-swap'                    " Reorder arguments in functions with `g>` and `g<`
-Plug 'tyru/caw.vim'                          " Comment plugin
-Plug 'Shougo/deoplete.nvim', {
-  \ 'do': ':UpdateRemotePlugins' }           " Autocomplition
-Plug 'sirver/ultisnips'                      " Snippets plugin
-Plug 'honza/vim-snippets'                    " A collection of snippets
-Plug 'lukas-reineke/indent-blankline.nvim'   " Display indent levels in code
-Plug 'ocaml/vim-ocaml'                       " Vim runtime files for OCaml
-Plug 'neovim/nvim-lspconfig'                 " Configuration for native Neovim LSP client
-Plug 'jubnzv/virtual-types.nvim'             " Plugin that shows type annotations in virtual text
-Plug 'Shougo/deoplete-lsp'                   " Neovim's LSP Completion source for deoplete
-Plug 'sbdchd/neoformat'                      " Integration with code formatters
-Plug 'jpalardy/vim-slime'                    " REPL integraion
-Plug 'bfrg/vim-cpp-modern'                   " Extended Vim syntax highlighting for C and C++ (C++11/14/17/20)
-Plug 'derekwyatt/vim-fswitch'                " This Vim plugin will help switching between companion files
-Plug 'vim-python/python-syntax'              " Extended python syntax
-Plug 'luochen1990/rainbow'                   " Rainbow Parentheses improved
-Plug 'dhruvasagar/vim-table-mode'            " VIM Table Mode for instant table creation
-Plug 'tpope/vim-markdown'                    " Extra settings for markdown
-Plug 'masukomi/vim-markdown-folding'         " Markdown folding by sections
-Plug 'iamcco/markdown-preview.nvim', {
-  \ 'do': { -> mkdp#util#install() },
-  \ 'tag': 'v0.0.10' }                       " Live markdown preview in the browser
-Plug 'lervag/vimtex', { 'for': ['tex'] }     " LaTeX plugin
-Plug 'wlangstroth/vim-racket', {
-  \ 'for': ['rkt'] }                         " Racket syntax highlight
-Plug 'rust-lang/rust.vim', {
-  \ 'for': ['rust'] }                        " Rust plugin
-Plug 'qnighy/lalrpop.vim'                    " Plugin for lalrpop parser generator
-Plug 'fatih/vim-go', { 'for': ['go'] }       " (bloated) golang environment
-Plug 'tomlion/vim-solidity', {
-  \ 'for': ['sol'] }                         " Solidity syntax highlight
-Plug 'aklt/plantuml-syntax', {
-  \ 'for': ['uml', 'puml'] }                 " Syntax highlight for PlantUML
-Plug 'weirongxu/plantuml-previewer.vim', {
-  \ 'for': ['uml', 'puml'] }                 " Show interactive preview for PlantUML diagrams
-Plug 'jubnzv/IEC.vim', {
-  \ 'for': ['st', 'il'] }                    " IEC61131-3 languages
-Plug 'leafgarland/typescript-vim', {
-  \ 'for': ['typescript'] }                  " Typescript syntax highlight
-Plug 'Cian911/vim-cadence', {
-  \ 'for': ['cdc'] }                         " Cadence plugin (Flow blockchain)
-Plug 'othree/xml.vim', {
-  \ 'for': ['xml', 'html'] }                 " More convient working w/ html and xml tags
-Plug 'whonore/Coqtail', { 'for': ['coq'] }   " Coq plugin
-Plug 'florentc/vim-tla', {
-  \ 'for': ['tla'] }                         " TLA+ plugin
-Plug 'elzr/vim-json', {'for': ['json'] }
-Plug 'jubnzv/mdeval.nvim'                    " Execute code in markdown documents
-Plug 'akinsho/toggleterm.nvim'               " Wrapper for Neovim's built-in :terminal
-Plug 'nvim-lua/plenary.nvim'                 " Various utilities used by other plugins
-Plug 'nvim-telescope/telescope.nvim'         " Fuzzy-finder
-Plug 'nvim-telescope/telescope-project.nvim' " Emacs' Projectile
-Plug 'nvim-telescope/telescope-symbols.nvim' " Insert unicode symbols w/ telescope
-Plug 'folke/trouble.nvim'                    " Show persistent telescope results
-Plug 'nvim-treesitter/nvim-treesitter'       " tree-sitter integration
-Plug 'nvim-orgmode/orgmode.nvim'             " org-mode clone
-Plug 'stevearc/dressing.nvim'                " A plugin that replaces most of built-in menus with telescope
-Plug 'jamessan/vim-gnupg/'                   " Needed for transparent edit for GPG-encrypted files
+" [MIGRATED TO LUA: user/options.lua]
+" " {{{ Disable some builtin plugins
+" let g:loaded_gzip         = 1
+" let g:loaded_tar          = 1
+" let g:loaded_tarPlugin    = 1
+" let g:loaded_zipPlugin    = 1
+" let g:loaded_2html_plugin = 1
+" " }}}
 
-" LLVM plugin
-" See: https://github.com/llvm/llvm-project/tree/master/llvm/utils/vim
-if isdirectory('/home/jubnzv/Sources/llvm-project/llvm/utils/vim/')
-  Plug '/home/jubnzv/Sources/llvm-project/llvm/utils/vim/'
-endif
+" [MIGRATED TO LUA: user/options.lua]
+" " {{{ General options
+" set viminfo='1000,f1                        " Save global marks for up to 1000 files
+" set scrolloff=7                             " 7 lines above/below cursor when scrolling
+" set scroll=7                                " Number of lines scrolled by <C-u> and <C-d>
+" set undofile
+" set undodir=$HOME/.vim/undo
+" set undolevels=1000
+" set undoreload=10000
+" set clipboard=unnamedplus,unnamed           " Use system clipboard
+" set showmatch                               " Show matching brackets when text indicator is over them
+" set mat=1                                   " How many tenths of a second to blink when matching brackets
+" set wildmenu                                " wildmenu: command line completion
+" set wildmode=longest,list,full
+" set wildignore+=*.o                         " Compiled object files
+" set wildignore+=*.pyc                       " Python bytecode
+" set wildignore+=*.aux,*.out,*.toc           " LaTeX output
+" set wildignore+=*.jpg,*.jpeg,*.gif,*.png    " Binary images
+" set wildignore+=.hg,.git,.svn               " VCS
+" set wildignore+=*~                          " Backup files
+" set wildcharm=<C-z>
+" set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
+" set notimeout                               " Remove delay between complex keybindings.
+" set noautochdir                             " Set working directory to the current file
+" set autoindent                              " Autoindent when starting new line, or using o or O.
+" set noautoread                              " Don't reload unchanged files automatically.
+" set hidden
+" set tabstop=4
+" set shiftwidth=4
+" set expandtab                               " On pressing tab insert 4 spaces
+" set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
+" set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
+" set eol
+" set fixeol                                  " <EOL> at the end of file will be restored if missing
+" set mouse=a
+"
+" " Disable syntax highlighting for large files
+" au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
+"
+" " Disable spellchecking globally, because it works incorrectly for the most of filetypes.
+" set nospell
+"
+" " Default conceal settings
+" set conceallevel=0
+" set concealcursor=nc
+"
+" " Cyrillic layout in normal mode
+" set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
+" set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
+" set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
+"
+" " Allows to open files in external program with `gx` inside netrw
+" let g:netrw_browsex_viewer = "xdg-open"
+" " }}}
 
-if isdirectory('/home/jubnzv/Dev/scilla.nvim/')
-  Plug '/home/jubnzv/Dev/scilla.nvim/'
-else
-  Plug 'jubnzv/vim-scilla', { 'for': ['scilla'] }
-endif
+" [MIGRATED TO LUA: user/options.lua - UI settings]
+" set termguicolors
+" set winblend=5    " Transparency for floating windows
+" set pumblend=5    " Transparency for popup menus
+" set guioptions-=m                           " Remove menu bar
+" set guioptions-=T                           " Remove toolbar
+" set guioptions-=r                           " Remove right-hand scroll bar
+" set guioptions-=L                           " Remove left-hand scroll bar
+" set shortmess+=Ic                           " Don't display the intro message on starting vim
+" set noshowmode
+" set relativenumber
+" set cursorline
+" set laststatus=2                            " Always show status line
+" set title                                   " Show window title
+" set signcolumn=yes
+" set background=dark
+" set t_Co=256                                " 256-colors mode
+" set guicursor+=c-ci-cr:block                " Cursor style
+" " Italic symbols in terminal
+" set t_ZH=^[[3m
+" set t_ZR=^[[23m
 
-call plug#end()
-" }}}
-
-" {{{ Disable some builtin plugins
-let g:loaded_gzip         = 1
-let g:loaded_tar          = 1
-let g:loaded_tarPlugin    = 1
-let g:loaded_zipPlugin    = 1
-let g:loaded_2html_plugin = 1
-" }}}
-
-" {{{ General options
-set viminfo='1000,f1                        " Save global marks for up to 1000 files
-set scrolloff=7                             " 7 lines above/below cursor when scrolling
-set scroll=7                                " Number of lines scrolled by <C-u> and <C-d>
-set undofile
-set undodir=$HOME/.vim/undo
-set undolevels=1000
-set undoreload=10000
-set clipboard=unnamedplus,unnamed           " Use system clipboard
-set showmatch                               " Show matching brackets when text indicator is over them
-set mat=1                                   " How many tenths of a second to blink when matching brackets
-set wildmenu                                " wildmenu: command line completion
-set wildmode=longest,list,full
-set wildignore+=*.o                         " Compiled object files
-set wildignore+=*.pyc                       " Python bytecode
-set wildignore+=*.aux,*.out,*.toc           " LaTeX output
-set wildignore+=*.jpg,*.jpeg,*.gif,*.png    " Binary images
-set wildignore+=.hg,.git,.svn               " VCS
-set wildignore+=*~                          " Backup files
-set wildcharm=<C-z>
-set timeoutlen=500                          " Time to wait for a mapped sequence to complete (ms)
-set notimeout                               " Remove delay between complex keybindings.
-set noautochdir                             " Set working directory to the current file
-set autoindent                              " Autoindent when starting new line, or using o or O.
-set noautoread                              " Don't reload unchanged files automatically.
-set hidden
-set tabstop=4
-set shiftwidth=4
-set expandtab                               " On pressing tab insert 4 spaces
-set lazyredraw                              " Do not redraw screen in the middle of a macro. Makes them complete faster.
-set nojoinspaces                            " Don't add two spaces when joining a line that ends with.,?, or !
-set eol
-set fixeol                                  " <EOL> at the end of file will be restored if missing
-set re=1                                    " Required for vista.vim: https://github.com/liuchengxu/vista.vim/issues/82
-set mouse=a
-
-" Disable syntax highlighting for large files
-au BufWinEnter * if line2byte(line("$") + 1) > 1000000 | syntax clear | endif
-
-" Disable spellchecking globally, because it works incorrectly for the most of filetypes.
-set nospell
-
-" Default conceal settings
-set conceallevel=0
-set concealcursor=nc
-
-" Cyrillic layout in the normal mode
-set langmap+=ФИСВУАПРШОЛДЬТЩЗЙКЫЕГМЦЧНЯ;ABCDEFGHIJKLMNOPQRSTUVWXYZ
-set langmap+=фисвуапршолдьтщзйкыегмцчня;abcdefghijklmnopqrstuvwxyz
-set langmap+=ЖжЭэХхЪъ;\:\;\"\'{[}]
-
-" Allows to open files in external program with `gx` inside netrw
-let g:netrw_browsex_viewer = "xdg-open"
-" }}}
-
-" {{{ UI options
-set termguicolors
-set winblend=5    " Transparency for floating windows
-set pumblend=5    " Transparency for popup menus
-
-set guioptions-=m                           " Remove menu bar
-set guioptions-=T                           " Remove toolbar
-set guioptions-=r                           " Remove right-hand scroll bar
-set guioptions-=L                           " Remove left-hand scroll bar
-set shortmess+=Ic                           " Don't display the intro message on starting vim
-set noshowmode
-set relativenumber
-set cursorline
-set laststatus=2                            " Always show status line
-set title                                   " Show window title
-set signcolumn=yes
-set background=dark
-set t_Co=256                                " 256-colors mode
-set guicursor+=c-ci-cr:block                " Cursor style
-
-" Italic symbols in terminal
-set t_ZH=^[[3m
-set t_ZR=^[[23m
-
-" Gruvbox configuration
+" Gruvbox configuration (kept here - needs to run after plugins)
 let g:gruvbox_sign_column='bg0'
 let g:gruvbox_color_column='bg1'
 let g:gruvbox_number_column='bg0'
@@ -242,19 +143,10 @@ if (has('nvim') && len(nvim_list_uis()) > 0 && (!nvim_list_uis()[0]['ext_termcol
 endif
 " }}}
 
-" {{{ Common functions and commands
-" Don't parse modelines on temporary paths (google: "vim modeline vulnerability").
-function! ParseModeline()
-  let l:path = expand('%:p')
-  if l:path =~ '/tmp' || l:path =~ '~/Downloads'
-    setlocal nomodeline
-  endif
-endfunction
-au! BufReadPost,BufNewFile * call ParseModeline()
-
-" Jump to the last position when reopening a file (see `/etc/vim/vimrc` on Debian)
-au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
-" }}}
+" [MIGRATED TO LUA: user/autocmds.lua]
+" " {{{ Common functions and commands
+" " ParseModeline and last position jump now in Lua
+" " }}}
 
 " {{{ Keybindings
 
@@ -263,6 +155,7 @@ inoremap jj <Esc>
 nnoremap <leader>h :noh<CR>
 nnoremap <leader>xc :q<CR>
 nnoremap <leader>w :w<CR>
+cabbrev w1 w!
 
 " Y yanks from the cursor to the end of line as expected. See :help Y.
 nnoremap Y y$
@@ -453,98 +346,8 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 
-" {{{ Lightline
-let g:buftabline_indicators=1 " show modified
-
-let g:lightline = {
-  \ 'colorscheme': 'gruvbox',
-  \ 'active': {
-  \   'left':  [ [ 'mode', 'paste' ],
-  \              [ 'readonly', 'filename', 'modified' ],
-  \              [ 'current_function'] ],
-  \   'right': [ [ 'lineinfo' ],
-  \              [ 'percent' ],
-  \              [ 'fileformat', 'fileencoding', 'filetype' ],
-  \              [ 'gitbranch' ] ],
-  \ },
-  \ 'component_expand': {
-  \   'lsp_warnings': 'LightlineLspWarnings',
-  \   'lsp_errors': 'LightlineLspErrors',
-  \ },
-  \ 'component_function': {
-  \   'filename': 'LightlineStrippedFilename',
-  \   'gitbranch': 'FugitiveHead'
-  \ },
-  \ 'component_type': {
-  \   'lsp_warnings': 'warning',
-  \   'lsp_errors': 'error',
-  \   'readonly': 'error',
-  \ },
-  \ }
-
-function! LightlineLspWarnings() abort
-let sl = ''
-    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-       let warnings = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Warning]])")
-       return warnings.' ◆'
-    else
-        return ''
-    endif
-    return sl
-endfunction
-
-function! LightlineLspErrors() abort
-let sl = ''
-    if luaeval('not vim.tbl_isempty(vim.lsp.buf_get_clients(0))')
-       let errors = luaeval("vim.lsp.diagnostic.get_count(vim.fn.bufnr('%'), [[Error]])")
-       return errors.' ✕'
-    else
-        return ''
-    endif
-    return sl
-endfunction
-
-function! LightlineCurrentFunctionVista() abort
-  let l:method = get(b:, 'vista_nearest_method_or_function', '')
-  if l:method != ''
-    let l:method = '[' . l:method . ']'
-  endif
-  return l:method
-endfunction
-if &loadplugins
-  au VimEnter * call vista#RunForNearestMethodOrFunction()
-endif
-
-function! LightlineStrippedFilename() abort
-	let subs = split(expand('%'), "/")
-
-    " Handle './filename' and 'filename' cases
-    let subs_len = len(subs)
-    if subs_len < 3
-      if subs_len == 1
-        return subs[0]
-      endif
-      if (subs_len == 2) && (subs[0] == '.')
-        return subs[1]
-      endif
-    endif
-
-	let name = ""
-	let i = 1
-	for s in subs
-		let parent = name
-		if  i == len(subs)
-			let name = parent . '/' . s
-		elseif i == 1
-			let name = parent . strpart(s, 0, 2)
-		else
-			let name = parent . '/' . strpart(s, 0, 2)
-		endif
-		let i += 1
-	endfor
-  return name
-endfunction
-" }}}
+" [MIGRATED TO LUA: user/plugins/lualine.lua]
+" Lightline replaced with lualine.nvim
 
 " {{{ Web-browser integration (tyru/open-browser.vim)
 let g:openbrowser_search_engines = extend(
@@ -604,12 +407,6 @@ call s:JbzSetOpenbrowserBindings("<leader>osh", "hotexamples")
 call s:JbzSetOpenbrowserBindings("<leader>osx", "cppreference")
 call s:JbzSetOpenbrowserBindings("<leader>osq", "qt")
 call s:JbzSetOpenbrowserBindings("<leader>osp", "python")
-" }}}
-
-" {{{ vim-maximizer
-let g:maximizer_default_mapping_key = '<localleader>z'
-let g:maximizer_restore_on_winleave = 0
-let g:maximizer_handle_window_resize = 1
 " }}}
 
 " {{{ tmux and vim-slime configuration
@@ -678,13 +475,13 @@ let g:matchup_matchparen_status_offscreen=0
 " let g:surround_102 = split(&commentstring, '%s')[0] . " {{{ \r " . split(&commentstring, '%s')[0] . " }}}"
 " }}}
 
-" {{{ Folding settings
-set foldmethod=syntax
-set foldnestmax=6
-set nofoldenable " Disable folding when openning a file
-set foldlevel=2
-set foldcolumn=0
-set fillchars=fold:\ 
+" [MIGRATED TO LUA: user/options.lua - Folding settings]
+" set foldmethod=syntax
+" set foldnestmax=6
+" set nofoldenable " Disable folding when openning a file
+" set foldlevel=2
+" set foldcolumn=0
+" set fillchars=fold:\
 
 " {{{ Custom fold function
 " http://www.gregsexton.org/2011/03/improving-the-text-displayed-in-a-fold/
@@ -783,27 +580,14 @@ au InsertLeave * match ExtraWhitespace /\s\+$/
 au BufWinLeave * call clearmatches()
 " }}}
 
-" {{{ ctags and vista.vim
-set tags=./tags;
+" {{{ ctags
+" [MIGRATED TO LUA: user/options.lua]
+" set tags=./tags;
 let g:gutentags_ctags_exclude = [
   \'node_modules', '_build', 'build', 'CMakeFiles', '.mypy_cache', 'venv',
   \'*.md', '*.tex', '*.css', '*.html', '*.json', '*.xml', '*.xmls', '*.ui']
 " Guttentags will exclude files from wildignore settings
 let g:gutentags_ctags_exclude_wildignore = 1
-
-let g:vista_default_executive = 'ctags'
-let g:vista_fzf_preview = ['right:50%']
-
-" Copy current function name to system clipboard.
-function! FunctionNameToClipboard() abort
-  redir @+
-    let l:method = get(b:, 'vista_nearest_method_or_function', '')
-    echon l:method
-  redir END
-endfunction
-nnoremap <leader>yf :call FunctionNameToClipboard()<cr>
-
-nnoremap <silent> <A-6> :Vista!!<CR>
 " }}}
 
 " {{{ vim-signature
@@ -850,31 +634,18 @@ nnoremap <silent> [9 :call signature#marker#Goto('prev', 9, v:count)<cr>
 nnoremap <silent> ]9 :call signature#marker#Goto('next', 9, v:count)<cr>
 " }}}
 
-" {{{ deoplete
-let g:deoplete#enable_at_startup = 1
-inoremap <expr><A-q> pumvisible() ? deoplete#mappings#close_popup() : "\<CR>"
-inoremap <expr><A-j> pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr><A-k> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-inoremap <expr><A-l> pumvisible() ? "\<CR>" : ""
-inoremap <expr><A-o> deoplete#mappings#manual_complete()
-
-" Otherwise autocompletion in Telescope writes to files when typing <Enter>.
-autocmd FileType TelescopePrompt call deoplete#custom#buffer_option('auto_complete', v:false)
-
-call deoplete#custom#source('_',
-  \ 'matchers', ['matcher_full_fuzzy'])
-
-set completeopt-=preview
-
-" Add Icons for LSP_KINDS.
-" See: https://github.com/deoplete-plugins/deoplete-lsp/pull/46/files
-let g:deoplete#lsp#use_icons_for_candidates = 1
-" }}}
+" [MIGRATED TO LUA: user/plugins/cmp.lua - using nvim-cmp instead]
+" " {{{ deoplete
+" Replaced with nvim-cmp
+" " }}}
 
 " {{{ UltiSnips
-let g:UltiSnipsExpandTrigger='<A-l>'
-let g:UltiSnipsJumpForwardTrigger='<A-l>'
-let g:UltiSnipsJumpBackwardTrigger='<A-h>'
+" Note: Expansion/jumping now handled by nvim-cmp (A-l, A-h)
+" Setting these to avoid conflicts with nvim-cmp
+let g:UltiSnipsExpandTrigger='<Plug>(ultisnips_expand)'
+let g:UltiSnipsJumpForwardTrigger='<Plug>(ultisnips_jump_forward)'
+let g:UltiSnipsJumpBackwardTrigger='<Plug>(ultisnips_jump_backward)'
+let g:UltiSnipsRemoveSelectModeMappings = 0
 
 nnoremap <localleader>sr :call UltiSnips#RefreshSnippets()<cr>:echo "Snippets reloaded"<CR>
 nnoremap <localleader>se :UltiSnipsEdit<CR>
@@ -926,14 +697,12 @@ nmap <localleader>vb :Git blame<cr>
 nmap <localleader>vf :GFiles<cr>
 nmap <localleader>vl :Agit<cr>
 
-" Copy a shareable link to git frontend
-lua << EOF
-require"gitlinker".setup()
-vim.api.nvim_set_keymap('n', '<leader>vo',
-  '<cmd>lua require"gitlinker".get_buf_range_url("n", {action_callback = require"gitlinker.actions".open_in_browser})<cr>', {})
-vim.api.nvim_set_keymap('v', '<leader>vo',
-  '<cmd>lua require"gitlinker".get_buf_range_url("v", {action_callback = require"gitlinker.actions".open_in_browser})<cr>', {})
-EOF
+" [MIGRATED TO LUA: user/plugins/gitlinker.lua]
+" " Copy a shareable link to git frontend
+" lua << EOF
+" require"gitlinker".setup()
+" vim.api.nvim_set_keymap('n', '<leader>vo', ...)
+" EOF
 " }}}
 
 " {{{ table-mode
@@ -942,138 +711,47 @@ let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
 " }}}
 
-" {{{ :terminal
-let g:neoterm_default_mod = 'botright'
-let g:neoterm_autoscroll = 1
-if has('win32')
-  let g:neoterm_eof = "\r"
-  let g:neoterm_shell = "powershell.exe"
-endif
+" {{{ Plain text editing
+let s:PTModeActive = exists('w:PTModeActive') ? w:PTModeActive : 0
+
+function! s:PTEnable()
+    let s:PTModeActive = 1
+    Pencil
+    Goyo
+    :silent! call matchadd('MdTodo', 'TODO', -1)<CR>
+endfunction
+
+function! s:PTDisable()
+    let s:PTModeActive = 0
+    NoPencil
+    Goyo!
+endfunction
+
+function! s:PTToggle()
+    if s:PTModeActive
+        call s:PTDisable()
+    else
+        call s:PTEnable()
+    endif
+endfunction
+
+command! PTToggle call s:PTToggle()
 " }}}
 
-" {{{ nvim-tree.lua
-nnoremap <silent><A-0> :NvimTreeToggle<CR>
-hi NvimTreeIndentMarker guifg=#3c3836
-hi NvimTreeFolderIcon guifg=#7c6f64
-hi NvimTreeGitDirty guifg=#689d6a
-lua << EOF
-require 'nvim-tree'.setup{
-  git                 = { ignore = true },
-  disable_netrw       = true,
-  update_focused_file = { enable = true },
-  update_cwd          = true,
-  filters             = { custom = { '.git', 'node_modules', '.cache', '__pycache__', '.clangd' } },
-}
-EOF
-" }}}
+" [MIGRATED TO LUA: user/plugins/nvim-tree.lua]
+" " {{{ nvim-tree.lua
+" nnoremap <silent><A-0> :NvimTreeToggle<CR>
+" ... nvim-tree setup
+" " }}}
 
-" {{{ telescope.nvim and related plugins
-lua << EOF
-local telescope = require("telescope")
-local trouble = require("trouble.providers.telescope")
-telescope.setup {
-  defaults = {
-    mappings = {
-      i = { ["<c-t>"] = trouble.open_with_trouble },
-      n = { ["<c-t>"] = trouble.open_with_trouble },
-    },
-  },
-}
-telescope.load_extension("project")
-EOF
-nnoremap <A-p>      <cmd>lua require('telescope.builtin').find_files()<cr>
-nnoremap <leader>fs <cmd>lua require('telescope.builtin').live_grep()<cr>
-nnoremap <leader>b  <cmd>lua require('telescope.builtin').buffers()<cr>
-nnoremap <leader>fo <cmd>lua require('telescope.builtin').oldfiles()<cr>
-nnoremap <leader>fp <cmd>lua require'telescope'.extensions.project.project{}<cr>
-nnoremap <A-u> <cmd>lua require('telescope.builtin').spell_suggest()<cr>
-nnoremap gr <cmd>lua require('telescope.builtin').lsp_references()<cr>
-nnoremap gs <cmd>lua require('telescope.builtin').lsp_document_symbols()<cr>
-nnoremap gd <cmd>lua require('telescope.builtin').lsp_definitions()<cr>
-nnoremap gi <cmd>lua require('telescope.builtin').lsp_implementations()<cr>
-nnoremap <localleader>a <cmd>lua vim.lsp.buf.code_action()<cr>
-nnoremap <localleader>vc <cmd>lua require('telescope.builtin').git_commits()<cr>
-nnoremap <localleader>vC <cmd>lua require('telescope.builtin').git_bcommits()<cr>
-nnoremap <localleader>vB <cmd>lua require('telescope.builtin').git_branches()<cr>
-nnoremap <localleader>vS <cmd>lua require('telescope.builtin').git_stash()<cr>
+" [MIGRATED TO LUA: user/plugins/telescope.lua and user/keymaps.lua]
+" " {{{ telescope.nvim and the related plugins
+" telescope.setup, keymaps, and Zettelkasten backlinks
+" " }}}
 
-nnoremap <A-e> <cmd>lua require'telescope.builtin'.symbols{ sources = {'emoji', 'math', 'latex'} }<cr>
-inoremap <A-e> <C-O>:lua require'telescope.builtin'.symbols{ sources = {'emoji', 'math', 'latex'} }<cr>
-
-nnoremap <leader>pn <cmd>lua require('telescope.builtin').find_files({prompt_title = "Notes", cwd = "~/Org/Notes/"})<cr>
-nnoremap <leader>pm <cmd>lua require('telescope.builtin').find_files({prompt_title = "org-mode", cwd = "~/Org/org-mode"})<cr>
-
-" {{{ Poor man's Zettelkasten
-lua << END
-local home = vim.fn.expand("~/Org/Notes/")
-local builtin = require("telescope.builtin")
-function backlinks()
-  local filename = vim.fn.expand("%:t")
-  builtin.live_grep({
-    results_title = "Backlinks to " .. filename,
-    prompt_title = "Search",
-    cwd = home,
-    search_dirs = { home },
-    default_text = "\\[.*\\]\\((./)?" .. filename .. "(#.+)*\\)",
-    find_command = { "fd" },
-  })
-end
-END
-if !empty('/home/jubnzv/.config/nvim/data/telescope-sources/zettel_tags.json')
-  nnoremap <leader>, <cmd>lua require'telescope.builtin'.symbols{ sources = {'zettel_tags'} }<cr>
-endif
-" }}}
-" }}}
-
-" {{{ mdeval.nvim
-lua << EOF
-require('mdeval').setup({
-  require_confirmation = false,
-  exec_timeout = 5,
-  eval_options = {
-    cpp = {
-      default_header = [[
-#include <iostream>
-#include <vector>
-using namespace std;
-      ]],
-      command = {"clang++", "-std=c++20", "-O0"},
-    },
-    racket = {
-      command = {"racket"},
-      language_code = "racket",
-      exec_type = "interpreted",
-      extension = "rkt",
-    },
-  }
-})
-vim.api.nvim_set_keymap('n', '<localleader>c',
-                        "<cmd>lua require 'mdeval'.eval_code_block()<CR>",
-                        {silent = true, noremap = true})
-vim.api.nvim_set_keymap('n', '<localleader>C',
-                        "<cmd>lua require 'mdeval'.eval_clean_results()<CR>",
-                        {silent = true, noremap = true})
-EOF
-" }}}
-
-" {{{ nvim-colorizer.lua
-lua << EOF
-require'colorizer'.setup {
-  'yml',
-  'css',
-  'javascript',
-  'html',
-  'markdown',
-  'conf',
-  'plantuml',
-}
-require 'colorizer'.setup {
-  '*';
-  markdown = { names = false };
-  css = { rgb_fn = true; }; -- Enable parsing rgb(...) functions in css.
-}
-EOF
-" }}}
+" [MIGRATED TO LUA: user/plugins/colorizer.lua]
+" " {{{ nvim-colorizer.lua
+" " }}}
 
 " {{{ vim-cursorword
 let g:cursorword_highlight = 0
@@ -1085,95 +763,42 @@ let g:GPGPreferArmor=1
 let g:GPGDefaultRecipients=["jubnzv@gmail.com"]
 " }}}
 
-" {{{ Built-in LSP server and related settings: keybinginds, helper plugins, etc.
-lua << EOF
-local lsp = require('lspconfig')
-local virtualtypes = require('virtualtypes')
+" [MIGRATED TO LUA: user/plugins/lsp.lua and user/keymaps.lua]
+" " {{{ Built-in LSP server and related settings
+" All LSP configuration now in lua/user/plugins/lsp.lua
+" " }}}
 
--- General LSP options
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    underline = true,
-    virtual_text=false,
-    update_in_insert = false,
-  }
-)
+" {{{ TreeSitter
+"lua <<EOF
+"require'nvim-treesitter.configs'.setup {
+"    highlight = {
+"        enable = function(lang, bufnr)
+"        	return lang == "org"
+"        end,
+"        disable = true,
+"    },
+"}
+"EOF
+" }}}
 
--- Enables LSP server if its `executable` is present and the current directory not in `forbidden_directories`
-local enable_if = function(executable, forbidden_directories)
-  if not vim.fn.executable(executable) then
-    return false
-  end
-
-  if forbidden_directories then
-    local current_directory = vim.fn.getcwd()
-    local basename = vim.fn.fnamemodify(current_directory, ':t')
-    for _, value in ipairs(forbidden_directories) do
-      if value == basename then
-        return false
-      end
-    end
-  end
-
-  return true
-end
-
-if enable_if('clangd', {"llvm-project"}) then
-  lsp.clangd.setup {
-    cmd = { "clangd",
-            "--background-index",
-            "--header-insertion=iwyu",
-            "--header-insertion-decorators",
-            "--suggest-missing-includes",
-            "--completion-style=detailed",
-            "--clang-tidy",
-           },
-  }
-end
-
-if enable_if('pylsp') then
-  lsp.pylsp.setup { }
-end
-
-if enable_if('gopls') then
-  lsp.gopls.setup { }
-end
-
-if enable_if("rust-analyzer", {"rust", "solang"}) then
-  lsp.rust_analyzer.setup({
-    on_attach=on_attach,
-    settings = {
-      ["rust-analyzer"] = {
-        checkOnSave = {
-          command = "clippy",
-        },
-        assist = {
-          importGranularity = "module",
-          importPrefix = "by_self",
-        },
-        cargo = {
-          loadOutDirsFromCheck = true
-        },
-        procMacro = {
-          enable = true
-        },
-      }
-    }
-})
-end
-
-if enable_if('ocamllsp') then
-  lsp.ocamllsp.setup { on_attach=virtualtypes.on_attach }
-end
-
-EOF
-
-nnoremap <silent> gy <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> gh <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> <localleader>r <cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap ]e <cmd>lua vim.diagnostic.goto_next()<CR>
-nnoremap [e <cmd>lua vim.diagnostic.goto_prev()<CR>
-nnoremap <silent> <localleader>d <cmd>lua vim.diagnostic.open_float()<CR>
+" {{{ TreeSitter Context
+"lua << EOF
+"require'treesitter-context'.setup{
+"  enable = false, -- Enable this plugin (Can be enabled/disabled later via commands)
+"  max_lines = 0, -- How many lines the window should span. Values <= 0 mean no limit.
+"  min_window_height = 0, -- Minimum editor window height to enable context. Values <= 0 mean no limit.
+"  line_numbers = true,
+"  multiline_threshold = 20, -- Maximum number of lines to show for a single context
+"  trim_scope = 'outer', -- Which context lines to discard if `max_lines` is exceeded. Choices: 'inner', 'outer'
+"  mode = 'cursor',  -- Line used to calculate context. Choices: 'cursor', 'topline'
+"  -- Separator between context and content. Should be a single character string, like '-'.
+"  -- When separator is set, the context will only show up when there are at least 2 lines above cursorline.
+"  separator = nil,
+"  zindex = 20, -- The Z-index of the context window
+"  on_attach = nil, -- (fun(buf: integer): boolean) return false to disable attaching
+"}
+"EOF
+"nmap <localleader>c :TSContextToggle<CR>
 " }}}
 
 " {{{ C and C++
@@ -1437,7 +1062,7 @@ augroup END
 au BufNewFile,BufRead *.scilexp setlocal syntax=scilla
 " }}}
 
-" {{{ Racket and other Lisps/Schemes
+" {{{ Scheme/Racket
 augroup rkt_group
   au!
   " au FileType racket inoremap <A-1> `()<Esc>i
@@ -1450,7 +1075,7 @@ augroup rkt_group
   au FileType racket RainbowToggleOn
 augroup END
 
-augroup rkt_group
+augroup scheme_group
   au!
   au FileType scheme RainbowToggleOn
 augroup END
@@ -1464,6 +1089,15 @@ augroup vim_group
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
+augroup END
+" }}}
+
+" {{{ GLSL
+augroup glsl_group
+  au!
+  au FileType glsl RainbowToggleOn
+  au FileType glsl nmap <buffer> <silent><A-o> <Nop>
+  au FileType glsl setlocal sw=2 ts=2 expandtab
 augroup END
 " }}}
 
@@ -1510,7 +1144,7 @@ augroup tex_group
   au!
   au FileType tex set sw=2
   au FileType tex call Togglegjgk()
-  " au FileType tex setlocal spell! spelllang=en_us,ru_yo
+  " au FileType tex setlocal spell! spelllang=en_us,ru_yo,es_es
   au FileType tex nnoremap <buffer> <silent> <leader>pi :call pasteimage#LatexClipboardImage()<CR>
   au FileType tex nnoremap <buffer> <silent> <leader>зш :call pasteimage#LatexClipboardImage()<CR>
 augroup end
@@ -1529,7 +1163,7 @@ augroup rst_group
   au FileType rst setlocal sw=4 ts=4 expandtab
   au FileType rst setlocal textwidth=80
   au Filetype rst setlocal foldmethod=expr
-  au FileType rst setlocal spell! spelllang=en_us,ru_ru
+  au FileType rst setlocal spell! spelllang=en_us,ru_ru,es_es
   au FileType rst call Togglegjgk()
 augroup END
 " }}}
@@ -1543,107 +1177,12 @@ augroup json_group
 augroup END
 " }}}
 
-" {{{ orgmode.nvim
-lua << EOF
--- Tree-sitter configuration
-require('orgmode').setup_ts_grammar() -- Load custom tree-sitter grammar for org filetype
-require'nvim-treesitter.configs'.setup {
-  -- If TS highlights are not enabled at all, or disabled via `disable` prop, highlighting will fallback to default Vim
-  -- syntax highlighting.
-  highlight = {
-    enable = true,
-    -- Required for spellcheck, some LaTeX highlights and code block highlights that do not have TS grammar
-    additional_vim_regex_highlighting = {'org'},
-  },
-  ensure_installed = {'org'}, -- Or run `:TSUpdate` org manually
-}
-
-local org = require('orgmode')
-
-org.setup({
-  org_agenda_files = {'/home/jubnzv/Org/org-mode/*.org'},
-  org_default_notes_file = '/home/jubnzv/Org/org-mode/Notes.org',
-  org_deadline_warning_days = 2,
-  notifications = {
-    enabled = true,
-    cron_enabled = true,
-    reminder_time = 30,
-    deadline_reminder = true,
-    scheduled_reminder = false,
-    notifier = function(tasks)
-      local result = {}
-      for _, task in ipairs(tasks) do
-        require('orgmode.utils').concat(result, {
-          string.format('# %s (%s)', task.category, task.humanized_duration),
-          string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title),
-          string.format('%s: <%s>', task.type, task.time:to_string())
-        })
-      end
-      if not vim.tbl_isempty(result) then
-        require('orgmode.notifications.notification_popup'):new({ content = result })
-      end
-    end,
-    cron_notifier = function(tasks)
-      for _, task in ipairs(tasks) do
-        local title = string.format('%s (%s)', task.category, task.humanized_duration)
-        local subtitle = string.format('%s %s %s', string.rep('*', task.level), task.todo, task.title)
-        local date = string.format('%s: %s', task.type, task.time:to_string())
-        if vim.fn.executable('notify-send') == 1 then
-          vim.loop.spawn('notify-send', { args = { string.format('%s\n%s\n%s', title, subtitle, date) }})
-        end
-      end
-    end
-  },
-})
-
--- Custom functions
---
--- These are used in scripts outside vim to integrate org-mode with the desktop environment.
--- All of them don't use `vim.schedule`, since they are synchronous and must be executed from the shell.
---
--- References:
--- * [Capture from terminal](https://github.com/nvim-orgmode/orgmode/discussions/230)
-
--- Get the information about the active tasks
--- It returns the number of TODO tasks that were scheduled for today or in the past and a flag that says if there is an
--- active task. Output format: `<deadline_num>/<scheduled_num>/<1/0 if there is an active task>`.
---
--- Usage: `nvim --headless -c 'lua print(tasks_status() .. "\n")' -c 'qa!'`
-function _G.tasks_status()
-  org.instance():init() -- Normally, it is called when openning agenda view. We have to call it manually.
-  local Files = require('orgmode.parser.files')
-  local scheduled_num, deadline_num, is_active = 0, 0, 0
-  for _, orgfile in ipairs(Files.all()) do
-    for _, section in ipairs(orgfile:get_unfinished_todo_entries()) do
-      local scheduled = section:get_scheduled_date()
-      local deadline = section:get_deadline_date()
-      if deadline ~= nil then
-         deadline_num = deadline_num  + 1
-      elseif scheduled ~= nil then
-         scheduled_num = scheduled_num + 1
-      end
-    end
-  end
-  local active_headline = Files.get_clocked_headline()
-  if active_headline then
-    is_active = 1
-  end
-  return tostring(deadline_num) .. "/" .. tostring(scheduled_num) .. "/" .. tostring(is_active)
-end
-
-EOF
-
-highlight! OrgTSHeadlineLevel1 ctermfg=214 guifg=#fabd2f
-highlight! OrgTSHeadlineLevel3 ctermfg=109 guifg=#83a598
-highlight! OrgTSTag ctermfg=208 cterm=bold guifg=#fe8019 gui=bold
-" }}}
 
 " {{{ Markdown & org-mode
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
- \'json', 'plantuml', 'html', 'sql', 'lua', 'racket', 'vim', 'coq',
- \'scilla', 'llvm', 'solidity'
+ \'json', 'html', 'sql', 'lua', 'racket', 'vim', 'coq', 'solidity'
  \]
 highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
@@ -1651,7 +1190,7 @@ augroup markdown_group
   au!
   au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
   au FileType markdown nmap <buffer> <silent><A-o> <Nop>
-  " au FileType markdown setlocal spell! spelllang=en_us,ru_yo
+  " au FileType markdown setlocal spell! spelllang=en_us,ru_yo,es_es
   au FileType markdown call Togglegjgk()
   " Fold on <Tab> like org-mode does
   " au FileType markdown nnoremap <buffer> <Tab> za<CR>k
@@ -1680,7 +1219,7 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
   " Open Zettelkasten prompt
   au FileType markdown nnoremap <buffer> <localleader>zb :lua backlinks()<CR>
-  au FileType markdown setlocal spell spelllang=en_us,ru_yo
+  au FileType markdown setlocal spell spelllang=en_us,ru_yo,es_es
 augroup end
 
 " Markdown preview in web-browser
@@ -1704,14 +1243,6 @@ augroup todo_group
 augroup end
 " }}}
 
-" {{{ Plant UML
-au! BufNewFile,BufReadPost *.{uml,puml} set filetype=plantuml
-augroup plantuml_group
-    au!
-    " au FileType plantuml setlocal spell! spelllang=en_us,ru_yo
-augroup END
-" }}}
-
 " {{{ Other ft-specific autocommands
 au! BufNewFile,BufReadPost *.{yaml,yml,sublime-syntax} set filetype=yaml foldmethod=indent
 au FileType yaml setlocal ts=2 sts=2 sw=2
@@ -1719,6 +1250,9 @@ au FileType yaml setlocal ts=2 sts=2 sw=2
 au FileType conf set foldmethod=marker foldenable
 au Filetype css setlocal ts=4
 au Filetype html setlocal ts=4
+
+" quint specification language
+au BufNewFile,BufRead *.qnt setlocal syntax=bsv
 
 " gno language: https://gno.land/
 au BufNewFile,BufRead *.gno setlocal syntax=go
