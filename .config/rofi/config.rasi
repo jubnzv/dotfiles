@@ -15,4 +15,4 @@ configuration {
     sorting-method:    "name";
   }
 }
-@theme "~/.config/rofi/gruvbox-jubnzv.rasi"
+@theme "~/.config/rofi/gruvbox-current.rasi"

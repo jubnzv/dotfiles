@@ -23,7 +23,7 @@ exec --no-startup-id $SCRIPTS_PATH/setup-keys.sh
 exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
 exec --no-startup-id udiskie -t
-exec --no-startup-id bsetroot -solid "#282828"
+exec --no-startup-id ~/.config/i3/init-theme.sh
 exec --no-startup-id bitwarden-desktop
 exec --no-startup-id xss-lock -- ~/.config/i3/i3lock-wrapper.sh
 # exec --no-startup-id syncthing-gtk
@@ -38,12 +38,8 @@ exec --no-startup-id xrdb -merge ~/.Xresources
 # }}}
 
 # {{{ UI and appearance
-# Color theme
-# class                 border  backgr. text    indicator
-client.focused          #4e4e4e #282828 #ebdbb2 #d65d0e
-client.focused_inactive #282828 #282828 #93a1a1 #586e75
-client.unfocused        #282828 #282828 #93a1a1 #586e75
-client.urgent           #d65d0e #282828 #000000 #586e75
+# Color theme (loaded from symlink managed by toggle-theme.sh)
+include ~/.config/i3/colors.conf
 
 # Window appearance
 new_window 1pixel
@@ -242,6 +238,9 @@ bindsym Shift+F4 --release [class=".*"] border none
 bindsym $mod+d         exec --no-startup-id dunstctl close
 bindsym $mod+Control+d exec --no-startup-id dunstctl closeall
 bindsym $mod+Shift+D   exec --no-startup-id dunstctl history-pop
+
+# Theme toggle
+bindsym $mod+Shift+t exec ~/.config/i3/toggle-theme.sh
 # }}}
 
 # {{{ Custom modes

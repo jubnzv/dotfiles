@@ -1,0 +1,104 @@
+* {
+    backgroundcolor: #fbf1c7;
+    bg1: #ebdbb2;
+    backgroundcoloralternate: #fbf1c7;
+    separatorcolor: #928374;
+    scrollbarcolor: #d5c4a1;
+    foregroundcolor: #3c3836;
+    foregroundcolorinverse: #3c3836;
+    selectioncolor: #ebdbb2;
+
+    font: "Iosevka 13";
+    border-color: @separatorcolor;
+    background-color: @backgroundcolor;
+    text-color: @foregroundcolor;
+    margin: 0;
+    margin-bottom: 0;
+    margin-top: 0;
+    spacing: 0;
+}
+
+#listview {
+    spacing: 0;
+    scrollbar: false;
+    margin: 0;
+    dynamic: false;
+}
+
+#window {
+    background-color: @backgroundcolor;
+    border-color: @separatorcolor;
+    border: 1;
+    border-radius: 0;
+    height: 600;
+    width: 500;
+}
+
+#mainbox {
+    border: 0;
+    padding: 0;
+    background-color: @backgroundcoloralternate;
+}
+
+#element {
+    padding: 10;
+    border: 0 0 1 0;
+    border-color: @separatorcolor;
+    background-color: @backgroundcoloralternate;
+}
+
+#element.selected.normal {
+    background-color: @selectioncolor;
+    text-color: @foregroundcolorinverse;
+    border-radius: 0;
+    border: 0 0 1 0;
+    border-color: @separatorcolor;
+}
+
+#element.alternate.normal {
+    background-color: @backgroundcoloralternate;
+}
+
+#element.normal.active {
+    background-color: #d5c4a1;
+}
+
+#element.alternate.active {
+    background-color: #d5c4a1;
+}
+
+#element.selected.active {
+    background-color: @selectioncolor;
+    text-color: @foregroundcolorinverse;
+    border-radius: 0;
+
+    border: 0 0 1 0;
+    border-color: @separatorcolor;
+}
+
+#inputbar {
+    border: 0 solid 0 solid 1 solid 0 solid;
+    margin: 0;
+    spacing: 0;
+    border-color: @separatorcolor;
+}
+
+#prompt {
+    padding: 10;
+    background-color: @backgroundcoloralternate;
+    border: 0 1 0 0;
+}
+
+#entry {
+    padding: 10;
+}
+
+#scrollbar {
+    border: 0;
+    width: 0;
+    handle-color: @scrollbarcolor;
+    handle-width: 0;
+    background-color: @backgroundcoloralternate;
+}
+
+/* vim: set ft=css : */

@@ -49,8 +49,8 @@ timeout = 0
 
 [scrot]
 summary = scrot
-format = "<b>  %s</b>\n%b"
+format = "<b>  %s</b>\n%b"
 
 [usb]
 summary = Automount
-format = "<b> %s</b>\n%b"
+format = "<b> %s</b>\n%b"

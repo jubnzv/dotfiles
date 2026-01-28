@@ -1,0 +1,56 @@
+[global]
+font = "FontAwesome, Iosevka 12"
+markup = full
+format = "<b>%s</b>\n%b"
+sort = yes
+indicate_hidden = yes
+alignment = right
+bounce_freq = 0
+show_age_threshold = 60
+word_wrap = yes
+ignore_newline = no
+corner_radius = 0
+geometry = "300x10-25+15"
+shrink = no
+transparency = 10
+idle_threshold = 120
+monitor = 0
+follow = keyboard
+sticky_history = yes
+history_length = 20
+show_indicators = yes
+line_height = 0
+separator_height = 0
+padding = 6
+horizontal_padding = 6
+separator_color = frame
+dmenu = /usr/bin/dmenu -p dunst:
+browser = firefox
+icon_position = left
+max_icon_size = 32
+icon_path = /usr/share/icons/gnome/32x32/status/:/usr/share/icons/gnome/32x32/devices/:/usr/share/icons/breeze/status/32/:/usr/share/icons/breeze/actions/32
+frame_width = 1
+frame_color = "#928374"
+
+[urgency_low]
+background = "#fbf1c7"
+foreground = "#3c3836"
+timeout = 10
+
+[urgency_normal]
+background = "#fbf1c7"
+foreground = "#3c3836"
+timeout = 10
+
+[urgency_critical]
+background = "#fbf1c7"
+foreground = "#9d0006"
+timeout = 0
+
+[scrot]
+summary = scrot
+format = "<b>  %s</b>\n%b"
+
+[usb]
+summary = Automount
+format = "<b> %s</b>\n%b"
