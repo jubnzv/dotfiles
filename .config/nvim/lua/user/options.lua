@@ -69,6 +69,9 @@ opt.langmap:append('ЖжЭэХхЪъ;\\:\\;\\"\\\'\\{[\\}]')
 -- netrw
 g.netrw_browsex_viewer = 'xdg-open'
 
+-- rainbow parentheses
+g.rainbow_active = 1
+
 -- UI options
 opt.termguicolors = true
 opt.winblend = 5

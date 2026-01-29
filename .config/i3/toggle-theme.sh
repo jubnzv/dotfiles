@@ -13,8 +13,8 @@ kitty +kitten themes --reload-in=all "Gruvbox Material ${mode^}" 2>/dev/null || 
 kitty +kitten themes --reload-in=all "Gruvbox ${mode^}" 2>/dev/null
 
 # Neovim - send to all running instances
-for sock in /run/user/$(id -u)/nvim.*/0; do
-    [ -S "$sock" ] && nvim --server "$sock" --remote-send ":set background=$mode<CR>" 2>/dev/null &
+for sock in /run/user/$(id -u)/nvim.*.0; do
+    [ -S "$sock" ] && nvim --server "$sock" --remote-send ":set background=$mode | colorscheme gruvbox<CR>" 2>/dev/null &
 done
 
 # i3 - symlink + reload

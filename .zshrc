@@ -397,31 +397,41 @@ bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # {{{ fzf
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 
-# {{{ Gruvbox color scheme
-# https://github.com/nicodebo/base16-fzf/blob/master/bash/base16-gruvbox-dark-soft.config
+# {{{ Gruvbox color scheme (dynamic light/dark)
 _gen_fzf_default_opts() {
-local color00='#32302f'
-local color01='#3c3836'
-local color02='#504945'
-local color03='#665c54'
-local color04='#bdae93'
-local color05='#d5c4a1'
-local color06='#ebdbb2'
-local color07='#fbf1c7'
-local color08='#fb4934'
-local color09='#fe8019'
-local color0A='#fabd2f'
-local color0B='#b8bb26'
-local color0C='#8ec07c'
-local color0D='#83a598'
-local color0E='#d3869b'
-local color0F='#d65d0e'
+  local mode=$(cat ~/.config/theme-mode 2>/dev/null || echo "dark")
 
-export FZF_DEFAULT_OPTS="
-  --color=bg+:$color01,bg:$color00,spinner:$color0C,hl:$color0D
-  --color=fg:$color04,header:$color0D,info:$color0A,pointer:$color0C
-  --color=marker:$color0C,fg+:$color06,prompt:$color0A,hl+:$color0D
-"
+  if [[ "$mode" == "light" ]]; then
+    # Gruvbox Light
+    local color_bg='#fbf1c7'
+    local color_bg_plus='#ebdbb2'
+    local color_fg='#3c3836'
+    local color_fg_plus='#282828'
+    local color_hl='#076678'      # blue
+    local color_info='#b57614'    # yellow
+    local color_prompt='#b57614'
+    local color_pointer='#427b58' # cyan
+    local color_marker='#427b58'
+    local color_spinner='#427b58'
+  else
+    # Gruvbox Dark
+    local color_bg='#32302f'
+    local color_bg_plus='#3c3836'
+    local color_fg='#bdae93'
+    local color_fg_plus='#ebdbb2'
+    local color_hl='#83a598'      # blue
+    local color_info='#fabd2f'    # yellow
+    local color_prompt='#fabd2f'
+    local color_pointer='#8ec07c' # cyan
+    local color_marker='#8ec07c'
+    local color_spinner='#8ec07c'
+  fi
+
+  export FZF_DEFAULT_OPTS="
+    --color=bg+:$color_bg_plus,bg:$color_bg,spinner:$color_spinner,hl:$color_hl
+    --color=fg:$color_fg,header:$color_hl,info:$color_info,pointer:$color_pointer
+    --color=marker:$color_marker,fg+:$color_fg_plus,prompt:$color_prompt,hl+:$color_hl
+  "
 }
 
 _gen_fzf_default_opts
