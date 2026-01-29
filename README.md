@@ -15,6 +15,14 @@ Go to [about:config](about:config) and set:
 
 Set the [surfing keys settings](https://raw.githubusercontent.com/jubnzv/dotfiles/master/assets/surfing-keys.js).
 
+#### Telegram themes
+
+```bash
+unzip theme.tdesktop-theme -d theme-extract
+vim theme-extract/colors.tdesktop-theme
+zip new-theme.tdesktop-theme theme-extract/colors.tdesktop-theme theme-extract/tiled.png
+```
+
 ### Previous configurations
 
 * i3wm, rofi, polybar, etc.: [f978ac1](https://github.com/jubnzv/dotfiles/tree/f978ac1aaa460db4c509b69462bf533ecd98004a) (2013-2020)
