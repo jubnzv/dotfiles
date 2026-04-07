@@ -83,15 +83,12 @@ Plug('nvim-orgmode/orgmode.nvim')             -- org-mode clone
 
 -- Writing
 Plug('dhruvasagar/vim-table-mode', { ['for'] = { 'markdown' } })
-Plug('tpope/vim-markdown', { ['for'] = { 'markdown' } })
-Plug('masukomi/vim-markdown-folding', { ['for'] = { 'markdown' } })
 Plug('iamcco/markdown-preview.nvim', {
   ['for'] = { 'markdown' },
   ['do'] = vim.fn['mkdp#util#install'],
   tag = 'v0.0.10'
 })
 Plug('junegunn/goyo.vim')                     -- Distraction-free writing
-Plug('preservim/vim-pencil')                  -- Soft-wraps in markdown
 
 -- Language-specific
 Plug('jamessan/vim-gnupg')                    -- Transparent editing of GPG-encrypted files
@@ -111,6 +108,8 @@ Plug('hanw/vim-bluespec', { ['for'] = { 'quint' } })
 Plug('tikhomirov/vim-glsl', { ['for'] = { 'glsl' } })
 Plug('elzr/vim-json', { ['for'] = { 'json' } })
 Plug('hylang/vim-hy', { ['for'] = { 'hy' } })
+Plug('nathangrigg/vim-beancount', { ['for'] = { 'beancount' } })
+Plug('move-language/move.vim', { ['for'] = { 'move' } })
 
 -- Local plugins
 if vim.fn.isdirectory('/home/jubnzv/Sources/llvm-project/llvm/utils/vim/') == 1 then

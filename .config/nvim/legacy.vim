@@ -112,11 +112,6 @@ endfunction
 nnoremap <localleader>f :call GoToColumnInFile(expand("<cWORD>"))<CR>
 " }}}
 
-" Highlight search results incrementally (haya14busa/incsearch.vim)
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
-
 " vim-easyalign
 cnoreabbrev Tab EasyAlign
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -246,6 +241,8 @@ let g:AutoPairsShortcutToggle = ''
 
 " Free statusline from Matchup
 let g:matchup_matchparen_status_offscreen=0
+" Use deferred highlighting to avoid E803 in CursorMovedI (vimtex conflict)
+let g:matchup_matchparen_deferred=1
 " }}}
 
 " {{{ Custom fold function
@@ -327,7 +324,6 @@ match ExtraWhitespace /\s\+$/
 au BufWinEnter * match ExtraWhitespace /\s\+$/
 au InsertEnter * match ExtraWhitespace /\s\+\%#\@<!$/
 au InsertLeave * match ExtraWhitespace /\s\+$/
-au BufWinLeave * call clearmatches()
 " }}}
 
 " {{{ ctags
@@ -777,6 +773,7 @@ augroup END
 let g:tex_flavor = 'latex'
 let g:vimtex_view_method = 'zathura'
 let g:vimtex_quickfix_mode=0
+let g:vimtex_matchparen_enabled=0
 let g:vimtex_complete_close_braces = 1
 let g:tex_conceal='abdmg'
 
@@ -827,7 +824,7 @@ highlight MdTodo ctermfg=red cterm=bold guifg=red gui=bold
 highlight MdDone ctermfg=green cterm=bold guifg=green gui=bold
 augroup markdown_group
   au!
-  au FileType markdown setlocal nofen tw=0 sw=2 foldlevel=0 foldexpr=NestedMarkdownFolds() cocu=nv
+  au FileType markdown setlocal tw=0 sw=2 nofoldenable
   au FileType markdown nmap <buffer> <silent><A-o> <Nop>
   au FileType markdown call Togglegjgk()
   " Insert code blocks
@@ -849,7 +846,9 @@ augroup markdown_group
   au FileType markdown nnoremap <buffer> <leader>T :read !gh-md-toc --hide-footer --hide-header %:p<CR>
   " Open Zettelkasten prompt
   au FileType markdown nnoremap <buffer> <localleader>zb :lua backlinks()<CR>
-  au FileType markdown setlocal spell spelllang=en_us,ru_yo,es_es
+  au FileType markdown setlocal nospell spelllang=en_us,ru_yo
+  au BufWritePost *.md setlocal spell
+  " au FileType markdown setlocal spell spelllang=en_us,ru_yo,es_es
 augroup end
 
 " Markdown preview in web-browser
@@ -866,10 +865,8 @@ cnoreabbrev MP MarkdownPreview
 " Highligth TODO and DONE entries.
 augroup todo_group
   au!
-  au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[\ \]" conceal cchar=
-  au WinEnter,VimEnter,FileType markdown,org syntax match todoCheckbox "\[x\]" conceal cchar=
-  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
-  au WinEnter,VimEnter,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
+  au WinEnter,VimEnter,BufRead,FileType markdown :silent! call matchadd('MdTodo', 'TODO', -1)
+  au WinEnter,VimEnter,BufRead,FileType markdown :silent! call matchadd('MdDone', 'DONE', -1)
 augroup end
 " }}}
 

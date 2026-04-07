@@ -40,7 +40,12 @@ fi
 xset dpms force off &
 disable_notifications
 pactl set-sink-mute 0 true
-i3lock -n --color=282828 -f -e
+
+# Use light/dark background based on current theme
+theme=$(cat "$HOME/.config/theme-mode" 2>/dev/null || echo "dark")
+bg_color=$( [ "$theme" = "light" ] && echo "fbf1c7" || echo "282828" )
+setxkbmap -layout "us,ru" -option "grp:alt_shift_toggle,compose:ralt" -option ctrl:nocaps
+i3lock -n --color="$bg_color" -f -e
 
 # After unlock
 ~/.config/i3/setup-keys.sh

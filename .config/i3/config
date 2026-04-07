@@ -28,7 +28,7 @@ exec --no-startup-id xrdb /home/jubnzv/.Xdefaults
 exec --no-startup-id dunst
 exec --no-startup-id udiskie -t
 exec --no-startup-id ~/.config/i3/init-theme.sh
-exec --no-startup-id bitwarden-desktop
+exec --no-startup-id bitwarden --no-sandbox
 exec --no-startup-id xss-lock -- ~/.config/i3/i3lock-wrapper.sh
 # exec --no-startup-id syncthing-gtk
 exec --no-startup-id ~/.local/bin/diff-notes.sh
@@ -292,6 +292,17 @@ mode "$mode_run_repl" {
     bindsym h       exec $TERMINAL -e ghci; mode "default"
 	bindsym Return  mode "default"
 	bindsym Escape  mode "default"
+}
+# }}}
+# {{{ beancount
+set $mode_beancount  beancount\t [b] journal [f] fava [s] balance
+bindsym $mod+b mode "$mode_beancount"
+mode "$mode_beancount" {
+    bindsym b       exec $TERMINAL -e nvim ~/.journal.beancount; mode "default"
+    bindsym f       exec $TERMINAL --hold -e ~/.config/beancount/fava-wrapper.sh; mode "default"
+    bindsym s       exec notify-send "Balance" "$(bean-balance)"; mode "default"
+    bindsym Return  mode "default"
+    bindsym Escape  mode "default"
 }
 # }}}
 # }}}

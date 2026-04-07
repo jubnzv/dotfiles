@@ -41,8 +41,20 @@ if tmux list-sessions &>/dev/null; then
     tmux source-file ~/.tmux/colors.conf
 fi
 
-# GTK via gsettings
-gsettings set org.gnome.desktop.interface gtk-theme "Adwaita$( [ "$mode" = "dark" ] && echo "-dark" )" 2>/dev/null
+# Claude Code - update theme in preferences
+if [ -f ~/.claude.json ]; then
+    jq --arg theme "$mode" '.theme = $theme' ~/.claude.json > ~/.claude.json.tmp && mv ~/.claude.json.tmp ~/.claude.json
+fi
+
+# GTK theme (Breeze)
+GTK_THEME=$( [ "$mode" = "dark" ] && echo "Breeze-Dark" || echo "Breeze" )
+GTK_ICONS="breeze"
+
+sed -i "s/^gtk-theme-name=.*/gtk-theme-name=$GTK_THEME/" ~/.config/gtk-3.0/settings.ini
+sed -i "s/^gtk-icon-theme-name=.*/gtk-icon-theme-name=$GTK_ICONS/" ~/.config/gtk-3.0/settings.ini
+sed -i "s/^gtk-theme-name=.*/gtk-theme-name=\"$GTK_THEME\"/" ~/.gtkrc-2.0
+sed -i "s/^gtk-icon-theme-name=.*/gtk-icon-theme-name=\"$GTK_ICONS\"/" ~/.gtkrc-2.0
+gsettings set org.gnome.desktop.interface gtk-theme "$GTK_THEME" 2>/dev/null
 gsettings set org.gnome.desktop.interface color-scheme "prefer-$mode" 2>/dev/null
 
 # Background

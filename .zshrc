@@ -32,6 +32,7 @@ fi
 # }}}
 
 fpath=( ~/.zfunc ~/.zsh/zsh-completions/src/ "${fpath[@]}" )
+[[ -x "$(command -v rustup)" ]] && rustup completions zsh cargo > ~/.zfunc/_cargo 2>/dev/null
 
 if [[ -x "$(command -v zoxide)" ]]; then
     eval "$(zoxide init zsh)"
@@ -98,7 +99,7 @@ export QT_QPA_PLATFORMTHEME='qt5ct'
 export EDITOR="nvim"
 export DEBEMAIL="jubnzv@gmail.com"
 export ALTERNATE_EDITOR="nvim-qt"
-export MANPAGER="nvim -c 'set ft=man nomod nolist' -c 'map q :q<CR>' -"
+export MANPAGER="less"
 export TERMCMD="alacritty"
 export TERMINAL="alacritty -e"
 export USE_EDITOR=$EDITOR
@@ -389,7 +390,18 @@ backward-kill-dir () {
 zle -N backward-kill-dir
 bindkey '^H' backward-kill-dir
 
-bindkey -s "\ep"  "^Qvimfzf .^J"            # Select file with fzf and open it in vim.
+# Select file with fzf and open it in vim (saves the actual command to history).
+vimfzf-widget() {
+    local files
+    files=$(fzf --cycle --multi < /dev/tty)
+    [[ -z "$files" ]] && { zle reset-prompt; return; }
+    local cmd="${EDITOR:-nvim} ${(f)files}"
+    print -s "$cmd"
+    BUFFER="$cmd"
+    zle accept-line
+}
+zle -N vimfzf-widget
+bindkey "\ep" vimfzf-widget
 bindkey -s "\ev"  "^Qv .^J"                 # Open editor in current directory
 bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # }}}

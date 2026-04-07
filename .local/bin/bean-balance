@@ -1,0 +1,4 @@
+#!/bin/bash
+# Show total balance in USD
+~/.local/share/pipx/venvs/beancount/bin/python -m beanquery ~/.journal.beancount \
+  "SELECT convert(sum(position), 'USD') as total WHERE account ~ 'Assets'" 2>/dev/null | tail -1 | tr -d ' '
