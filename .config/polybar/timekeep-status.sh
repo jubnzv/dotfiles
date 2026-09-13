@@ -2,12 +2,8 @@
 # Polybar module: show timekeep tracking status from latest weekly note
 
 WEEKLY_DIR="$HOME/Org/Notes/weekly"
-
-# Read colors from active theme
-green=$(grep '^aqua1' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
-red=$(grep '^red1' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
-: "${green:=#689d6a}"
-: "${red:=#cc241d}"
+green='#689d6a'
+red='#cc241d'
 
 # Find latest weekly note
 latest=$(ls "$WEEKLY_DIR"/*.md 2>/dev/null | sort | tail -1)

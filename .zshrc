@@ -319,44 +319,12 @@ bindkey -s '\C-x\C-d' '$(date +%Y-%m-%d)'
 # {{{ fzf
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 
-# {{{ Gruvbox color scheme (dynamic light/dark)
-_gen_fzf_default_opts() {
-  local mode=$(cat ~/.config/theme-mode 2>/dev/null || echo "dark")
-
-  if [[ "$mode" == "light" ]]; then
-    # Gruvbox Light
-    local color_bg='#fbf1c7'
-    local color_bg_plus='#ebdbb2'
-    local color_fg='#3c3836'
-    local color_fg_plus='#282828'
-    local color_hl='#076678'      # blue
-    local color_info='#b57614'    # yellow
-    local color_prompt='#b57614'
-    local color_pointer='#427b58' # cyan
-    local color_marker='#427b58'
-    local color_spinner='#427b58'
-  else
-    # Gruvbox Dark
-    local color_bg='#32302f'
-    local color_bg_plus='#3c3836'
-    local color_fg='#bdae93'
-    local color_fg_plus='#ebdbb2'
-    local color_hl='#83a598'      # blue
-    local color_info='#fabd2f'    # yellow
-    local color_prompt='#fabd2f'
-    local color_pointer='#8ec07c' # cyan
-    local color_marker='#8ec07c'
-    local color_spinner='#8ec07c'
-  fi
-
-  export FZF_DEFAULT_OPTS="
-    --color=bg+:$color_bg_plus,bg:$color_bg,spinner:$color_spinner,hl:$color_hl
-    --color=fg:$color_fg,header:$color_hl,info:$color_info,pointer:$color_pointer
-    --color=marker:$color_marker,fg+:$color_fg_plus,prompt:$color_prompt,hl+:$color_hl
-  "
-}
-
-_gen_fzf_default_opts
+# {{{ Gruvbox dark color scheme
+export FZF_DEFAULT_OPTS="
+  --color=bg+:#3c3836,bg:#32302f,spinner:#8ec07c,hl:#83a598
+  --color=fg:#bdae93,header:#83a598,info:#fabd2f,pointer:#8ec07c
+  --color=marker:#8ec07c,fg+:#ebdbb2,prompt:#fabd2f,hl+:#83a598
+"
 # }}}
 
 export FZF_DEFAULT_OPTS=${FZF_DEFAULT_OPTS}" --bind alt-k:up,alt-j:down,alt-p:previous-history,alt-n:next-history,alt-m:accept,alt-q:cancel,esc:cancel"

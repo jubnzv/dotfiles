@@ -91,25 +91,7 @@ opt.cursorline = true
 opt.laststatus = 2
 opt.title = true
 opt.signcolumn = 'yes'
--- Set background based on theme-mode file
-local function set_background_from_theme()
-  local theme_file = vim.fn.expand('$HOME/.config/theme-mode')
-  local f = io.open(theme_file, 'r')
-  if f then
-    local mode = f:read('*l')
-    f:close()
-    if mode == 'light' or mode == 'dark' then
-      opt.background = mode
-    end
-  end
-end
-set_background_from_theme()
-
--- Update background when Neovim gains focus
-vim.api.nvim_create_autocmd('FocusGained', {
-  group = vim.api.nvim_create_augroup('ThemeMode', { clear = true }),
-  callback = set_background_from_theme,
-})
+opt.background = 'dark'
 opt.guicursor:append('c-ci-cr:block')
 
 -- Folding settings
@@ -1285,7 +1267,7 @@ end
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 
--- Custom highlights. Every colorscheme (re)load wipes them, e.g. on a theme-mode flip.
+-- Custom highlights. Every colorscheme (re)load wipes them.
 local function set_user_hl()
   vim.cmd([[
     highlight Todo ctermfg=130 guibg=#af3a03

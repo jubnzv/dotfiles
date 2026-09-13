@@ -3,14 +3,9 @@
 
 VAULT="$HOME/Org/Notes"
 TODAY=$(date +%Y-%m-%d)
-
-# Read colors from active theme
-green=$(grep '^aqua1' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
-purple=$(grep '^purple2' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
-bg=$(grep '^background ' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
-: "${green:=#689d6a}"
-: "${purple:=#d3869b}"
-: "${bg:=#262626}"
+green='#689d6a'
+purple='#d3869b'
+bg='#262626'
 
 # Categorize dated tasks
 eval "$(rg -P '[\-\*] \[.\].*[📅⏳✅].*\d{4}-\d{2}-\d{2}' "$VAULT" --glob '*.md' --no-filename 2>/dev/null | \
