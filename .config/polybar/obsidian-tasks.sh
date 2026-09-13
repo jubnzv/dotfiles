@@ -7,14 +7,17 @@ TODAY=$(date +%Y-%m-%d)
 # Read colors from active theme
 green=$(grep '^aqua1' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
 purple=$(grep '^purple2' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
+bg=$(grep '^background ' ~/.config/polybar/colors.ini 2>/dev/null | cut -d= -f2 | tr -d ' ')
 : "${green:=#689d6a}"
 : "${purple:=#d3869b}"
+: "${bg:=#262626}"
 
 # Categorize dated tasks
 eval "$(rg -P '[\-\*] \[.\].*[📅⏳✅].*\d{4}-\d{2}-\d{2}' "$VAULT" --glob '*.md' --no-filename 2>/dev/null | \
   awk -v today="$TODAY" '
   {
-    d = ($0 ~ /\[[x\-]\]/) ? 1 : 0
+    if ($0 ~ /\[-\]/) next
+    d = ($0 ~ /\[x\]/) ? 1 : 0
     scheduled = ""; due = ""; done_date = ""
     if (match($0, /⏳ ([0-9]{4}-[0-9]{2}-[0-9]{2})/, m)) scheduled = m[1]
     if (match($0, /📅 ([0-9]{4}-[0-9]{2}-[0-9]{2})/, m)) due = m[1]
@@ -25,11 +28,11 @@ eval "$(rg -P '[\-\*] \[.\].*[📅⏳✅].*\d{4}-\d{2}-\d{2}' "$VAULT" --glob '*
     if (done_date == today) is_done = 1
 
     if (scheduled != "") {
-      if (scheduled == today) is_today = 1
+      if (scheduled == today && !d) is_today = 1
       if (scheduled < today && !d) is_overdue = 1
     }
     if (due != "") {
-      if (due == today) is_today = 1
+      if (due == today && !d) is_today = 1
       if (due < today && !d) is_overdue = 1
     }
 
@@ -54,8 +57,15 @@ n_today=$((n_today + daily))
 total=$((n_today + n_done + n_overdue))
 [[ "$total" -eq 0 ]] && { echo "0"; exit 0; }
 
-out=""
-[[ "$n_today" -gt 0 ]] && out+="${n_today}"
-[[ "$n_done" -gt 0 ]] && out+="%{F${green}}+${n_done}%{F-}"
-[[ "$n_overdue" -gt 0 ]] && out+="%{F${purple}}!${n_overdue}%{F-}"
+if [[ "$n_overdue" -gt 0 ]]; then
+  # Overdue alert: invert -- dark text on purple background
+  out="%{B${purple}}%{F${bg}} "
+  [[ "$n_today" -gt 0 ]] && out+="${n_today} "
+  [[ "$n_done" -gt 0 ]] && out+="+${n_done} "
+  out+="!${n_overdue} %{F-}%{B-}"
+else
+  out=""
+  [[ "$n_today" -gt 0 ]] && out+="${n_today}"
+  [[ "$n_done" -gt 0 ]] && out+="%{F${green}}+${n_done}%{F-}"
+fi
 echo "$out"

@@ -1,4 +1,47 @@
 #!/bin/bash
-# Show total balance in USD
-~/.local/share/pipx/venvs/beancount/bin/python -m beanquery ~/.journal.beancount \
-  "SELECT convert(sum(position), 'USD') as total WHERE account ~ 'Assets'" 2>/dev/null | tail -1 | tr -d ' '
+# Total assets in USD at live prices (i3: Mod+b s).
+#   -n  do not fetch, use whatever is in ~/.prices.beancount
+set -uo pipefail
+
+PY="$HOME/.local/share/pipx/venvs/beancount/bin/python"
+J="$HOME/.journal.beancount"
+P="$HOME/.prices.beancount"
+TTL=3600
+
+W=""
+if [ "${1-}" != "-n" ]; then
+  age=$(( $(date +%s) - $(stat -c %Y "$P" 2>/dev/null || echo 0) ))
+  if [ "$age" -ge "$TTL" ] && ! e=$("$HOME/.config/beancount/fetch-prices.sh" 2>&1 >/dev/null); then
+    W="PRICE FETCH FAILED: $(echo "$e" | head -2 | tr '\n' ' ')"
+  fi
+fi
+
+q() { "$PY" -m beanquery "$J" "$1" 2>"$err" | tail -n +3; }
+
+err=$(mktemp); trap 'rm -f "$err"' EXIT
+
+tot=$(q "SELECT convert(sum(position), 'USD') as t WHERE account ~ 'Assets'" | awk '{print $1}')
+brk=$(q "SELECT currency, sum(number) as u, convert(sum(position),'USD') as v
+         WHERE account ~ 'Assets' GROUP BY currency ORDER BY 3 DESC")
+
+# beanquery dumps the whole offending transaction after the error line; the
+# first line is the only part that fits in a notification.
+[ -s "$err" ] && W="${W:+$W
+}LEDGER ERROR: $(head -1 "$err")"
+
+[ -n "$tot" ] || { echo "${W:-beanquery produced nothing}"; exit 1; }
+
+printf '$%s\n\n' "$(awk -v n="$tot" 'BEGIN{
+  s=sprintf("%.2f",n); split(s,a,"."); i=a[1]; o=""
+  while (length(i)>3) { o=","substr(i,length(i)-2)o; i=substr(i,1,length(i)-3) }
+  print i o "." a[2] }')"
+
+echo "$brk" | awk '$1!=""{printf "%-5s %14.2f %12.2f\n", $1, $2, $3}'
+
+# The whole point of this rewrite: stale or bogus prices must be impossible to
+# miss, so always show how old the oldest quote actually is.
+oldest=$(grep -E '^[0-9-]{10} price ' "$P" 2>/dev/null \
+  | awk '{p[$3]=$1} END{o="none"; for(c in p) if(o=="none"||p[c]<o) o=p[c]; print o}')
+printf '\nprices as of %s\n' "$oldest"
+[ -n "$W" ] && echo "$W"
+exit 0

@@ -55,3 +55,9 @@ gpgsign = true
 path = ~/.gitconfig.work
 [safe]
 	directory = /usr/local/share/dotfiles
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
