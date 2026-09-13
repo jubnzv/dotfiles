@@ -141,10 +141,8 @@ if not R then
   Plug('jiangmiao/auto-pairs')                  -- Insert or delete brackets, parens, quotes in pair
   Plug('tpope/vim-rsi')                         -- Readline (emacs) keybindings in command and insert modes
   Plug('osyo-manga/vim-over')                   -- :substitute preview
-  Plug('christoomey/vim-tmux-navigator')        -- tmux integration
 
   -- UI
-  Plug('tyru/open-browser.vim')                 -- Plugin for opening links in the browser
   Plug('nvim-lualine/lualine.nvim')             -- Statusline plugin
   Plug('jubnzv/gruvbox')                        -- Color scheme
   Plug('norcalli/nvim-colorizer.lua')           -- Colorize color names and codes
@@ -152,16 +150,13 @@ if not R then
 
   -- Git
   Plug('tpope/vim-fugitive')                    -- Git wrapper
-  Plug('cohama/agit.vim')                       -- gitk clone for vim
   Plug('airblade/vim-gitgutter')                -- Shows git status on a gutter column
   Plug('ruifm/gitlinker.nvim')                  -- Generate shareable links for git frontends
-  Plug('statox/vim-compare-lines')              -- Compares symbol in two lines in the buffer
   Plug('rhysd/git-messenger.vim')               -- Reveal the commit messages under the cursor
 
   -- File navigation
   Plug('kyazdani42/nvim-tree.lua')              -- A tree explorer plugin for vim
   Plug('kyazdani42/nvim-web-devicons')          -- devicons for nvim-tree.lua
-  Plug('mbbill/undotree')                       -- Emacs' undotree
 
   -- LSP & Completion
   Plug('simrat39/symbols-outline.nvim')         -- Viewer & Finder for LSP symbols and tags
@@ -187,7 +182,6 @@ if not R then
   Plug('machakann/vim-swap')                    -- Reorder arguments in functions with `g>` and `g<`
   Plug('lukas-reineke/indent-blankline.nvim')   -- Display indent levels in code
   Plug('sbdchd/neoformat')                      -- Integration with code formatters
-  Plug('jpalardy/vim-slime')                    -- REPL integration
   Plug('derekwyatt/vim-fswitch')                -- Switching between companion files
   Plug('luochen1990/rainbow')                   -- Rainbow Parentheses improved
 
@@ -201,9 +195,6 @@ if not R then
   Plug('nvim-treesitter/nvim-treesitter')         -- tree-sitter integration
   Plug('nvim-treesitter/nvim-treesitter-context') -- Shows context of a current function using treesitter
 
-  -- org-mode
-  Plug('nvim-orgmode/orgmode.nvim')               -- org-mode clone
-
   -- Writing
   Plug('dhruvasagar/vim-table-mode', { ['for'] = { 'markdown' } })
   Plug('iamcco/markdown-preview.nvim', {
@@ -211,7 +202,6 @@ if not R then
     ['do'] = vim.fn['mkdp#util#install'],
     tag = 'v0.0.10'
   })
-  Plug('junegunn/goyo.vim')                     -- Distraction-free writing
 
   -- Language-specific
   Plug('jamessan/vim-gnupg')                    -- Transparent editing of GPG-encrypted files
@@ -219,17 +209,13 @@ if not R then
   Plug('bfrg/vim-cpp-modern', { ['for'] = { 'cpp' } })
   Plug('ocaml/vim-ocaml', { ['for'] = { 'ocaml' } })
   Plug('vim-python/python-syntax', { ['for'] = { 'python' } })
-  Plug('wlangstroth/vim-racket', { ['for'] = { 'rkt' } })
   Plug('rust-lang/rust.vim', { ['for'] = { 'rust' } })
-  Plug('fatih/vim-go', { ['for'] = { 'go' } })
   Plug('tomlion/vim-solidity', { ['for'] = { 'sol' } })
   Plug('leafgarland/typescript-vim', { ['for'] = { 'typescript' } })
   Plug('othree/xml.vim', { ['for'] = { 'xml', 'html' } })
   Plug('florentc/vim-tla', { ['for'] = { 'tla' } })
   Plug('hanw/vim-bluespec', { ['for'] = { 'quint' } })
-  Plug('tikhomirov/vim-glsl', { ['for'] = { 'glsl' } })
   Plug('elzr/vim-json', { ['for'] = { 'json' } })
-  Plug('hylang/vim-hy', { ['for'] = { 'hy' } })
   Plug('nathangrigg/vim-beancount', { ['for'] = { 'beancount' } })
   Plug('move-language/move.vim', { ['for'] = { 'move' } })
   Plug('Julian/lean.nvim')                      -- no lazy 'for': plugin registers .lean ft itself
@@ -347,66 +333,7 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 " }}}
 
-" {{{ Web-browser integration (tyru/open-browser.vim)
-let g:openbrowser_search_engines = extend(
-\   get(g:, 'openbrowser_search_engines', {}),
-\   {
-\       'github': 'http://github.com/search?q={query}',
-\       'github-c': 'http://github.com/search?l=C&q=language%3AC+{query}&type=Code',
-\       'github-cpp': 'http://github.com/search?l=C%2B%2B&q=language%3AC%2B%2B+{query}&type=Code',
-\       'github-python': 'http://github.com/search?l=Python&q=language%3APython+{query}&type=Code',
-\       'github-rust': 'http://github.com/search?l=Rust&q=language%3ARust+{query}&type=Code',
-\       'github-go': 'http://github.com/search?l=Go&q=language%3AGo+{query}&type=Code',
-\       'github-ocaml': 'http://github.com/search?l=OCaml&q=language%3AOCaml+{query}&type=Code',
-\       'github-vimscript': 'http://github.com/search?l=Vim+Script&language%3Avimscript+{query}&type=Code',
-\       'grep-app': 'https://grep.app/search?q={query}&case=true',
-\       'google': 'http://google.com/search?q={query}',
-\       'yandex-translate-en-ru': 'https://translate.yandex.ru/?lang=en-ru&text={query}',
-\       'ludwig-en': 'https://ludwig.guru/ru/s/{query}',
-\       'debian-code-search': 'https://codesearch.debian.net/search?q={query}',
-\       'cppreference': 'https://en.cppreference.com/mwiki/index.php?title=Special%3ASearch&search={query}',
-\       'hotexamples': 'https://cpp.hotexamples.com/search/{query}',
-\       'qt': 'https://doc.qt.io/qt-5/search-results.html?q={query}',
-\       'python': 'http://docs.python.org/dev/search.html?q={query}&check_keywords=yes&area=default',
-\   },
-\   'keep'
-\)
-let g:openbrowser_default_search = 'google'
-
-function! s:JbzGetVisual()
-  let l:old_reg = getreg('"')
-  let l:old_regtype = getregtype('"')
-  norm gvy
-  let l:ret = getreg('"')
-  call setreg('"', l:old_reg, l:old_regtype)
-  exe "norm \<Esc>"
-  return substitute(l:ret, '\n\+$', '', '') " chomp
-endfunction
-
-function! s:JbzSetOpenbrowserBindings(keybind, name)
-  silent! exe 'nnoremap <silent> ' . a:keybind . " :call openbrowser#smart_search(expand('<cword>'), " . '"' . a:name . '")<CR>'
-  silent! exe 'vnoremap <silent> ' . a:keybind . ' :<C-U>execute "call openbrowser#smart_search(\"" . <SID>JbzGetVisual() . "\", \"' . a:name . '\")"<CR>'
-endfunction
-
-call s:JbzSetOpenbrowserBindings("<leader>osg", "google")
-call s:JbzSetOpenbrowserBindings("<leader>otr", "yandex-translate-en-ru")
-call s:JbzSetOpenbrowserBindings("<leader>otl", "ludwig-en")
-call s:JbzSetOpenbrowserBindings("<leader>ogs", "github")
-call s:JbzSetOpenbrowserBindings("<leader>ogc", "github-c")
-call s:JbzSetOpenbrowserBindings("<leader>ogx", "github-cpp")
-call s:JbzSetOpenbrowserBindings("<leader>ogp", "github-python")
-call s:JbzSetOpenbrowserBindings("<leader>ogr", "github-rust")
-call s:JbzSetOpenbrowserBindings("<leader>ogg", "github-go")
-call s:JbzSetOpenbrowserBindings("<leader>ogo", "github-ocaml")
-call s:JbzSetOpenbrowserBindings("<leader>ogv", "github-vimscript")
-call s:JbzSetOpenbrowserBindings("<leader>osa", "grep-app")
-call s:JbzSetOpenbrowserBindings("<leader>osh", "hotexamples")
-call s:JbzSetOpenbrowserBindings("<leader>osx", "cppreference")
-call s:JbzSetOpenbrowserBindings("<leader>osq", "qt")
-call s:JbzSetOpenbrowserBindings("<leader>osp", "python")
-" }}}
-
-" {{{ tmux and vim-slime configuration
+" {{{ tmux
 " Free my prefix key
 map ` <Nop>
 
@@ -415,50 +342,6 @@ if exists('$TMUX')
   nnoremap <silent> <leader><tab> :silent !tmux send-keys -t \! Up Enter<cr>
   nnoremap <silent> <leader><leader><tab> :silent !tmux clear-history -t right && tmux send-keys -t \! C-l Up Enter<cr>
 endif
-
-" slime
-let g:slime_target = "tmux"
-let g:slime_paste_file = tempname()
-let g:slime_default_config = {"socket_name": "default", "target_pane": "1.2"}
-let g:slime_dont_ask_default = 1
-let g:slime_no_mappings = 1
-
-" Configure slime for the right tmux pane in the current window
-function! s:JbzSlimeRight()
-  if !exists('$TMUX')
-    echo "tmux is not running"
-    return
-  endif
-  let win_num = split(system("tmux display-message -p '#I'"), "\n")[0]
-  let sock = split($TMUX, ",")[0]
-  let b:slime_config = {"socket_name": sock, "target_pane": win_num . '.2' }
-  call slime#config()
-endfunction
-command! JbzSlimeRight call s:JbzSlimeRight()
-
-" Open tmux pane with selected REPL and run slime configuration routine
-function! s:JbzOpenSlimeREPL(repl_exe, ...)
-  if !exists('$TMUX')
-    echo "tmux is not running"
-    return
-  endif
-
-  let cmd = a:repl_exe
-
-  " Parse additional command to execute before running the REPL
-  let cmd_aux = get(a:, 1, "")
-  if !empty(cmd_aux) | let cmd = cmd_aux . "; " . cmd | endif
-
-  call system("tmux split-window -h \"" . cmd . "\"")
-  call system("tmux last-pane")
-  call s:JbzSlimeRight()
-endfunction
-command! -nargs=+ JbzOpenSlimeREPL call s:JbzOpenSlimeREPL(<f-args>)
-
-nnoremap <leader>sc :JbzSlimeRight
-xmap <leader>ss <Plug>SlimeRegionSend
-nmap <leader>ss <Plug>SlimeParagraphSend
-nmap <leader>sl <Plug>SlimeLineSend
 " }}}
 
 " {{{ Parens settings
@@ -589,19 +472,11 @@ nmap <leader>vr <Plug>(GitGutterRefresh)
 nmap <localleader>vp <Plug>(GitGutterPreviewHunk)
 nmap <localleader>b <Plug>(git-messenger)
 nmap <localleader>vs :Git<cr>
-nmap <localleader>vD :Git! diff<cr>
-nmap <localleader>vb :Git blame<cr>
-nmap <localleader>vl :Agit<cr>
 " }}}
 
 " {{{ table-mode
 let g:table_mode_map_prefix = ',t'
-let g:table_mode_delete_row_map = ',tdd'
 let g:table_mode_delete_column_map = ',tdc'
-" }}}
-
-" {{{ Plain text editing
-command! PTToggle Goyo
 " }}}
 
 " {{{ vim-cursorword
@@ -682,18 +557,6 @@ augroup cmm_group
   " Set the correct filetype for C-- IR dumps.
   au BufNewFile,BufReadPost *.cmm set filetype=c
 augroup END
-" }}}
-
-" {{{ Go
-augroup go_group
-  au!
-  au FileType go RainbowToggleOn
-  au FileType go nmap <buffer> <silent><A-o> <Nop>
-  au FileType go nnoremap <buffer><leader>rd :JbzRemoveDebugPrints<CR>
-augroup END
-
-" fatih/vim-go settings
-let g:go_fmt_autosave = 0
 " }}}
 
 " {{{ Solidity
@@ -800,23 +663,6 @@ augroup ml_ft_group
 augroup END
 " }}}
 
-" {{{ Scheme/Racket
-augroup rkt_group
-  au!
-  au FileType racket inoremap <buffer> <A-1> `
-  au FileType racket inoremap <buffer> <A-2> '
-  au FileType racket inoremap <buffer> <A-3> λ
-  au FileType racket setlocal foldmethod=marker
-  au FileType racket setlocal commentstring=;\ %s
-  au FileType racket RainbowToggleOn
-augroup END
-
-augroup scheme_group
-  au!
-  au FileType scheme RainbowToggleOn
-augroup END
-" }}}
-
 " {{{ vimscript
 let g:vim_indent_cont = 2
 augroup vim_group
@@ -825,15 +671,6 @@ augroup vim_group
   au FileType vim setlocal foldmethod=marker foldlevel=0 foldenable
   au FileType vim nnoremap <silent><buffer> K <Esc>:help <C-R><C-W><CR>
   au FileType help noremap <buffer> q :q<cr>
-augroup END
-" }}}
-
-" {{{ GLSL
-augroup glsl_group
-  au!
-  au FileType glsl RainbowToggleOn
-  au FileType glsl nmap <buffer> <silent><A-o> <Nop>
-  au FileType glsl setlocal sw=2 ts=2 expandtab
 augroup END
 " }}}
 
@@ -879,24 +716,6 @@ augroup tex_group
 augroup end
 " }}}
 
-" {{{ reStructuredText
-" Settings for gu-fan/riv.vim. I don't use it nowdays.
-" Disable auto-folding on `:w`
-let g:riv_fold_auto_update=0
-" The position of fold info
-let g:riv_fold_info_pos='left'
-
-augroup rst_group
-  au!
-  au FileType rst setlocal syn=off
-  au FileType rst setlocal sw=4 ts=4 expandtab
-  au FileType rst setlocal textwidth=80
-  au Filetype rst setlocal foldmethod=expr
-  au FileType rst setlocal spell spelllang=en_us,ru_ru,es_es
-  au FileType rst call s:Gjgk(1)
-augroup END
-" }}}
-
 " {{{ JSON
 augroup json_group
   au!
@@ -907,11 +726,11 @@ augroup END
 " }}}
 
 
-" {{{ Markdown & org-mode
+" {{{ Markdown
 let g:markdown_fenced_languages = [
  \'python', 'py=python', 'bash=sh', 'c', 'cpp', 'c++=cpp',
  \'asm', 'go', 'rust', 'ocaml', 'cmake', 'diff', 'yaml', 'haskell',
- \'json', 'html', 'sql', 'lua', 'racket', 'vim', 'lean', 'solidity'
+ \'json', 'html', 'sql', 'lua', 'vim', 'lean', 'solidity'
  \]
 augroup markdown_group
   au!
@@ -975,20 +794,6 @@ augroup other_ft_group
   " neosnippet snippets
   au BufNewFile,BufRead *.snip setlocal ft=neosnippet fdm=marker foldlevel=0 fen tw=120 ts=4 noexpandtab
 
-  " ansible playbooks
-  au BufRead,BufNewFile */playbooks/*.yml setlocal filetype=yaml.ansible
-  au BufRead,BufNewFile */ops/ansible/*.yml setlocal filetype=yaml.ansible
-
-  " buildbot configuration files
-  au BufNewFile,BufRead   master.cfg      setlocal ft=python foldmethod=marker foldenable tw=120
-  au BufNewFile,BufRead   buildbot.tac    setlocal ft=python foldmethod=marker foldenable tw=120
-
-  " cppcheck dumps
-  au BufNewFile,BufRead *.c.dump      setlocal filetype=xml tw=120
-  au BufNewFile,BufRead *.cpp.dump    setlocal filetype=xml tw=120
-  " cppcheck configuration files
-  au BufRead,BufNewFile *cppcheck*/cfg/*.cfg setlocal filetype=xml
-
   autocmd FileType xml let b:did_indent = 0
 
   " Taskwarrior tasks (`task <id> edit`)
@@ -1021,16 +826,6 @@ function! ToggleSyntax()
   endif
 endfunction
 
-function! ToggleNumber()
-  if(&nu == 1)
-    set nu!
-    set rnu
-  else
-    set nornu
-    set nu
-  endif
-endfunction
-
 function! s:Gjgk(on)
   if a:on
     nnoremap <buffer> j gj
@@ -1057,19 +852,6 @@ function! ToggleHex()
   else
     %!xxd
     let b:hex_mode = 1
-  endif
-endfunction
-
-" Scroll all windows at the same time
-function! ToggleScrollBind()
-  if (s:scroll_mode == 0)
-    execute ":windo set scrollbind!"
-    let s:scroll_mode = 1
-    echo 'Enable scrollbind'
-  else
-    execute ":windo set noscrollbind!"
-    let s:scroll_mode = 0
-    echo 'Disable scrollbind'
   endif
 endfunction
 " }}}
@@ -1647,7 +1429,7 @@ autocmd('FileType', {
   end,
 })
 
--- Highlight TODO/DONE in markdown/org. Uses extmarks (priority 250) because
+-- Highlight TODO/DONE in markdown. Uses extmarks (priority 250) because
 -- matchadd is overlaid by treesitter extmarks in modern Neovim regardless of
 -- matchadd priority.
 local todo_ns = vim.api.nvim_create_namespace('user_md_todo')
@@ -1667,7 +1449,7 @@ local function refresh_todo(buf)
   buf = buf or vim.api.nvim_get_current_buf()
   if not vim.api.nvim_buf_is_valid(buf) then return end
   local ft = vim.bo[buf].filetype
-  if ft ~= 'markdown' and ft ~= 'org' then return end
+  if ft ~= 'markdown' then return end
   vim.api.nvim_buf_clear_namespace(buf, todo_ns, 0, -1)
   local lines = vim.api.nvim_buf_get_lines(buf, 0, -1, false)
   for i, line in ipairs(lines) do
@@ -1679,7 +1461,7 @@ end
 augroup('MdTodoHighlight', { clear = true })
 autocmd({ 'BufWinEnter', 'BufReadPost', 'FileType', 'InsertLeave', 'BufWritePost' }, {
   group = 'MdTodoHighlight',
-  pattern = { '*.md', '*.markdown', '*.org', 'markdown', 'org' },
+  pattern = { '*.md', '*.markdown', 'markdown' },
   callback = function(ev) refresh_todo(ev.buf) end,
 })
 -- }}}
@@ -1773,9 +1555,6 @@ keymap('n', '<leader>c.', '"=strftime("%Y-%m-%d")<CR>P', opts)
 keymap('n', '<C-c>.', '"=strftime("%Y-%m-%d")<CR>P', opts)
 keymap('i', '<C-c>.', '<C-R>=strftime("%Y-%m-%d")<CR>', opts)
 
--- UndoTree
-keymap('n', '<A-U>', ':UndotreeToggle<CR>', opts)
-
 -- Highlight specific lines
 keymap('n', '<leader>m', ":call matchadd('LineHighlight', '\\%'.line('.').'l')<CR>", opts)
 keymap('n', '<leader>M', ':call clearmatches()<CR>', opts)
@@ -1818,7 +1597,6 @@ keymap('n', '<localleader>vS', "<cmd>lua require('telescope.builtin').git_stash(
 
 -- Notes navigation
 keymap('n', '<leader>pn', "<cmd>lua require('telescope.builtin').find_files({prompt_title = 'Notes', cwd = '~/Org/Notes/'})<CR>", opts)
-keymap('n', '<leader>pm', "<cmd>lua require('telescope.builtin').find_files({prompt_title = 'org-mode', cwd = '~/Org/org-mode'})<CR>", opts)
 
 -- LSP keymaps
 keymap('n', 'gy', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opts)
@@ -1834,15 +1612,11 @@ keymap('n', '<A-6>', ':SymbolsOutline<CR>', opts)
 -- Toggle functions
 keymap('n', '<leader>tc', ':call ToggleConceal()<CR>', opts)
 keymap('n', '<leader>tg', ':call Togglegjgk()<CR>', opts)
-keymap('n', '<leader>tx', ':call ToggleHex()<CR>', opts)
 keymap('n', '<leader>ts', ':call ToggleSyntax()<CR>', opts)
-keymap('n', '<leader>tn', ':call ToggleNumber()<CR>', opts)
-keymap('n', '<leader>tS', ':call ToggleScrollBind()<CR>', opts)
 keymap('n', '<leader>tp', ':setlocal paste!<CR>', opts)
 keymap('n', '<leader>tC', ':ColorizerToggle<CR>', opts)
 keymap('n', '<leader>tr', ':RainbowToggle<CR>', opts)
 keymap('n', '<leader>tt', ':TableModeToggle<CR>', opts)
-keymap('n', '<leader>ti', ':IBLToggle<CR>', opts)
 -- }}}
 
 vim.g.init_loaded = 1
