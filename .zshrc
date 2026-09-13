@@ -202,7 +202,6 @@ alias history='history -i'
 # }}}
 
 # {{{ Aliases
-# Common
 alias q='exit'
 alias :q='exit'
 alias :qa='exit'
@@ -212,30 +211,17 @@ alias s='sudo'
 alias less='less -Q' # Turn off beeps
 alias rp='realpath'
 alias grep='grep --color=auto'
-alias minicom_usb0='sudo minicom -D /dev/ttyUSB0 -C /tmp/minicom.log'
-alias minicom_usb1='sudo minicom -D /dev/ttyUSB1 -C /tmp/minicom.log'
 zt() { zathura $1 2>&1 >/dev/null & }
 alias j='z'
 jj() { z "$@"; [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}" }
 alias tree='tree -C'
 alias r='ranger'
 alias getip='dig +short myip.opendns.com @resolver1.opendns.com'
-lfind() { find . -iname $@ 2>/dev/null }
-
 alias gdb='gdb -q'
-
-# Debian tools
-alias dquilt="quilt --quiltrc=${HOME}/.quiltrc-dpkg"
-
-# vim
 alias v='nvim'
 alias vim='nvim'
-alias vO='nvim -O' # Open in vertical splits
-alias vo='nvim -o' # Open in horizontal splits
-alias vc='nvim -u NONE'
-
-# copy working directory to clipboard
-alias cpwd='pwd | tr -d "\n" | xsel -ib'
+alias ls='ls --color=auto'
+alias diffdir='diff -ENwbur'
 
 mkcd() {
     [[ $# -gt 1 ]] && return 1
@@ -245,16 +231,7 @@ mkcd() {
 
 # git
 alias g='git'
-alias gb='git branch'
-alias gatzf='tar cfvz $(basename ~+).tar.gz --exclude .git .'
-alias gatz='git archive master --format=tar.gz > "$(basename ~+)".tar.gz'
-alias gaz='git archive master --format=zip > "$(basename ~+)".zip'
-alias gf='git fetch --prune'
-alias gfa='git fetch --prune --all'
-alias gsm='git submodule'
-alias gsmi='git submodule update --init --recursive'
-alias gsmy='git submodule sync'
-alias gclean='git clean -fidx'
+alias gc='f() { url="${1%/}"; url="${url%.git}"; org=$(basename $(dirname "$url")); repo=$(basename "$url"); git clone --filter=blob:none "https://github.com/$org/$repo.git" "${org}__${repo}"; }; f'
 gcd() {
     [[ $# -ne 1 ]] && return 1
     url=`echo $1 | grep -P 'https?://[a-zA-Z.-]+/[a-zA-Z-]+/[a-zA-Z-]+' -o`
@@ -262,18 +239,6 @@ gcd() {
     git clone "$url" && cd "${url##*/}" || return 1
     [[ $TMUX ]] && tmux rename-window "#{b:pane_current_path}"
 }
-
-alias -g KE="2>&1"
-alias -g NE="2>/dev/null"
-alias -g NUL=">/dev/null 2>&1"
-alias -g O="> output.txt"
-alias -g G='| rg'
-alias -g L="|& less"
-alias -g V="| nvim -"
-alias -g ND="notify-send 'Done' ''"
-alias -g U="echo -e '\a'"
-alias -g CP="xclip -selection clipboard"
-alias -g IR="i3-msg 'workspace back_and_forth' >/dev/null"
 
 # Perform operation using fzf. Examples:
 #   find /usr/include -name "test.h" F nvim
@@ -286,66 +251,11 @@ fi
 
 # Python
 alias vs='source venv/bin/activate'
-alias py2='python2'
 alias py3='python3'
-alias ipy='ipython3'
-alias ipy2='ipython'
-alias ipy3='ipython3'
-alias venv2='virtualenv venv --system-site-packages --python=/usr/bin/python2'
-alias venv3='virtualenv venv --system-site-packages --python=/usr/bin/python3'
-
-alias d='dune'
-
-# Rust
-alias c='cargo'
-
-# ls
-alias ls='ls --color=auto'
-alias ll='ls -oh'
-
-# diffs
-alias diffdir='diff -ENwbur'
-alias cpd='cpdiff'
-
-# {{{ taskwarrior
-if [[ -x "$(command -v task)" ]]; then
-    alias t="task"                        # Default `task next` report
-    alias tt="t recent"                   # Recently added tasks
-    alias tstopall="t rc.gc=off +ACTIVE _ids | xargs task rc.gc=off rc.confirmation=no rc.bulk=yes stop"
-    alias tschedd='task sched.before:today+1d -COMPLETED -DELETED -DUETODAY +PENDING'
-    alias tdued='task due.before:today+1d -COMPLETED -DELETED +PENDING'
-    alias tdoned='t end:today status:completed all'
-    alias tdonew='t end.after:today-7d status:completed all'
-    alias tdonem='t end.after:today-30d status:completed all'
-    alias bwp="bugwarrior-pull"
-
-    # Simplify work with tasks marked with +event
-    alias tel="task +event"
-    tea() {
-        if [ $# -ne 2 ]; then
-            echo "Usage: tea DESCRIPTION DATE"
-            return 1
-        fi
-        task add +event "$1" due:"$2" until:due+1d
-    }
-fi
-
-if [[ -x "$(command -v task)" ]]; then
-    cal() {
-        task calendar
-    }
-else
-    alias cal="cal -3"
-fi
-# }}}
-
-alias exrm="exim4 -bp | grep frozen| awk '{print $3}' | xargs exim4 -Mrm"
+alias venv='virtualenv venv --system-site-packages --python=/usr/bin/python3'
 
 # Sequence that disables cursor blinking
 alias stopblink="printf '\033[?12l'"
-
-# Tools
-alias psmem="sudo $(which ps_mem.py)"
 # }}}
 
 # {{{ Functions
@@ -469,30 +379,6 @@ function fzf-ctags() {
 }
 zle -N fzf-ctags
 bindkey "^[t" fzf-ctags
-
-function fzf-delete-branches() {
-  git branch |
-    grep --invert-match '\*' |
-    cut -c 3- |
-    fzf --multi --preview="git log {} --" |
-    xargs --no-run-if-empty git branch --delete --force
-}
-
-function fzf-rga() {
-	RG_PREFIX="rga --files-with-matches"
-	local file
-	file="$(
-		FZF_DEFAULT_COMMAND="$RG_PREFIX '$1'" \
-			fzf --sort --preview="[[ ! -z {} ]] && rga --pretty --context 5 {q} {}" \
-				--phony -q "$1" \
-				--bind "change:reload:$RG_PREFIX {q}" \
-				--preview-window="70%:wrap"
-	)" &&
-	echo "opening $file" &&
-	xdg-open "$file"
-}
-zle -N fzf-rga
-bindkey "^[r" fzf-rga
 # }}}
 
 # {{{ auto-notify plugin configuration
@@ -521,35 +407,6 @@ add-zsh-hook precmd set-title-precmd
 add-zsh-hook preexec set-title-preexec
 # }}}
 
-# {{{ Start ssh-agent
-function start_ssh_agent() {
-	local lifetime
-	local -a identities
-
-	zstyle -s :plugins:ssh-agent lifetime lifetime
-
-	ssh-agent -s ${lifetime:+-t} ${lifetime} | sed 's/^echo/#echo/' >! $ssh_environment
-	chmod 600 $ssh_environment
-	source $ssh_environment > /dev/null
-
-	zstyle -a :plugins:ssh-agent identities identities
-
-	echo starting ssh-agent...
-	ssh-add $HOME/.ssh/${^identities}
-}
-
-# ssh_environment="$HOME/.ssh/environment-$HOST"
-# 
-# if [[ -f "$ssh_environment" ]]; then
-# 	source $ssh_environment > /dev/null
-# 	ps x | grep ssh-agent | grep -q $SSH_AGENT_PID || {
-# 		start_ssh_agent
-# 	}
-# else
-# 	start_ssh_agent
-# fi
-# }}}
-
 # {{{ Utilities
 # Shell commands usage statistics
 function zsh_stats() {
@@ -562,9 +419,10 @@ function zsh_stats() {
 # Auto start X
 if [[ -z $DISPLAY ]] && [[ $(tty) = /dev/tty2 ]]; then exec startx; fi
 
-# Setup nvm (a tool that installs npm)
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+
+. "$HOME/.local/bin/env"
 
 # vim:foldmethod=marker:foldenable:foldlevel=0:sw=4:tw=120
